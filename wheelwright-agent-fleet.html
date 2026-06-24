@@ -1,0 +1,644 @@
+<title>Wheelwright Agent Fleet</title>
+<style>
+:root{
+  --ground:#060F1C;--text:#C4D8EE;--text-dim:#3E607E;
+  --accent:#C8982A;--border:#132840;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--ground);color:var(--text);
+  font-family:'Courier New',Courier,monospace;min-height:100vh;overflow-x:auto}
+
+#page-header{
+  display:flex;align-items:center;gap:20px;
+  padding:20px 36px 16px;border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:50;background:var(--ground);
+}
+.brand-label{font-size:9px;letter-spacing:.35em;text-transform:uppercase;color:var(--text-dim);margin-bottom:3px}
+.page-title{font-size:20px;letter-spacing:.1em;color:var(--accent);font-weight:normal}
+.page-subtitle{font-size:9px;letter-spacing:.15em;color:var(--text-dim);margin-top:3px;text-transform:uppercase}
+
+#info-bar{
+  padding:7px 36px;font-size:10px;letter-spacing:.07em;color:var(--text-dim);
+  border-bottom:1px solid var(--border);min-height:30px;display:flex;align-items:center;
+  position:sticky;top:63px;z-index:40;background:var(--ground);
+}
+#info-bar span{color:var(--accent)}
+
+#graph-wrap{overflow-x:auto;overflow-y:visible}
+svg#graph{display:block}
+
+#legend{
+  display:flex;flex-wrap:wrap;align-items:center;gap:14px;
+  padding:12px 36px;border-top:1px solid var(--border);
+  font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);
+}
+.lr{display:flex;align-items:center;gap:7px}
+.ld{width:22px;height:1.5px;flex-shrink:0}
+.lc{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+.lsep{width:1px;height:14px;background:var(--border);margin:0 4px}
+
+#tooltip{
+  position:fixed;pointer-events:none;opacity:0;transition:opacity .1s;z-index:200;
+  background:#0B1A2C;border:1px solid var(--accent);padding:10px 14px;
+  max-width:260px;font-size:10px;line-height:1.65;
+}
+#tooltip.show{opacity:1}
+#tip-id{font-size:11px;color:var(--accent);letter-spacing:.06em;margin-bottom:2px}
+#tip-phase{font-size:8px;color:var(--text-dim);letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px}
+</style>
+
+<div id="page-header">
+  <svg width="40" height="40" viewBox="0 0 40 40" style="flex-shrink:0">
+    <circle cx="20" cy="20" r="18" fill="none" stroke="#C8982A" stroke-width="1.1" opacity=".7"/>
+    <circle cx="20" cy="20" r="7" fill="none" stroke="#C8982A" stroke-width="1.1" opacity=".7"/>
+    <circle cx="20" cy="20" r="2.2" fill="#C8982A" opacity=".9"/>
+    <line x1="20" y1="2" x2="20" y2="13" stroke="#C8982A" stroke-width=".9" opacity=".65"/>
+    <line x1="20" y1="27" x2="20" y2="38" stroke="#C8982A" stroke-width=".9" opacity=".65"/>
+    <line x1="2" y1="20" x2="13" y2="20" stroke="#C8982A" stroke-width=".9" opacity=".65"/>
+    <line x1="27" y1="20" x2="38" y2="20" stroke="#C8982A" stroke-width=".9" opacity=".65"/>
+    <line x1="7" y1="7" x2="13.5" y2="13.5" stroke="#C8982A" stroke-width=".9" opacity=".65"/>
+    <line x1="26.5" y1="26.5" x2="33" y2="33" stroke="#C8982A" stroke-width=".9" opacity=".65"/>
+    <line x1="33" y1="7" x2="26.5" y2="13.5" stroke="#C8982A" stroke-width=".9" opacity=".65"/>
+    <line x1="7" y1="33" x2="13.5" y2="26.5" stroke="#C8982A" stroke-width=".9" opacity=".65"/>
+  </svg>
+  <div>
+    <div class="brand-label">Wheelwright Toolkit</div>
+    <div class="page-title">AGENT FLEET MAP</div>
+    <div class="page-subtitle">52 Role-Specialist Agents &nbsp;·&nbsp; 10 Lifecycle Phases &nbsp;·&nbsp; Full SDLC Traceability</div>
+  </div>
+</div>
+
+<div id="info-bar">Click any agent to trace its delegation chain &nbsp;·&nbsp; Hover for description</div>
+<div id="graph-wrap"><svg id="graph"></svg></div>
+
+<div id="legend">
+  <div class="lr"><div class="ld" style="background:#C8982A"></div>Primary delegation</div>
+  <div class="lr"><div class="ld" style="background:#3D8FB5;border-top:1px dashed #3D8FB5;height:0"></div>Secondary / parallel</div>
+  <div class="lr"><div class="ld" style="background:#8055B5;border-top:1px dotted #8055B5;height:0"></div>Feedback loop</div>
+  <div class="lr"><div class="ld" style="background:#4A8AAA;border-top:1px dashed #4A8AAA;height:0;opacity:.6"></div>Indexes (wiki-curator — click to reveal)</div>
+  <div class="lsep"></div>
+  <div id="phase-legend" style="display:flex;flex-wrap:wrap;gap:12px"></div>
+</div>
+
+<div id="tooltip">
+  <div id="tip-id"></div>
+  <div id="tip-phase"></div>
+  <div id="tip-desc"></div>
+</div>
+
+<script>
+// ─── PHASES (authoritative — from agents/INDEX.md) ──────────────────────────
+const PHASES = [
+  {id:'discovery',    label:'DISCOVERY',    n:'01', color:'#3B7DC4'},
+  {id:'requirements', label:'REQUIREMENTS', n:'02', color:'#3A9E6A'},
+  {id:'design',       label:'DESIGN',       n:'03', color:'#6B50B0'},
+  {id:'planning',     label:'PLANNING',     n:'04', color:'#B08030'},
+  {id:'build',        label:'BUILD',        n:'05', color:'#3A6BA0'},
+  {id:'test',         label:'TEST',         n:'06', color:'#984040'},
+  {id:'review',       label:'REVIEW',       n:'07', color:'#307A6A'},
+  {id:'release',      label:'RELEASE',      n:'08', color:'#906040'},
+  {id:'operate',      label:'OPERATE',      n:'09', color:'#7A5030'},
+  {id:'process',      label:'PROCESS',      n:'10', color:'#4040A0'},
+];
+
+// ─── AGENTS (50 total — positions match INDEX.md phases exactly) ─────────────
+const AGENTS = [
+  // 01 DISCOVERY
+  {id:'doc-strategy-advisor', label:'doc-strategy\nadvisor', phase:'discovery',
+   desc:'Entry point. Selects which documents a team needs by size (Lean/Mid/Enterprise) and assigns ownership. Hands off to mrd-writer, brd-writer, and wiki-curator.'},
+  {id:'mrd-writer', label:'mrd-writer', phase:'discovery',
+   desc:'Market Requirements Document — market need, target personas, competitive landscape. Feeds brd-writer.'},
+
+  // 02 REQUIREMENTS
+  {id:'brd-writer', label:'brd-writer', phase:'requirements',
+   desc:'Business Requirements Document — business goals, ROI case, scope, stakeholder sign-off. Produces BR-series requirements.'},
+  {id:'prd-writer', label:'prd-writer', phase:'requirements',
+   desc:'Product Requirements Document — user stories, features, acceptance criteria. The primary product authority document.'},
+  {id:'frd-writer', label:'frd-writer', phase:'requirements',
+   desc:'Functional Requirements Document — exact feature behaviour, branching flows, edge cases. Living spec updated per feature.'},
+  {id:'srs-writer', label:'srs-writer', phase:'requirements',
+   desc:'Software Requirements Specification — technical constraints, performance budgets, scalability, compliance obligations.'},
+  {id:'urs-writer', label:'urs-writer', phase:'requirements',
+   desc:'User Requirements Specification for regulated environments (FDA 21 CFR, ISPE/GAMP5). Only required when validation is mandatory.'},
+
+  // 03 DESIGN
+  {id:'solution-recon', label:'solution-recon', phase:'design',
+   desc:'Brownfield ground-truth agent. Reads the existing codebase before specs are written to confirm what actually exists. Feeds sdd-writer, architect, estimation-facilitator, backend/frontend devs, and raid-log.'},
+  {id:'architect', label:'architect', phase:'design',
+   desc:'Architecture orchestration. Reads SDD scope, directs C4 modelling and decision layers. Hands off to adr-writer, rfc, backend-developer, frontend-developer, and raid-log.'},
+  {id:'rfc', label:'rfc', phase:'design',
+   desc:'Request for Comments — forward-looking design proposals before building. Every RFC resolved into an ADR.'},
+  {id:'adr-writer', label:'adr-writer', phase:'design',
+   desc:'Continuous: records Architecture Decision Records — an immutable, append-only log of significant decisions + rationale. Feeds tech-radar.'},
+  {id:'sdd-writer', label:'sdd-writer', phase:'design',
+   desc:'Software Design Document — component breakdown, C4/arc42, data flows, reliability plan. Blueprint for all build work.'},
+  {id:'api-designer', label:'api-designer', phase:'design',
+   desc:'Contract-first API design — OpenAPI/GraphQL schemas, auth strategy, versioning policy. Feeds backend-developer, frontend-developer, and test-automation-engineer.'},
+  {id:'data-modeler', label:'data-modeler', phase:'design',
+   desc:'Data model design — conceptual→logical→physical schema, ERD, indexing, migration plan. Feeds backend-developer.'},
+  {id:'ux-ui-designer', label:'ux-ui-designer', phase:'design',
+   desc:'UX/UI design spec — flows, wireframes, hi-fi components, design system. Feeds frontend-developer and accessibility-auditor.'},
+  {id:'tsd-writer', label:'tsd-writer', phase:'design',
+   desc:'Technical Specification Document — pinned stack versions, endpoint specs, deploy/rollback procedures. Feeds backlog-manager.'},
+
+  // 04 PLANNING
+  {id:'backlog-manager', label:'backlog-manager', phase:'planning',
+   desc:'Converts PRD/FRD/SDD into a structured product backlog — epics → PBIs → tasks. INVEST-checked. Feeds estimation-facilitator, sprint-planner, status-reporter, and test-author.'},
+  {id:'estimation-facilitator', label:'estimation\nfacilitator', phase:'planning',
+   desc:'Sizes backlog items — story points, Planning Poker, velocity, capacity planning. Feeds sprint-planner.'},
+  {id:'sprint-planner', label:'sprint-planner', phase:'planning',
+   desc:'Plans the sprint — goal, capacity-fit backlog selection, DoR gate, sprint backlog output. Feeds frontend/backend devs, retrospective-facilitator, and raid-log.'},
+
+  // 05 BUILD
+  {id:'dev-onboarding', label:'dev-onboarding', phase:'build',
+   desc:'CONTRIBUTING guide and developer onboarding — git branching, commit conventions, PR process, inner-loop setup.'},
+  {id:'coding-standards', label:'coding-standards', phase:'build',
+   desc:'Team coding guidelines — enforceable rules for what good code looks like here. Referenced by code-reviewer and CI.'},
+  {id:'ai-orchestration', label:'ai-orchestration', phase:'build',
+   desc:'Governs agentic SDLC — defines what AI may do autonomously, guardrail thresholds, human-in-the-loop points by risk tier. Entry point (no inbound handoff).'},
+  {id:'pr-author', label:'pr-author', phase:'build',
+   desc:'Drafts PR descriptions and Conventional Commit messages from a diff. Feeds code-reviewer.'},
+  {id:'backend-developer', label:'backend-developer', phase:'build',
+   desc:'Backend service implementation — APIs, data access, reliability, security, scaling. Feeds code-reviewer, qa-tester, pr-author, performance-engineer.'},
+  {id:'frontend-developer', label:'frontend-developer', phase:'build',
+   desc:'Frontend implementation — component architecture, state, accessibility, design system, performance. Feeds code-reviewer, qa-tester, pr-author, accessibility-auditor, performance-engineer.'},
+
+  // 06 TEST
+  {id:'test-plan-writer', label:'test-plan-writer', phase:'test',
+   desc:'Test plan, test cases, QA strategy — fully traced to FRD and SRS requirements via the RTM. Feeds test-author, qa-tester, and test-automation-engineer.'},
+  {id:'test-author', label:'test-author', phase:'test',
+   desc:'Writes unit and integration tests from acceptance criteria. Feeds code-reviewer.'},
+  {id:'qa-tester', label:'qa-tester', phase:'test',
+   desc:'Manual test execution, bug reporting, defect lifecycle, QA sign-off gate. Feeds bug-triager, release-manager, and debugger.'},
+  {id:'test-automation-engineer', label:'test-auto\nengineer', phase:'test',
+   desc:'Automated e2e, integration, and contract test suites. Owns the test pyramid and CI integration. Feeds ci-cd-pipeline.'},
+  {id:'accessibility-auditor', label:'accessibility\nauditor', phase:'test',
+   desc:'WCAG 2.1 AA audit — keyboard, screen reader, contrast. Sign-off gate before release. Feeds release-manager.'},
+  {id:'ai-eval', label:'ai-eval', phase:'test',
+   desc:'Eval harness for shipped AI/LLM features — golden datasets, LLM-as-judge scoring, regression gates in CI.'},
+  {id:'bug-triager', label:'bug-triager', phase:'test',
+   desc:'Triages incoming bug queue — severity vs priority, deduplication, routing, fix-now vs defer. Feeds debugger and backlog-manager.'},
+  {id:'flaky-test-detective', label:'flaky-test\ndetective', phase:'test',
+   desc:'Identifies, quarantines, and fixes flaky tests. Tracks flake rate and feeds fixes to test-automation-engineer.'},
+  {id:'debugger', label:'debugger', phase:'test',
+   desc:'Root-cause analysis from stack trace, failing test, or error log. Produces a fix + regression test. Hands off to test-author.'},
+  {id:'change-verifier', label:'change-verifier', phase:'test',
+   desc:'Maker/checker gate. Verifies a code change against its acceptance criteria by RUNNING it -- builds, executes changed tests + lint, exercises each AC, returns pass/fail verdict with evidence. Distinct from code-reviewer (static quality) and qa-tester (system QA). Feeds pr-author, code-reviewer, and debugger.'},
+
+  // 07 REVIEW
+  {id:'code-reviewer', label:'code-reviewer', phase:'review',
+   desc:'Reviews PRs against coding-standards and DoD — severity-grouped, actionable feedback. Feeds ci-cd-pipeline, release-manager, tech-debt-register, and back to backend/frontend devs.'},
+  {id:'security-reviewer', label:'security-reviewer', phase:'review',
+   desc:'Threat modelling (STRIDE), security requirements, authz design, AppSec checklist. Feeds code-reviewer, ci-cd-pipeline, backend-developer, and frontend-developer.'},
+  {id:'performance-engineer', label:'performance\nengineer', phase:'review',
+   desc:'Profiles against SRS performance budgets — bottlenecks, memory, N+1 queries, Core Web Vitals. Feeds sre and release-manager.'},
+  {id:'raid-log', label:'raid-log', phase:'review',
+   desc:'Living RAID register — Risks, Assumptions, Issues, Decisions tracked continuously. Feeds status-reporter.'},
+  {id:'status-reporter', label:'status-reporter', phase:'review',
+   desc:'Project status reports — RAG health, key metrics, RAID summary for stakeholder audiences. Terminal agent (no outbound handoff).'},
+
+  // 08 RELEASE
+  {id:'ci-cd-pipeline', label:'ci-cd-pipeline', phase:'release',
+   desc:'Designs automated build→deploy pipeline — stages, gates, DoD/coding standards enforcement. Feeds release-manager, flaky-test-detective, and sre.'},
+  {id:'release-manager', label:'release-manager', phase:'release',
+   desc:'Plans and coordinates the release — release plan, go/no-go checklist, release notes. Feeds incident-postmortem, feature-docs-writer, and wiki-curator.'},
+
+  // 09 OPERATE
+  {id:'sre', label:'sre', phase:'operate',
+   desc:'Proactive reliability — SLO/SLI definition, error budgets, observability, alerting, runbooks, capacity. Feeds incident-postmortem and release-manager.'},
+  {id:'incident-postmortem', label:'incident\npostmortem', phase:'operate',
+   desc:'Production incident response + blameless postmortem + runbooks. Feeds backlog-manager, retrospective-facilitator, tech-debt-register, and raid-log.'},
+
+  // 10 PROCESS
+  {id:'feature-docs-writer', label:'feature-docs\nwriter', phase:'process',
+   desc:'End-user documentation (Diátaxis: tutorial, how-to, reference, explanation). Feeds wiki-curator.'},
+  {id:'product-analytics', label:'product-analytics', phase:'process',
+   desc:'Instruments success metrics — event/telemetry spec, conversion funnels, A/B experiment design. Feeds status-reporter.'},
+  {id:'retrospective-facilitator', label:'retrospective\nfacilitator', phase:'process',
+   desc:'Blameless sprint retrospective — reflection, action items, velocity trending. Feeds backlog-manager and tech-debt-register.'},
+  {id:'spec-driven-dev', label:'spec-driven-dev', phase:'process',
+   desc:'Assesses & improves Spec-Driven Development maturity. Prevents AI-generated code from drifting from specifications. Entry point — feeds doc-strategy-advisor.'},
+  {id:'tech-debt-register', label:'tech-debt\nregister', phase:'process',
+   desc:'Living tech-debt register — impact × interest vs effort. High-priority items promoted directly to backlog-manager.'},
+  {id:'tech-radar', label:'tech-radar', phase:'process',
+   desc:'Technology radar — Adopt/Trial/Assess/Hold rings. Aligns technology choices across teams based on accumulated ADRs. Terminal agent.'},
+  {id:'wiki-curator', label:'wiki-curator', phase:'process',
+   desc:'Builds and maintains the project wiki — home page, navigation, links to all systems of record. Terminal agent.'},
+  {id:'run-orchestrator', label:'run-orchestrator', phase:'process',
+   desc:'Fleet conductor. Reads the contract graph + run-state spine, proposes the next agent(s) to dispatch, enforces stop-condition contracts and handoff gates, and records progress so a run is resumable. Distinct from ai-orchestration (writes governance policy). Proposes-and-confirms by default; never auto-dispatches to protected paths. Entry point -- no inbound handoffs.'},
+];
+
+// ─── EDGES (authoritative — from INDEX.md "Hands off to" columns) ────────────
+// t: 'p'=primary  's'=secondary  'f'=feedback
+const EDGES = [
+  // Discovery
+  {from:'doc-strategy-advisor', to:'mrd-writer',          t:'p'},
+  {from:'doc-strategy-advisor', to:'brd-writer',          t:'p'},
+  {from:'doc-strategy-advisor', to:'prd-writer',          t:'s'},
+  {from:'doc-strategy-advisor', to:'solution-recon',      t:'s'},
+  {from:'doc-strategy-advisor', to:'urs-writer',          t:'s'},
+  {from:'doc-strategy-advisor', to:'wiki-curator',        t:'s'},
+  {from:'mrd-writer',           to:'brd-writer',          t:'p'},
+
+  // Requirements chain
+  {from:'brd-writer',  to:'prd-writer',         t:'p'},
+  // urs-writer is invoked by doc-strategy-advisor, not brd-writer (per canonical INDEX)
+  {from:'prd-writer',  to:'frd-writer',          t:'p'},
+  {from:'prd-writer',  to:'ux-ui-designer',      t:'p'},
+  {from:'prd-writer',  to:'backlog-manager',     t:'s'},
+  {from:'prd-writer',  to:'solution-recon',      t:'s'},
+  {from:'prd-writer',  to:'ai-eval',             t:'s'},
+  {from:'prd-writer',  to:'product-analytics',   t:'s'},
+  {from:'urs-writer',  to:'srs-writer',           t:'p'},
+  {from:'urs-writer',  to:'frd-writer',           t:'s'},
+  {from:'frd-writer',  to:'srs-writer',           t:'p'},
+  {from:'frd-writer',  to:'test-plan-writer',     t:'p'},
+  {from:'frd-writer',  to:'api-designer',         t:'p'},
+  {from:'frd-writer',  to:'backlog-manager',      t:'s'},
+  {from:'frd-writer',  to:'solution-recon',       t:'s'},
+  {from:'frd-writer',  to:'ux-ui-designer',       t:'s'},
+  {from:'frd-writer',  to:'feature-docs-writer',  t:'s'},
+  {from:'frd-writer',  to:'product-analytics',    t:'s'},
+  {from:'frd-writer',  to:'architect',            t:'s'},
+
+  // Design
+  {from:'srs-writer',     to:'sdd-writer',           t:'p'},
+  {from:'srs-writer',     to:'data-modeler',          t:'p'},
+  {from:'srs-writer',     to:'security-reviewer',     t:'s'},
+  {from:'srs-writer',     to:'sre',                   t:'s'},
+  {from:'srs-writer',     to:'performance-engineer',  t:'s'},
+  {from:'srs-writer',     to:'test-plan-writer',      t:'s'},
+  {from:'srs-writer',     to:'backlog-manager',       t:'s'},
+  {from:'solution-recon', to:'sdd-writer',            t:'p'},
+  {from:'solution-recon', to:'backlog-manager',       t:'s'},
+  {from:'solution-recon', to:'architect',             t:'s'},
+  {from:'solution-recon', to:'estimation-facilitator',t:'s'},
+  {from:'solution-recon', to:'backend-developer',     t:'s'},
+  {from:'solution-recon', to:'frontend-developer',    t:'s'},
+  {from:'solution-recon', to:'raid-log',              t:'s'},
+  {from:'architect',      to:'adr-writer',            t:'p'},
+  {from:'architect',      to:'rfc',                   t:'p'},
+  {from:'architect',      to:'backend-developer',     t:'s'},
+  {from:'architect',      to:'frontend-developer',    t:'s'},
+  {from:'architect',      to:'raid-log',              t:'s'},
+  {from:'rfc',            to:'adr-writer',            t:'p'},
+  {from:'rfc',            to:'sdd-writer',            t:'s'},
+  {from:'adr-writer',     to:'tech-radar',            t:'s'},
+  {from:'sdd-writer',     to:'tsd-writer',            t:'p'},
+  {from:'sdd-writer',     to:'backlog-manager',       t:'p'},
+  {from:'sdd-writer',     to:'api-designer',          t:'s'},
+  {from:'sdd-writer',     to:'data-modeler',          t:'s'},
+  {from:'sdd-writer',     to:'security-reviewer',     t:'p'},
+  {from:'sdd-writer',     to:'sre',                   t:'s'},
+  {from:'sdd-writer',     to:'architect',             t:'f'},
+  {from:'sdd-writer',     to:'adr-writer',            t:'s'},
+  {from:'tsd-writer',     to:'backlog-manager',       t:'p'},
+  {from:'api-designer',   to:'backend-developer',     t:'p'},
+  {from:'api-designer',   to:'frontend-developer',    t:'p'},
+  {from:'api-designer',   to:'test-automation-engineer',t:'s'},
+  {from:'data-modeler',   to:'backend-developer',     t:'p'},
+  {from:'ux-ui-designer', to:'frontend-developer',    t:'p'},
+  {from:'ux-ui-designer', to:'accessibility-auditor', t:'s'},
+
+  // Planning
+  {from:'backlog-manager',       to:'estimation-facilitator',   t:'p'},
+  {from:'backlog-manager',       to:'sprint-planner',           t:'s'},
+  {from:'backlog-manager',       to:'status-reporter',          t:'s'},
+  {from:'backlog-manager',       to:'test-author',              t:'s'},
+  {from:'estimation-facilitator',to:'sprint-planner',           t:'p'},
+  {from:'sprint-planner',        to:'backend-developer',        t:'p'},
+  {from:'sprint-planner',        to:'frontend-developer',       t:'p'},
+  {from:'sprint-planner',        to:'retrospective-facilitator',t:'s'},
+  {from:'sprint-planner',        to:'raid-log',                 t:'s'},
+
+  // Build
+  {from:'coding-standards',  to:'code-reviewer',    t:'p'},
+  {from:'coding-standards',  to:'frontend-developer',t:'s'},
+  {from:'coding-standards',  to:'backend-developer', t:'s'},
+  {from:'coding-standards',  to:'ci-cd-pipeline',   t:'s'},
+  {from:'dev-onboarding',    to:'backend-developer',       t:'s'},
+  {from:'dev-onboarding',    to:'frontend-developer',      t:'s'},
+  {from:'dev-onboarding',    to:'flaky-test-detective',    t:'s'},
+  {from:'ai-orchestration',  to:'ai-eval',           t:'p'},
+  {from:'pr-author',         to:'code-reviewer',     t:'p'},
+  {from:'backend-developer', to:'code-reviewer',       t:'p'},
+  {from:'backend-developer', to:'qa-tester',           t:'p'},
+  {from:'backend-developer', to:'pr-author',           t:'p'},
+  {from:'backend-developer', to:'performance-engineer',t:'s'},
+  {from:'backend-developer', to:'debugger',            t:'p'},
+  {from:'frontend-developer',to:'code-reviewer',       t:'p'},
+  {from:'frontend-developer',to:'qa-tester',           t:'p'},
+  {from:'frontend-developer',to:'pr-author',           t:'p'},
+  {from:'frontend-developer',to:'accessibility-auditor',t:'p'},
+  {from:'frontend-developer',to:'performance-engineer', t:'s'},
+  {from:'frontend-developer',to:'debugger',            t:'p'},
+
+  // Test
+  {from:'test-plan-writer',       to:'test-author',              t:'p'},
+  {from:'test-plan-writer',       to:'qa-tester',                t:'p'},
+  {from:'test-plan-writer',       to:'test-automation-engineer', t:'p'},
+  {from:'test-author',            to:'code-reviewer',            t:'p'},
+  {from:'test-author',            to:'debugger',                 t:'p'},
+  {from:'test-author',            to:'flaky-test-detective',     t:'p'},
+  {from:'qa-tester',              to:'bug-triager',              t:'p'},
+  {from:'qa-tester',              to:'release-manager',          t:'s'},
+  {from:'qa-tester',              to:'debugger',                 t:'s'},
+  {from:'test-automation-engineer',to:'ci-cd-pipeline',          t:'p'},
+  {from:'accessibility-auditor',  to:'release-manager',          t:'s'},
+  {from:'ai-eval',                to:'ci-cd-pipeline',           t:'s'},
+  {from:'bug-triager',            to:'debugger',                 t:'p'},
+  {from:'bug-triager',            to:'backlog-manager',          t:'f'},
+  {from:'flaky-test-detective',   to:'test-automation-engineer', t:'f'},
+  {from:'debugger',               to:'test-author',              t:'f'},
+  {from:'backend-developer',     to:'change-verifier',          t:'s'},
+  {from:'frontend-developer',    to:'change-verifier',          t:'s'},
+  {from:'test-author',           to:'change-verifier',          t:'s'},
+  {from:'change-verifier',       to:'pr-author',                t:'p'},
+  {from:'change-verifier',       to:'code-reviewer',            t:'p'},
+  {from:'change-verifier',       to:'debugger',                 t:'f'},
+
+  // Review
+  {from:'code-reviewer',      to:'ci-cd-pipeline',    t:'p'},
+  {from:'code-reviewer',      to:'release-manager',   t:'s'},
+  {from:'code-reviewer',      to:'tech-debt-register',t:'s'},
+  {from:'code-reviewer',      to:'backend-developer', t:'f'},
+  {from:'code-reviewer',      to:'frontend-developer',t:'f'},
+  {from:'security-reviewer',  to:'code-reviewer',     t:'p'},
+  {from:'security-reviewer',  to:'ci-cd-pipeline',    t:'s'},
+  {from:'security-reviewer',  to:'backend-developer', t:'f'},
+  {from:'security-reviewer',  to:'frontend-developer',t:'f'},
+  {from:'performance-engineer',to:'sre',              t:'s'},
+  {from:'performance-engineer',to:'release-manager',  t:'s'},
+  {from:'raid-log',            to:'status-reporter',  t:'p'},
+
+  // Release
+  {from:'ci-cd-pipeline', to:'release-manager',        t:'p'},
+  {from:'ci-cd-pipeline', to:'flaky-test-detective',   t:'s'},
+  {from:'ci-cd-pipeline', to:'sre',                    t:'s'},
+  {from:'release-manager',to:'incident-postmortem',    t:'s'},
+  {from:'release-manager',to:'feature-docs-writer',    t:'p'},
+  {from:'release-manager',to:'wiki-curator',           t:'s'},
+
+  // Operate
+  {from:'sre',               to:'incident-postmortem', t:'p'},
+  {from:'sre',               to:'release-manager',     t:'s'},
+  {from:'incident-postmortem',to:'backlog-manager',    t:'f'},
+  {from:'incident-postmortem',to:'retrospective-facilitator',t:'f'},
+  {from:'incident-postmortem',to:'tech-debt-register', t:'s'},
+  {from:'incident-postmortem',to:'raid-log',           t:'s'},
+
+  // Process
+  {from:'feature-docs-writer',    to:'wiki-curator',      t:'p'},
+
+  // wiki-curator indexes (hidden by default; appear when wiki-curator is selected)
+  // Source: wiki-curator.md body — "every agent's output a home — no artifact is orphaned"
+  {from:'mrd-writer',             to:'wiki-curator',      t:'i'},
+  {from:'brd-writer',             to:'wiki-curator',      t:'i'},
+  {from:'prd-writer',             to:'wiki-curator',      t:'i'},
+  {from:'frd-writer',             to:'wiki-curator',      t:'i'},
+  {from:'urs-writer',             to:'wiki-curator',      t:'i'},
+  {from:'sdd-writer',             to:'wiki-curator',      t:'i'},
+  {from:'tsd-writer',             to:'wiki-curator',      t:'i'},
+  {from:'adr-writer',             to:'wiki-curator',      t:'i'},
+  {from:'api-designer',           to:'wiki-curator',      t:'i'},
+  {from:'data-modeler',           to:'wiki-curator',      t:'i'},
+  {from:'ux-ui-designer',         to:'wiki-curator',      t:'i'},
+  {from:'dev-onboarding',         to:'wiki-curator',      t:'i'},
+  {from:'coding-standards',       to:'wiki-curator',      t:'i'},
+  {from:'ci-cd-pipeline',         to:'wiki-curator',      t:'i'},
+  {from:'sre',                    to:'wiki-curator',      t:'i'},
+  {from:'test-plan-writer',       to:'wiki-curator',      t:'i'},
+  {from:'qa-tester',              to:'wiki-curator',      t:'i'},
+  {from:'backlog-manager',        to:'wiki-curator',      t:'i'},
+  {from:'status-reporter',        to:'wiki-curator',      t:'i'},
+  {from:'raid-log',               to:'wiki-curator',      t:'i'},
+  {from:'incident-postmortem',    to:'wiki-curator',      t:'i'},
+
+  {from:'product-analytics',      to:'status-reporter',   t:'s'},
+  {from:'retrospective-facilitator',to:'backlog-manager', t:'f'},
+  {from:'retrospective-facilitator',to:'tech-debt-register',t:'s'},
+  {from:'spec-driven-dev',        to:'doc-strategy-advisor',t:'f'},
+  {from:'tech-debt-register',     to:'backlog-manager',   t:'f'},
+];
+
+// ─── LAYOUT ──────────────────────────────────────────────────────────────────
+const SVG_W   = 2060;
+const L_MAR   = 148;
+const R_MAR   = 20;
+const LANE_H  = 122;
+const NODE_W  = 134;
+const NODE_H  = 44;
+const HDR_H   = 34;
+
+const phaseIdx = {};
+PHASES.forEach((p,i)=>phaseIdx[p.id]=i);
+
+const phaseAgents={};
+PHASES.forEach(p=>{phaseAgents[p.id]=[]});
+AGENTS.forEach(a=>phaseAgents[a.phase].push(a));
+
+const pos={}; // id→{cx,cy}
+PHASES.forEach((ph,pi)=>{
+  const list=phaseAgents[ph.id];
+  const lY=HDR_H+pi*LANE_H;
+  const usable=SVG_W-L_MAR-R_MAR;
+  list.forEach((a,ai)=>{
+    pos[a.id]={cx: L_MAR+(usable/list.length)*(ai+0.5), cy: lY+LANE_H/2};
+  });
+});
+const SVG_H=HDR_H+PHASES.length*LANE_H+22;
+
+// ─── BUILD SVG ───────────────────────────────────────────────────────────────
+const svg=document.getElementById('graph');
+const ns='http://www.w3.org/2000/svg';
+svg.setAttribute('width',SVG_W);
+svg.setAttribute('height',SVG_H);
+svg.setAttribute('viewBox',`0 0 ${SVG_W} ${SVG_H}`);
+
+function el(tag,attrs,text){
+  const e=document.createElementNS(ns,tag);
+  for(const [k,v] of Object.entries(attrs)) e.setAttribute(k,v);
+  if(text!=null) e.textContent=text;
+  return e;
+}
+
+// Defs
+const defs=el('defs',{});
+const gp=el('pattern',{id:'grid',width:'40',height:'40',patternUnits:'userSpaceOnUse'});
+gp.appendChild(el('path',{d:'M 40 0 L 0 0 0 40',fill:'none',stroke:'#0E2238','stroke-width':'0.35'}));
+defs.appendChild(gp);
+function mkArr(id,color){
+  const m=el('marker',{id,markerWidth:'7',markerHeight:'7',refX:'5.5',refY:'3',orient:'auto'});
+  m.appendChild(el('path',{d:'M0,0 L7,3 L0,6 Z',fill:color}));
+  return m;
+}
+defs.appendChild(mkArr('arr-p','#C8982A'));
+defs.appendChild(mkArr('arr-s','#3D8FB5'));
+defs.appendChild(mkArr('arr-f','#8055B5'));
+svg.appendChild(defs);
+
+// Background
+svg.appendChild(el('rect',{width:SVG_W,height:SVG_H,fill:'#060F1C'}));
+svg.appendChild(el('rect',{width:SVG_W,height:SVG_H,fill:'url(#grid)'}));
+
+// Phase lanes
+PHASES.forEach((ph,pi)=>{
+  const ly=HDR_H+pi*LANE_H;
+  svg.appendChild(el('rect',{x:0,y:ly,width:SVG_W,height:LANE_H,fill:ph.color,opacity:'0.055'}));
+  svg.appendChild(el('rect',{x:0,y:ly,width:L_MAR-8,height:LANE_H,fill:ph.color,opacity:'0.14'}));
+  if(pi>0) svg.appendChild(el('line',{x1:0,y1:ly,x2:SVG_W,y2:ly,stroke:ph.color,'stroke-width':'0.5',opacity:'0.28'}));
+  svg.appendChild(el('text',{x:9,y:ly+17,fill:ph.color,opacity:'0.6','font-family':'Courier New,monospace','font-size':'9','letter-spacing':'0.14em'},ph.n));
+  svg.appendChild(el('text',{x:9,y:ly+30,fill:ph.color,'font-family':'Courier New,monospace','font-size':'8','letter-spacing':'0.09em'},ph.label));
+});
+
+// ─── EDGES ───────────────────────────────────────────────────────────────────
+const edgeLayer=el('g',{});
+svg.appendChild(edgeLayer);
+
+const ECFG={
+  p:{stroke:'#C8982A',sw:1.5, op:0.55,dash:'none', arr:'arr-p'},
+  s:{stroke:'#3D8FB5',sw:0.85,op:0.26,dash:'5,4',  arr:'arr-s'},
+  f:{stroke:'#8055B5',sw:0.85,op:0.38,dash:'2,5',  arr:'arr-f'},
+  i:{stroke:'#4A8AAA',sw:0.7, op:0,   dash:'3,6',  arr:'arr-s'}, // indexes — hidden until wiki-curator selected
+};
+const edgeEls={};
+
+EDGES.forEach(edge=>{
+  const a=pos[edge.from], b=pos[edge.to];
+  if(!a||!b) return;
+  const key=edge.from+'→'+edge.to;
+  const pA=phaseIdx[AGENTS.find(x=>x.id===edge.from)?.phase]??-1;
+  const pB=phaseIdx[AGENTS.find(x=>x.id===edge.to)?.phase]??-1;
+  const cfg=ECFG[edge.t];
+  let d;
+  if(pA===pB){
+    const mx=(a.cx+b.cx)/2;
+    d=`M${a.cx},${a.cy-NODE_H/2} Q${mx},${a.cy-NODE_H/2-48} ${b.cx},${b.cy-NODE_H/2}`;
+  } else if(pB<pA){
+    const ox=Math.max(a.cx,b.cx)+90;
+    d=`M${a.cx},${a.cy} C${ox},${a.cy} ${ox},${b.cy} ${b.cx+NODE_W/2},${b.cy}`;
+  } else {
+    const mY=(a.cy+b.cy)/2;
+    d=`M${a.cx},${a.cy+NODE_H/2} C${a.cx},${mY} ${b.cx},${mY} ${b.cx},${b.cy-NODE_H/2}`;
+  }
+  const path=el('path',{d,fill:'none',stroke:cfg.stroke,'stroke-width':cfg.sw,
+    opacity:cfg.op,'stroke-dasharray':cfg.dash,'marker-end':`url(#${cfg.arr})`});
+  edgeLayer.appendChild(path);
+  edgeEls[key]={el:path,from:edge.from,to:edge.to,t:edge.t,cfg};
+});
+
+// ─── NODES ───────────────────────────────────────────────────────────────────
+const nodeLayer=el('g',{});
+svg.appendChild(nodeLayer);
+const nodeEls={};
+
+AGENTS.forEach(agent=>{
+  const p=pos[agent.id]; if(!p) return;
+  const ph=PHASES.find(x=>x.id===agent.phase);
+  const c=ph.color;
+  const g=document.createElementNS(ns,'g');
+  g.setAttribute('data-id',agent.id);
+  g.style.cursor='pointer';
+  g.setAttribute('transform',`translate(${p.cx-NODE_W/2},${p.cy-NODE_H/2})`);
+
+  const r=el('rect',{width:NODE_W,height:NODE_H,rx:'2',ry:'2',
+    fill:c,'fill-opacity':'0.13',stroke:c,'stroke-width':'0.85','stroke-opacity':'0.65'});
+  g.appendChild(r);
+  g.appendChild(el('rect',{x:0,y:0,width:5,height:5,fill:c,opacity:'0.8'}));
+  g.appendChild(el('rect',{x:NODE_W-5,y:NODE_H-5,width:5,height:5,fill:c,opacity:'0.45'}));
+
+  const lines=agent.label.split('\n');
+  const baseY=lines.length===1 ? NODE_H/2+4 : NODE_H/2-3;
+  lines.forEach((ln,li)=>{
+    g.appendChild(el('text',{x:NODE_W/2,y:baseY+li*13,fill:'#C4D8EE',
+      'font-family':'Courier New,monospace','font-size':'9','text-anchor':'middle',
+      'letter-spacing':'0.04em'},ln));
+  });
+
+  g.addEventListener('mouseenter',e=>showTip(e,agent,ph));
+  g.addEventListener('mouseleave',()=>tip.classList.remove('show'));
+  g.addEventListener('click',()=>selectAgent(agent.id));
+  nodeLayer.appendChild(g);
+  nodeEls[agent.id]=g;
+});
+
+// ─── INTERACTION ─────────────────────────────────────────────────────────────
+const tip=document.getElementById('tooltip');
+const infoBar=document.getElementById('info-bar');
+let selected=null;
+
+function showTip(e,agent,ph){
+  document.getElementById('tip-id').textContent=agent.id;
+  document.getElementById('tip-phase').textContent=ph.label;
+  document.getElementById('tip-desc').textContent=agent.desc;
+  tip.classList.add('show');
+  moveTip(e);
+}
+document.addEventListener('mousemove',e=>{if(tip.classList.contains('show'))moveTip(e)});
+function moveTip(e){
+  tip.style.left=Math.min(e.clientX+18,window.innerWidth-280)+'px';
+  tip.style.top=Math.min(e.clientY+14,window.innerHeight-140)+'px';
+}
+
+function selectAgent(id){
+  if(selected===id){clearSel();return}
+  selected=id;
+  const linked=new Set([id]);
+  const linkedEdges=new Set();
+  Object.keys(edgeEls).forEach(k=>{
+    const e=edgeEls[k];
+    if(e.from===id||e.to===id){linked.add(e.from);linked.add(e.to);linkedEdges.add(k)}
+  });
+  Object.keys(nodeEls).forEach(nid=>{
+    const g=nodeEls[nid];
+    if(linked.has(nid)){
+      g.style.opacity='1';
+      g.querySelector('rect').setAttribute('fill-opacity',nid===id?'0.38':'0.22');
+    } else {
+      g.style.opacity='0.1';
+    }
+  });
+  Object.keys(edgeEls).forEach(k=>{
+    const e=edgeEls[k];
+    if(linkedEdges.has(k)){
+      const hiOp = e.t==='p'?'0.95': e.t==='f'?'0.8': e.t==='i'?'0.45':'0.55';
+      e.el.setAttribute('opacity',hiOp);
+      if(e.t==='p') e.el.setAttribute('stroke-width','2.2');
+    } else {
+      e.el.setAttribute('opacity','0.03');
+    }
+  });
+  const agent=AGENTS.find(a=>a.id===id);
+  const ph=PHASES.find(p=>p.id===agent.phase);
+  const out=EDGES.filter(e=>e.from===id).length;
+  const inc=EDGES.filter(e=>e.to===id).length;
+  infoBar.innerHTML=`<span>${id}</span> &nbsp;·&nbsp; ${ph.label} &nbsp;·&nbsp; ${inc} incoming &nbsp;·&nbsp; ${out} outgoing &nbsp;·&nbsp; click again to clear`;
+}
+
+function clearSel(){
+  selected=null;
+  Object.keys(nodeEls).forEach(nid=>{
+    nodeEls[nid].style.opacity='1';
+    nodeEls[nid].querySelector('rect').setAttribute('fill-opacity','0.13');
+  });
+  Object.keys(edgeEls).forEach(k=>{
+    const e=edgeEls[k];
+    e.el.setAttribute('opacity',e.cfg.op);
+    e.el.setAttribute('stroke-width',e.cfg.sw);
+  });
+  infoBar.innerHTML='Click any agent to trace its delegation chain &nbsp;·&nbsp; Hover for description';
+}
+svg.addEventListener('click',e=>{if(!e.target.closest('[data-id]'))clearSel()});
+
+// ─── LEGEND ──────────────────────────────────────────────────────────────────
+const pl=document.getElementById('phase-legend');
+PHASES.forEach(ph=>{
+  const r=document.createElement('div');
+  r.className='lr';
+  const d=document.createElement('div');
+  d.className='lc';d.style.background=ph.color;
+  r.appendChild(d);
+  r.appendChild(document.createTextNode(ph.label));
+  pl.appendChild(r);
+});
+</script>

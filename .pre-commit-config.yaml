@@ -1,0 +1,45 @@
+repos:
+  - repo: local
+    hooks:
+      # ── Fleet integrity ──────────────────────────────────────────────────────
+      - id: refresh-agent-index
+        name: Refresh agents/INDEX.md
+        entry: python hooks/build_agent_index.py
+        language: python
+        pass_filenames: false
+        files: ^agents/.*\.md$
+        stages: [pre-commit]
+
+      - id: validate-agent-fleet
+        name: Validate agent fleet (graph symmetry, skills, INDEX, claude_code)
+        entry: python hooks/validate_graph.py
+        language: python
+        pass_filenames: false
+        files: ^(agents|skills|commands)/.*\.md$
+        stages: [pre-commit]
+
+      - id: harness-bundles-fresh
+        name: Harness bundles not stale (targets/)
+        entry: python hooks/build_harness_artifacts.py --check
+        language: python
+        pass_filenames: false
+        files: ^(agents|skills|commands|hooks)/
+        stages: [pre-commit]
+
+      # ── Shell hook lint ──────────────────────────────────────────────────────
+      - id: shellcheck-hooks
+        name: shellcheck --severity=warning on hooks/*.sh
+        entry: shellcheck --severity=warning
+        language: system
+        files: ^hooks/.*\.sh$
+        stages: [pre-commit]
+
+      # ── Python hook tests ────────────────────────────────────────────────────
+      - id: python-hook-tests
+        name: Python hook unit tests (test_*.py)
+        entry: python -m pytest hooks/ -q --tb=short
+        language: python
+        pass_filenames: false
+        files: ^hooks/(.*\.py)$
+        stages: [pre-commit]
+        additional_dependencies: [pytest]
