@@ -1,0 +1,16 @@
+{
+  "name": "wheelwright",
+  "description": "Wheelwright — an AI agent fleet for the entire SDLC (market → spec → design → build → test → ship → operate), one traceable chain.",
+  "author": {
+    "name": "Wheelwright"
+  },
+  "keywords": [
+    "sdlc",
+    "requirements",
+    "specs",
+    "traceability",
+    "backlog",
+    "agents",
+    "project-management"
+  ]
+}

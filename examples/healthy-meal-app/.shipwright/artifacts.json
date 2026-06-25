@@ -1,0 +1,328 @@
+[
+  {
+    "id": "CONSTITUTION",
+    "kind": "constitution",
+    "title": "Project Constitution — FreshDesk",
+    "path": "00-constitution.md",
+    "owner": "Architect",
+    "status": "Active",
+    "version": "v1.0",
+    "updated": "2026-06-11",
+    "defines_ids": [],
+    "id_count": 0
+  },
+  {
+    "id": "MRD",
+    "kind": "mrd",
+    "title": "MRD: FreshDesk — Healthy Meal Delivery for Working Professionals",
+    "path": "01-mrd.md",
+    "owner": "PM (market)",
+    "status": "Approved",
+    "version": null,
+    "updated": "2026-06-11",
+    "defines_ids": [],
+    "id_count": 0
+  },
+  {
+    "id": "BRD",
+    "kind": "brd",
+    "title": "BRD: FreshDesk",
+    "path": "02-brd.md",
+    "owner": "Business Analyst",
+    "status": "Approved",
+    "version": null,
+    "updated": "2026-06-11",
+    "defines_ids": [],
+    "id_count": 0
+  },
+  {
+    "id": "PRD",
+    "kind": "prd",
+    "title": "PRD: FreshDesk",
+    "path": "03-prd.md",
+    "owner": "PM, eng lead, designer, QA",
+    "status": "In development",
+    "version": "v1.0",
+    "updated": "2026-06-11",
+    "defines_ids": [],
+    "id_count": 0
+  },
+  {
+    "id": "FRD",
+    "kind": "frd",
+    "title": "FRD: FreshDesk",
+    "path": "04-frd.md",
+    "owner": "BA",
+    "status": "Approved",
+    "version": null,
+    "updated": "2026-06-11",
+    "defines_ids": [
+      "FRD-FAV-001",
+      "FRD-FILT-001",
+      "FRD-FILT-002",
+      "FRD-ORD-001",
+      "FRD-ORD-002",
+      "FRD-TRK-001"
+    ],
+    "id_count": 6
+  },
+  {
+    "id": "SRS",
+    "kind": "srs",
+    "title": "SRS: FreshDesk",
+    "path": "05-srs.md",
+    "owner": "Tech lead",
+    "status": "Approved",
+    "version": null,
+    "updated": "2026-06-11",
+    "defines_ids": [
+      "FRD-FILT-001",
+      "FRD-ORD-001",
+      "FRD-ORD-002",
+      "FRD-TRK-001",
+      "SR-FUNC-001",
+      "SR-FUNC-002",
+      "SR-FUNC-003",
+      "SR-FUNC-004"
+    ],
+    "id_count": 8
+  },
+  {
+    "id": "SDD",
+    "kind": "sdd",
+    "title": "SDD: FreshDesk",
+    "path": "06-sdd.md",
+    "owner": "Architect",
+    "status": "Approved",
+    "version": null,
+    "updated": "2026-06-11",
+    "defines_ids": [],
+    "id_count": 0
+  },
+  {
+    "id": "TSD",
+    "kind": "tsd",
+    "title": "TSD: FreshDesk",
+    "path": "07-tsd.md",
+    "owner": "Senior engineer",
+    "status": "Approved",
+    "version": null,
+    "updated": "2026-06-11",
+    "defines_ids": [
+      "FRD-ORD-002"
+    ],
+    "id_count": 1
+  },
+  {
+    "id": "ADR-0001",
+    "kind": "adr",
+    "title": "ADR-0001: Event-driven delivery tracking",
+    "path": "08-adr-0001-event-driven-tracking.md",
+    "owner": "Architect, eng lead",
+    "status": "Accepted",
+    "version": null,
+    "updated": "2026-06-11",
+    "defines_ids": [
+      "FRD-TRK-001",
+      "SR-FUNC-003"
+    ],
+    "id_count": 2
+  },
+  {
+    "id": "RFC-0001",
+    "kind": "rfc",
+    "title": "RFC-0001: Event-driven delivery tracking",
+    "path": "09-rfc-0001-event-driven-tracking.md",
+    "owner": "Architect",
+    "status": "Accepted",
+    "version": null,
+    "updated": null,
+    "defines_ids": [
+      "FRD-TRK-001",
+      "SR-FUNC-003"
+    ],
+    "id_count": 2
+  },
+  {
+    "id": "TECH-RADAR",
+    "kind": "tech-radar",
+    "title": "Technology Radar — FreshDesk — 2026-Q2",
+    "path": "10-tech-radar.md",
+    "owner": "Architect",
+    "status": null,
+    "version": null,
+    "updated": null,
+    "defines_ids": [],
+    "id_count": 0
+  },
+  {
+    "id": "TECH-DEBT-REGISTER",
+    "kind": "tech-debt-register",
+    "title": "Technical-Debt Register — FreshDesk",
+    "path": "11-tech-debt-register.md",
+    "owner": "Architect",
+    "status": null,
+    "version": null,
+    "updated": null,
+    "defines_ids": [
+      "OBS-PII-1",
+      "ORD-IDEM-1"
+    ],
+    "id_count": 2
+  },
+  {
+    "id": "BACKLOG",
+    "kind": "backlog",
+    "title": "Product Backlog — FreshDesk",
+    "path": "12-backlog.md",
+    "owner": "PM (acting PO)",
+    "status": "Living",
+    "version": null,
+    "updated": "2026-06-11",
+    "defines_ids": [
+      "FRD-FAV-001",
+      "FRD-FILT-001",
+      "FRD-FILT-002",
+      "FRD-ORD-001",
+      "FRD-ORD-002",
+      "FRD-TRK-001",
+      "PBI-FAV-001",
+      "PBI-FILT-001",
+      "PBI-FILT-002",
+      "PBI-ORD-001",
+      "PBI-ORD-002",
+      "PBI-TRK-001",
+      "SR-FUNC-001",
+      "SR-FUNC-002",
+      "SR-FUNC-003",
+      "SR-FUNC-004",
+      "TRK-BE-001"
+    ],
+    "id_count": 17
+  },
+  {
+    "id": "ESTIMATION",
+    "kind": "estimation",
+    "title": "Estimation & Capacity — FreshDesk",
+    "path": "13-estimation.md",
+    "owner": "Lead (facilitator)",
+    "status": "Living",
+    "version": null,
+    "updated": "2026-06-11",
+    "defines_ids": [
+      "PBI-FAV-001",
+      "PBI-FILT-001",
+      "PBI-FILT-002",
+      "PBI-ORD-001",
+      "PBI-ORD-002",
+      "PBI-TRK-001",
+      "SR-FUNC-004",
+      "TRK-BE-001"
+    ],
+    "id_count": 8
+  },
+  {
+    "id": "SPRINT-PLAN",
+    "kind": "sprint-plan",
+    "title": "Sprint 1 Plan — FreshDesk",
+    "path": "14-sprint-plan.md",
+    "owner": "PM (acting PO)",
+    "status": "Active",
+    "version": null,
+    "updated": "2026-06-11",
+    "defines_ids": [
+      "FRD-FILT-002",
+      "PBI-FAV-001",
+      "PBI-FILT-001",
+      "PBI-FILT-002",
+      "PBI-ORD-001",
+      "PBI-ORD-002",
+      "PBI-TRK-001",
+      "SR-FUNC-004",
+      "TRK-BE-001"
+    ],
+    "id_count": 9
+  },
+  {
+    "id": "RETROSPECTIVE",
+    "kind": "retrospective",
+    "title": "Sprint 1 Retrospective — FreshDesk",
+    "path": "15-retrospective.md",
+    "owner": "Lead (facilitator)",
+    "status": "Closed",
+    "version": null,
+    "updated": "2026-06-25",
+    "defines_ids": [
+      "FRD-FILT-002",
+      "PBI-FILT-002",
+      "TRK-BE-001"
+    ],
+    "id_count": 3
+  },
+  {
+    "id": "RAID-LOG",
+    "kind": "raid-log",
+    "title": "RAID Log — FreshDesk",
+    "path": "16-raid-log.md",
+    "owner": "PM",
+    "status": "Living",
+    "version": null,
+    "updated": "2026-06-25",
+    "defines_ids": [
+      "FRD-FILT-002",
+      "PBI-FILT-002",
+      "SR-FUNC-002",
+      "SR-FUNC-004"
+    ],
+    "id_count": 4
+  },
+  {
+    "id": "STATUS-REPORT",
+    "kind": "status-report",
+    "title": "Status Report — FreshDesk — Sprint 1",
+    "path": "17-status-report.md",
+    "owner": "PM",
+    "status": "Issued",
+    "version": null,
+    "updated": "2026-06-25",
+    "defines_ids": [
+      "FRD-FILT-002",
+      "PBI-FAV-001",
+      "PBI-FILT-002",
+      "PBI-ORD-002",
+      "PBI-TRK-001",
+      "SR-FUNC-004"
+    ],
+    "id_count": 6
+  },
+  {
+    "id": "RTM",
+    "kind": "rtm",
+    "title": "RTM: FreshDesk — Requirements Traceability Matrix",
+    "path": "RTM.md",
+    "owner": null,
+    "status": null,
+    "version": null,
+    "updated": null,
+    "defines_ids": [
+      "FRD-FAV-001",
+      "FRD-FILT-001",
+      "FRD-FILT-002",
+      "FRD-ORD-001",
+      "FRD-ORD-002",
+      "FRD-TRK-001",
+      "PBI-FAV-001",
+      "PBI-FILT-001",
+      "PBI-FILT-002",
+      "PBI-ORD-001",
+      "PBI-ORD-002",
+      "PBI-TRK-001",
+      "SR-FUNC-001",
+      "SR-FUNC-002",
+      "SR-FUNC-003",
+      "SR-FUNC-004",
+      "TRK-BE-001"
+    ],
+    "id_count": 17
+  }
+]

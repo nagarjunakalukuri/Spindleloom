@@ -1,0 +1,13 @@
+{
+  "name": "wheelwright",
+  "owner": {
+    "name": "Wheelwright"
+  },
+  "plugins": [
+    {
+      "name": "wheelwright",
+      "source": "./",
+      "description": "The full Wheelwright SDLC agent fleet (agents, skills, commands, hooks, templates)."
+    }
+  ]
+}

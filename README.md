@@ -2,7 +2,7 @@
 
 *An AI agent fleet for the entire software development lifecycle — market → spec → design → build → test → ship → operate, one traceable chain.*
 
-A *wheelwright* builds the wheel that keeps turning — and the SDLC is exactly that wheel (build → ship → operate → learn → repeat). The project comes in three `-wright`s: **Wheelwright** is the fleet that builds the wheel, **Shipwright** ships it to every harness (`hooks/build_harness_artifacts.py` → `targets/`), and **Loopwright** runs it inside the delivery feedback loop (`LOOPWRIGHT.md`). Wheelwright is a tool-agnostic fleet of **52 role-specialist AI agents** (plus 50 templates, commands, and self-validating hooks) that carry a product from the market problem at 30,000 feet down to build-ready, shipped, monitored code. Each agent owns one role, reads the artifact above it, and **hands off to the next** along a single traceable chain — and pushes discoveries back upstream. Run only the subset your team needs (`doc-strategy-advisor`).
+A *wheelwright* builds the wheel that keeps turning — and the SDLC is exactly that wheel (build → ship → operate → learn → repeat). The project comes in three `-wright`s: **Wheelwright** is the fleet that builds the wheel, **Shipwright** ships it to every harness (`hooks/build_harness_artifacts.py` → `targets/`), and **Loopwright** runs it inside the delivery feedback loop (`project_guides/LOOPWRIGHT.md`). Wheelwright is a tool-agnostic fleet of **52 role-specialist AI agents** (plus 50 templates, commands, and self-validating hooks) that carry a product from the market problem at 30,000 feet down to build-ready, shipped, monitored code. Each agent owns one role, reads the artifact above it, and **hands off to the next** along a single traceable chain — and pushes discoveries back upstream. Run only the subset your team needs (`doc-strategy-advisor`).
 
 ## The funnel
 
@@ -109,9 +109,9 @@ Inner loop: **dev-onboarding/coding-standards** (set the bar) → build → **co
 | spec-driven-dev | `agents/spec-driven-dev.md` | Assesses Spec Driven Development maturity and keeps a living spec so AI tools don't drift from intent. |
 | run-orchestrator | `agents/run-orchestrator.md` | **The conductor.** Drives a multi-agent run end-to-end against a goal — reads the contract graph + a run-state spine, proposes the next runnable agent (required upstreams done + gate passed), enforces the stop contract, and dispatches with confirmation (`/run`). Makes the implicit funnel an explicit, resumable run; pairs with `change-verifier` (its build-phase gate) and `ai-orchestration` (its policy). |
 
-Each document agent can **create**, **review**, or **update** its document, reads the upstream doc(s) before drafting, and flags discoveries back upstream (see feedback loops in `BEST-PRACTICES.md`).
+Each document agent can **create**, **review**, or **update** its document, reads the upstream doc(s) before drafting, and flags discoveries back upstream (see feedback loops in `project_guides/BEST-PRACTICES.md`).
 
-> Navigate the full fleet by lifecycle phase in [`agents/INDEX.md`](agents/INDEX.md) — auto-generated from each agent's machine-readable contract block (`phase:` / `inputs` / `outputs` / `rtm_column` / `upstream` / `downstream`) by `hooks/build_agent_index.py`. See `AGENT-AUTHORING.md` for the contract schema.
+> Navigate the full fleet by lifecycle phase in [`agents/INDEX.md`](agents/INDEX.md) — auto-generated from each agent's machine-readable contract block (`phase:` / `inputs` / `outputs` / `rtm_column` / `upstream` / `downstream`) by `hooks/build_agent_index.py`. See `project_guides/AGENT-AUTHORING.md` for the contract schema.
 
 ## Usage
 
@@ -180,19 +180,19 @@ Blank, fill-in-the-blank versions of each document:
 
 ## Shared conventions
 
-`STANDARD.md` — **the authoritative, versioned layout standard**: the one project-agnostic `docs/` + `.shipwright/` tree, the profiles (lean/mid/enterprise), the four cadence planes (durable/living/cyclic/snapshot), naming + ID immutability, backlog system-of-record, and the sanctioned-exception config. Greenfield scaffolds it; existing repos **convert** via `scaffold.py migrate` (never by hand).
+`project_guides/STANDARD.md` — **the authoritative, versioned layout standard**: the one project-agnostic `docs/` + `.shipwright/` tree, the profiles (lean/mid/enterprise), the four cadence planes (durable/living/cyclic/snapshot), naming + ID immutability, backlog system-of-record, and the sanctioned-exception config. Greenfield scaffolds it; existing repos **convert** via `scaffold.py migrate` (never by hand).
 
-`INFORMATION-ARCHITECTURE.md` — the **detailed reference** under `STANDARD.md`: where artifacts live and how they're organized, found, and versioned — the canonical tree, the profiles, the metadata convention, baselines, and the four retrieval paths (RTM · catalog · MCP · wiki).
+`project_guides/INFORMATION-ARCHITECTURE.md` — the **detailed reference** under `project_guides/STANDARD.md`: where artifacts live and how they're organized, found, and versioned — the canonical tree, the profiles, the metadata convention, baselines, and the four retrieval paths (RTM · catalog · MCP · wiki).
 
-`HARNESS-MATRIX.md` — the 7-surface × 4-tool convergence matrix (Claude Code · Cursor · Copilot · Windsurf): which customization surface each tool exposes and which Wheelwright source maps onto it. What `hooks/build_harness_artifacts.py` (Shipwright) targets.
+`project_guides/HARNESS-MATRIX.md` — the 7-surface × 4-tool convergence matrix (Claude Code · Cursor · Copilot · Windsurf): which customization surface each tool exposes and which Wheelwright source maps onto it. What `hooks/build_harness_artifacts.py` (Shipwright) targets.
 
-`BEST-PRACTICES.md` — the funnel, feedback loops, team-size doc tiers, ownership matrix, the requirement quality standard (ISO/IEC/IEEE 29148 + INCOSE checklist and the "system shall" rule), the traceability backbone with Req-ID convention, change control & baselines, and frameworks (arc42, C4, Diátaxis, Docs-as-Code) that all agents follow.
+`project_guides/BEST-PRACTICES.md` — the funnel, feedback loops, team-size doc tiers, ownership matrix, the requirement quality standard (ISO/IEC/IEEE 29148 + INCOSE checklist and the "system shall" rule), the traceability backbone with Req-ID convention, change control & baselines, and frameworks (arc42, C4, Diátaxis, Docs-as-Code) that all agents follow.
 
-`AGENT-AUTHORING.md` — the prompting conventions every agent follows (role, context, calm instructions, grounding, right-sized output) and a checklist for adding a new agent. Read this before creating or editing an agent.
+`project_guides/AGENT-AUTHORING.md` — the prompting conventions every agent follows (role, context, calm instructions, grounding, right-sized output) and a checklist for adding a new agent. Read this before creating or editing an agent.
 
 `SPEC-KIT-CROSSWALK.md` — how this toolkit maps to [GitHub Spec Kit](https://github.com/github/spec-kit): a command-by-command crosswalk, the per-feature vs per-document structural choice, and three adoption paths (Spec Kit container + this toolkit's depth).
 
-`TEAM-ROLES-AND-AZURE-DEVOPS.md` — who drives which agents on a 9-person team (Director/PM/Architect/Leads/Devs), and how the artifacts map onto Azure DevOps Boards/Repos/Wiki/Test Plans as the system of record.
+`project_guides/TEAM-ROLES-AND-AZURE-DEVOPS.md` — who drives which agents on a 9-person team (Director/PM/Architect/Leads/Devs), and how the artifacts map onto Azure DevOps Boards/Repos/Wiki/Test Plans as the system of record.
 
 `how-to-use.html` — a standalone, role-by-role usage guide (open in a browser): for each role — Director, PM, Architect, Lead, UX/UI Designer, Developer, QA, Security, SRE, AI/Data — the agents they drive, a typical flow, and copy-paste **sample prompts**, plus an end-to-end FreshDesk walkthrough.
 

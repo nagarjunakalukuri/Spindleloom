@@ -1,0 +1,544 @@
+#!/usr/bin/env python3
+"""
+build_harness_artifacts.py — Shipwright: one source -> harness-native artifacts.
+
+The fleet is authored once (agents/*.md + skills/ + commands/ + hooks/ + the
+convention docs). Shipwright reads that single source and emits it in the native
+shape and location of each target harness — across every customization *surface*
+the harness exposes (Agents, Skills, Instructions, Hooks, Commands, Plugin), not
+just agents. So a team adopts the fleet in their tool of choice without the manual
+copy-table in INSTALL.md.
+
+Targets:
+  claude-plugin  one installable Claude Code PLUGIN bundling agents + commands +
+                 skills + hooks + templates + instructions (the headline: `/plugin
+                 install` replaces the whole copy-table).
+  claude-code    loose Claude Code subagents (.claude/agents/) for hand-wiring.
+  cursor         project rules (.cursor/rules/*.mdc) + an always-on conventions rule.
+  copilot        custom chat modes (.github/chatmodes/) + copilot-instructions.md.
+  agents-md      the cross-tool AGENTS.md router (one file, any tool reads it).
+
+Convergence: source of truth = agents/*.md + sibling folders. Targets are derived,
+never hand-edited (same contract as build_agent_index.py). Re-run on source change;
+run with --check in CI as a drift gate.
+
+Dependency-free (Python 3 stdlib only). Read-only except for writing under the
+output root (default: targets/).
+
+Usage:
+    python hooks/build_harness_artifacts.py
+    python hooks/build_harness_artifacts.py --only claude-plugin,cursor
+    python hooks/build_harness_artifacts.py --out yard
+    python hooks/build_harness_artifacts.py --check
+
+Add a harness in one place: write an emit_* function and register it in HARNESSES.
+"""
+import json
+import re
+import sys
+from pathlib import Path
+
+PHASE_ORDER = [
+    "discovery", "requirements", "design", "planning",
+    "build", "test", "review", "release", "operate", "process",
+]
+PLUGIN_NAME = "wheelwright"
+
+# ---------------------------------------------------------------- source parsing
+
+def split_doc(text):
+    """Return (frontmatter_lines, body_str). Frontmatter is the first --- ... --- block."""
+    m = re.match(r"^---\r?\n(.*?)\r?\n---\r?\n?(.*)$", text, re.S)
+    if not m:
+        return [], text
+    return m.group(1).splitlines(), m.group(2)
+
+
+def scalar(lines, key):
+    for ln in lines:
+        m = re.match(rf"\s*{re.escape(key)}\s*:\s*(.+?)\s*$", ln)
+        if m:
+            v = m.group(1).strip()
+            if len(v) >= 2 and v[0] == v[-1] == "'":      # single-quoted YAML
+                return v[1:-1].replace("''", "'")
+            if len(v) >= 2 and v[0] == v[-1] == '"':      # double-quoted YAML
+                return v[1:-1].replace('\\"', '"').replace("\\\\", "\\")
+            return v
+    return ""
+
+
+def inline_list(lines, key):
+    raw = scalar(lines, key)
+    if not raw or raw in ("[]", "—"):
+        return []
+    return [x.strip().strip('"') for x in raw.strip("[]").split(",") if x.strip()]
+
+
+def block_list(lines, key):
+    """Items of a YAML block list (key:\\n  - "v")."""
+    out, collecting = [], False
+    for ln in lines:
+        if collecting:
+            s = ln.strip()
+            if ln[:1] in (" ", "\t") and s.startswith("- "):
+                v = s[2:].strip()
+                if len(v) >= 2 and v[0] in "\"'" and v[-1] == v[0]:
+                    v = v[1:-1]
+                out.append(v.replace('\\"', '"').replace("\\\\", "\\"))
+                continue
+            break
+        if ln.lstrip().startswith(key + ":"):
+            collecting = True
+    return out
+
+
+def yaml_sq(s):
+    """Single-quote a scalar for YAML — safe for descriptions with : , " inside."""
+    return "'" + s.replace("'", "''") + "'"
+
+
+def first_sentence(s):
+    s = s.strip()
+    m = re.search(r"\.\s", s)
+    return (s[: m.start() + 1] if m else s).strip()
+
+
+def load_agents(agents_dir):
+    out = []
+    for f in sorted(agents_dir.glob("*.md")):
+        if f.name in ("INDEX.md", "HELP.md"):
+            continue
+        fm, body = split_doc(f.read_text(encoding="utf-8", errors="ignore"))
+        if not fm:
+            continue
+        out.append({
+            "name": f.stem,
+            "fm": fm,
+            "body": body.rstrip() + "\n",
+            "description": scalar(fm, "description"),
+            "tools": scalar(fm, "tools"),
+            "model": scalar(fm, "model") or "inherit",
+            "phase": scalar(fm, "phase") or "process",
+            "outputs": scalar(fm, "outputs") or "—",
+            "downstream": inline_list(fm, "downstream"),
+            "examples": block_list(fm, "examples"),
+        })
+    return out
+
+
+def read_tree(base, prefix, patterns=("*",), recurse=True):
+    """Return {f'{prefix}/{relpath}': content} for files under base. Skips if base missing."""
+    out = {}
+    if not base.is_dir():
+        return out
+    files = []
+    for pat in patterns:
+        files += (base.rglob(pat) if recurse else base.glob(pat))
+    for f in sorted(set(files)):
+        if not f.is_file():
+            continue
+        rel = f.relative_to(base).as_posix()
+        out[f"{prefix}/{rel}"] = f.read_text(encoding="utf-8", errors="ignore")
+    return out
+
+
+# ---- MCP surface (the traceability server: rtm_core + mcp_server, + per-harness config) ----
+
+def mcp_server_files(src):
+    """The bundled MCP server: stdlib core + FastMCP wrapper + artifact-registry
+    generator, under mcp/."""
+    out = {}
+    for nm in ("rtm_core.py", "mcp_server.py", "build_artifact_registry.py", "scaffold.py"):
+        p = src / "hooks" / nm
+        if p.is_file():
+            out[f"mcp/{nm}"] = p.read_text(encoding="utf-8", errors="ignore")
+    return out
+
+
+def mcp_config(style, server_arg, spec_root):
+    """A harness-native MCP config pointing at the bundled wheelwright server.
+    style 'vscode' uses the `servers` key + explicit stdio type; others use `mcpServers`.
+
+    Launches via `uv run --with "mcp[cli]"`: uv provisions the one dependency in a
+    cached ephemeral env on first run (no global `pip install` step) and resolves an
+    interpreter itself — sidestepping the `python` vs `py` launcher problem that bites
+    bare `"command": "python"` on machines where `python` is a stub/missing. The one
+    prerequisite becomes `uv` (https://docs.astral.sh/uv/), which also bootstraps Python."""
+    entry = {
+        "command": "uv",
+        "args": ["run", "--with", "mcp[cli]", "python", server_arg],
+        "env": {"WHEELWRIGHT_SPEC_ROOT": spec_root},
+    }
+    if style == "vscode":
+        entry = {"type": "stdio", **entry}
+        cfg = {"servers": {"wheelwright": entry}}
+    else:
+        cfg = {"mcpServers": {"wheelwright": entry}}
+    return json.dumps(cfg, indent=2, ensure_ascii=False) + "\n"
+
+
+# ---------------------------------------------------------------- shared content
+
+def agent_md(a):
+    """A Claude-Code-native agent file (CC-recognized frontmatter only)."""
+    fm = [f"name: {a['name']}", f"description: {yaml_sq(a['description'])}"]
+    if a["tools"]:
+        fm.append(f"tools: {a['tools']}")
+    fm.append(f"model: {a['model']}")
+    return "---\n" + "\n".join(fm) + "\n---\n\n" + a["body"]
+
+
+def instructions_md(agents, src):
+    """The Instructions surface: project-wide conventions distilled from the convention docs.
+
+    Kept concise and AI-read-first; points to the bundled project_guides/BEST-PRACTICES.md for the
+    full standard rather than duplicating 13KB."""
+    n = len(agents)
+    out = [
+        "# Wheelwright — project conventions (AI-read-first)",
+        "",
+        f"This project uses the **Wheelwright** fleet of {n} role-specialist SDLC agents "
+        "(market → spec → design → build → test → ship → operate), one traceable chain. "
+        "When a task matches a role, adopt that agent. Run only the subset your team needs — "
+        "start with `doc-strategy-advisor`.",
+        "",
+        "## The funnel",
+        "",
+        "```",
+        "MRD → BRD → PRD → FRD → SRS → SDD → TSD",
+        "```",
+        "`urs-writer` runs in parallel for regulated systems; `adr-writer` runs continuously.",
+        "",
+        "## Conventions every agent follows",
+        "",
+        "- **Requirement quality:** \"the system shall …\", one obligation per statement "
+        "(ISO/IEC/IEEE 29148 + INCOSE). No vague/compound requirements.",
+        "- **Req-ID convention:** `<DOC>-<AREA>-<NUM>` (e.g. `PRD-AUTH-001`). Every "
+        "requirement carries an ID and is traced in the RTM.",
+        "- **Traceability:** one RTM per initiative, kept living — business goal → story → "
+        "requirement → design → test/PBI. Nothing dropped, blast radius visible.",
+        "- **Layout standard:** the canonical `docs/` + `.shipwright/` tree, the profiles, and the "
+        "four cadence planes (durable/living/cyclic/snapshot) are fixed by `project_guides/STANDARD.md`; existing "
+        "repos convert via `scaffold.py migrate`, never by hand.",
+        "- **Right-sized output:** the leanest doc that does the job for the team's tier; "
+        "fight documentation fatigue.",
+        "- **Ground, don't fabricate:** read the upstream doc(s) first; flag assumed values.",
+        "",
+        "The full standard (feedback loops, change control, team-size tiers, frameworks) is in "
+        "`project_guides/BEST-PRACTICES.md` (bundled). Navigate the fleet by phase in `AGENTS.md` / `agents/INDEX.md`.",
+        "",
+    ]
+    return "\n".join(out)
+
+
+# ---------------------------------------------------------------- harness emitters
+# Each returns {relative_path: content}. Pure (no disk writes) so --check can diff.
+
+def emit_claude_plugin(agents, src):
+    """P0 — one installable Claude Code plugin bundling every surface.
+
+    Self-contained: manifest + marketplace + agents + commands + skills + hooks +
+    templates + instructions. `/plugin install` replaces the entire copy-table."""
+    files = {}
+
+    # --- manifest (auto-discovery handles agents/ commands/ skills/ hooks/hooks.json) ---
+    # version omitted on purpose: for an actively-developed fleet the commit SHA drives
+    # updates; a pinned version in plugin.json silently overrides the marketplace entry
+    # and must be hand-bumped every release.
+    files[".claude-plugin/plugin.json"] = json.dumps({
+        "name": PLUGIN_NAME,
+        "description": "Wheelwright — an AI agent fleet for the entire SDLC "
+                       "(market → spec → design → build → test → ship → operate), one traceable chain.",
+        "author": {"name": "Wheelwright"},
+        "keywords": ["sdlc", "requirements", "specs", "traceability", "backlog", "agents", "project-management"],
+    }, indent=2, ensure_ascii=False) + "\n"
+
+    # --- marketplace so users can `/plugin marketplace add <repo>` then install ---
+    files[".claude-plugin/marketplace.json"] = json.dumps({
+        "name": PLUGIN_NAME,
+        "owner": {"name": "Wheelwright"},
+        "plugins": [{
+            "name": PLUGIN_NAME,
+            "source": "./",
+            "description": "The full Wheelwright SDLC agent fleet (agents, skills, commands, hooks, templates).",
+        }],
+    }, indent=2, ensure_ascii=False) + "\n"
+
+    # --- Agents (generated, clean CC frontmatter) + the generated role-help index ---
+    for a in agents:
+        files[f"agents/{a['name']}.md"] = agent_md(a)
+    help_md = src / "agents" / "HELP.md"
+    if help_md.is_file():
+        files["agents/HELP.md"] = help_md.read_text(encoding="utf-8", errors="ignore")
+
+    # --- Skills + Commands + Templates (verbatim from source) ---
+    files.update(read_tree(src / "skills", "skills"))
+    files.update(read_tree(src / "commands", "commands", patterns=("*.md",), recurse=False))
+    files.update(read_tree(src / "templates", "templates", patterns=("*.md",), recurse=False))
+
+    # --- Hooks: the consumer-facing spec-traceability gate + its wiring ---
+    vr = src / "hooks" / "validate_reqs.py"
+    if vr.is_file():
+        files["hooks/validate_reqs.py"] = vr.read_text(encoding="utf-8", errors="ignore")
+        files["hooks/hooks.json"] = json.dumps({
+            "hooks": {
+                "PostToolUse": [{
+                    "matcher": "Write|Edit",
+                    "hooks": [{
+                        "type": "command",
+                        "command": 'python "${CLAUDE_PLUGIN_ROOT}/hooks/validate_reqs.py" '
+                                   '"${CLAUDE_PROJECT_DIR}" 2>/dev/null || true',
+                    }],
+                }],
+            }
+        }, indent=2) + "\n"
+
+    # --- Instructions surface: shipped as a SKILL, not plugin-root CLAUDE.md.
+    # A plugin-root CLAUDE.md is NOT auto-loaded by Claude Code (verified), so the
+    # conventions ride as a relevance-loaded skill; the full standard stays at root,
+    # referenced by both the agents and this skill. ---
+    conv_desc = ("Wheelwright SDLC conventions — the funnel (MRD→…→TSD), the Req-ID convention, "
+                 "the living RTM, and the requirement-quality standard. Use when writing, reviewing, "
+                 "or decomposing any spec, requirement, backlog, or design artifact in this project.")
+    files["skills/wheelwright-conventions/SKILL.md"] = (
+        "---\nname: wheelwright-conventions\ndescription: " + yaml_sq(conv_desc) + "\n---\n\n"
+        + instructions_md(agents, src)
+    )
+    bp = src / "project_guides" / "BEST-PRACTICES.md"
+    if bp.is_file():
+        files["project_guides/BEST-PRACTICES.md"] = bp.read_text(encoding="utf-8", errors="ignore")
+    sd = src / "project_guides" / "STANDARD.md"
+    if sd.is_file():
+        files["project_guides/STANDARD.md"] = sd.read_text(encoding="utf-8", errors="ignore")
+
+    # --- MCP surface: the live traceability server, auto-discovered at plugin root ---
+    files.update(mcp_server_files(src))
+    files[".mcp.json"] = mcp_config("claude", "${CLAUDE_PLUGIN_ROOT}/mcp/mcp_server.py", "${CLAUDE_PROJECT_DIR}")
+
+    files["README.md"] = (
+        "# Wheelwright — Claude Code plugin\n\n"
+        "Generated by Shipwright (`hooks/build_harness_artifacts.py`) from the single source. "
+        "Do not edit — re-run the generator.\n\n"
+        "## Install\n\n"
+        "```\n"
+        "# from a repo/marketplace that contains this bundle\n"
+        f"/plugin marketplace add <owner/repo-or-path>\n"
+        f"/plugin install {PLUGIN_NAME}@{PLUGIN_NAME}\n"
+        "```\n\n"
+        "Then the agents trigger by description (or `/agents`), the slash commands "
+        "(`/spec-new`, `/pbi-next`, `/rtm-check`, …) are available, skills load on relevance, "
+        "and the spec-traceability hook runs on edits. One install — the whole fleet.\n\n"
+        "## Live traceability (MCP, optional)\n\n"
+        "The bundled `wheelwright` MCP server exposes **18 tools** in two groups. "
+        "**RTM / catalog / conformance (12):** trace/coverage (`trace_requirement`, `rtm_coverage`, `funnel_status`), "
+        "catalog (`list_requirements`, `list_artifacts`, `find_artifact`, `find_decision`, `search_specs`), "
+        "conformance (`check_conformance`), and authoring (`next_req_id`, `stale_artifacts`, `scaffold_project`). "
+        "**Agent context memory (6):** `save_context` / `recall_context` / `list_contexts` / `get_context` / "
+        "`delete_context` / `sync_contexts` — token-efficient handoff layer so agents retrieve prior decisions "
+        "in one call instead of re-reading upstream docs. Enable semantic search with "
+        "`\"WHEELWRIGHT_SEMANTIC\":\"1\"` (local ONNX embeddings, no API calls). "
+        "`.mcp.json` launches it via `uv run --with \"mcp[cli]\"`, so the only prerequisite is "
+        "[uv](https://docs.astral.sh/uv/) — uv provisions the MCP SDK (and a Python interpreter) "
+        "on first run, no manual `pip install`.\n\n"
+        "`.mcp.json` is auto-discovered; it points the server at your project root. `scaffold_project` "
+        "writes and is disabled unless you add `\"WHEELWRIGHT_WRITABLE\": \"1\"` to the server's `env`.\n"
+    )
+    return files
+
+
+def emit_claude_code(agents, src):
+    """Loose Claude Code subagents for teams that hand-wire `.claude/` (no plugin)."""
+    files = {f"agents/{a['name']}.md": agent_md(a) for a in agents}
+    files["CLAUDE.md"] = instructions_md(agents, src)
+    files.update(mcp_server_files(src))
+    files[".mcp.json"] = mcp_config("claude", "${CLAUDE_PROJECT_DIR}/mcp/mcp_server.py", "${CLAUDE_PROJECT_DIR}")
+    files["README.md"] = (
+        "# Claude Code bundle (loose files)\n\n"
+        "Generated by Shipwright from the single source. Prefer the `claude-plugin` target "
+        "(one `/plugin install`); use this only to hand-wire `.claude/`.\n\n"
+        "Copy `agents/` → `.claude/agents/`, `CLAUDE.md` → repo root, and `mcp/` + `.mcp.json` "
+        "→ repo root for live traceability (launched via `uv run` — install "
+        "[uv](https://docs.astral.sh/uv/), which provisions the MCP SDK on first run). "
+        "Commands/skills/hooks live in the source — copy them too, or use the plugin.\n"
+    )
+    return files
+
+
+def emit_cursor(agents, src):
+    """Cursor project rules: .cursor/rules/<name>.mdc + an always-on conventions rule."""
+    files = {}
+    for a in agents:
+        fm = ["---", f"description: {yaml_sq(a['description'])}", "globs:", "alwaysApply: false", "---", ""]
+        files[f".cursor/rules/{a['name']}.mdc"] = "\n".join(fm) + a["body"]
+    # Instructions surface as an always-on rule (Cursor has no separate "instructions" slot)
+    conv = ["---", "description: Wheelwright project conventions (SDLC funnel, Req-ID, RTM).",
+            "globs:", "alwaysApply: true", "---", ""]
+    files[".cursor/rules/000-wheelwright-conventions.mdc"] = "\n".join(conv) + instructions_md(agents, src)
+    files.update(mcp_server_files(src))
+    # Cursor resolves ${workspaceFolder} (the dir containing .cursor/mcp.json) — portable, no abs path.
+    files[".cursor/mcp.json"] = mcp_config("cursor", "${workspaceFolder}/mcp/mcp_server.py", "${workspaceFolder}")
+    files["README.md"] = (
+        "# Cursor bundle\n\n"
+        "Generated by Shipwright. Copy `.cursor/` and `mcp/` into your repo root. Each role is a "
+        "description-triggered project rule; `000-wheelwright-conventions.mdc` is always-on. "
+        "`.cursor/mcp.json` registers the live traceability server, launched via `uv run` "
+        "(install [uv](https://docs.astral.sh/uv/); it provisions the MCP SDK on first run); "
+        "it uses `${workspaceFolder}`, so it's portable across machines.\n"
+    )
+    return files
+
+
+def emit_copilot(agents, src):
+    """GitHub Copilot custom chat modes + the instructions surface."""
+    files = {}
+    for a in agents:
+        fm = ["---", f"description: {yaml_sq(a['description'])}", "---", ""]
+        files[f".github/chatmodes/{a['name']}.chatmode.md"] = "\n".join(fm) + a["body"]
+    lines = [instructions_md(agents, src).rstrip(), "", "## Agent chat modes", "",
+             "Select a chat mode (`.github/chatmodes/<name>.chatmode.md`) matching the task:", ""]
+    for a in sorted(agents, key=lambda x: x["name"]):
+        lines.append(f"- **{a['name']}** — {first_sentence(a['description'])}")
+    files[".github/copilot-instructions.md"] = "\n".join(lines) + "\n"
+    files.update(mcp_server_files(src))
+    files[".vscode/mcp.json"] = mcp_config("vscode", "${workspaceFolder}/mcp/mcp_server.py", "${workspaceFolder}")
+    files["README.md"] = (
+        "# GitHub Copilot bundle\n\n"
+        "Generated by Shipwright. Copy `.github/`, `.vscode/`, and `mcp/` into your repo root. "
+        "Chat modes + `copilot-instructions.md` carry the fleet; `.vscode/mcp.json` registers the "
+        "live traceability server, launched via `uv run` (install "
+        "[uv](https://docs.astral.sh/uv/); it provisions the MCP SDK on first run).\n"
+    )
+    return files
+
+
+def emit_agents_md(agents, src):
+    """The cross-tool open standard: a single root AGENTS.md (router/index by phase)."""
+    out = ["# AGENTS.md", "",
+           "> Generated by Shipwright (`hooks/build_harness_artifacts.py`) from `agents/*.md` — "
+           "the single source. Any AGENTS.md-aware tool reads this. Do not edit by hand.", "",
+           "This project carries a fleet of role-specialist AI agents spanning the SDLC "
+           "(market → spec → design → build → test → ship → operate). When a task matches a "
+           "role below, **adopt that agent's instructions** — full text in `agents/<name>.md`. "
+           "Run only the subset your team needs (start with `doc-strategy-advisor`). "
+           "Conventions: Req-ID `<DOC>-<AREA>-<NUM>`, one living RTM, \"the system shall …\" "
+           "(ISO/IEC/IEEE 29148); see `project_guides/BEST-PRACTICES.md`.", ""]
+    by_phase = {}
+    for a in agents:
+        by_phase.setdefault(a["phase"], []).append(a)
+    for phase in PHASE_ORDER + sorted(set(by_phase) - set(PHASE_ORDER)):
+        group = by_phase.get(phase)
+        if not group:
+            continue
+        out += [f"## {phase.capitalize()}", "",
+                "| Agent | Produces | Hands off to | Role | Example prompt |",
+                "|---|---|---|---|---|"]
+        for a in sorted(group, key=lambda x: x["name"]):
+            ds = ", ".join(a["downstream"]) or "—"
+            ex = (a["examples"][0].replace("|", "\\|") if a["examples"] else "—")
+            out.append(f"| `{a['name']}` | {a['outputs']} | {ds} | {first_sentence(a['description'])} | {ex} |")
+        out.append("")
+    return {"AGENTS.md": "\n".join(out)}
+
+
+def emit_windsurf(agents, src):
+    """Windsurf has no subagents, so each role becomes a `model_decision` rule and the
+    conventions an always-on rule. MCP is user-global, so we ship the server + a snippet."""
+    files = {}
+    for a in agents:
+        fm = ["---", "trigger: model_decision", f"description: {yaml_sq(a['description'])}", "---", ""]
+        files[f".windsurf/rules/{a['name']}.md"] = "\n".join(fm) + a["body"]
+    conv = ["---", "trigger: always_on",
+            "description: Wheelwright project conventions (SDLC funnel, Req-ID, RTM).", "---", ""]
+    files[".windsurf/rules/000-wheelwright-conventions.md"] = "\n".join(conv) + instructions_md(agents, src)
+    files.update(mcp_server_files(src))
+    snippet = mcp_config("claude", "/abs/path/to/your/repo/mcp/mcp_server.py", "/abs/path/to/your/repo")
+    files["README.md"] = (
+        "# Windsurf bundle\n\n"
+        "Generated by Shipwright. Copy `.windsurf/` and `mcp/` into your repo root. Windsurf has no "
+        "subagents, so each role is a `model_decision` rule (activates when relevant); "
+        "`000-wheelwright-conventions.md` is always-on. Rules cap at ~12k chars — split a long one if Windsurf truncates it.\n\n"
+        "## Live traceability (MCP)\n\n"
+        "Windsurf's MCP config is **user-global**, so add this to `~/.codeium/windsurf/mcp_config.json` "
+        "(install [uv](https://docs.astral.sh/uv/) — it provisions the MCP SDK on first run), with "
+        "absolute paths to where you copied `mcp/`:\n\n"
+        "```json\n" + snippet + "```\n"
+    )
+    return files
+
+
+HARNESSES = {
+    "claude-plugin": emit_claude_plugin,
+    "claude-code": emit_claude_code,
+    "cursor": emit_cursor,
+    "copilot": emit_copilot,
+    "windsurf": emit_windsurf,
+    "agents-md": emit_agents_md,
+}
+
+
+# ---------------------------------------------------------------- driver
+
+def build(agents, src, only):
+    return {h: HARNESSES[h](agents, src) for h in (only or HARNESSES)}
+
+
+def main(argv):
+    only, out_dir, check = None, "targets", False
+    i = 1
+    while i < len(argv):
+        if argv[i] == "--only" and i + 1 < len(argv):
+            only = [x.strip() for x in argv[i + 1].split(",") if x.strip()]; i += 2
+        elif argv[i] == "--out" and i + 1 < len(argv):
+            out_dir = argv[i + 1]; i += 2
+        elif argv[i] == "--check":
+            check = True; i += 1
+        else:
+            print(f"build_harness_artifacts: ignoring unknown arg {argv[i]!r}"); i += 1
+
+    if only:
+        bad = [h for h in only if h not in HARNESSES]
+        if bad:
+            print(f"build_harness_artifacts: unknown harness(es) {bad}; known: {list(HARNESSES)}")
+            return 2
+
+    agents_dir = Path("agents")
+    if not agents_dir.is_dir():
+        agents_dir = Path("project_managment_agents/agents")
+    src = agents_dir.parent
+    agents = load_agents(agents_dir)
+    if not agents:
+        print(f"build_harness_artifacts: no agents found under {agents_dir}")
+        return 2
+
+    out_root = Path(out_dir)
+    built = build(agents, src, only)
+
+    if check:
+        drift = []
+        for harness, files in built.items():
+            for rel, content in files.items():
+                p = out_root / harness / rel
+                if not p.exists() or p.read_text(encoding="utf-8", errors="ignore") != content:
+                    drift.append(str(p))
+        if drift:
+            print(f"build_harness_artifacts: DRIFT — {len(drift)} artifact(s) stale vs source. "
+                  f"Re-run the generator. First few:\n  " + "\n  ".join(drift[:8]))
+            return 1
+        print(f"build_harness_artifacts: in sync — {sum(len(f) for f in built.values())} artifacts "
+              f"across {len(built)} harness(es).")
+        return 0
+
+    total = 0
+    for harness, files in built.items():
+        for rel, content in files.items():
+            p = out_root / harness / rel
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text(content, encoding="utf-8")
+            total += 1
+    print(f"build_harness_artifacts: wrote {total} artifacts for {len(agents)} agents -> "
+          f"{out_root}/ ({', '.join(built)})")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

@@ -1,0 +1,18 @@
+{
+  "servers": {
+    "wheelwright": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run",
+        "--with",
+        "mcp[cli]",
+        "python",
+        "${workspaceFolder}/mcp/mcp_server.py"
+      ],
+      "env": {
+        "WHEELWRIGHT_SPEC_ROOT": "${workspaceFolder}"
+      }
+    }
+  }
+}

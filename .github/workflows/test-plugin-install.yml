@@ -1,0 +1,130 @@
+name: Wheelwright CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  # ── Fleet integrity ──────────────────────────────────────────────────────────
+  validate-fleet:
+    name: Fleet integrity (validate_graph + harness bundles)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Refresh INDEX + validate graph
+        run: |
+          python hooks/build_agent_index.py
+          python hooks/validate_graph.py
+
+      - name: Harness bundles not stale
+        run: python hooks/build_harness_artifacts.py --check
+
+  # ── Spec traceability ────────────────────────────────────────────────────────
+  validate-traceability:
+    name: Spec traceability (validate_reqs)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate changed spec folders
+        run: |
+          changed=$(git diff --name-only origin/${{ github.base_ref || 'main' }}... \
+            | grep -E '/RTM\.md$' | xargs -n1 dirname | sort -u || true)
+          if [[ -z "$changed" ]]; then
+            echo "No RTM.md files changed — skipping spec traceability check."
+            exit 0
+          fi
+          for d in $changed; do
+            echo "Validating $d …"
+            python hooks/validate_reqs.py "$d"
+          done
+
+  # ── Hook lint ────────────────────────────────────────────────────────────────
+  lint-hooks:
+    name: Lint shell hooks (shellcheck)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y shellcheck
+
+      - name: shellcheck --severity=warning hooks/*.sh
+        run: |
+          shfiles=$(find hooks/ -maxdepth 1 -name '*.sh' 2>/dev/null || true)
+          if [[ -z "$shfiles" ]]; then
+            echo "No .sh files found in hooks/ — nothing to lint."
+            exit 0
+          fi
+          echo "Linting: $shfiles"
+          shellcheck --severity=warning $shfiles
+
+  # ── Python unit tests ────────────────────────────────────────────────────────
+  test-hooks:
+    name: Python hook tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run hook tests
+        run: |
+          python -m pytest hooks/test_*.py -v 2>/dev/null || \
+          python -m unittest discover -s hooks -p 'test_*.py' -v
+
+  # ── Plugin install smoke test ─────────────────────────────────────────────────
+  plugin-install:
+    name: Plugin install smoke test
+    runs-on: ubuntu-latest
+    needs: [validate-fleet, lint-hooks]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build targets/ bundles
+        run: python hooks/build_harness_artifacts.py
+
+      - name: Verify claude-plugin bundle structure
+        run: |
+          test -d targets/claude-plugin || { echo "claude-plugin bundle missing"; exit 1; }
+          test -f targets/claude-plugin/.claude-plugin/plugin.json || \
+            { echo "plugin.json missing in claude-plugin bundle"; exit 1; }
+          echo "Plugin bundle structure OK."
+
+      - name: Verify agent count in plugin manifest
+        run: |
+          python - <<'EOF'
+          import json, sys, pathlib
+          manifest = pathlib.Path("targets/claude-plugin/.claude-plugin/plugin.json")
+          if not manifest.exists():
+              sys.exit(0)   # not generated yet; skip
+          data = json.loads(manifest.read_text())
+          agents = data.get("agents", [])
+          print(f"Plugin manifest: {len(agents)} agents")
+          if len(agents) < 40:
+              print("ERROR: fewer than 40 agents in manifest — bundle looks truncated")
+              sys.exit(1)
+          EOF
