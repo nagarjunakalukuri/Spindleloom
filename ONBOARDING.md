@@ -35,7 +35,7 @@ Top MCP Servers:
 
 ## Team Tips
 
-- **Know the three `-wright`s.** **Wheelwright** is the agent fleet that builds the SDLC wheel; **Shipwright** (`hooks/build_harness_artifacts.py`) ships it to every harness bundle in `targets/`; **Loopwright** (`LOOPWRIGHT.md`) is the delivery feedback loop the agents tighten. Build it, ship it, loop it.
+- **Know the three `-wright`s.** **Wheelwright** is the agent fleet that builds the SDLC wheel; **Shipwright** (`hooks/build_harness_artifacts.py`) ships it to every harness bundle in `targets/`; **Loopwright** (`project_guides/LOOPWRIGHT.md`) is the delivery feedback loop the agents tighten. Build it, ship it, loop it.
 - **Run `/hooks` once after cloning** (or restart Claude Code) to activate the fleet-integrity hook — it validates the agent graph + `claude_code` mappings on every edit and never blocks you.
 - **Edit source, then resync.** After changing anything in `agents/`, `skills/`, or `commands/`, re-run `py hooks/build_harness_artifacts.py` to regenerate `targets/`. The hook nudges you when bundles drift; CI gates on it.
 - **On Windows, use `py`** — bare `python`/`python3` aren't on PATH here.
@@ -45,7 +45,7 @@ Top MCP Servers:
 ## Get Started
 
 1. Read the canonical end-to-end example: `examples/healthy-meal-app/` — a full run of the chain (MRD → BRD → PRD → FRD → SRS → SDD → TSD + an ADR) tied together by one RTM. It's the fastest way to see how the documents interlock.
-2. Skim `README.md` (the fleet overview), `STANDARD.md` (the authoritative layout standard adopters target — greenfield scaffolds it, brownfield converts via `scaffold.py migrate`), and `AGENT-AUTHORING.md` (how every agent is written) so you can add or edit agents in-convention.
+2. Skim `README.md` (the fleet overview), `project_guides/STANDARD.md` (the authoritative layout standard adopters target — greenfield scaffolds it, brownfield converts via `scaffold.py migrate`), and `project_guides/AGENT-AUTHORING.md` (how every agent is written) so you can add or edit agents in-convention.
 3. Try it live: ask Claude to "write a BRD for <a feature you care about>" and watch it hand off down the funnel. Then run `py hooks/validate_graph.py` to see the integrity checks.
 
 <!-- INSTRUCTION FOR CLAUDE: A new teammate just pasted this guide for how the

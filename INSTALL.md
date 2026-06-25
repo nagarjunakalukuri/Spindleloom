@@ -46,7 +46,7 @@ For teams rolling out Wheelwright across multiple repos or to 10+ developers.
 ### Phase 1 — Validate and package (owner/champion, 1 day)
 
 - [ ] Clone source, run `validate_graph.py` — confirm OK
-- [ ] Run `build_harness_artifacts.py` — confirm 386 artifacts across 6 harnesses
+- [ ] Run `build_harness_artifacts.py` — confirm 387 artifacts across 6 harnesses
 - [ ] Run all hook tests: `py -3 -m unittest discover -s hooks -p "test_*.py"` — all pass
 - [ ] Decide install method: **plugin** (recommended for Claude Code teams) or **manual copy**
 - [ ] Decide tracker: Azure Boards (set `AZURE_DEVOPS_*` vars) or Jira (set `JIRA_*` vars)
@@ -79,7 +79,7 @@ For teams rolling out Wheelwright across multiple repos or to 10+ developers.
 - [ ] Wire `build_harness_artifacts.py --check` as a CI drift gate so stale bundles can't merge
 - [ ] After any Wheelwright source update: re-run `build_harness_artifacts.py` and re-distribute
 - [ ] Use `run-orchestrator` + `.shipwright/run-state.json` for any autonomous fleet runs
-- [ ] Review `PILOT-READOUT.md` for known adjustment areas before wider rollout
+- [ ] Review `project_guides/PILOT-READOUT.md` for known adjustment areas before wider rollout
 
 ### Size your adoption
 
@@ -128,7 +128,7 @@ python3 hooks/validate_graph.py
 
 Expected output:
 ```
-agents: 52 | templates: 50 | skills: 21 | commands: 13
+agents: 52 | templates: 50 | skills: 22 | commands: 13
 OK — graph symmetric, no dangling refs, declared skills present, INDEX current, claude_code mappings resolve.
 ```
 
@@ -177,18 +177,31 @@ After install: agents auto-trigger by description, every `/spec-new` `/rtm-check
 
 Use when you don't want the plugin install step.
 
+**Option A — automated (recommended):**
+
+```bash
+python3 project_managment_agents/hooks/install.py --target claude-code --repo .
+# or --dry-run to preview first
+```
+
+**Option B — manual copy:**
+
 ```bash
 # From your project repo root:
 mkdir -p .claude/agents .claude/skills .claude/commands
 
 # Windows (PowerShell)
 Copy-Item project_managment_agents\targets\claude-code\agents\* .claude\agents\
+Copy-Item project_managment_agents\skills\* .claude\skills\ -Recurse
+Copy-Item project_managment_agents\commands\* .claude\commands\
 Copy-Item project_managment_agents\targets\claude-code\CLAUDE.md .
 Copy-Item project_managment_agents\targets\claude-code\mcp .\ -Recurse
 Copy-Item project_managment_agents\targets\claude-code\.mcp.json .
 
 # macOS / Linux
 cp project_managment_agents/targets/claude-code/agents/*  .claude/agents/
+cp -r project_managment_agents/skills/*                   .claude/skills/
+cp project_managment_agents/commands/*                    .claude/commands/
 cp project_managment_agents/targets/claude-code/CLAUDE.md .
 cp -r project_managment_agents/targets/claude-code/mcp    .
 cp project_managment_agents/targets/claude-code/.mcp.json .
@@ -213,8 +226,15 @@ Copy-Item project_managment_agents\targets\claude-code\agents\* "$env:USERPROFIL
 ### Cursor
 
 ```bash
+python3 project_managment_agents/hooks/install.py --target cursor --repo .
+```
+
+Or manually:
+
+```bash
 # macOS / Linux — copy into your repo root
 cp -r project_managment_agents/targets/cursor/.cursor .
+cp -r project_managment_agents/skills/*               .claude/skills/
 cp -r project_managment_agents/targets/cursor/mcp .
 cp    project_managment_agents/targets/cursor/.mcp.json .
 ```
@@ -222,6 +242,7 @@ cp    project_managment_agents/targets/cursor/.mcp.json .
 ```powershell
 # Windows
 Copy-Item project_managment_agents\targets\cursor\.cursor .\ -Recurse
+Copy-Item project_managment_agents\skills\*               .claude\skills\ -Recurse
 Copy-Item project_managment_agents\targets\cursor\mcp     .\ -Recurse
 Copy-Item project_managment_agents\targets\cursor\.mcp.json .
 ```
@@ -233,9 +254,16 @@ Each role becomes a description-triggered `.mdc` rule. `000-wheelwright-conventi
 ### GitHub Copilot
 
 ```bash
+python3 project_managment_agents/hooks/install.py --target copilot --repo .
+```
+
+Or manually:
+
+```bash
 # macOS / Linux
 cp -r project_managment_agents/targets/copilot/.github  .
 cp -r project_managment_agents/targets/copilot/.vscode  .
+cp -r project_managment_agents/skills/*                 .claude/skills/
 cp -r project_managment_agents/targets/copilot/mcp      .
 ```
 
@@ -243,6 +271,7 @@ cp -r project_managment_agents/targets/copilot/mcp      .
 # Windows
 Copy-Item project_managment_agents\targets\copilot\.github .\ -Recurse
 Copy-Item project_managment_agents\targets\copilot\.vscode .\ -Recurse
+Copy-Item project_managment_agents\skills\*                .claude\skills\ -Recurse
 Copy-Item project_managment_agents\targets\copilot\mcp     .\ -Recurse
 ```
 
@@ -253,18 +282,27 @@ Custom chat modes + `copilot-instructions.md` + `.vscode/mcp.json` for live trac
 ### Windsurf
 
 ```bash
+python3 project_managment_agents/hooks/install.py --target windsurf --repo .
+# The script also prints the user-global mcp_config.json snippet with absolute paths filled in.
+```
+
+Or manually:
+
+```bash
 # macOS / Linux
 cp -r project_managment_agents/targets/windsurf/.windsurf .
+cp -r project_managment_agents/skills/*                   .claude/skills/
 cp -r project_managment_agents/targets/windsurf/mcp       .
 ```
 
 ```powershell
 # Windows
 Copy-Item project_managment_agents\targets\windsurf\.windsurf .\ -Recurse
+Copy-Item project_managment_agents\skills\*                   .claude\skills\ -Recurse
 Copy-Item project_managment_agents\targets\windsurf\mcp       .\ -Recurse
 ```
 
-> **Windsurf MCP is user-global.** Copy the server entry from `targets/windsurf/README.md` into `~/.codeium/windsurf/mcp_config.json` (use absolute paths — `${workspaceFolder}` is not supported there).
+> **Windsurf MCP is user-global.** Copy the server entry from `targets/windsurf/README.md` into `~/.codeium/windsurf/mcp_config.json` (use absolute paths — `${workspaceFolder}` is not supported there). The `install.py` script prints the snippet with paths pre-filled.
 
 ---
 
@@ -280,7 +318,7 @@ The cross-tool router any `AGENTS.md`-aware tool reads.
 
 ## Step 5 — Wire the MCP server (optional, recommended)
 
-The MCP server gives any wired tool 12 live RTM query tools (`trace_requirement`, `rtm_coverage`, `funnel_status`, `search_specs`, `scaffold_project`, …).
+The MCP server exposes **18 tools** in two groups. **RTM / catalog / conformance (12):** `trace_requirement`, `rtm_coverage`, `funnel_status`, `list_requirements`, `search_specs`, `scaffold_project`, and more. **Agent context memory (6):** `save_context`, `recall_context`, `list_contexts`, `get_context`, `delete_context`, `sync_contexts` — agents store decisions and retrieve them in one call, no re-reading upstream docs.
 
 **Prerequisite: uv** — provisions the MCP SDK on first run (no manual `pip install`).
 

@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "wheelwright": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--with",
+        "mcp[cli]",
+        "python",
+        "${CLAUDE_PROJECT_DIR}/hooks/mcp_server.py"
+      ],
+      "env": {
+        "WHEELWRIGHT_SPEC_ROOT": "${CLAUDE_PROJECT_DIR}",
+        "WHEELWRIGHT_WRITABLE": "",
+        "WHEELWRIGHT_SEMANTIC": ""
+      }
+    }
+  }
+}

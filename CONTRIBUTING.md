@@ -41,7 +41,7 @@ pip install "mcp[cli]"
 | `docs/` | Wheelwright-level docs (per-agent config, onboarding, etc.) |
 | `.github/workflows/` | CI (fleet integrity, harness bundles, shellcheck, plugin install) |
 
-Key single-source files: `STANDARD.md` (information-architecture contract), `BEST-PRACTICES.md` (fleet conventions), `HARNESS-MATRIX.md` (per-tool feature surface), `hooks/HOOKS.md` (hook reference).
+Key single-source files: `project_guides/STANDARD.md` (information-architecture contract), `project_guides/BEST-PRACTICES.md` (fleet conventions), `project_guides/HARNESS-MATRIX.md` (per-tool feature surface), `hooks/HOOKS.md` (hook reference).
 
 ---
 
@@ -51,7 +51,7 @@ Key single-source files: `STANDARD.md` (information-architecture contract), `BES
 - **Commit:** Conventional Commits (`feat:`, `fix:`, `docs:`, `chore:`); small and logical; one concern per commit
 - **PR:** use `templates/pr-template.md`; keep it reviewable; CI must be green
 - **Ready / Done:** see `templates/definition-of-ready-done-template.md`
-- **Review bar:** see `AGENT-AUTHORING.md` for agent quality bar; `BEST-PRACTICES.md` for general conventions
+- **Review bar:** see `project_guides/AGENT-AUTHORING.md` for agent quality bar; `project_guides/BEST-PRACTICES.md` for general conventions
 
 ---
 
@@ -96,7 +96,7 @@ If you find a near-duplicate, consider whether your change belongs as:
    py -3 hooks/build_harness_artifacts.py   # rebuild bundles
    ```
 5. Add the new agent to the fleet count table in `README.md`.
-6. See `AGENT-AUTHORING.md` for the full quality bar (examples block, handoff line, style rules).
+6. See `project_guides/AGENT-AUTHORING.md` for the full quality bar (examples block, handoff line, style rules).
 
 ---
 
@@ -133,6 +133,6 @@ If you find a near-duplicate, consider whether your change belongs as:
 
 ## Getting help
 
-- Read `BEST-PRACTICES.md` and `AGENT-AUTHORING.md` before authoring new agents.
+- Read `project_guides/BEST-PRACTICES.md` and `project_guides/AGENT-AUTHORING.md` before authoring new agents.
 - Run `py -3 hooks/validate_graph.py` — it tells you exactly what's wrong.
 - Stuck? Open a discussion issue with the `question` label.
