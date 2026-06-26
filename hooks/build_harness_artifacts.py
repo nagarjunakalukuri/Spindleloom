@@ -254,12 +254,15 @@ def emit_claude_plugin(agents, src):
     }, indent=2, ensure_ascii=False) + "\n"
 
     # --- marketplace so users can `/plugin marketplace add <repo>` then install ---
+    # source: "../" points from .claude-plugin/ up to the bundle root where agents/
+    # commands/ skills/ hooks/ etc. live — required for Claude Code to resolve the
+    # plugin files correctly when the marketplace is loaded from the .claude-plugin/ dir.
     files[".claude-plugin/marketplace.json"] = json.dumps({
         "name": PLUGIN_NAME,
         "owner": {"name": "Wheelwright"},
         "plugins": [{
             "name": PLUGIN_NAME,
-            "source": "./",
+            "source": "../",
             "description": "The full Wheelwright SDLC agent fleet (agents, skills, commands, hooks, templates).",
         }],
     }, indent=2, ensure_ascii=False) + "\n"

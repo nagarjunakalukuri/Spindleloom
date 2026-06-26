@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "wheelwright",
-      "source": "./",
+      "source": "../",
       "description": "The full Wheelwright SDLC agent fleet (agents, skills, commands, hooks, templates)."
     }
   ]
