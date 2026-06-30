@@ -30,8 +30,11 @@ try:
     from mcp import ClientSession, StdioServerParameters
     from mcp.client.stdio import stdio_client
 except ImportError:
-    sys.exit('test_mcp_server: the MCP SDK is not installed. Run via `uv run python '
-             'hooks/test_mcp_server.py`, or `pip install "mcp[cli]"` first.')
+    import unittest
+    raise unittest.SkipTest(
+        'mcp SDK not installed — run via `uv run python hooks/test_mcp_server.py` '
+        'or `pip install "mcp[cli]"` first.'
+    )
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
