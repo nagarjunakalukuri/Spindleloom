@@ -1,4 +1,4 @@
-name: Wheelwright CI
+name: Spindleloom CI
 
 on:
   push:

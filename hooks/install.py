@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-install.py -- Wheelwright installer.
+install.py -- Spindleloom installer.
 
 Copies the correct bundle for your AI coding tool into a target repo,
 including the skills/ directory that manual copy steps often miss.
@@ -142,11 +142,11 @@ def _install_windsurf(bundle: Path, repo: Path, dry: bool) -> list[str]:
         f"  (use the absolute path shown — ${{workspaceFolder}} is not supported there):\n\n"
         f'  {{\n'
         f'    "mcpServers": {{\n'
-        f'      "wheelwright": {{\n'
+        f'      "spindleloom": {{\n'
         f'        "command": "uv",\n'
         f'        "args": ["run", "--with", "mcp[cli]", "python",\n'
         f'                 "{mcp_py}"],\n'
-        f'        "env": {{ "WHEELWRIGHT_SPEC_ROOT": "{repo}/docs" }}\n'
+        f'        "env": {{ "SPINDLELOOM_SPEC_ROOT": "{repo}/docs" }}\n'
         f'      }}\n'
         f'    }}\n'
         f'  }}\n'
@@ -167,7 +167,7 @@ NEXT_STEPS = {
         "    macOS:    curl -LsSf https://astral.sh/uv/install.sh | sh\n"
         "  Then .mcp.json auto-discovers the server -- nothing else to run.\n\n"
         "  To enable agent context memory (semantic search):\n"
-        "    pip install chromadb   # then set WHEELWRIGHT_SEMANTIC=1 in .mcp.json"
+        "    pip install chromadb   # then set SPINDLELOOM_SEMANTIC=1 in .mcp.json"
     ),
     "cursor": (
         "  Reload Cursor window (Ctrl+Shift+P -> Developer: Reload Window).\n"
@@ -191,7 +191,7 @@ NEXT_STEPS = {
 
 def main() -> None:
     ap = argparse.ArgumentParser(
-        description="Install Wheelwright into a repo's AI coding tool.",
+        description="Install Spindleloom into a repo's AI coding tool.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__,
     )
@@ -229,7 +229,7 @@ def main() -> None:
 
     dest_label = "~/.claude/" if args.global_install else str(repo)
     dry_label  = " [DRY RUN]" if args.dry_run else ""
-    print(f"Wheelwright installer{dry_label}")
+    print(f"Spindleloom installer{dry_label}")
     print(f"  source :  {SRC}")
     print(f"  target :  {args.target}")
     print(f"  dest   :  {dest_label}")

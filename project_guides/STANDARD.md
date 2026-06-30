@@ -1,16 +1,16 @@
-# The Wheelwright Standard
+# The Spindleloom Standard
 
 | Field | Value |
 |---|---|
 | Standard version | 1.0 |
 | Status | Active |
-| Owner | Wheelwright (toolkit maintainer) |
+| Owner | Spindleloom (toolkit maintainer) |
 | Last updated | 2026-06-20 |
 | Detailed reference | [`INFORMATION-ARCHITECTURE.md`](INFORMATION-ARCHITECTURE.md) |
 
-> **This is the standard, not a default.** Wheelwright defines **one** project-agnostic way to lay out, name, and version SDLC artifacts. Every project that adopts Wheelwright targets this shape: greenfield projects **scaffold** it; existing projects **convert** to it (`scaffold.py migrate`). The layout is not a menu — where a project genuinely cannot use a canonical path, it declares the deviation in `.shipwright/config.json` (the sanctioned exception, §8), never by improvising a new tree. Nothing here is specific to any product, domain, or tool.
+> **This is the standard, not a default.** Spindleloom defines **one** project-agnostic way to lay out, name, and version SDLC artifacts. Every project that adopts Spindleloom targets this shape: greenfield projects **scaffold** it; existing projects **convert** to it (`scaffold.py migrate`). The layout is not a menu — where a project genuinely cannot use a canonical path, it declares the deviation in `.shipwright/config.json` (the sanctioned exception, §8), never by improvising a new tree. Nothing here is specific to any product, domain, or tool.
 >
-> **This repository is exempt.** Wheelwright's own source repo *ships* the standard — it is the toolkit distribution, not a consuming project. The standard governs the repos that **adopt** Wheelwright.
+> **This repository is exempt.** Spindleloom's own source repo *ships* the standard — it is the toolkit distribution, not a consuming project. The standard governs the repos that **adopt** Spindleloom.
 
 ## 1. Two layers of knowledge
 
@@ -18,7 +18,7 @@ Knowledge is owned by exactly one party — never both, never duplicated.
 
 | Layer | What | Lives in | Edited by |
 |---|---|---|---|
-| **Toolkit knowledge** (global) | The standard, conventions, requirement-quality rules, ceremony, and the agents / skills / commands / templates themselves | The Wheelwright **bundle / plugin** (referenced, updated centrally) | The toolkit maintainer — **never** the adopting team |
+| **Toolkit knowledge** (global) | The standard, conventions, requirement-quality rules, ceremony, and the agents / skills / commands / templates themselves | The Spindleloom **bundle / plugin** (referenced, updated centrally) | The toolkit maintainer — **never** the adopting team |
 | **Project knowledge** | The artifacts a team produces — product docs, specs, RTM, ADRs, backlog, sprint docs | The **adopter's repo** (`docs/` + `.shipwright/`) + the work tracker | The adopting team |
 
 **The rule that keeps them clean:** the toolkit ships the *how*; the project holds the *what*. Toolkit knowledge is **never copied into a project's `docs/`** — it is referenced through the installed bundle and updates centrally. A project never stores its own artifacts inside the toolkit.
@@ -128,7 +128,7 @@ A repo is conformant when it matches the standard for its declared `profile` / `
 - **`validate_reqs.py`** — Req-ID format, RTM coverage, ADR-reference integrity, **duplicate-ID and multiple-ADR-directory detection**, and a **layout / version conformance check**;
 - **`build_artifact_registry.py --check`** — fails CI on any conformance violation.
 
-Conformance is also queryable live via the `wheelwright` MCP server.
+Conformance is also queryable live via the `spindleloom` MCP server.
 
 ## 11. This document vs. INFORMATION-ARCHITECTURE.md
 

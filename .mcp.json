@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "wheelwright": {
+    "spindleloom": {
       "command": "uv",
       "args": [
         "run",
@@ -10,9 +10,9 @@
         "${CLAUDE_PROJECT_DIR}/hooks/mcp_server.py"
       ],
       "env": {
-        "WHEELWRIGHT_SPEC_ROOT": "${CLAUDE_PROJECT_DIR}",
-        "WHEELWRIGHT_WRITABLE": "",
-        "WHEELWRIGHT_SEMANTIC": ""
+        "SPINDLELOOM_SPEC_ROOT": "${CLAUDE_PROJECT_DIR}",
+        "SPINDLELOOM_WRITABLE": "",
+        "SPINDLELOOM_SEMANTIC": ""
       }
     }
   }

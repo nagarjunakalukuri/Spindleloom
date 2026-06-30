@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-test_standard.py — stdlib-only tests for the Wheelwright Standard tooling: config-driven
+test_standard.py — stdlib-only tests for the Spindleloom Standard tooling: config-driven
 scaffold, collision detection, conformance, and the brownfield converter (scaffold.py
 migrate). No external deps (does not need the MCP SDK).
 
@@ -116,7 +116,7 @@ def test_migrate_self_exemption():
     with tempfile.TemporaryDirectory() as d:
         root = Path(d)
         _w(root / "prd.md", "# PRD\n\nPRD-A-001 the system shall ship.\n")          # real project doc
-        _w(root / "vendor_toolkit/project_guides/STANDARD.md", "# The Wheelwright Standard\n")      # copied-in distribution
+        _w(root / "vendor_toolkit/project_guides/STANDARD.md", "# The Spindleloom Standard\n")      # copied-in distribution
         _w(root / "vendor_toolkit/agents/adr-writer.md", "---\nname: adr-writer\n---\nbody\n")
         _w(root / "vendor_toolkit/examples/x/01-mrd.md", "# MRD\n")
         _w(root / "templates/prd-template.md", "# PRD template\n")                   # toolkit-shaped file
@@ -131,7 +131,7 @@ def test_migrate_self_exemption():
 def test_migrate_exempt_root():
     with tempfile.TemporaryDirectory() as d:
         root = Path(d)
-        _w(root / "project_guides/STANDARD.md", "# The Wheelwright Standard\n")
+        _w(root / "project_guides/STANDARD.md", "# The Spindleloom Standard\n")
         _w(root / "prd.md", "# PRD\n")
         check(scaffold.migrate(root).get("exempt") is True,
               "migrate refuses (exempt) when the root is itself a distribution")

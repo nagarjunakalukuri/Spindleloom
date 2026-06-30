@@ -10,7 +10,7 @@
 #   ./hooks/sdd-cache-post.sh <url> [<cache-dir>] < fetched-content.txt
 #
 # Env vars:
-#   SDD_CACHE_DIR  — override default cache directory (~/.cache/wheelwright/sdd)
+#   SDD_CACHE_DIR  — override default cache directory (~/.cache/spindleloom/sdd)
 #
 # SSRF guards (mirrors sdd-cache-pre.sh):
 #   * Only http:// and https:// schemes accepted.
@@ -26,7 +26,7 @@
 set -euo pipefail
 
 URL="${1:-}"
-CACHE_DIR="${2:-${SDD_CACHE_DIR:-${HOME}/.cache/wheelwright/sdd}}"
+CACHE_DIR="${2:-${SDD_CACHE_DIR:-${HOME}/.cache/spindleloom/sdd}}"
 
 if [[ -z "$URL" ]]; then
     echo "Usage: <fetch> | $0 <url> [<cache-dir>]" >&2

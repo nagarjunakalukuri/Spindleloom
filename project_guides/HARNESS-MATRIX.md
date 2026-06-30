@@ -1,6 +1,6 @@
 # Harness convergence matrix — 7 surfaces × 4 tools
 
-Where each AI-coding harness exposes each customization surface, and which Wheelwright source maps onto it. This is what **Shipwright** (`hooks/build_harness_artifacts.py`) targets — one source, native artifacts per tool.
+Where each AI-coding harness exposes each customization surface, and which Spindleloom source maps onto it. This is what **Shipwright** (`hooks/build_harness_artifacts.py`) targets — one source, native artifacts per tool.
 
 > Verified against official docs (2026-06). Several cells are **Preview** and may shift — re-verify before relying on a Preview format. `yes` = first-class native · `partial` = supported but Preview / lossy / different model · `no` = no native concept.
 
@@ -16,7 +16,7 @@ Where each AI-coding harness exposes each customization surface, and which Wheel
 | **Plugins** | **yes** — `.claude-plugin/plugin.json` + `marketplace.json` | **yes** — `.cursor-plugin/plugin.json` (**has** `commands` key); v2.5+ | **partial** — Agent Plugins `plugin.json` (**Preview**; **no** `commands` key) | **no** — no multi-surface bundle format |
 | **Slash Commands** | **yes** — merged into Skills; legacy `.claude/commands/*.md` | **yes** — `.cursor/commands/*.md` | **yes** — `.github/prompts/*.prompt.md` | **yes** — `.windsurf/workflows/*.md` (manual-only) |
 
-## Wheelwright source → surface (what Shipwright emits)
+## Spindleloom source → surface (what Shipwright emits)
 
 | Source | Claude Code | Cursor | Copilot | Windsurf |
 |---|---|---|---|---|

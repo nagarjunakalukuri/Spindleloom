@@ -1,6 +1,6 @@
 # Story Craft — Epics, Stories, Acceptance Criteria & Tasks
 
-> *The card is not the story — write the conversation it starts.* The Wheelwright reference for agile story craft, grounded in primary sources (Cohn, Wake, Lawrence & Green / Humanizing Work, Agile Alliance, Scrum.org). `backlog-manager`, `frd-writer`, `test-plan-writer`, and the DoR/DoD + epic templates all reference this — don't restate it per item.
+> *The card is not the story — write the conversation it starts.* The Spindleloom reference for agile story craft, grounded in primary sources (Cohn, Wake, Lawrence & Green / Humanizing Work, Agile Alliance, Scrum.org). `backlog-manager`, `frd-writer`, `test-plan-writer`, and the DoR/DoD + epic templates all reference this — don't restate it per item.
 
 | Field | Value |
 |---|---|
@@ -60,7 +60,7 @@ Two forms — choose per story:
 
 Slice through **all layers** so each slice delivers visible value. **Horizontal splits (a "UI story" + a "DB story") are the single most common anti-pattern** — they may satisfy *Small* but fail *Independent* and *Valuable* (the DB layer alone has no customer value). Horizontal is acceptable only for a pure spike.
 
-> **Wheelwright brownfield exception:** when a UI needs an endpoint/data that **doesn't exist yet** (platform extension), a backend enabler PBI *is* a legitimate split — `*-BE` blocks `*-FE`, schedule BE first. See `backlog-manager` + the DoR backend-readiness gate.
+> **Spindleloom brownfield exception:** when a UI needs an endpoint/data that **doesn't exist yet** (platform extension), a backend enabler PBI *is* a legitimate split — `*-BE` blocks `*-FE`, schedule BE first. See `backlog-manager` + the DoR backend-readiness gate.
 
 **The 9 patterns (Humanizing Work — Lawrence & Green):**
 
