@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wheelwright -- how it works, end to end</title>
+<title>Spindleloom -- how it works, end to end</title>
 <style>
   :root{
     --ground:#1b1512;        /* seasoned oak / charred wood */
@@ -223,9 +223,9 @@
 <header class="hero"><div class="wrap">
   <div class="hero-grid">
     <div>
-      <p class="eyebrow">Wheelwright  -  how it works, end to end</p>
+      <p class="eyebrow">Spindleloom  -  how it works, end to end</p>
       <h1>Software, built like a <span class="em">wheel</span>.</h1>
-      <p class="lede">A <b>wheelwright</b> builds the wheel that keeps turning. Wheelwright is a crew of <b>52 specialist AI agents</b> -- one for each step of building software, from the market question down to shipped, monitored code.</p>
+      <p class="lede">A <b>spindleloom</b> builds the wheel that keeps turning. Spindleloom is a crew of <b>52 specialist AI agents</b> -- one for each step of building software, from the market question down to shipped, monitored code.</p>
       <p class="lede">You don't open an app or learn 52 commands. You <b>describe the work</b>; the right specialist picks it up, does it, and hands the result to the next one along.</p>
       <div class="stat">
         <div><div class="num">52</div><div class="cap">specialist agents</div></div>
@@ -439,7 +439,7 @@ expense tracker.</span>
       <p>Install as a plugin so agents auto-pick -- then just describe the task, no file to name.</p>
       <span class="say"><span class="c"># once</span>
 /plugin install
-  wheelwright@wheelwright
+  spindleloom@spindleloom
 <span class="c"># then</span>
 Write a PRD for X.</span>
     </div>
@@ -560,7 +560,7 @@ Write a PRD for X.</span>
   <div class="tscroll"><table class="wtable">
     <thead><tr><th>Tool</th><th>Adopt by</th><th>What you get</th></tr></thead>
     <tbody>
-      <tr><td><b>Claude Code -- plugin</b> <span class="star">*</span></td><td><code>/plugin marketplace add &lt;repo&gt;</code> <code>/plugin install wheelwright@wheelwright</code></td><td>One install: all agents + skills + commands + hooks + templates + MCP</td></tr>
+      <tr><td><b>Claude Code -- plugin</b> <span class="star">*</span></td><td><code>/plugin marketplace add &lt;repo&gt;</code> <code>/plugin install spindleloom@spindleloom</code></td><td>One install: all agents + skills + commands + hooks + templates + MCP</td></tr>
       <tr><td><b>Claude Code -- manual</b></td><td>copy <code>agents/</code> <code>skills/</code> <code>commands/</code> -> <code>.claude/</code></td><td>Loose subagents, hand-wired</td></tr>
       <tr><td><b>Cursor</b></td><td>copy <code>targets/cursor/.cursor/</code> into repo root</td><td>.mdc role rules + always-on conventions + MCP</td></tr>
       <tr><td><b>GitHub Copilot</b></td><td>copy <code>targets/copilot/</code> <code>.github/</code> + <code>.vscode/</code> to root</td><td>Custom chat modes + copilot-instructions + MCP</td></tr>
@@ -573,7 +573,7 @@ Write a PRD for X.</span>
 
   <p class="inst-h">Claude Code -- plugin <span class="star">* recommended</span></p>
   <div class="code">/plugin marketplace add &lt;owner/repo-or-path&gt;
-/plugin install wheelwright@wheelwright</div>
+/plugin install spindleloom@spindleloom</div>
   <p class="cfg-note">One install -- agents trigger by description (or <code>/agents</code>), every slash command works, skills load on relevance, and the traceability hook runs on edits.</p>
 
   <p class="inst-h">Claude Code -- manual (loose files)</p>
@@ -586,7 +586,7 @@ copy  mcp/ .mcp.json  ->  repo root      <span class="c"># live traceability (op
   <p class="inst-h">Cursor</p>
   <div class="code"><span class="c"># from targets/cursor/ -- copy into your repo root</span>
 copy  .cursor/  mcp/  ->  repo root</div>
-  <p class="cfg-note">Each role becomes a description-triggered project rule; <code>000-wheelwright-conventions.mdc</code> is always-on. <code>.cursor/mcp.json</code> uses <code>${workspaceFolder}</code>, so it's portable across machines.</p>
+  <p class="cfg-note">Each role becomes a description-triggered project rule; <code>000-spindleloom-conventions.mdc</code> is always-on. <code>.cursor/mcp.json</code> uses <code>${workspaceFolder}</code>, so it's portable across machines.</p>
 
   <p class="inst-h">GitHub Copilot</p>
   <div class="code"><span class="c"># from targets/copilot/ -- copy into your repo root</span>
@@ -596,7 +596,7 @@ copy  .github/  .vscode/  mcp/  ->  repo root</div>
   <p class="inst-h">Windsurf</p>
   <div class="code"><span class="c"># from targets/windsurf/ -- copy into your repo root</span>
 copy  .windsurf/  mcp/  ->  repo root</div>
-  <p class="cfg-note">No subagents, so each role is a <code>model_decision</code> rule that activates when relevant; <code>000-wheelwright-conventions.md</code> is always-on (rules cap ~12k chars). MCP here is <b style="color:var(--accent-2)">user-global</b> -- add the server to <code>~/.codeium/windsurf/mcp_config.json</code> with absolute paths.</p>
+  <p class="cfg-note">No subagents, so each role is a <code>model_decision</code> rule that activates when relevant; <code>000-spindleloom-conventions.md</code> is always-on (rules cap ~12k chars). MCP here is <b style="color:var(--accent-2)">user-global</b> -- add the server to <code>~/.codeium/windsurf/mcp_config.json</code> with absolute paths.</p>
 
   <p class="inst-h">Any AGENTS.md tool <span style="color:var(--mut);font-weight:400;font-size:.82rem">(Codex  -  Gemini CLI  -  ...)</span></p>
   <div class="code"><span class="c"># the cross-tool router</span>
@@ -637,14 +637,14 @@ copy  targets/agents-md/AGENTS.md  ->  repo root</div>
   <p class="cfg-note">...or as a CI / pre-PR gate to make traceability a merge requirement -- drop the <code>|| true</code> so a failed check blocks the merge.</p>
 
   <h3 class="cfg-sub">4  -  Live spec queries -- MCP, optional</h3>
-  <p class="cfg-note">The bundled server exposes <b style="color:var(--text)">18 tools</b> in two groups. <b>RTM / catalog / conformance (12):</b> trace/coverage (<code>trace_requirement</code>, <code>rtm_coverage</code>, <code>funnel_status</code>), catalog (<code>list_requirements</code>, <code>find_artifact</code>, <code>search_specs</code>...), conformance (<code>check_conformance</code>), and authoring (<code>next_req_id</code>, <code>scaffold_project</code>). <b>Agent context memory (6):</b> <code>save_context</code> / <code>recall_context</code> / <code>list_contexts</code> / <code>get_context</code> / <code>delete_context</code> / <code>sync_contexts</code> -- a token-efficient handoff layer so agents retrieve prior decisions in one call instead of re-reading upstream docs. Enable semantic search with <code>"WHEELWRIGHT_SEMANTIC":"1"</code> (local ONNX embeddings, no API calls).</p>
+  <p class="cfg-note">The bundled server exposes <b style="color:var(--text)">18 tools</b> in two groups. <b>RTM / catalog / conformance (12):</b> trace/coverage (<code>trace_requirement</code>, <code>rtm_coverage</code>, <code>funnel_status</code>), catalog (<code>list_requirements</code>, <code>find_artifact</code>, <code>search_specs</code>...), conformance (<code>check_conformance</code>), and authoring (<code>next_req_id</code>, <code>scaffold_project</code>). <b>Agent context memory (6):</b> <code>save_context</code> / <code>recall_context</code> / <code>list_contexts</code> / <code>get_context</code> / <code>delete_context</code> / <code>sync_contexts</code> -- a token-efficient handoff layer so agents retrieve prior decisions in one call instead of re-reading upstream docs. Enable semantic search with <code>"SPINDLELOOM_SEMANTIC":"1"</code> (local ONNX embeddings, no API calls).</p>
   <p class="cfg-note">The only prerequisite is <b style="color:var(--text)">uv</b> -- <code>.mcp.json</code> launches the server with <code>uv run --with "mcp[cli]"</code>, which provisions the MCP SDK <i>and</i> a Python interpreter on first run (no manual <code>pip install</code>).</p>
   <div class="code"><span class="c"># install uv once -- macOS / Linux</span>
 curl -LsSf https://astral.sh/uv/install.sh | sh
 <span class="c"># Windows (PowerShell)</span>
 powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 <span class="c"># then .mcp.json is auto-discovered -- nothing else to run</span></div>
-  <p class="cfg-note"><code>scaffold_project</code> can write files, so it stays disabled unless you add <code>"WHEELWRIGHT_WRITABLE": "1"</code> to the server's <code>env</code>.</p>
+  <p class="cfg-note"><code>scaffold_project</code> can write files, so it stays disabled unless you add <code>"SPINDLELOOM_WRITABLE": "1"</code> to the server's <code>env</code>.</p>
 </div></section>
 
 <hr class="rule">
@@ -700,7 +700,7 @@ powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
   <div class="tscroll"><table class="wtable">
     <thead><tr><th>Script</th><th>What it is</th><th>When</th></tr></thead>
     <tbody>
-      <tr><td><code>mcp_server.py</code></td><td>The Wheelwright MCP server -- <b>18 tools</b>: 12 RTM / catalog / conformance tools (<code>trace_requirement</code>, <code>rtm_coverage</code>, <code>funnel_status</code>, <code>check_conformance</code>...) + 6 agent context memory tools (<code>save_context</code>, <code>recall_context</code>, <code>list_contexts</code>, <code>get_context</code>, <code>delete_context</code>, <code>sync_contexts</code>). The <b>one</b> script needing a dependency -- launched via <code>uv run --with "mcp[cli]"</code> (no manual pip).</td><td>Launched by a harness via <code>.mcp.json</code></td></tr>
+      <tr><td><code>mcp_server.py</code></td><td>The Spindleloom MCP server -- <b>18 tools</b>: 12 RTM / catalog / conformance tools (<code>trace_requirement</code>, <code>rtm_coverage</code>, <code>funnel_status</code>, <code>check_conformance</code>...) + 6 agent context memory tools (<code>save_context</code>, <code>recall_context</code>, <code>list_contexts</code>, <code>get_context</code>, <code>delete_context</code>, <code>sync_contexts</code>). The <b>one</b> script needing a dependency -- launched via <code>uv run --with "mcp[cli]"</code> (no manual pip).</td><td>Launched by a harness via <code>.mcp.json</code></td></tr>
       <tr><td><code>rtm_core.py</code></td><td>The shared stdlib parser behind the validator, registry, and MCP server -- one parser, no drift.</td><td>Library -- not run directly</td></tr>
     </tbody>
   </table></div>
@@ -762,7 +762,7 @@ python hooks/build_harness_artifacts.py          <span class="c"># rebuild targe
   <p class="cfg-note">Lay it down with <code>/spec-new &lt;feature&gt;</code> (or <code>python hooks/scaffold.py</code>) -- profile-aware (lean / mid / enterprise) and idempotent; existing repos convert with <code>scaffold.py migrate</code>, never by hand. <b style="color:var(--accent-2)">Naming:</b> every requirement gets an immutable <code>&lt;DOC&gt;-&lt;AREA&gt;-&lt;NUM&gt;</code> ID (e.g. <code>FRD-TRK-001</code>); every durable doc carries an Owner / Status / Version / Last-updated header so the catalog can read it.</p>
 
   <h3 class="cfg-sub">Organized by scope &amp; cadence</h3>
-  <p class="cfg-note">Artifacts are filed by <b style="color:var(--text)">how often they change</b> and <b style="color:var(--text)">what scope they serve</b> -- so fast-moving sprint work never pollutes durable knowledge. The four planes (the Wheelwright <code>STANDARD.md</code>):</p>
+  <p class="cfg-note">Artifacts are filed by <b style="color:var(--text)">how often they change</b> and <b style="color:var(--text)">what scope they serve</b> -- so fast-moving sprint work never pollutes durable knowledge. The four planes (the Spindleloom <code>STANDARD.md</code>):</p>
   <div class="tscroll"><table class="wtable">
     <thead><tr><th>Plane</th><th>What</th><th>Cadence</th><th>Home</th></tr></thead>
     <tbody>
@@ -808,7 +808,7 @@ python hooks/build_harness_artifacts.py          <span class="c"># rebuild targe
 
   <h3 class="cfg-sub">Work items</h3>
   <div class="tscroll"><table class="wtable">
-    <thead><tr><th>Wheelwright produces</th><th>Azure Boards work item</th></tr></thead>
+    <thead><tr><th>Spindleloom produces</th><th>Azure Boards work item</th></tr></thead>
     <tbody>
       <tr><td>Epic -- <code>backlog-manager</code></td><td><b>Epic</b> (one per major feature area)</td></tr>
       <tr><td>Optional grouping</td><td><b>Feature</b> (group PBIs when epics are large)</td></tr>
@@ -846,7 +846,7 @@ python hooks/build_harness_artifacts.py          <span class="c"># rebuild targe
 <hr class="rule">
 
 <footer><div class="wrap">
-  <p><b>Wheelwright</b> -- an AI agent fleet for the whole software lifecycle: market -> spec -> design -> build -> test -> ship -> operate, one traceable chain. More process is not better -- run only the subset your team needs.</p>
+  <p><b>Spindleloom</b> -- an AI agent fleet for the whole software lifecycle: market -> spec -> design -> build -> test -> ship -> operate, one traceable chain. More process is not better -- run only the subset your team needs.</p>
   <p class="meta">52 agents  -  50 templates  -  21 skills  -  13 hooks &amp; scripts  -  a full worked example  -  ships to Claude Code, Cursor, Copilot &amp; Windsurf. For the role-by-role guide with sample prompts, see <code>how-to-use.html</code> in the repo.</p>
 </div></footer>
 

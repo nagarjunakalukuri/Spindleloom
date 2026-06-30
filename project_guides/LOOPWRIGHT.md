@@ -1,8 +1,8 @@
 # Loopwright — the delivery-loop layer
 
-*Loopwright is the Wheelwright fleet's loop layer — the **loop-engineering** discipline applied to this project: the feedback loops of software delivery, what they are, why they dominate productivity, how to measure and tighten them, and how the fleet's agents map onto them.*
+*Loopwright is the Spindleloom fleet's loop layer — the **loop-engineering** discipline applied to this project: the feedback loops of software delivery, what they are, why they dominate productivity, how to measure and tighten them, and how the fleet's agents map onto them.*
 
-> **The three `-wright`s.** **Wheelwright** builds the fleet (market → spec → build → ship → operate); **Shipwright** generates the per-harness bundles from that single source (`hooks/build_harness_artifacts.py` → `targets/`); **Loopwright** is this layer — the fleet running inside the delivery feedback loop, tightening each loop so feedback arrives fast and clear. *Build it, ship it, loop it.*
+> **The three `-wright`s.** **Spindleloom** builds the fleet (market → spec → build → ship → operate); **Shipwright** generates the per-harness bundles from that single source (`hooks/build_harness_artifacts.py` → `targets/`); **Loopwright** is this layer — the fleet running inside the delivery feedback loop, tightening each loop so feedback arrives fast and clear. *Build it, ship it, loop it.*
 
 > **Scope note — two senses of "loop engineering".** This document is about the **human delivery loop**: a developer's inner loop (edit→build→test→debug) and the team's outer loop (PR→CI→review→deploy). The term is also used for a *different* discipline — engineering **autonomous AI-agent loops** (scheduling an agent against a goal, with stop conditions, maker/checker verification, and an autonomy ladder). In that sense, "inner loop" is one agent turn and "outer loop" is the orchestration system around it. For the **agent** loop, see `agents/ai-orchestration.md` → "Autonomous loop architecture". This file is the **human** loop.
 

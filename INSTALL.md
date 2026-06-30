@@ -1,4 +1,4 @@
-# Install — Wheelwright Agent Fleet
+# Install — Spindleloom Agent Fleet
 
 52 AI agents for the full SDLC (market → spec → design → build → test → ship → operate), shipped to every AI coding tool from one source.
 
@@ -41,7 +41,7 @@ That's it for trying it out. When you're ready to go further: Step 4 covers the 
 
 ## Enterprise rollout checklist
 
-For teams rolling out Wheelwright across multiple repos or to 10+ developers.
+For teams rolling out Spindleloom across multiple repos or to 10+ developers.
 
 ### Phase 1 — Validate and package (owner/champion, 1 day)
 
@@ -51,7 +51,7 @@ For teams rolling out Wheelwright across multiple repos or to 10+ developers.
 - [ ] Decide install method: **plugin** (recommended for Claude Code teams) or **manual copy**
 - [ ] Decide tracker: Azure Boards (set `AZURE_DEVOPS_*` vars) or Jira (set `JIRA_*` vars)
 - [ ] Create a shared internal fork/mirror if policies require (the source is product-agnostic)
-- [ ] Set `WHEELWRIGHT_SPEC_ROOT` to your org's standard `docs/` location
+- [ ] Set `SPINDLELOOM_SPEC_ROOT` to your org's standard `docs/` location
 
 ### Phase 2 — Pilot repo (1–2 days)
 
@@ -77,7 +77,7 @@ For teams rolling out Wheelwright across multiple repos or to 10+ developers.
 
 - [ ] Pin to a release tag so teams don't get breaking changes on `main`
 - [ ] Wire `build_harness_artifacts.py --check` as a CI drift gate so stale bundles can't merge
-- [ ] After any Wheelwright source update: re-run `build_harness_artifacts.py` and re-distribute
+- [ ] After any Spindleloom source update: re-run `build_harness_artifacts.py` and re-distribute
 - [ ] Use `run-orchestrator` + `.shipwright/run-state.json` for any autonomous fleet runs
 - [ ] Review `project_guides/PILOT-READOUT.md` for known adjustment areas before wider rollout
 
@@ -160,7 +160,7 @@ One command installs everything: agents + skills + commands + hooks + templates 
 
 ```
 /plugin marketplace add <owner/repo-or-path>
-/plugin install wheelwright@wheelwright
+/plugin install spindleloom@spindleloom
 ```
 
 After install: agents auto-trigger by description, every `/spec-new` `/rtm-check` etc. works, and the traceability hook fires on spec edits.
@@ -247,7 +247,7 @@ Copy-Item project_managment_agents\targets\cursor\mcp     .\ -Recurse
 Copy-Item project_managment_agents\targets\cursor\.mcp.json .
 ```
 
-Each role becomes a description-triggered `.mdc` rule. `000-wheelwright-conventions.mdc` is always-on. `.cursor/mcp.json` uses `${workspaceFolder}` so it's portable across machines.
+Each role becomes a description-triggered `.mdc` rule. `000-spindleloom-conventions.mdc` is always-on. `.cursor/mcp.json` uses `${workspaceFolder}` so it's portable across machines.
 
 ---
 
@@ -330,16 +330,16 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-The generated `.mcp.json` auto-discovers and launches the server. Set `WHEELWRIGHT_SPEC_ROOT` to your project's `docs/` folder:
+The generated `.mcp.json` auto-discovers and launches the server. Set `SPINDLELOOM_SPEC_ROOT` to your project's `docs/` folder:
 
 ```json
 // .mcp.json (already generated — just set the env var)
 {
   "mcpServers": {
-    "wheelwright": {
+    "spindleloom": {
       "command": "uv",
       "args": ["run", "--with", "mcp[cli]", "python", "mcp/mcp_server.py"],
-      "env": { "WHEELWRIGHT_SPEC_ROOT": "${CLAUDE_PROJECT_DIR}/docs" }
+      "env": { "SPINDLELOOM_SPEC_ROOT": "${CLAUDE_PROJECT_DIR}/docs" }
     }
   }
 }
@@ -352,7 +352,7 @@ uv run python hooks/test_mcp_server.py
 
 **Enable the write tool** (`scaffold_project`) — disabled by default:
 ```json
-"env": { "WHEELWRIGHT_SPEC_ROOT": "...", "WHEELWRIGHT_WRITABLE": "1" }
+"env": { "SPINDLELOOM_SPEC_ROOT": "...", "SPINDLELOOM_WRITABLE": "1" }
 ```
 
 ---
@@ -515,7 +515,7 @@ py -3 hooks/build_harness_artifacts.py
 python3 hooks/build_harness_artifacts.py
 ```
 
-Then re-copy the updated bundle for your tool (same Step 4 commands). The plugin install auto-updates if you run `/plugin install wheelwright@wheelwright` again.
+Then re-copy the updated bundle for your tool (same Step 4 commands). The plugin install auto-updates if you run `/plugin install spindleloom@spindleloom` again.
 
 ---
 
@@ -526,7 +526,7 @@ Then re-copy the updated bundle for your tool (same Step 4 commands). The plugin
 | `validate_graph.py` exits 1 | Read the error — usually a dangling ref or stale INDEX. Run `py -3 hooks/build_agent_index.py` first, then re-validate. |
 | `build_harness_artifacts.py --check` exits 1 | Bundles are stale. Run without `--check` to regenerate. |
 | Agent not found in Claude Code | The `claude_code.subagent_type` in the agent's frontmatter must match its `name`. The validator catches this (check 7). |
-| MCP server won't start | Check `uv` is on PATH (`uv --version`). Check `WHEELWRIGHT_SPEC_ROOT` is set and points to a real directory. |
+| MCP server won't start | Check `uv` is on PATH (`uv --version`). Check `SPINDLELOOM_SPEC_ROOT` is set and points to a real directory. |
 | Jira `--apply` refused | `JIRA_BASE_URL`, `JIRA_PROJECT_KEY`, `JIRA_USER_EMAIL`, `JIRA_API_TOKEN` must all be set. Run `--list-fields` to confirm connectivity. |
 | Azure Boards `--apply` refused | `AZURE_DEVOPS_ORG_URL` (or `AZURE_DEVOPS_ORG`), `AZURE_DEVOPS_PROJECT`, `AZURE_DEVOPS_PAT` must all be set. PAT needs Work Items read+write scope. |
 | `pre-commit run` fails on shellcheck | Install shellcheck first (`brew install shellcheck` / `apt install shellcheck`). |

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-emit_backlog.py — Wheelwright: backlog.md -> work-tracker work items (the sync contract, run).
+emit_backlog.py — Spindleloom: backlog.md -> work-tracker work items (the sync contract, run).
 
 Closes the recurring "no backlog->Boards automation" gap. The `backlog-manager` **Tracker
 sync contract** (which doc field maps to which work-item field) is encoded here as runnable

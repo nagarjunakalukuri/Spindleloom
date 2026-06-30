@@ -1,8 +1,12 @@
-# Wheelwright
+# Spindleloom
+
+<p align="center">
+  <img src="assets/spindleloom-loop.svg" width="200" alt="Spindleloom — the agent walking the lifecycle" />
+</p>
 
 *An AI agent fleet for the entire software development lifecycle — market → spec → design → build → test → ship → operate, one traceable chain.*
 
-A *wheelwright* builds the wheel that keeps turning — and the SDLC is exactly that wheel (build → ship → operate → learn → repeat). The project comes in three `-wright`s: **Wheelwright** is the fleet that builds the wheel, **Shipwright** ships it to every harness (`hooks/build_harness_artifacts.py` → `targets/`), and **Loopwright** runs it inside the delivery feedback loop (`project_guides/LOOPWRIGHT.md`). Wheelwright is a tool-agnostic fleet of **52 role-specialist AI agents** (plus 50 templates, commands, and self-validating hooks) that carry a product from the market problem at 30,000 feet down to build-ready, shipped, monitored code. Each agent owns one role, reads the artifact above it, and **hands off to the next** along a single traceable chain — and pushes discoveries back upstream. Run only the subset your team needs (`doc-strategy-advisor`).
+A *spindleloom* weaves many threads — every role and artifact — into one cloth on a loop that never stops turning, and the SDLC is exactly that loop (build → ship → operate → learn → repeat). The project comes in three `-wright`s: **Spindleloom** is the fleet that builds the wheel, **Shipwright** ships it to every harness (`hooks/build_harness_artifacts.py` → `targets/`), and **Loopwright** runs it inside the delivery feedback loop (`project_guides/LOOPWRIGHT.md`). Spindleloom is a tool-agnostic fleet of **52 role-specialist AI agents** (plus 50 templates, commands, and self-validating hooks) that carry a product from the market problem at 30,000 feet down to build-ready, shipped, monitored code. Each agent owns one role, reads the artifact above it, and **hands off to the next** along a single traceable chain — and pushes discoveries back upstream. Run only the subset your team needs (`doc-strategy-advisor`).
 
 ## The funnel
 
@@ -184,7 +188,7 @@ Blank, fill-in-the-blank versions of each document:
 
 `project_guides/INFORMATION-ARCHITECTURE.md` — the **detailed reference** under `project_guides/STANDARD.md`: where artifacts live and how they're organized, found, and versioned — the canonical tree, the profiles, the metadata convention, baselines, and the four retrieval paths (RTM · catalog · MCP · wiki).
 
-`project_guides/HARNESS-MATRIX.md` — the 7-surface × 4-tool convergence matrix (Claude Code · Cursor · Copilot · Windsurf): which customization surface each tool exposes and which Wheelwright source maps onto it. What `hooks/build_harness_artifacts.py` (Shipwright) targets.
+`project_guides/HARNESS-MATRIX.md` — the 7-surface × 4-tool convergence matrix (Claude Code · Cursor · Copilot · Windsurf): which customization surface each tool exposes and which Spindleloom source maps onto it. What `hooks/build_harness_artifacts.py` (Shipwright) targets.
 
 `project_guides/BEST-PRACTICES.md` — the funnel, feedback loops, team-size doc tiers, ownership matrix, the requirement quality standard (ISO/IEC/IEEE 29148 + INCOSE checklist and the "system shall" rule), the traceability backbone with Req-ID convention, change control & baselines, and frameworks (arc42, C4, Diátaxis, Docs-as-Code) that all agents follow.
 

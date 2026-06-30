@@ -1,5 +1,5 @@
 ---
-description: Show how to use a Wheelwright agent — its responsibility, when to run it, and copy-paste example prompts. Triggers on "how do I use <agent>", "help for <role>", "what does <agent> do", "show example prompts for <agent>".
+description: Show how to use a Spindleloom agent — its responsibility, when to run it, and copy-paste example prompts. Triggers on "how do I use <agent>", "help for <role>", "what does <agent> do", "show example prompts for <agent>".
 argument-hint: [agent-name]
 ---
 

@@ -10,7 +10,7 @@
 #   ./hooks/sdd-cache-pre.sh <url> [<cache-dir>]
 #
 # Env vars:
-#   SDD_CACHE_DIR      — override default cache directory (~/.cache/wheelwright/sdd)
+#   SDD_CACHE_DIR      — override default cache directory (~/.cache/spindleloom/sdd)
 #   SDD_CACHE_MAX_AGE  — TTL in seconds (default: 604800 = 7 days)
 #
 # SSRF guards:
@@ -27,7 +27,7 @@
 set -euo pipefail
 
 URL="${1:-}"
-CACHE_DIR="${2:-${SDD_CACHE_DIR:-${HOME}/.cache/wheelwright/sdd}}"
+CACHE_DIR="${2:-${SDD_CACHE_DIR:-${HOME}/.cache/spindleloom/sdd}}"
 SDD_CACHE_MAX_AGE="${SDD_CACHE_MAX_AGE:-604800}"   # 7 days
 
 if [[ -z "$URL" ]]; then

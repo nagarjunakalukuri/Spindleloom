@@ -1,6 +1,6 @@
-# Contributing to Wheelwright
+# Contributing to Spindleloom
 
-Wheelwright is a fleet of 52 AI agents for the full SDLC.  Changes here affect every team that installs it — so the bar is: add value, don't break symmetry, don't create hidden dependencies.
+Spindleloom is a fleet of 52 AI agents for the full SDLC.  Changes here affect every team that installs it — so the bar is: add value, don't break symmetry, don't create hidden dependencies.
 
 ---
 
@@ -38,7 +38,7 @@ pip install "mcp[cli]"
 | `hooks/*.sh` | Shell hooks (SSRF-safe URL caching for remote spec fetches) |
 | `targets/` | Generated harness bundles — **do not edit by hand** |
 | `examples/` | End-to-end project artifacts (healthy-meal-app reference) |
-| `docs/` | Wheelwright-level docs (per-agent config, onboarding, etc.) |
+| `docs/` | Spindleloom-level docs (per-agent config, onboarding, etc.) |
 | `.github/workflows/` | CI (fleet integrity, harness bundles, shellcheck, plugin install) |
 
 Key single-source files: `project_guides/STANDARD.md` (information-architecture contract), `project_guides/BEST-PRACTICES.md` (fleet conventions), `project_guides/HARNESS-MATRIX.md` (per-tool feature surface), `hooks/HOOKS.md` (hook reference).

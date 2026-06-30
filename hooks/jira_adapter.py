@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-jira_adapter.py — Wheelwright: the live Jira push() for emit_backlog.py.
+jira_adapter.py — Spindleloom: the live Jira push() for emit_backlog.py.
 
 emit_backlog.py field-maps backlog.md → tracker-agnostic work-item payloads and leaves the
 network push to "YOUR adapter". This IS that adapter for Jira Cloud (REST API v3) — the last

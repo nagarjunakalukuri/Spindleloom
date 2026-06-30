@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-test_mcp_server.py — end-to-end smoke test for the Wheelwright MCP server.
+test_mcp_server.py — end-to-end smoke test for the Spindleloom MCP server.
 
 Spawns mcp_server.py over stdio exactly as a harness would, then asserts the
 expected tools/resources are registered and that representative tool calls
@@ -30,8 +30,11 @@ try:
     from mcp import ClientSession, StdioServerParameters
     from mcp.client.stdio import stdio_client
 except ImportError:
-    sys.exit('test_mcp_server: the MCP SDK is not installed. Run via `uv run python '
-             'hooks/test_mcp_server.py`, or `pip install "mcp[cli]"` first.')
+    import unittest
+    raise unittest.SkipTest(
+        'mcp SDK not installed — run via `uv run python hooks/test_mcp_server.py` '
+        'or `pip install "mcp[cli]"` first.'
+    )
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
@@ -43,13 +46,13 @@ EXPECTED_TOOLS = {
     "check_conformance",
 }
 EXPECTED_RESOURCES = {
-    "rtm://current", "wheelwright://requirements", "wheelwright://artifacts",
-    "wheelwright://decisions",
+    "rtm://current", "spindleloom://requirements", "spindleloom://artifacts",
+    "spindleloom://decisions",
 }
 
 
 def parse_args():
-    ap = argparse.ArgumentParser(description="Smoke-test the Wheelwright MCP server.")
+    ap = argparse.ArgumentParser(description="Smoke-test the Spindleloom MCP server.")
     ap.add_argument("--spec-root", default=str(REPO / "examples" / "healthy-meal-app"))
     ap.add_argument("--server", default=str(HERE / "mcp_server.py"))
     ap.add_argument("--uv", action="store_true",
@@ -65,7 +68,7 @@ def server_params(args):
     return StdioServerParameters(
         command=command,
         args=[*pre, args.server],
-        env={**os.environ, "WHEELWRIGHT_SPEC_ROOT": args.spec_root},
+        env={**os.environ, "SPINDLELOOM_SPEC_ROOT": args.spec_root},
     )
 
 
@@ -120,12 +123,12 @@ async def run(args):
                   "search_specs() returns matches")
 
             scaf = await session.call_tool("scaffold_project", {})
-            check(bool(scaf.content) and "WHEELWRIGHT_WRITABLE" in scaf.content[0].text,
-                  "scaffold_project() is read-only by default (gated on WHEELWRIGHT_WRITABLE)")
+            check(bool(scaf.content) and "SPINDLELOOM_WRITABLE" in scaf.content[0].text,
+                  "scaffold_project() is read-only by default (gated on SPINDLELOOM_WRITABLE)")
 
-            res = await session.read_resource("wheelwright://decisions")
+            res = await session.read_resource("spindleloom://decisions")
             check(bool(res.contents) and res.contents[0].text.strip().startswith(("[", "{")),
-                  "wheelwright://decisions resource returns the decisions table")
+                  "spindleloom://decisions resource returns the decisions table")
 
             conf = await session.call_tool("check_conformance", {})
             check(bool(conf.content) and '"conformance"' in conf.content[0].text,

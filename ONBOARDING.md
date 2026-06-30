@@ -1,4 +1,4 @@
-# Welcome to Wheelwright
+# Welcome to Spindleloom
 
 ## How We Use Claude
 
@@ -21,7 +21,7 @@ Top MCP Servers:
 ## Your Setup Checklist
 
 ### Codebases
-- [ ] project_managment_agents — local workspace (the "Wheelwright" SDLC agent fleet; no git remote)
+- [ ] project_managment_agents — local workspace (the "Spindleloom" SDLC agent fleet; no git remote)
 - [ ] IDP-Accelerator / idp-orchestrator — additional working dir (Python/LangGraph document-processing engine)
 - [ ] IDP-Accelerator / idp-skills — additional working dir
 
@@ -30,12 +30,12 @@ Top MCP Servers:
 
 ### Skills to Know About
 - [ ] /deep-research — fan-out web research with adversarial fact-checking and a cited report. Used for multi-source investigation before deciding.
-- [ ] /spec-new, /pbi-next, /rtm-check, /adr-new — the Wheelwright fleet's own slash commands (in `commands/`) for scaffolding specs, pulling the next backlog item, auditing the RTM, and recording decisions.
+- [ ] /spec-new, /pbi-next, /rtm-check, /adr-new — the Spindleloom fleet's own slash commands (in `commands/`) for scaffolding specs, pulling the next backlog item, auditing the RTM, and recording decisions.
 - [ ] The 49-agent fleet auto-delegates by description (e.g. "write a PRD" → `prd-writer`); model-invoked skills like `requirement-elicitation` and `ubiquitous-language` fire automatically.
 
 ## Team Tips
 
-- **Know the three `-wright`s.** **Wheelwright** is the agent fleet that builds the SDLC wheel; **Shipwright** (`hooks/build_harness_artifacts.py`) ships it to every harness bundle in `targets/`; **Loopwright** (`project_guides/LOOPWRIGHT.md`) is the delivery feedback loop the agents tighten. Build it, ship it, loop it.
+- **Know the three `-wright`s.** **Spindleloom** is the agent fleet that builds the SDLC wheel; **Shipwright** (`hooks/build_harness_artifacts.py`) ships it to every harness bundle in `targets/`; **Loopwright** (`project_guides/LOOPWRIGHT.md`) is the delivery feedback loop the agents tighten. Build it, ship it, loop it.
 - **Run `/hooks` once after cloning** (or restart Claude Code) to activate the fleet-integrity hook — it validates the agent graph + `claude_code` mappings on every edit and never blocks you.
 - **Edit source, then resync.** After changing anything in `agents/`, `skills/`, or `commands/`, re-run `py hooks/build_harness_artifacts.py` to regenerate `targets/`. The hook nudges you when bundles drift; CI gates on it.
 - **On Windows, use `py`** — bare `python`/`python3` aren't on PATH here.

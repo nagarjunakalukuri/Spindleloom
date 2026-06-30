@@ -1,4 +1,4 @@
-name: Wheelwright CI
+name: Spindleloom CI
 
 on:
   push:
@@ -114,17 +114,16 @@ jobs:
             { echo "plugin.json missing in claude-plugin bundle"; exit 1; }
           echo "Plugin bundle structure OK."
 
-      - name: Verify agent count in plugin manifest
+      - name: Verify agent count in plugin bundle
         run: |
           python - <<'EOF'
-          import json, sys, pathlib
-          manifest = pathlib.Path("targets/claude-plugin/.claude-plugin/plugin.json")
-          if not manifest.exists():
+          import sys, pathlib
+          agents_dir = pathlib.Path("targets/claude-plugin/agents")
+          if not agents_dir.exists():
               sys.exit(0)   # not generated yet; skip
-          data = json.loads(manifest.read_text())
-          agents = data.get("agents", [])
-          print(f"Plugin manifest: {len(agents)} agents")
+          agents = list(agents_dir.glob("*.md"))
+          print(f"Plugin bundle: {len(agents)} agents")
           if len(agents) < 40:
-              print("ERROR: fewer than 40 agents in manifest — bundle looks truncated")
+              print("ERROR: fewer than 40 agents in bundle — bundle looks truncated")
               sys.exit(1)
           EOF

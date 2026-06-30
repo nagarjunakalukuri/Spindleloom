@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-scaffold.py — lay down the canonical Wheelwright project layout.
+scaffold.py — lay down the canonical Spindleloom project layout.
 
 Creates the visible, content-named docs tree (the deliverables) + the hidden
 `.shipwright/` machinery, per the information-architecture decision: brand the
@@ -206,7 +206,7 @@ def _rewrite_links(text, src_old, src_new, moved):
 
 
 _NOISE_DIRS = {"node_modules", "__pycache__", "venv", "dist", "build", "site-packages", "vendor"}
-# A directory carrying any of these is a Wheelwright distribution (toolkit knowledge) or a
+# A directory carrying any of these is a Spindleloom distribution (toolkit knowledge) or a
 # generated harness bundle — never a consuming project's content, so it is pruned wholesale.
 _DIST_MARKERS = ("project_guides/STANDARD.md", "build_harness_artifacts.py", "marketplace.json", ".claude-plugin")
 # Toolkit content folders: their files are toolkit knowledge, not a project's artifacts.
@@ -214,12 +214,12 @@ _TOOLKIT_DIRS = {"agents", "skills", "commands", "templates", "hooks"}
 
 
 def _is_distribution_dir(d):
-    """True if directory `d` is (or contains the marker of) a Wheelwright distribution."""
+    """True if directory `d` is (or contains the marker of) a Spindleloom distribution."""
     return any((Path(d) / m).exists() for m in _DIST_MARKERS)
 
 
 def _looks_toolkit(relposix):
-    """A path that is Wheelwright's own source rather than a project artifact: under a
+    """A path that is Spindleloom's own source rather than a project artifact: under a
     toolkit content folder, or an agent/template filename pattern (`*-writer`, `*-template`)."""
     parts = relposix.split("/")
     if any(p in _TOOLKIT_DIRS for p in parts[:-1]):
@@ -230,7 +230,7 @@ def _looks_toolkit(relposix):
 
 def _scan_migratable(root):
     """The .md files under root eligible for migration — pruning dotdirs, noise dirs,
-    Wheelwright distribution subtrees (self-exemption), and the toolkit's own source files.
+    Spindleloom distribution subtrees (self-exemption), and the toolkit's own source files.
     So the converter never plans to relocate toolkit knowledge into a project's docs/."""
     root = Path(root)
     out = []
@@ -253,13 +253,13 @@ def _scan_migratable(root):
 def migrate(root, feature="feature-1", apply=False, force=False):
     """Convert an existing repo to the Standard layout: relocate detected artifacts into
     the canonical tree (per config) and rewrite cross-links. Dry-run by default; pass
-    apply=True to write. Self-exempts Wheelwright distributions + toolkit source, guards
+    apply=True to write. Self-exempts Spindleloom distributions + toolkit source, guards
     against many-to-one destination collisions, refuses on a non-git repo (unless force)
     or while ADR/destination collisions exist, and pins the Standard in config on apply."""
     root = Path(root)
     if _is_distribution_dir(root):
         return {"root": str(root), "apply": apply, "exempt": True, "moves": [], "moved_count": 0,
-                "note": "this directory is a Wheelwright distribution (toolkit knowledge), exempt per "
+                "note": "this directory is a Spindleloom distribution (toolkit knowledge), exempt per "
                         "project_guides/STANDARD.md — nothing to convert. Point migrate at a CONSUMING project."}
     lay = rtm_core.layout(root)
     docs_root = rtm_core.resolve_docs_root(root)

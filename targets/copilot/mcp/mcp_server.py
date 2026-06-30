@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-mcp_server.py — Wheelwright traceability MCP server (FastMCP).
+mcp_server.py — Spindleloom traceability MCP server (FastMCP).
 
 Exposes the live requirement/traceability graph (parsed by rtm_core) so any
 MCP-aware harness — Claude Code, Cursor, Copilot/VS Code, Windsurf — can query
@@ -10,7 +10,7 @@ Requires the MCP SDK (the one opt-in dependency, isolated to this server; the
 validator and rtm_core stay stdlib-only):
     pip install "mcp[cli]"
 
-$WHEELWRIGHT_SPEC_ROOT (default: current dir) is the *project root*, set in the
+$SPINDLELOOM_SPEC_ROOT (default: current dir) is the *project root*, set in the
 harness's .mcp.json; the actual docs folder is resolved from .shipwright/config.json
 (`docs_root`, default `docs/`, falling back to the project root for a flat layout).
 Read-only.
@@ -31,22 +31,22 @@ try:
 except ImportError:
     sys.exit('mcp_server: the MCP SDK is not installed. Run:  pip install "mcp[cli]"')
 
-mcp = FastMCP("wheelwright")
+mcp = FastMCP("spindleloom")
 
 
 def _root():
-    return str(rtm_core.resolve_docs_root(os.environ.get("WHEELWRIGHT_SPEC_ROOT", ".")))
+    return str(rtm_core.resolve_docs_root(os.environ.get("SPINDLELOOM_SPEC_ROOT", ".")))
 
 
 def _project_root():
-    """The project root the server was pointed at (WHEELWRIGHT_SPEC_ROOT) — scaffolding
+    """The project root the server was pointed at (SPINDLELOOM_SPEC_ROOT) — scaffolding
     targets this, not the resolved docs_root."""
-    return os.environ.get("WHEELWRIGHT_SPEC_ROOT", ".")
+    return os.environ.get("SPINDLELOOM_SPEC_ROOT", ".")
 
 
 def _writable():
-    """Write tools are opt-in: enabled only when WHEELWRIGHT_WRITABLE is truthy."""
-    return os.environ.get("WHEELWRIGHT_WRITABLE", "").strip().lower() in ("1", "true", "yes", "on")
+    """Write tools are opt-in: enabled only when SPINDLELOOM_WRITABLE is truthy."""
+    return os.environ.get("SPINDLELOOM_WRITABLE", "").strip().lower() in ("1", "true", "yes", "on")
 
 
 @mcp.tool()
@@ -133,7 +133,7 @@ def search_specs(query: str, max_results: int = 50) -> dict:
 
 @mcp.tool()
 def check_conformance() -> dict:
-    """Does this repo match the Wheelwright Standard? Returns the conformance report
+    """Does this repo match the Spindleloom Standard? Returns the conformance report
     (declared profile/version vs the toolkit's, plus duplicate artifact IDs — e.g. two
     RTMs or two ADR files claiming one id) alongside the RTM/Req-ID audit (which now
     flags duplicate ADRs and multiple ADR directories). See project_guides/STANDARD.md §10."""
@@ -142,15 +142,15 @@ def check_conformance() -> dict:
 
 @mcp.tool()
 def scaffold_project(profile: str = "mid", feature: str = "feature-1") -> dict:
-    """WRITE TOOL (opt-in) — lay down the canonical Wheelwright doc layout under the
+    """WRITE TOOL (opt-in) — lay down the canonical Spindleloom doc layout under the
     project root: the docs/ funnel, the RTM backbone, the cyclic sprints/ home, and the
     .shipwright/ machinery (per project_guides/STANDARD.md). profile is 'lean' | 'mid' | 'enterprise'.
     Idempotent: never overwrites an existing file. Disabled unless the server was started
-    with WHEELWRIGHT_WRITABLE=1."""
+    with SPINDLELOOM_WRITABLE=1."""
     if not _writable():
         return {"writable": False,
                 "error": "scaffold_project is a write tool and is disabled. Restart the "
-                         "server with WHEELWRIGHT_WRITABLE=1 in its env to enable it."}
+                         "server with SPINDLELOOM_WRITABLE=1 in its env to enable it."}
     try:
         created = scaffold.scaffold(_project_root(), profile=profile, feature=feature)
     except ValueError as e:
@@ -162,13 +162,13 @@ def scaffold_project(profile: str = "mid", feature: str = "feature-1") -> dict:
 # --- Agent context / memory handoff ---
 # Default:  SQLite keyword search (always available, zero deps, zero config)
 # Optional: ChromaDB local semantic search -- enabled by setting
-#           WHEELWRIGHT_SEMANTIC=1 in the server env AND installing chromadb:
+#           SPINDLELOOM_SEMANTIC=1 in the server env AND installing chromadb:
 #               pip install chromadb   (or uv add chromadb)
 #           Uses built-in ONNX all-MiniLM-L6-v2 embeddings -- zero API calls,
 #           ~40 MB model cached in ~/.cache/chroma/ after first run.
 
 def _semantic_enabled() -> bool:
-    return os.environ.get("WHEELWRIGHT_SEMANTIC", "").strip().lower() in ("1", "true", "yes", "on")
+    return os.environ.get("SPINDLELOOM_SEMANTIC", "").strip().lower() in ("1", "true", "yes", "on")
 
 _chromadb = None
 if _semantic_enabled():
@@ -183,7 +183,7 @@ def _CHROMA() -> bool:
 
 def _ctx_db_path() -> str:
     root = Path(_project_root())
-    ww = root / ".wheelwright"
+    ww = root / ".spindleloom"
     ww.mkdir(exist_ok=True)
     return str(ww / "context.db")
 
@@ -218,7 +218,7 @@ def _chroma_col():
     if not _CHROMA():
         return None
     root = Path(_project_root())
-    client = _chromadb.PersistentClient(path=str(root / ".wheelwright" / "chroma"))
+    client = _chromadb.PersistentClient(path=str(root / ".spindleloom" / "chroma"))
     return client.get_or_create_collection(
         "agent_context",
         metadata={"hnsw:space": "cosine"},  # distance in [0,2]; score = 1-dist in [-1,1]
@@ -409,7 +409,7 @@ def delete_context(task_id: str, agent_id: str = "") -> dict:
 @mcp.tool()
 def sync_contexts() -> dict:
     """Re-sync SQLite rows that failed to write to ChromaDB (chroma_synced=0). Only
-    relevant when WHEELWRIGHT_SEMANTIC=1 is set. Call after a Chroma outage or first
+    relevant when SPINDLELOOM_SEMANTIC=1 is set. Call after a Chroma outage or first
     enabling semantic mode on an existing DB to replay all missed rows."""
     if not _CHROMA():
         return {"semantic": False, "message": "ChromaDB not enabled -- nothing to sync"}
@@ -444,19 +444,19 @@ def rtm_resource() -> str:
     return json.dumps(rtm_core.parse_rtm(_root()), ensure_ascii=False, indent=2)
 
 
-@mcp.resource("wheelwright://requirements")
+@mcp.resource("spindleloom://requirements")
 def requirements_resource() -> str:
     """The full requirement list as JSON (every Req-ID + where defined)."""
     return json.dumps(rtm_core.list_requirements(_root()), ensure_ascii=False, indent=2)
 
 
-@mcp.resource("wheelwright://artifacts")
+@mcp.resource("spindleloom://artifacts")
 def artifacts_resource() -> str:
     """The artifact catalog as JSON (every artifact + location/owner/status/version)."""
     return json.dumps(rtm_core.artifacts(_root()), ensure_ascii=False, indent=2)
 
 
-@mcp.resource("wheelwright://decisions")
+@mcp.resource("spindleloom://decisions")
 def decisions_resource() -> str:
     """The RTM decisions table (ADR/RFC ledger) as JSON."""
     return json.dumps(rtm_core.decisions(_root()), ensure_ascii=False, indent=2)

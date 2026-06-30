@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "wheelwright": {
+    "spindleloom": {
       "command": "uv",
       "args": [
         "run",
@@ -10,7 +10,7 @@
         "${workspaceFolder}/mcp/mcp_server.py"
       ],
       "env": {
-        "WHEELWRIGHT_SPEC_ROOT": "${workspaceFolder}"
+        "SPINDLELOOM_SPEC_ROOT": "${workspaceFolder}"
       }
     }
   }
