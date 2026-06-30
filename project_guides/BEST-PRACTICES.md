@@ -169,3 +169,80 @@ The team's **Definition of Ready and Definition of Done** are the explicit gate 
 | Enterprise (50+) | BRD → PRD → SRS → SDD (+MRD where needed) | Full stack, but automate the pipeline (BRD mandates PRD → auto Jira epics → linked SDD). |
 
 Run `doc-strategy-advisor` to apply this to a specific team.
+
+---
+
+## Delivery patterns (pilot-hardened)
+
+Patterns distilled from real SDLC funnel runs. Each addresses a recurring failure mode.
+
+### Small-change lane (≤ ~3 well-scoped tasks)
+
+Running the full funnel (decompose → recon → SDD → backlog split → sprint-plan) on a tiny, self-contained change is ceremony that wastes tokens and burns context. When the change is ≤ ~3 clearly-scoped tasks:
+
+- **Collapse decompose into recon.** If `solution-recon` already enumerates an ordered task list, treat it as PBI-grade and skip the separate backlog-manager decompose call. The gate: could a developer start immediately from the recon output? If yes, proceed directly to build.
+- Still run: recon → build → test-author → change-verifier → code-reviewer. The quality controls don't shrink; only the ceremony stages do.
+- Right-size the funnel to the blast radius; don't right-size the quality gates.
+
+### Project operating manual (avoid re-discovery per agent)
+
+Key project-specific facts — Python interpreter path, test run incantation, repo root layout, per-package test commands — are re-derived by each new agent in a session if they're not persisted. This wastes tokens and causes friction (G8):
+
+- **Use `save_agent_context` (MCP tool):** at session start, one agent resolves and saves the incantation; every subsequent agent calls `load_agent_context` first before running commands.
+- **Use a project `CLAUDE.md` addendum:** add a `## Running tests` section with the literal, resolved commands for this repo (e.g., `uv run pytest oi_atlas_cache/tests/ -x`). Every agent reads CLAUDE.md at start.
+- **On Windows with `uv`:** the interpreter is typically `.venv/Scripts/python.exe` and the test runner is `uv run pytest`. Write the resolved form once and reference it everywhere rather than re-probing per agent.
+
+### Increment by blast radius
+
+When a planned change includes both net-new/isolated work and a cutover of a hot path (shared infrastructure, heavily-imported module, live API endpoint or store), **ship them as separate increments** — not one combined change:
+
+1. Build and verify the net-new isolated replacement independently.
+2. Cut over the hot path in its own gated step with its own recon → build → test-author → change-verifier → code-reviewer cycle.
+
+The cutover increment is the one that can break callers — it deserves its own blast-radius assessment, its own symbol-removal grep (see `backend-developer`), and its own `change-verifier` run. "Agent enthusiasm vs blast radius" is the failure mode: don't let the readiness of the isolated piece tempt a combined hot-path cutover in one pass (G11).
+
+### Maker/checker split — mandatory, not optional
+
+The maker/checker pattern is the pilot's **highest-ROI control** (G3/G13/G16):
+
+- `code-reviewer` must be a **different agent from both the maker and the test-author**. The agent that wrote the bug is the worst one to spot it; the agent that wrote the tests can agree with the maker's wrong contract.
+- For every cutover (hot-path migration, symbol removal, store replacement), run `code-reviewer` on the diff it did not write. This is not optional and not a ceremony — it is the control that catches Critical/Major bugs that tests and the verifier both miss.
+- The maker builds → `change-verifier` executes the change → `code-reviewer` reads the diff statically. All three are distinct agents; collapsing any two collapses the separation that makes the loop work.
+
+### Recon-before-implement — mandatory for brownfield
+
+`solution-recon` must run before any brownfield implementation (G4/G10):
+
+- Recon establishes ground truth: what the code actually does, not what the spec describes. In brownfield codebases, the spec routinely understates the work (broken import placeholders, "5 caches" that are really 3, shells that don't function).
+- **Feed recon drift back into the ADR.** When recon finds a mismatch between the spec/ADR and the actual code (e.g., the ADR describes a 5-cache architecture but the code has 3), amend the ADR or write a superseding one — don't silently diverge (G10).
+- Recon is per-family / per-epic, not per-task: one recon covers the whole feature; per-story builds cite it as warm context; per-task is a pointer, not a re-run.
+
+### Brownfield cache / symbol-cutover playbook
+
+The canonical template for migrating an existing brownfield store, cache, or shared symbol — proven repeatable across multiple caches in the pilot (G14/G16):
+
+```
+1. solution-recon   — establish ground truth; find broken shells, real contracts,
+                      non-functional placeholders; amend the ADR if scope changed.
+
+2. backend-developer (maker)
+   a. Clone-and-re-point the nearest working sibling as a mechanical scaffold pass.
+   b. Hand-edit only spec-driven logic.
+   c. Symbol removal grep: grep -r "<old_symbol>" tests/ **/tests/ and fix every
+      hit IN THE SAME CHANGE before handing off.
+   d. Batch-verify: run the full suite (not per-file) before hand-off.
+
+3. test-author      — write unit + integration tests; add consumed-shape parity
+                      assertions for any fixture against the real consumer shape.
+
+4. change-verifier  — impacted-test discovery first (grep all changed symbols across
+                      ALL test dirs); run every hit suite; report gaps explicitly.
+
+5. code-reviewer    — distinct agent from maker + test-author; all-call-forms grep
+                      for every removed/renamed symbol; check pre-existing test suites
+                      that import the changed package.
+
+6. Repeat for each cutover unit (one increment per hot path, by blast radius).
+```
+
+Test-author discoveries (latent bugs surfaced while writing tests) route to `tech-debt-register`, not back to the maker — they are real bugs found during writing, not test failures. Apply cheap hardening (e.g., `isinstance` guards) in-loop rather than always deferring to a follow-up (G6/G9).
