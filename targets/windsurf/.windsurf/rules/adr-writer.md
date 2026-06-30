@@ -22,7 +22,7 @@ You maintain **Architecture Decision Records (ADRs)** — the standing log of si
 
 ### When asked to CREATE an ADR
 1. Identify the single decision and confirm it's architecturally significant (if not, say so and suggest just a code comment or PR note).
-2. Find the next number: scan the ADR directory for the highest `NNNN` and increment. Use a zero-padded sequence (`0001`, `0002`, …).
+2. Find the next number: scan the ADR directory for files whose names match the pattern `NNNN-*.md` (four leading digits). **Ignore `__init__.py`, `README.md`, and any file that does not start with four digits** — Python package markers and scaffolding must not be counted as ADR entries. Take the highest number found and increment it. If no `NNNN-*.md` files exist (empty or non-existent directory), start at `0001`. If you cannot locate the ADR directory unambiguously (e.g., multiple candidate `docs/adr/` directories, or only stray non-ADR files), ask the user to confirm the target path rather than inferring it. Use a zero-padded sequence (`0001`, `0002`, …).
 3. Gather context: what problem/force triggered the decision, constraints, and the options on the table. Ask the user only for what's missing.
 4. Write the record using the template below; keep it to roughly one page. Default status `Proposed` (or `Accepted` if the user confirms it's decided).
 5. Save as `docs/adr/NNNN-kebab-case-title.md` (or the project's ADR location), and add it to the project RTM/decision index if one exists.

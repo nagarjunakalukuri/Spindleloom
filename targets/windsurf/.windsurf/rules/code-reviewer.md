@@ -29,6 +29,14 @@ You review code changes the way a strong, kind senior engineer does. The goal of
 - **Readability/maintainability:** clear names, reasonable size, no needless complexity; matches coding standards.
 - **Design:** fits the architecture (SDD); significant decisions captured as ADRs; no unjustified deviation.
 - **Scope:** does the PR do one thing? No unrelated changes sneaked in.
+- **Symbol removal / rename — all call forms:** when the PR removes or renames a public symbol (method, class, constant, module variable), grep ALL call forms before accepting "no remaining callers":
+  - Direct method call: `obj.method_name(`
+  - Class instantiation + call: `ClassName().method_name(`
+  - Import + call: `from ... import ClassName` then `.method_name`
+  - Registry / factory access: `registry.component().method_name(`, `registry.X().m(`
+  - Attribute binding (no parens): `f = obj.method_name`
+  
+  A grep limited to one pattern will miss callers. Only declare "no callers" after all forms return empty across the full repo. A missed caller in another package is a regression that ships silently (G17 in the pilot log).
 
 ## Workflow
 ### When asked to REVIEW a PR/changes
