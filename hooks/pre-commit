@@ -1,0 +1,12 @@
+#!/bin/sh
+# Spindleloom pre-commit: auto-regenerate harness targets when source changes.
+# Install: cp hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+set -e
+
+if git diff --cached --name-only | grep -qE '^(agents/|project_guides/)'; then
+    printf 'Spindleloom: source changed — regenerating harness targets...\n'
+    py hooks/build_harness_artifacts.py 2>/dev/null \
+        || python hooks/build_harness_artifacts.py
+    git add targets/
+    printf 'Spindleloom: targets/ regenerated and staged.\n'
+fi
