@@ -1,10 +1,11 @@
 ---
-trigger: always_on
-description: Wheelwright project conventions (SDLC funnel, Req-ID, RTM).
+name: spindleloom-conventions
+description: 'Spindleloom SDLC conventions — the funnel (MRD→…→TSD), the Req-ID convention, the living RTM, and the requirement-quality standard. Use when writing, reviewing, or decomposing any spec, requirement, backlog, or design artifact in this project.'
 ---
-# Wheelwright — project conventions (AI-read-first)
 
-This project uses the **Wheelwright** fleet of 52 role-specialist SDLC agents (market → spec → design → build → test → ship → operate), one traceable chain. When a task matches a role, adopt that agent. Run only the subset your team needs — start with `doc-strategy-advisor`.
+# Spindleloom — project conventions (AI-read-first)
+
+This project uses the **Spindleloom** fleet of 52 role-specialist SDLC agents (market → spec → design → build → test → ship → operate), one traceable chain. When a task matches a role, adopt that agent. Run only the subset your team needs — start with `doc-strategy-advisor`.
 
 ## The funnel
 

@@ -1,13 +1,13 @@
 {
-  "name": "wheelwright",
+  "name": "spindleloom",
   "owner": {
-    "name": "Wheelwright"
+    "name": "Spindleloom"
   },
   "plugins": [
     {
-      "name": "wheelwright",
+      "name": "spindleloom",
       "source": ".",
-      "description": "The full Wheelwright SDLC agent fleet (agents, skills, commands, hooks, templates)."
+      "description": "The full Spindleloom SDLC agent fleet (agents, skills, commands, hooks, templates)."
     }
   ]
 }

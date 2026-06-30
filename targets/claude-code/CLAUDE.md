@@ -1,6 +1,6 @@
-# Wheelwright — project conventions (AI-read-first)
+# Spindleloom — project conventions (AI-read-first)
 
-This project uses the **Wheelwright** fleet of 52 role-specialist SDLC agents (market → spec → design → build → test → ship → operate), one traceable chain. When a task matches a role, adopt that agent. Run only the subset your team needs — start with `doc-strategy-advisor`.
+This project uses the **Spindleloom** fleet of 52 role-specialist SDLC agents (market → spec → design → build → test → ship → operate), one traceable chain. When a task matches a role, adopt that agent. Run only the subset your team needs — start with `doc-strategy-advisor`.
 
 ## The funnel
 

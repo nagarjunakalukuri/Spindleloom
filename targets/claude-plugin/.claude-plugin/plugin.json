@@ -1,8 +1,8 @@
 {
-  "name": "wheelwright",
-  "description": "Wheelwright — an AI agent fleet for the entire SDLC (market → spec → design → build → test → ship → operate), one traceable chain.",
+  "name": "spindleloom",
+  "description": "Spindleloom — an AI agent fleet for the entire SDLC (market → spec → design → build → test → ship → operate), one traceable chain.",
   "author": {
-    "name": "Wheelwright"
+    "name": "Spindleloom"
   },
   "keywords": [
     "sdlc",

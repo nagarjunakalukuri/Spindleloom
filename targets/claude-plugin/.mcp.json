@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "wheelwright": {
+    "spindleloom": {
       "command": "uv",
       "args": [
         "run",
@@ -10,7 +10,7 @@
         "${CLAUDE_PLUGIN_ROOT}/mcp/mcp_server.py"
       ],
       "env": {
-        "WHEELWRIGHT_SPEC_ROOT": "${CLAUDE_PROJECT_DIR}"
+        "SPINDLELOOM_SPEC_ROOT": "${CLAUDE_PROJECT_DIR}"
       }
     }
   }

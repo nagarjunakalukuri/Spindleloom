@@ -1,6 +1,6 @@
 {
   "servers": {
-    "wheelwright": {
+    "spindleloom": {
       "type": "stdio",
       "command": "uv",
       "args": [
@@ -11,7 +11,7 @@
         "${workspaceFolder}/mcp/mcp_server.py"
       ],
       "env": {
-        "WHEELWRIGHT_SPEC_ROOT": "${workspaceFolder}"
+        "SPINDLELOOM_SPEC_ROOT": "${workspaceFolder}"
       }
     }
   }
