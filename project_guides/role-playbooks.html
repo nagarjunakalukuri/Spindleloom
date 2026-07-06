@@ -428,7 +428,7 @@ const SCENARIOS = [
   { role:'sre', label:'Write an incident postmortem',
     prompt:'Write the postmortem for INC-2024-089: auth service returned 503 for 14 minutes on 2024-12-09 18:32 UTC due to connection pool exhaustion during the evening peak. 4,200 users affected, no data loss.',
     ingredients:['error detail','constraint'],
-    agent:'incident-postmortem', mcp:false,
+    agent:'incident-responder', mcp:false,
     produces:['postmortem doc'],
     consumedBy:['sre','architect'] },
 

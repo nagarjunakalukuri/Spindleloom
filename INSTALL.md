@@ -10,24 +10,24 @@ The fastest path — no bundle step, no MCP, no gates. Just clone and use.
 
 ```bash
 # 1. Prerequisites: Git + Python 3.10+
-git clone <repo-url> project_managment_agents
+git clone <repo-url> spindleloom
 
 # 2. Verify the source is healthy
-py -3 project_managment_agents/hooks/validate_graph.py   # Windows
-# python3 project_managment_agents/hooks/validate_graph.py  # macOS/Linux
+py -3 spindleloom/hooks/validate_graph.py   # Windows
+# python3 spindleloom/hooks/validate_graph.py  # macOS/Linux
 
 # 3. Copy agents + skills + commands into your project's .claude/ folder
 mkdir -p .claude/agents .claude/skills .claude/commands
 
 # Windows (PowerShell)
-Copy-Item project_managment_agents\agents\*   .claude\agents\
-Copy-Item project_managment_agents\skills\*   .claude\skills\ -Recurse
-Copy-Item project_managment_agents\commands\* .claude\commands\
+Copy-Item spindleloom\agents\*   .claude\agents\
+Copy-Item spindleloom\skills\*   .claude\skills\ -Recurse
+Copy-Item spindleloom\commands\* .claude\commands\
 
 # macOS / Linux
-cp project_managment_agents/agents/*       .claude/agents/
-cp -r project_managment_agents/skills/*    .claude/skills/
-cp project_managment_agents/commands/*     .claude/commands/
+cp spindleloom/agents/*       .claude/agents/
+cp -r spindleloom/skills/*    .claude/skills/
+cp spindleloom/commands/*     .claude/commands/
 
 # 4. Open Claude Code in your project and try it
 #    /agents           → lists all 52 agents
@@ -87,7 +87,7 @@ For teams rolling out Spindleloom across multiple repos or to 10+ developers.
 |---|---|---|
 | 1–3 people | Lean | `prd-writer`, `frd-writer`, `backlog-manager`, `backend-developer`, `debugger` |
 | 4–10 people | Mid | Add `srs-writer`, `sdd-writer`, `test-plan-writer`, `qa-tester`, `code-reviewer`, `sprint-planner` |
-| 10+ people | Enterprise | Full funnel + `sre`, `release-manager`, `incident-postmortem`, `ai-orchestration`, `run-orchestrator` |
+| 10+ people | Enterprise | Full funnel + `sre`, `release-manager`, `incident-responder`, `ai-orchestrator`, `run-orchestrator` |
 
 Run `doc-strategy-advisor` — it picks the right subset for your context.
 
@@ -110,8 +110,8 @@ Run `doc-strategy-advisor` — it picks the right subset for your context.
 ## Step 1 — Get the source
 
 ```bash
-git clone <repo-url> project_managment_agents
-cd project_managment_agents
+git clone <repo-url> spindleloom
+cd spindleloom
 ```
 
 ---
@@ -159,9 +159,14 @@ Output: `targets/` with `claude-plugin/`, `claude-code/`, `cursor/`, `copilot/`,
 One command installs everything: agents + skills + commands + hooks + templates + MCP.
 
 ```
-/plugin marketplace add <owner/repo-or-path>
+/plugin marketplace add <owner/repo>          # GitHub slug, or a local path:
+/plugin marketplace add C:\path\to\Spindleloom
 /plugin install spindleloom@spindleloom
 ```
+
+Both the **repo root** and the built bundle (`<repo>/targets/claude-plugin`) work as the
+marketplace path — the root `.claude-plugin/marketplace.json` points at the bundle. (From a
+terminal the same commands are `claude plugin marketplace add …` / `claude plugin install …`.)
 
 After install: agents auto-trigger by description, every `/spec-new` `/rtm-check` etc. works, and the traceability hook fires on spec edits.
 
@@ -180,7 +185,7 @@ Use when you don't want the plugin install step.
 **Option A — automated (recommended):**
 
 ```bash
-python3 project_managment_agents/hooks/install.py --target claude-code --repo .
+python3 spindleloom/hooks/install.py --target claude-code --repo .
 # or --dry-run to preview first
 ```
 
@@ -191,34 +196,34 @@ python3 project_managment_agents/hooks/install.py --target claude-code --repo .
 mkdir -p .claude/agents .claude/skills .claude/commands
 
 # Windows (PowerShell)
-Copy-Item project_managment_agents\targets\claude-code\agents\* .claude\agents\
-Copy-Item project_managment_agents\skills\* .claude\skills\ -Recurse
-Copy-Item project_managment_agents\commands\* .claude\commands\
-Copy-Item project_managment_agents\targets\claude-code\CLAUDE.md .
-Copy-Item project_managment_agents\targets\claude-code\mcp .\ -Recurse
-Copy-Item project_managment_agents\targets\claude-code\.mcp.json .
+Copy-Item spindleloom\targets\claude-code\agents\* .claude\agents\
+Copy-Item spindleloom\skills\* .claude\skills\ -Recurse
+Copy-Item spindleloom\commands\* .claude\commands\
+Copy-Item spindleloom\targets\claude-code\CLAUDE.md .
+Copy-Item spindleloom\targets\claude-code\mcp .\ -Recurse
+Copy-Item spindleloom\targets\claude-code\.mcp.json .
 
 # macOS / Linux
-cp project_managment_agents/targets/claude-code/agents/*  .claude/agents/
-cp -r project_managment_agents/skills/*                   .claude/skills/
-cp project_managment_agents/commands/*                    .claude/commands/
-cp project_managment_agents/targets/claude-code/CLAUDE.md .
-cp -r project_managment_agents/targets/claude-code/mcp    .
-cp project_managment_agents/targets/claude-code/.mcp.json .
+cp spindleloom/targets/claude-code/agents/*  .claude/agents/
+cp -r spindleloom/skills/*                   .claude/skills/
+cp spindleloom/commands/*                    .claude/commands/
+cp spindleloom/targets/claude-code/CLAUDE.md .
+cp -r spindleloom/targets/claude-code/mcp    .
+cp spindleloom/targets/claude-code/.mcp.json .
 ```
 
 **Global install (all repos):** copy into `~/.claude/` instead of `.claude/`:
 
 ```bash
 # macOS / Linux
-cp project_managment_agents/targets/claude-code/agents/* ~/.claude/agents/
-cp -r project_managment_agents/targets/claude-code/skills/* ~/.claude/skills/
-cp project_managment_agents/targets/claude-code/commands/* ~/.claude/commands/
+cp spindleloom/targets/claude-code/agents/* ~/.claude/agents/
+cp -r spindleloom/targets/claude-code/skills/* ~/.claude/skills/
+cp spindleloom/targets/claude-code/commands/* ~/.claude/commands/
 ```
 
 ```powershell
 # Windows
-Copy-Item project_managment_agents\targets\claude-code\agents\* "$env:USERPROFILE\.claude\agents\"
+Copy-Item spindleloom\targets\claude-code\agents\* "$env:USERPROFILE\.claude\agents\"
 ```
 
 ---
@@ -226,25 +231,25 @@ Copy-Item project_managment_agents\targets\claude-code\agents\* "$env:USERPROFIL
 ### Cursor
 
 ```bash
-python3 project_managment_agents/hooks/install.py --target cursor --repo .
+python3 spindleloom/hooks/install.py --target cursor --repo .
 ```
 
 Or manually:
 
 ```bash
 # macOS / Linux — copy into your repo root
-cp -r project_managment_agents/targets/cursor/.cursor .
-cp -r project_managment_agents/skills/*               .claude/skills/
-cp -r project_managment_agents/targets/cursor/mcp .
-cp    project_managment_agents/targets/cursor/.mcp.json .
+cp -r spindleloom/targets/cursor/.cursor .
+cp -r spindleloom/skills/*               .claude/skills/
+cp -r spindleloom/targets/cursor/mcp .
+cp    spindleloom/targets/cursor/.mcp.json .
 ```
 
 ```powershell
 # Windows
-Copy-Item project_managment_agents\targets\cursor\.cursor .\ -Recurse
-Copy-Item project_managment_agents\skills\*               .claude\skills\ -Recurse
-Copy-Item project_managment_agents\targets\cursor\mcp     .\ -Recurse
-Copy-Item project_managment_agents\targets\cursor\.mcp.json .
+Copy-Item spindleloom\targets\cursor\.cursor .\ -Recurse
+Copy-Item spindleloom\skills\*               .claude\skills\ -Recurse
+Copy-Item spindleloom\targets\cursor\mcp     .\ -Recurse
+Copy-Item spindleloom\targets\cursor\.mcp.json .
 ```
 
 Each role becomes a description-triggered `.mdc` rule. `000-spindleloom-conventions.mdc` is always-on. `.cursor/mcp.json` uses `${workspaceFolder}` so it's portable across machines.
@@ -254,25 +259,25 @@ Each role becomes a description-triggered `.mdc` rule. `000-spindleloom-conventi
 ### GitHub Copilot
 
 ```bash
-python3 project_managment_agents/hooks/install.py --target copilot --repo .
+python3 spindleloom/hooks/install.py --target copilot --repo .
 ```
 
 Or manually:
 
 ```bash
 # macOS / Linux
-cp -r project_managment_agents/targets/copilot/.github  .
-cp -r project_managment_agents/targets/copilot/.vscode  .
-cp -r project_managment_agents/skills/*                 .claude/skills/
-cp -r project_managment_agents/targets/copilot/mcp      .
+cp -r spindleloom/targets/copilot/.github  .
+cp -r spindleloom/targets/copilot/.vscode  .
+cp -r spindleloom/skills/*                 .claude/skills/
+cp -r spindleloom/targets/copilot/mcp      .
 ```
 
 ```powershell
 # Windows
-Copy-Item project_managment_agents\targets\copilot\.github .\ -Recurse
-Copy-Item project_managment_agents\targets\copilot\.vscode .\ -Recurse
-Copy-Item project_managment_agents\skills\*                .claude\skills\ -Recurse
-Copy-Item project_managment_agents\targets\copilot\mcp     .\ -Recurse
+Copy-Item spindleloom\targets\copilot\.github .\ -Recurse
+Copy-Item spindleloom\targets\copilot\.vscode .\ -Recurse
+Copy-Item spindleloom\skills\*                .claude\skills\ -Recurse
+Copy-Item spindleloom\targets\copilot\mcp     .\ -Recurse
 ```
 
 Custom chat modes + `copilot-instructions.md` + `.vscode/mcp.json` for live traceability.
@@ -282,7 +287,7 @@ Custom chat modes + `copilot-instructions.md` + `.vscode/mcp.json` for live trac
 ### Windsurf
 
 ```bash
-python3 project_managment_agents/hooks/install.py --target windsurf --repo .
+python3 spindleloom/hooks/install.py --target windsurf --repo .
 # The script also prints the user-global mcp_config.json snippet with absolute paths filled in.
 ```
 
@@ -290,16 +295,16 @@ Or manually:
 
 ```bash
 # macOS / Linux
-cp -r project_managment_agents/targets/windsurf/.windsurf .
-cp -r project_managment_agents/skills/*                   .claude/skills/
-cp -r project_managment_agents/targets/windsurf/mcp       .
+cp -r spindleloom/targets/windsurf/.windsurf .
+cp -r spindleloom/skills/*                   .claude/skills/
+cp -r spindleloom/targets/windsurf/mcp       .
 ```
 
 ```powershell
 # Windows
-Copy-Item project_managment_agents\targets\windsurf\.windsurf .\ -Recurse
-Copy-Item project_managment_agents\skills\*                   .claude\skills\ -Recurse
-Copy-Item project_managment_agents\targets\windsurf\mcp       .\ -Recurse
+Copy-Item spindleloom\targets\windsurf\.windsurf .\ -Recurse
+Copy-Item spindleloom\skills\*                   .claude\skills\ -Recurse
+Copy-Item spindleloom\targets\windsurf\mcp       .\ -Recurse
 ```
 
 > **Windsurf MCP is user-global.** Copy the server entry from `targets/windsurf/README.md` into `~/.codeium/windsurf/mcp_config.json` (use absolute paths — `${workspaceFolder}` is not supported there). The `install.py` script prints the snippet with paths pre-filled.
@@ -309,7 +314,7 @@ Copy-Item project_managment_agents\targets\windsurf\mcp       .\ -Recurse
 ### Any AGENTS.md tool (Gemini CLI, Codex, …)
 
 ```bash
-cp project_managment_agents/targets/agents-md/AGENTS.md .
+cp spindleloom/targets/agents-md/AGENTS.md .
 ```
 
 The cross-tool router any `AGENTS.md`-aware tool reads.

@@ -35,4 +35,4 @@ Break cycle time into segments to find the bottleneck (the biggest chunk is usua
 
 ## Bottleneck & action
 - **Biggest stall this period:** <segment + why>
-- **One loop to shorten next period:** <action — ties to a retro item or `ci-cd-pipeline`/`code-reviewer` change>
+- **One loop to shorten next period:** <action — ties to a retro item or `pipeline-engineer`/`code-reviewer` change>

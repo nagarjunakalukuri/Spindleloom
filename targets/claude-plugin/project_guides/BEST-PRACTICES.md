@@ -22,11 +22,11 @@ Documents form a waterfall from 30,000 feet (business) to the trenches (code). E
 [TSD] Build details        → tsd-writer
 ```
 
-`doc-strategy-advisor` decides which of these a given team should actually maintain; `spec-driven-dev` keeps whichever you keep from drifting.
+`doc-strategy-advisor` decides which of these a given team should actually maintain; `spec-steward` keeps whichever you keep from drifting.
 
 Above the funnel sits the **constitution** (`templates/constitution-template.md`) — the standing, AI-read-first guardrails (principles, boundaries, non-goals) that hold across all features. The funnel describes *this release*; the constitution describes *the system's durable law*. Build it once via the `/constitution` command and keep it versioned.
 
-Alongside the funnel run the **engineering-craft lanes** the doc spine only touches generically: `ux-ui-designer` sits in the design phase doing UX **and** UI (PRD → flows/wireframes/hi-fi visuals + design system → `frontend-developer` implements them); `security-reviewer` is continuous (threat-models at the SDD, gates at review/CI); and `sre` owns proactive operate-phase reliability (SLOs/runbooks, feeding `incident-postmortem`). Four further specialists by need: `accessibility-auditor` (independent WCAG sign-off gate), `performance-engineer` (profiles and optimizes against a budget, behavior-preserving), `product-analytics` (instruments the PRD's success metrics to close the build→learn loop), and `ai-eval` (golden datasets + regression-eval gates for shipped AI features). Add each by what you're building (see `doc-strategy-advisor`).
+Alongside the funnel run the **engineering-craft lanes** the doc spine only touches generically: `ux-ui-designer` sits in the design phase doing UX **and** UI (PRD → flows/wireframes/hi-fi visuals + design system → `frontend-developer` implements them); `security-reviewer` is continuous (threat-models at the SDD, gates at review/CI); and `sre` owns proactive operate-phase reliability (SLOs/runbooks, feeding `incident-responder`). Four further specialists by need: `accessibility-auditor` (independent WCAG sign-off gate), `performance-engineer` (profiles and optimizes against a budget, behavior-preserving), `product-analytics` (instruments the PRD's success metrics to close the build→learn loop), and `ai-eval` (golden datasets + regression-eval gates for shipped AI features). Add each by what you're building (see `doc-strategy-advisor`).
 
 ## Feedback loops (documentation is not one-way)
 
@@ -45,9 +45,10 @@ Each specialist agent should, when it discovers something that invalidates an up
 2. **Definition of Ready.** A feature cannot enter a sprint until its technical blueprint (SDD/TSD/RFC) has been reviewed and signed off by at least one peer engineer.
 3. **Embed logic in tickets.** Write a clean, high-level doc for context; put hyper-specific functional logic ("if user clicks X, then Y") in the Jira/Linear ticket, not a fat standalone FRD.
 4. **One owner per document.** Shared ownership = no ownership.
-5. **Capture the *why*, not just the *what*.** Record decisions and rejected alternatives so the next reader (human or AI) doesn't re-litigate or "fix" deliberate choices. For architecturally significant decisions, keep an append-only **ADR log** (`adr-writer`) in the repo — one immutable record per decision, superseded rather than edited. For significant changes that need debate *before* building, raise an **RFC** (`rfc`) — the forward-looking proposal opened for comment; an accepted RFC produces the ADR. RFCs live in `/docs/rfc`, ADRs in `/docs/adr`, both reviewed in PRs.
+5. **Capture the *why*, not just the *what*.** Record decisions and rejected alternatives so the next reader (human or AI) doesn't re-litigate or "fix" deliberate choices. For architecturally significant decisions, keep an append-only **ADR log** (`adr-writer`) in the repo — one immutable record per decision, superseded rather than edited. For significant changes that need debate *before* building, raise an **RFC** (`rfc-facilitator`) — the forward-looking proposal opened for comment; an accepted RFC produces the ADR. RFCs live in `/docs/rfc`, ADRs in `/docs/adr`, both reviewed in PRs.
 6. **Docs-as-Code where it fits.** Treat docs like code: Markdown in the repo, reviewed in the same PR as the code, deployed via CI/CD. This is the single biggest lever for keeping technical docs current.
 7. **Update upstream before downstream.** When something changes, fix the source-of-truth document first, then let it flow down.
+8. **Mark invented facts; ratify before they harden.** Any value an agent assumes rather than receives (a threshold, a window, a default behavior) is written as a tagged assumption (`ASSUMPTION-n:` with owner) — never as plain fact. Downstream agents carry the tag forward; an assumption enters a sprint-committed acceptance criterion only after the owner ratifies it. Two documents independently inventing the same value is coincidence, not corroboration — the tag is what keeps a guessed number from silently becoming a requirement three documents later.
 
 ## Requirement quality standard (ISO/IEC/IEEE 29148 + INCOSE)
 
@@ -245,4 +246,4 @@ The canonical template for migrating an existing brownfield store, cache, or sha
 6. Repeat for each cutover unit (one increment per hot path, by blast radius).
 ```
 
-Test-author discoveries (latent bugs surfaced while writing tests) route to `tech-debt-register`, not back to the maker — they are real bugs found during writing, not test failures. Apply cheap hardening (e.g., `isinstance` guards) in-loop rather than always deferring to a follow-up (G6/G9).
+Test-author discoveries (latent bugs surfaced while writing tests) route to `tech-debt-keeper`, not back to the maker — they are real bugs found during writing, not test failures. Apply cheap hardening (e.g., `isinstance` guards) in-loop rather than always deferring to a follow-up (G6/G9).

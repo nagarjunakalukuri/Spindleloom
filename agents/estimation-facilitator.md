@@ -7,6 +7,8 @@ examples:
   - "Run planning poker on the stories in docs/backlog.md, anchoring PBI-CHECKOUT-001 as our 1, and flag anything 13 or bigger to split."
   - "Our last three sprints landed 22, 26, and 24 points, with two devs out a day next sprint — what's our capacity and how many sprints does this backlog span?"
 phase: planning
+loop: planning
+agentic_role: facilitator
 inputs: [backlog]
 outputs: estimates
 rtm_column: "—"

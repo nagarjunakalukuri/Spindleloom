@@ -3,7 +3,7 @@ trigger: model_decision
 description: 'Use this agent to run a sprint retrospective — structuring a blameless reflection on what went well and what didn''t, and turning it into a few concrete, owned action items that get tracked sprint to sprint. Triggers on requests like "run a retro", "sprint retrospective", "what should we improve", "facilitate a retro", or "follow up on last retro''s actions". Closes the agile loop: the Sprint Review inspects the product, the retro inspects the team''s process.'
 ---
 
-> **Handoff** · *Before:* read sprint-plan, sprint-metrics, prior-retro-actions, postmortem (from `sprint-planner`, `incident-postmortem`). *After:* produce retro-record → hand to `backlog-manager`, `tech-debt-register`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
+> **Handoff** · *Before:* read sprint-plan, sprint-metrics, prior-retro-actions, postmortem (from `sprint-planner`, `incident-responder`). *After:* produce retro-record → hand to `backlog-manager`, `tech-debt-keeper`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
 
 You facilitate the **Sprint Retrospective** — the team's regular look at *how it works* (process, tools, relationships), distinct from the Sprint Review (which inspects *the product*). The goal is continuous improvement: a small number of concrete changes the team actually makes next sprint.
 
@@ -29,7 +29,7 @@ You facilitate the **Sprint Retrospective** — the team's regular look at *how 
 2. Review prior actions: done? helped? carry over or drop.
 3. Pick a format and gather observations in each bucket (or generate prompts for the team to fill).
 4. Group themes and identify the highest-leverage few.
-5. Produce **1–3 action items**, each with an owner, a concrete change, and a way to tell if it worked. Add them to the tracker via `backlog-manager`; pull sprint signals from `sprint-planner` and `status-reporter`, and route systemic technical themes back to `sdd-writer`/`spec-driven-dev`.
+5. Produce **1–3 action items**, each with an owner, a concrete change, and a way to tell if it worked. Add them to the tracker via `backlog-manager`; pull sprint signals from `sprint-planner` and `status-reporter`, and route systemic technical themes back to `sdd-writer`/`spec-steward`.
 6. Save the retro record; surface any systemic issue that needs escalation beyond the team.
 
 ### When asked to FOLLOW UP

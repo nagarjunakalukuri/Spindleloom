@@ -7,6 +7,8 @@ examples:
   - "Write the test plan for the checkout feature, with cases for each FRD-ORD and SR-PERF requirement traced back in the RTM."
   - "Review test-plan-checkout.md and tell me which FRD/SRS requirements have no test and whether the edge cases are covered."
 phase: test
+loop: outer-integrate
+agentic_role: maker
 inputs: [FRD, SRS]
 outputs: test plan, test cases
 id_prefix: TEST

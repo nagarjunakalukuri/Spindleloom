@@ -141,7 +141,7 @@
     <li><b>Turn the plan into tickets.</b> <code>backlog-manager</code> breaks the documents into a prioritized list of build-ready stories with acceptance criteria; <code>estimation-facilitator</code> sizes them; <code>sprint-planner</code> picks what fits the next sprint.
       <div class="flow">You get: a backlog of stories like "<i>As a user I can pay with a saved card</i>" â€” each testable, ordered, and estimated. Ask <span class="kbd">/pbi-next</span> for the next one to build.</div></li>
     <li><b>Build â†’ check â†’ ship â†’ learn, then repeat.</b> Developers build each ticket; it's reviewed (code, security, accessibility), run through automated CI, tested by QA, released with a go/no-go decision, and watched in production. The retro turns lessons into new backlog items â€” and the cycle repeats every sprint.
-      <div class="flow">The loop: build â†’ <code>code-reviewer</code> + <code>security-reviewer</code> + <code>accessibility-auditor</code> â†’ <code>ci-cd-pipeline</code> â†’ <code>qa-tester</code> â†’ <code>release-manager</code> (go/no-go) â†’ operate with <code>sre</code> â†’ <code>retrospective-facilitator</code> â†’ back to the backlog.</div></li>
+      <div class="flow">The loop: build â†’ <code>code-reviewer</code> + <code>security-reviewer</code> + <code>accessibility-auditor</code> â†’ <code>pipeline-engineer</code> â†’ <code>qa-tester</code> â†’ <code>release-manager</code> (go/no-go) â†’ operate with <code>sre</code> â†’ <code>retrospective-facilitator</code> â†’ back to the backlog.</div></li>
   </ol>
   <p class="note" style="margin-top:14px"><b>The safety net:</b> one file â€” the <b>RTM</b> (a table linking every requirement to the design and the test that proves it) â€” makes sure nothing silently gets dropped. Run <span class="kbd">/rtm-check</span> to confirm everything's covered, and <span class="kbd">/spec-analyze</span> before building to catch places where two documents contradict each other.</p>
 </div></section>
@@ -172,7 +172,7 @@ evidence (QA sign-off, CI status, open risks, rollback plan).</pre>
 <section id="pm"><div class="wrap">
   <h2><span class="n">03</span>Project Manager (+ Product Owner)</h2>
   <p class="lead">You own the doc strategy, the PRD, the backlog, and the cadence â€” the busiest seat in the toolkit.</p>
-  <div class="agents"><code>doc-strategy-advisor</code><code>prd-writer</code><code>backlog-manager</code><code>estimation-facilitator</code><code>sprint-planner</code><code>retrospective-facilitator</code><code>raid-log</code><code>status-reporter</code><code>product-analytics</code></div>
+  <div class="agents"><code>doc-strategy-advisor</code><code>prd-writer</code><code>backlog-manager</code><code>estimation-facilitator</code><code>sprint-planner</code><code>retrospective-facilitator</code><code>raid-keeper</code><code>status-reporter</code><code>product-analytics</code></div>
   <div class="flow"><b>Flow:</b> pick docs â†’ write PRD â†’ backlog â†’ estimate â†’ plan sprint â†’ track (RAID/status) â†’ retro â†’ measure (analytics) â†’ repeat.</div>
   <div class="lbl">Sample prompts</div>
 <pre><span class="c"># Decide what to maintain (start here)</span>
@@ -205,7 +205,7 @@ Write this week's status report with a RAG rating and the asks.</pre>
 <section id="architect"><div class="wrap">
   <h2><span class="n">04</span>Architect</h2>
   <p class="lead">You own technical direction: constraints, the blueprint, decisions, and the standing guardrails across teams.</p>
-  <div class="agents"><code>srs-writer</code><code>sdd-writer</code><code>adr-writer</code><code>rfc</code><code>tech-radar</code><code>tech-debt-register</code><code>/constitution</code><code>spec-driven-dev</code><code>ai-orchestration</code></div>
+  <div class="agents"><code>srs-writer</code><code>sdd-writer</code><code>adr-writer</code><code>rfc-facilitator</code><code>tech-radar-curator</code><code>tech-debt-keeper</code><code>/constitution</code><code>spec-steward</code><code>ai-orchestrator</code></div>
   <div class="flow"><b>Flow:</b> set the constitution â†’ SRS targets â†’ SDD blueprint â†’ propose changes via RFC â†’ record decisions as ADRs â†’ broadcast sanctioned tech on the radar.</div>
   <div class="lbl">Sample prompts</div>
 <pre><span class="c"># Standing guardrails (once)</span>
@@ -233,7 +233,7 @@ risk, and the guardrails â€” write the ai-orchestration policy.</pre>
 <section id="lead"><div class="wrap">
   <h2><span class="n">05</span>Tech Lead</h2>
   <p class="lead">You translate product into build-ready specs and hold the code bar.</p>
-  <div class="agents"><code>frd-writer</code><code>tsd-writer</code><code>api-designer</code><code>data-modeler</code><code>coding-standards</code><code>code-reviewer</code><code>backlog-manager</code><code>estimation-facilitator</code></div>
+  <div class="agents"><code>frd-writer</code><code>tsd-writer</code><code>api-designer</code><code>data-modeler</code><code>coding-standards-writer</code><code>code-reviewer</code><code>backlog-manager</code><code>estimation-facilitator</code></div>
   <div class="flow"><b>Flow:</b> FRD behavior â†’ TSD build spec (with the architect) â†’ API + data contracts â†’ set coding standards â†’ review PRs â†’ facilitate estimation.</div>
   <div class="lbl">Sample prompts</div>
 <pre><span class="c"># Behavior, exactly</span>
@@ -330,7 +330,7 @@ contrast) and give a conformance sign-off.</pre>
   <h2><span class="n">09</span>Security Engineer</h2>
   <p class="lead">You find design and code weaknesses before an attacker does â€” the judgement above CI's scanners.</p>
   <div class="agents"><code>security-reviewer</code><code>ai-eval</code></div>
-  <div class="flow"><b>Flow:</b> threat-model at the SDD â†’ write testable <code>SEC-</code> requirements â†’ review designs/PRs â†’ gate at <code>code-reviewer</code> / <code>ci-cd-pipeline</code>.</div>
+  <div class="flow"><b>Flow:</b> threat-model at the SDD â†’ write testable <code>SEC-</code> requirements â†’ review designs/PRs â†’ gate at <code>code-reviewer</code> / <code>pipeline-engineer</code>.</div>
   <div class="lbl">Sample prompts</div>
 <pre><span class="c"># Threat model the risky flow</span>
 Threat-model the order &amp; payment flow with STRIDE: assets, trust
@@ -344,7 +344,7 @@ boundaries, secrets, and PII handling. Severity-grouped, with fixes.</pre>
 <section id="sre"><div class="wrap">
   <h2><span class="n">10</span>DevOps / SRE</h2>
   <p class="lead">You make the system operable before it breaks, then automate delivery and learn from incidents.</p>
-  <div class="agents"><code>sre</code><code>ci-cd-pipeline</code><code>incident-postmortem</code></div>
+  <div class="agents"><code>sre</code><code>pipeline-engineer</code><code>incident-responder</code></div>
   <div class="flow"><b>Flow:</b> SLOs + observability + runbooks (proactive) â†’ CI/CD pipeline &amp; gates â†’ blameless postmortem (reactive) feeds the runbooks.</div>
   <div class="lbl">Sample prompts</div>
 <pre><span class="c"># Proactive reliability</span>
@@ -364,7 +364,7 @@ cause, and prevention actions that become backlog items.</pre>
 <section id="ai"><div class="wrap">
   <h2><span class="n">11</span>AI / Data Engineer</h2>
   <p class="lead">For teams that <i>ship</i> AI features or own the data layer.</p>
-  <div class="agents"><code>ai-eval</code><code>ai-orchestration</code><code>data-modeler</code><code>product-analytics</code></div>
+  <div class="agents"><code>ai-eval</code><code>ai-orchestrator</code><code>data-modeler</code><code>product-analytics</code></div>
   <div class="flow"><b>Flow:</b> govern AI use (orchestration) â†’ build evals for shipped AI features â†’ model the data â†’ instrument product metrics.</div>
   <div class="lbl">Sample prompts</div>
 <pre><span class="c"># Evals for a shipped AI feature</span>
@@ -387,13 +387,13 @@ tracking plan, the funnel, and an A/B test design with guardrails.</pre>
     <tr><td>3</td><td>PM</td><td><code>prd-writer</code></td><td>product behavior + metrics</td></tr>
     <tr><td>4</td><td>Designer</td><td><code>ux-ui-designer</code></td><td>flows, wireframes, hi-fi UI</td></tr>
     <tr><td>5</td><td>Lead / BA</td><td><code>frd-writer</code></td><td>feature behavior + edge cases</td></tr>
-    <tr><td>6</td><td>Architect</td><td><code>srs-writer</code> â†’ <code>sdd-writer</code> â†’ <code>rfc</code> â†’ <code>adr-writer</code></td><td>constraints, blueprint, decisions</td></tr>
+    <tr><td>6</td><td>Architect</td><td><code>srs-writer</code> â†’ <code>sdd-writer</code> â†’ <code>rfc-facilitator</code> â†’ <code>adr-writer</code></td><td>constraints, blueprint, decisions</td></tr>
     <tr><td>7</td><td>Lead</td><td><code>tsd-writer</code> Â· <code>api-designer</code> Â· <code>data-modeler</code></td><td>build spec + contracts</td></tr>
     <tr><td>8</td><td>PM</td><td><code>backlog-manager</code> â†’ <code>estimation-facilitator</code> â†’ <code>sprint-planner</code></td><td>sprint-ready backlog</td></tr>
     <tr><td>9</td><td>Dev</td><td>build â†’ <code>test-author</code> â†’ <code>pr-author</code></td><td>code + tests + PR</td></tr>
     <tr><td>10</td><td>Reviewers</td><td><code>code-reviewer</code> + <code>security-reviewer</code> + <code>accessibility-auditor</code></td><td>verified change</td></tr>
-    <tr><td>11</td><td>SRE / Release</td><td><code>ci-cd-pipeline</code> â†’ <code>sre</code> â†’ <code>release-manager</code></td><td>shipped &amp; monitored</td></tr>
-    <tr><td>12</td><td>PM / Team</td><td><code>product-analytics</code> Â· <code>retrospective-facilitator</code> Â· <code>tech-debt-register</code></td><td>learnings â†’ next backlog</td></tr>
+    <tr><td>11</td><td>SRE / Release</td><td><code>pipeline-engineer</code> â†’ <code>sre</code> â†’ <code>release-manager</code></td><td>shipped &amp; monitored</td></tr>
+    <tr><td>12</td><td>PM / Team</td><td><code>product-analytics</code> Â· <code>retrospective-facilitator</code> Â· <code>tech-debt-keeper</code></td><td>learnings â†’ next backlog</td></tr>
   </table>
   <p class="note" style="margin-top:14px"><b>The thread that ties it together:</b> one shared <span class="pill">RTM.md</span> carries a Req-ID (e.g. <code>FRD-TRK-001</code>) from business goal â†’ story â†’ requirement â†’ design â†’ test. Run <span class="kbd">/spec-status</span> to see coverage and drift, <span class="kbd">/rtm-check</span> to prove nothing was dropped, and <span class="kbd">/spec-analyze</span> to catch contradictions between documents before you build.</p>
 </div></section>

@@ -7,6 +7,8 @@ examples:
   - "Write an MRD for a self-serve invoicing tool aimed at freelance designers in the US — size the market and name the main competitors."
   - "Review docs/mrd.md and check whether the competitive landscape is still current and our TAM/SAM/SOM figures are sourced."
 phase: discovery
+loop: planning
+agentic_role: maker
 inputs: [doc-strategy]
 outputs: MRD
 id_prefix: MRD

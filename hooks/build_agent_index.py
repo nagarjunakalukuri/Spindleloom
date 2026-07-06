@@ -9,7 +9,7 @@ rather than by reading every agent file. Dependency-free (Python 3 stdlib only);
 except for writing agents/INDEX.md.
 
 Usage:
-    python hooks/build_agent_index.py            # from the project_managment_agents root
+    python hooks/build_agent_index.py            # from the spindleloom root
     python hooks/build_agent_index.py <agents-dir>
 
 Exit 0 always (it's a generator); prints a one-line summary.
@@ -59,7 +59,7 @@ def claude_cmd(lines):
 def main(argv):
     root = Path(argv[1]) if len(argv) > 1 else Path("agents")
     if not root.is_dir():
-        root = Path("project_managment_agents/agents")
+        root = Path("spindleloom/agents")
     files = sorted(p for p in root.glob("*.md") if p.name not in ("INDEX.md", "HELP.md"))
 
     agents = []
@@ -70,6 +70,8 @@ def main(argv):
         agents.append({
             "name": f.stem,
             "phase": scalar(lines, "phase") or "(unset)",
+            "loop": scalar(lines, "loop") or "—",
+            "role": scalar(lines, "agentic_role") or "—",
             "outputs": scalar(lines, "outputs") or "—",
             "id_prefix": scalar(lines, "id_prefix") or "—",
             "rtm_column": scalar(lines, "rtm_column") or "—",
@@ -91,11 +93,11 @@ def main(argv):
             continue
         out.append(f"## {phase.capitalize()}")
         out.append("")
-        out.append("| Agent | Produces | ID | RTM column | Hands off to | Command |")
-        out.append("|---|---|---|---|---|---|")
+        out.append("| Agent | Loop · Role | Produces | ID | RTM column | Hands off to | Command |")
+        out.append("|---|---|---|---|---|---|---|")
         for a in sorted(group, key=lambda x: x["name"]):
             ds = ", ".join(a["downstream"]) or "—"
-            out.append(f"| `{a['name']}` | {a['outputs']} | {a['id_prefix']} | {a['rtm_column']} | {ds} | {a['command']} |")
+            out.append(f"| `{a['name']}` | {a['loop']} · {a['role']} | {a['outputs']} | {a['id_prefix']} | {a['rtm_column']} | {ds} | {a['command']} |")
         out.append("")
         total += len(group)
 

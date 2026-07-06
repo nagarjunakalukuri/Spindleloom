@@ -24,15 +24,30 @@ Checks (exit 1 if any fail):
      model-invoked (no `disable-model-invocation: true`), so it can actually fire.
  10. Orphans — an agent in no other agent's `downstream` (nothing hands off to
      it), excluding the foundational entry agents (invoked directly).
+ 11. Loop classification — each agent declares `loop:` and `agentic_role:` with
+     valid values (the two loop dimensions from LOOPWRIGHT.md / AGENT-AUTHORING.md).
+ 12. Fleet-page sync — project_guides/spindleloom-agent-fleet.html's node/edge data
+     matches the contract graph: every agent appears as a node, every contract edge
+     (types p/s/f; the t:'i' wiki overlay is exempt) exists in both directions, and
+     no page edge names a nonexistent agent.
+ 13. Artifact chain — every handoff edge A->B carries a declared artifact: some
+     `outputs` of A must match some `inputs` of B (stemmed-token overlap or a
+     work-product/backlog synonym family). Advisor/orchestrator sources are routing
+     edges (exempt per AGENT-AUTHORING "Edge semantics"), and SANCTIONED_EDGES lists
+     the few deliberate context-provision edges. This is the check that would have
+     caught the SRS->SDD and URS funnel breaks.
 Also prints the live agent/template/skill/command counts (advisory — update README
 and project-overview.html / how-to-use.html to match; section sub-counts are not checked).
 
 Usage:
-    python hooks/validate_graph.py        # from the project_managment_agents root
+    python hooks/validate_graph.py        # from the spindleloom root
 Exit 0 = clean, 1 = issues found.
 """
 import re
 import sys
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -176,11 +191,93 @@ def main():
     # downstream), excluding the foundational/always-on entry agents (invoked
     # directly). Catches the wiki-curator class: an agent silently left with no
     # inbound edge. Update ENTRY_POINTS when adding a legitimate always-on agent.
-    ENTRY_POINTS = {"ai-orchestration", "coding-standards", "dev-onboarding", "spec-driven-dev", "run-orchestrator"}
+    ENTRY_POINTS = {"ai-orchestrator", "coding-standards-writer", "dev-onboarding", "spec-steward", "run-orchestrator"}
     inbound = {b for a in names for b in down[a]}
     for a in sorted(names):
         if a not in inbound and a not in ENTRY_POINTS:
             errors.append(f"orphan: {a} is in no agent's downstream and not a known entry point — nothing hands off to it")
+
+    # 11: loop classification — both fields present with valid values
+    LOOPS = {"inner", "outer-integrate", "outer-ship", "planning", "governance"}
+    ROLES = {"maker", "checker", "facilitator", "keeper", "orchestrator", "advisor"}
+    for p in files:
+        b = frontmatter(p.read_text(encoding="utf-8", errors="ignore"))
+        lm = re.search(r"(?m)^loop:\s*(\S+)\s*$", b)
+        rm = re.search(r"(?m)^agentic_role:\s*(\S+)\s*$", b)
+        if not lm:
+            errors.append(f"{p.stem}: missing loop: field (see project_guides/AGENT-AUTHORING.md)")
+        elif lm.group(1) not in LOOPS:
+            errors.append(f"{p.stem}: loop:{lm.group(1)} is not one of {sorted(LOOPS)}")
+        if not rm:
+            errors.append(f"{p.stem}: missing agentic_role: field (see project_guides/AGENT-AUTHORING.md)")
+        elif rm.group(1) not in ROLES:
+            errors.append(f"{p.stem}: agentic_role:{rm.group(1)} is not one of {sorted(ROLES)}")
+
+    # 12: fleet-page sync — the hand-authored graph page must match the contract graph.
+    # Contract edges are t:'p'/'s'/'f'; the t:'i' wiki-overlay edges are informational
+    # and exempt. Decorative layout nodes (phase bands, grid) are ignored on the node side.
+    fleet = ROOT / "project_guides" / "spindleloom-agent-fleet.html"
+    if fleet.exists():
+        page = fleet.read_text(encoding="utf-8", errors="ignore")
+        page_nodes = set(re.findall(r"\{id:'([a-z0-9-]+)'", page))
+        page_edges = set()
+        for fr, to, ty in re.findall(r"\{from:'([a-z0-9-]+)',\s*to:'([a-z0-9-]+)',\s*t:'([psfi])'\}", page):
+            if ty != "i":
+                page_edges.add((fr, to))
+        real_edges = {(a, b) for a in names for b in down[a]}
+        for a in sorted(names - page_nodes):
+            errors.append(f"fleet-page: agent {a} has no node in spindleloom-agent-fleet.html")
+        for fr, to in sorted(real_edges - page_edges):
+            errors.append(f"fleet-page: contract edge {fr} -> {to} missing from spindleloom-agent-fleet.html")
+        for fr, to in sorted(page_edges - real_edges):
+            if fr in names and to in names:
+                errors.append(f"fleet-page: edge {fr} -> {to} drawn on the page but absent from the contract graph")
+            elif fr not in names or to not in names:
+                errors.append(f"fleet-page: edge {fr} -> {to} references a nonexistent agent")
+
+    # 13: artifact chain — every non-routing edge must carry a declared artifact.
+    # Matching: stemmed-token overlap between an output and an input, or membership
+    # in the same synonym family (code moves as diff/PR/build/fix; AC live on PBIs).
+    WORK_PRODUCT = {"code", "backend code", "frontend code", "diff", "pr", "build",
+                    "code change", "fix", "unit tests", "integration tests",
+                    "automated test suites", "test results", "failing test"}
+    BACKLOG_FAMILY = {"backlog", "pbi", "acceptance criteria", "sprint backlog"}
+    FAMILIES = [WORK_PRODUCT, BACKLOG_FAMILY]
+    # deliberate context-provision edges (no artifact handoff by design)
+    SANCTIONED_EDGES = {("dev-onboarding", "backend-developer"),
+                        ("dev-onboarding", "frontend-developer"),
+                        ("dev-onboarding", "flaky-test-detective")}
+
+    def _stem_tokens(s):
+        return {w[:-1] if w.endswith("s") else w
+                for w in re.sub(r"[^a-z0-9]+", " ", s.lower()).split() if w}
+
+    def _match(out, inp):
+        o, i = out.lower().strip(), inp.lower().strip()
+        if _stem_tokens(o) & _stem_tokens(i):
+            return True
+        return any(o in fam and i in fam for fam in FAMILIES)
+
+    inputs_map, outputs_map, roles = {}, {}, {}
+    for p in files:
+        b = frontmatter(p.read_text(encoding="utf-8", errors="ignore"))
+        inputs_map[p.stem] = inline_list(b, "inputs")
+        om = re.search(r"(?m)^outputs:\s*(.+)$", b)
+        outputs_map[p.stem] = [x.strip() for x in om.group(1).split(",") if x.strip()] if om else []
+        rm2 = re.search(r"(?m)^agentic_role:\s*(\S+)", b)
+        roles[p.stem] = rm2.group(1) if rm2 else ""
+    for a in sorted(names):
+        if roles.get(a) in ("advisor", "orchestrator"):
+            continue  # routing edges per AGENT-AUTHORING "Edge semantics"
+        for b in down[a]:
+            if b not in names or (a, b) in SANCTIONED_EDGES:
+                continue
+            if not any(_match(o, i) for o in outputs_map[a] for i in inputs_map.get(b, [])):
+                errors.append(
+                    f"artifact-chain: edge {a} -> {b} carries no declared artifact "
+                    f"({a}.outputs [{', '.join(outputs_map[a])}] matches none of "
+                    f"{b}.inputs [{', '.join(inputs_map.get(b, []))}]) — declare the input, "
+                    f"or sanction the edge if it is deliberate context provision")
 
     # advisory counts
     n_templates = len(list(TEMPLATES.glob("*.md")))

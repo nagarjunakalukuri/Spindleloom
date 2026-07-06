@@ -82,7 +82,7 @@ def when_to_run(up, down):
 def main(argv):
     root = Path(argv[1]) if len(argv) > 1 else Path("agents")
     if not root.is_dir():
-        root = Path("project_managment_agents/agents")
+        root = Path("spindleloom/agents")
 
     agents = []
     for f in sorted(root.glob("*.md")):

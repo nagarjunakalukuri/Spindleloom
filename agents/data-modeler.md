@@ -7,6 +7,8 @@ examples:
   - "Design the data model for the orders feature in docs/sdd.md — conceptual through physical schema, an ERD, and indexes for our lookup-by-customer and date-range queries."
   - "Review the schema in db/schema.sql: are the foreign keys and constraints right, do the indexes match our real queries, and are the migrations reversible?"
 phase: design
+loop: planning
+agentic_role: maker
 inputs: [SRS, SDD]
 outputs: data model
 id_prefix: DM

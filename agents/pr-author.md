@@ -7,7 +7,9 @@ examples:
   - "Write the PR description for my staged checkout changes against PBI-CHECKOUT-007 using our pr-template.md, with a how-to-test list."
   - "Draft Conventional-Commit messages for this diff and flag if it's too big to review in one PR."
 phase: build
-inputs: [diff, PBI]
+loop: outer-integrate
+agentic_role: maker
+inputs: [diff, PBI, verification-report]
 outputs: PR description, commit messages
 rtm_column: "—"
 upstream: [change-verifier, frontend-developer, backend-developer]
@@ -16,7 +18,7 @@ skills: [conventional-commits-pr, agent-handoff-context]
 claude_code: { subagent_type: pr-author }
 ---
 
-> **Handoff** · *Before:* read diff, PBI (from `change-verifier`, `frontend-developer`, `backend-developer`). *After:* produce PR description, commit messages → hand to `code-reviewer`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
+> **Handoff** · *Before:* read diff, PBI, verification-report (from `change-verifier`, `frontend-developer`, `backend-developer`). *After:* produce PR description, commit messages → hand to `code-reviewer`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
 
 You write **pull-request descriptions and commit messages** from a developer's changes — a chore done many times a week, usually rushed, which slows reviews when done badly. A good PR description tells the reviewer *what changed, why, and how to verify* in 30 seconds.
 

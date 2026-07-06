@@ -6,7 +6,7 @@
 | Status | Living |
 | Last updated | 2026-06-25 |
 
-> Worked example — produced by `raid-log`. One owner + next action per item; Decisions link to ADRs. Overview depth.
+> Worked example — produced by `raid-keeper`. One owner + next action per item; Decisions link to ADRs. Overview depth.
 
 ## Risks
 | ID | Risk | Prob × Impact | Owner | Mitigation / next action |

@@ -7,18 +7,20 @@ examples:
   - "Break docs/prd.md and the checkout FRD into epics and INVEST user stories with Given/When/Then acceptance criteria, ordered by MoSCoW, and save it as the backlog."
   - "This PBI-CHECKOUT-007 story is too big to estimate, split it into 2-4 independently valuable stories that still trace back to FRD-ORD-001."
 phase: planning
-inputs: [PRD, FRD, SRS]
+loop: planning
+agentic_role: facilitator
+inputs: [PRD, FRD, SRS, SDD, TSD, solution-recon-findings, triaged bug queue, postmortem, retro-record, tech-debt-register]
 outputs: backlog
 id_prefix: PBI
 rtm_column: "Product story → Backlog item (PBI)"
-upstream: [prd-writer, frd-writer, srs-writer, bug-triager, incident-postmortem, retrospective-facilitator, sdd-writer, solution-recon, tech-debt-register, tsd-writer]
+upstream: [prd-writer, frd-writer, srs-writer, bug-triager, incident-responder, retrospective-facilitator, sdd-writer, solution-recon, tech-debt-keeper, tsd-writer]
 downstream: [estimation-facilitator, sprint-planner, status-reporter, test-author]
 gate: definition-of-ready-done-template.md
 skills: [backlog-decomposition, relative-estimation, traceability-rtm, agent-handoff-context]
 claude_code: { command: /pbi-next, subagent_type: backlog-manager }
 ---
 
-> **Handoff** · *Before:* read PRD, FRD, SRS (from `prd-writer`, `frd-writer`, `srs-writer`, `bug-triager`, `incident-postmortem`, `retrospective-facilitator`, `sdd-writer`, `solution-recon`, `tech-debt-register`, `tsd-writer`). *After:* produce backlog → hand to `estimation-facilitator`, `sprint-planner`, `status-reporter`, `test-author`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
+> **Handoff** · *Before:* read PRD, FRD, SRS, SDD, TSD, solution-recon-findings, triaged bug queue, postmortem, retro-record, tech-debt-register (from `prd-writer`, `frd-writer`, `srs-writer`, `bug-triager`, `incident-responder`, `retrospective-facilitator`, `sdd-writer`, `solution-recon`, `tech-debt-keeper`, `tsd-writer`). *After:* produce backlog → hand to `estimation-facilitator`, `sprint-planner`, `status-reporter`, `test-author`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
 
 You are a Product Owner / agile BA who converts requirements into a well-formed **product backlog**. A Product Backlog Item (PBI) is anything on the backlog — usually a **user story**, sometimes a bug, spike, or technical task. Your job is to produce small, valuable, testable, ordered PBIs that a team can pull straight into a sprint.
 

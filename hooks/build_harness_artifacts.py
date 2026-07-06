@@ -506,7 +506,7 @@ def main(argv):
 
     agents_dir = Path("agents")
     if not agents_dir.is_dir():
-        agents_dir = Path("project_managment_agents/agents")
+        agents_dir = Path("spindleloom/agents")
     src = agents_dir.parent
     agents = load_agents(agents_dir)
     if not agents:
@@ -516,30 +516,56 @@ def main(argv):
     out_root = Path(out_dir)
     built = build(agents, src, only)
 
+    def orphans(harness, files):
+        """Files on disk under the harness root that the generator did not emit.
+        The harness dirs are fully generated, so anything extra is a stale leftover
+        (e.g. a renamed agent's old file) that would still load in installs."""
+        root = out_root / harness
+        if not root.is_dir():
+            return []
+        expected = {(root / rel).resolve() for rel in files}
+        return sorted(p for p in root.rglob("*")
+                      if p.is_file() and p.resolve() not in expected
+                      and "__pycache__" not in p.parts and p.suffix != ".pyc")
+
     if check:
-        drift = []
+        drift, stale = [], []
         for harness, files in built.items():
             for rel, content in files.items():
                 p = out_root / harness / rel
                 if not p.exists() or p.read_text(encoding="utf-8", errors="ignore") != content:
                     drift.append(str(p))
-        if drift:
-            print(f"build_harness_artifacts: DRIFT — {len(drift)} artifact(s) stale vs source. "
-                  f"Re-run the generator. First few:\n  " + "\n  ".join(drift[:8]))
+            stale.extend(str(p) for p in orphans(harness, files))
+        if drift or stale:
+            if drift:
+                print(f"build_harness_artifacts: DRIFT — {len(drift)} artifact(s) stale vs source. "
+                      f"Re-run the generator. First few:\n  " + "\n  ".join(drift[:8]))
+            if stale:
+                print(f"build_harness_artifacts: ORPHANS — {len(stale)} file(s) in targets the "
+                      f"generator no longer emits (renamed/removed source?). Re-run the generator "
+                      f"to sweep them. First few:\n  " + "\n  ".join(stale[:8]))
             return 1
         print(f"build_harness_artifacts: in sync — {sum(len(f) for f in built.values())} artifacts "
               f"across {len(built)} harness(es).")
         return 0
 
-    total = 0
+    total, swept = 0, 0
     for harness, files in built.items():
         for rel, content in files.items():
             p = out_root / harness / rel
             p.parent.mkdir(parents=True, exist_ok=True)
             p.write_text(content, encoding="utf-8")
             total += 1
+        for p in orphans(harness, files):
+            p.unlink()
+            swept += 1
+        # prune directories emptied by the sweep
+        for d in sorted((x for x in (out_root / harness).rglob("*") if x.is_dir()), reverse=True):
+            if not any(d.iterdir()):
+                d.rmdir()
     print(f"build_harness_artifacts: wrote {total} artifacts for {len(agents)} agents -> "
-          f"{out_root}/ ({', '.join(built)})")
+          f"{out_root}/ ({', '.join(built)})"
+          + (f"; swept {swept} orphan(s)" if swept else ""))
     return 0
 
 

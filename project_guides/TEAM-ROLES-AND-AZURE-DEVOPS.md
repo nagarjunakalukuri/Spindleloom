@@ -13,8 +13,8 @@ One important note up front: there is **no dedicated Product Owner / Product Man
 | Person | Primary agents they drive | Ceremonies / responsibilities |
 |---|---|---|
 | **Principal Director** (sponsor/exec) | mrd-writer, brd-writer (approves) | Sets business goals & funding; approves BRD/charter; consumes status reports; go/no-go at releases. Accountable, not hands-on. |
-| **Project Manager** (+ acting PO) | doc-strategy-advisor (start here), prd-writer, backlog-manager, sprint-planner, retrospective-facilitator, raid-log, status-reporter | Owns the doc strategy, backlog priority & PRD; runs Sprint Planning, facilitates the retro and daily standup; tracks risks and reports status; manages the Azure board. |
-| **Architect** | sdd-writer (arc42/C4, HLD), adr-writer, srs-writer (NFRs), spec-driven-dev; the technical-direction layer (rfc, tech-radar, tech-debt-register, /constitution) | Owns architecture & significant decisions (ADRs); sets technical constraints & sanctioned tech; reviews leads' designs; guards the Definition of Done's technical bar. |
+| **Project Manager** (+ acting PO) | doc-strategy-advisor (start here), prd-writer, backlog-manager, sprint-planner, retrospective-facilitator, raid-keeper, status-reporter | Owns the doc strategy, backlog priority & PRD; runs Sprint Planning, facilitates the retro and daily standup; tracks risks and reports status; manages the Azure board. |
+| **Architect** | sdd-writer (arc42/C4, HLD), adr-writer, srs-writer (NFRs), spec-steward; the technical-direction layer (rfc-facilitator, tech-radar-curator, tech-debt-keeper, /constitution) | Owns architecture & significant decisions (ADRs); sets technical constraints & sanctioned tech; reviews leads' designs; guards the Definition of Done's technical bar. |
 | **Lead 1 & Lead 2** | frd-writer, tsd-writer (LLD/API contracts), estimation-facilitator, backlog-manager (refinement), code-reviewer | Translate PRD→functional specs; write the build spec with the architect; facilitate Planning Poker; run backlog refinement with the team; review developers' code; mentor. Split by feature area (one lead per 2–3 devs). |
 | **5 Developers** | Consume frd/tsd; contribute to estimation (Planning Poker), ADRs, and backlog refinement; pr-author, test-author, debugger | Implement stories/tasks; estimate as the team that does the work; raise ADRs for local decisions; keep the board updated; participate in standup/review/retro. |
 
@@ -23,7 +23,7 @@ One important note up front: there is **no dedicated Product Owner / Product Man
 2. **Definition** — PM (PO hat) writes the PRD; Architect + Leads produce SRS/SDD; Architect logs ADRs and sets the constitution/tech-radar.
 3. **Breakdown** — PM/Leads run `backlog-manager` (PRD/FRD → epics → PBIs); whole team runs `estimation-facilitator` (Planning Poker).
 4. **Delivery loop** — `sprint-planner` each sprint (goal + capacity-fit backlog); devs build; daily standup; Architect/Leads review (`code-reviewer`); `retrospective-facilitator` at sprint end; repeat.
-5. **Governance/Release** — PM runs `raid-log` + `status-reporter`; Leads run `test-plan-writer`/`qa-tester`; `release-manager` handles go/no-go with the Director.
+5. **Governance/Release** — PM runs `raid-keeper` + `status-reporter`; Leads run `test-plan-writer`/`qa-tester`; `release-manager` handles go/no-go with the Director.
 
 This maps to a clean **RACI**: Director = Accountable (business), PM = Responsible (delivery/process), Architect = Accountable (technical), Leads = Responsible (specs/quality), Devs = Responsible (implementation). The `doc-strategy-advisor` ownership matrix already seeds this.
 
@@ -39,7 +39,7 @@ One epic, from "it's a PRD feature" to "build-ready, traceable tickets." No sing
 | 2 | Feature behaviour + edge cases | Lead/BA · `frd-writer` | — |
 | 3 | Constraints / NFRs the epic must meet | **Architect · `srs-writer`** | **Own** — performance, scale, security, accessibility, interfaces |
 | 4 | Architecture for the epic (HLD→LLD, components, interfaces) | **Architect · `sdd-writer`** | **Own** — the blueprint stories build against (arc42/C4) |
-| 5 | Significant decisions | **Architect · `rfc` → `adr-writer`** | **Own** — propose before building, record the why |
+| 5 | Significant decisions | **Architect · `rfc-facilitator` → `adr-writer`** | **Own** — propose before building, record the why |
 | 5b | *(brownfield only)* ground the epic in real code | dev · `solution-recon` | Confirm the design matches what exists; catch spec↔code drift |
 | 6 | Epic → stories (PBIs) → tasks; INVEST, SPIDR splits | `backlog-manager` | **Sign off** the breakdown — the DoR technical gate (no story enters a sprint until its blueprint is peer-reviewed) |
 | 7 | Sized + scheduled | `estimation-facilitator` → `sprint-planner` | Advise on risk and build order (which PBI unblocks which) |
@@ -72,7 +72,7 @@ The project's artifacts map cleanly onto Azure DevOps. Recommended setup: **Azur
 - **Priority / MoSCoW** → backlog **order** (stack rank) + the Priority field or a `MoSCoW` tag.
 - **RTM / traceability** → Azure **work-item links**: parent-child (Epic→Story→Task) plus **"Tested By"** links to **Test Plans** test cases, and links from commits/PRs (Repos) to work items. This realizes the RTM natively.
 - **Retro action items** (retrospective-facilitator) → work items tagged `retro-action`, assigned and tracked in the next iteration.
-- **RAID / risk** (raid-log) → a custom **Risk/Issue** work-item type or a Wiki RAID page; Decisions → link to ADRs in Repos.
+- **RAID / risk** (raid-keeper) → a custom **Risk/Issue** work-item type or a Wiki RAID page; Decisions → link to ADRs in Repos.
 
 ### Where the documents live
 - **BRD/PRD/FRD/SRS/SDD/TSD/URS** → Azure **Wiki** pages (or Repos as Markdown via Docs-as-Code), each **linked from the Epic/Feature** it governs. Keep the doc as the source of truth; link work items to it.

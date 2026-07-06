@@ -10,7 +10,7 @@ Spindleloom is a fleet of 52 AI agents for the full SDLC.  Changes here affect e
 
 ```bash
 git clone <repo-url>
-cd project_managment_agents
+cd spindleloom
 
 # Verify the fleet is healthy — should print "OK" with counts:
 py -3 hooks/validate_graph.py

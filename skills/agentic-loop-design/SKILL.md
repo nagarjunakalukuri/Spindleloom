@@ -1,6 +1,6 @@
 ---
 name: agentic-loop-design
-description: Design an autonomous or assistive agent loop that converges instead of drifting — reason→act→observe, a separate maker/checker split, verifiable stop conditions (end-state · evidence · constraints · budget), state-on-disk, and the autonomy ladder. Use when building or reviewing a scheduled/looping agent, a maker/checker harness, or any "run an agent against a goal" system. Consumed by ai-orchestration (policy), ai-eval (the signal it climbs on), change-verifier, ci-cd-pipeline, and debugger.
+description: Design an autonomous or assistive agent loop that converges instead of drifting — reason→act→observe, a separate maker/checker split, verifiable stop conditions (end-state · evidence · constraints · budget), state-on-disk, and the autonomy ladder. Use when building or reviewing a scheduled/looping agent, a maker/checker harness, or any "run an agent against a goal" system. Consumed by ai-orchestrator (policy), ai-eval (the signal it climbs on), change-verifier, pipeline-engineer, and run-orchestrator.
 ---
 
 # Agentic loop design — make the loop converge, not drift

@@ -6,7 +6,7 @@
 |---|---|
 | Run id | `run-YYYYMMDD-<slug>` |
 | Objective | <one line> |
-| Entry point | doc-strategy-advisor / solution-recon / pbi-next / incident-postmortem / ai-orchestration |
+| Entry point | doc-strategy-advisor / solution-recon / pbi-next / incident-responder / ai-orchestrator |
 | Autonomy rung | 0 manual · 1 triage · 2 draft · 3 verified-PR · 4 auto-merge |
 | Status | active / blocked / done / stopped |
 

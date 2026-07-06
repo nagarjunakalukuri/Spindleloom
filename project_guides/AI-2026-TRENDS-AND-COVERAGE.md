@@ -34,7 +34,7 @@ In an agentic SDLC the scarce, human-owned work becomes **"defining objectives a
 
 - **Specs & acceptance criteria** (MRD→TSD, FRD acceptance criteria) = the *objectives* you hand an AI agent.
 - **DoR/DoD, review bars, CI gates, test plans, go/no-go** = the *guardrails and validation* that keep autonomous output safe.
-- **`spec-driven-dev`** names the core 2026 risk — specification drift when AI writes the code — and keeps the spec authoritative; **`cross-artifact-analysis`** catches contradictions between artifacts before implementation.
+- **`spec-steward`** names the core 2026 risk — specification drift when AI writes the code — and keeps the spec authoritative; **`cross-artifact-analysis`** catches contradictions between artifacts before implementation.
 - **RTM + traceability** = how you verify an agent built the right thing, and find the blast radius when it didn't.
 
 So the toolkit reframes cleanly: **humans and AI agents both consume these artifacts; the agents here are the governance layer for agentic development.** The `doc-strategy-advisor`'s Lean and AI-native (Tier 0) tiers already match the minimal-team reality.
@@ -45,22 +45,22 @@ The capabilities the agentic SDLC demands, and where each lives in the toolkit t
 
 | 2026 need | Covered by |
 |---|---|
-| **Govern AI coding agents** — what to delegate, human-in-the-loop by risk, eval/guardrails, reviewing AI output | `ai-orchestration` (pairs with `spec-driven-dev` + `code-reviewer`) |
-| **Architect the autonomous loop** — stop conditions (end state/evidence/constraints/budget), maker/checker, autonomy ladder | `ai-orchestration` → "Autonomous loop architecture" |
-| **Keep specs authoritative against drift** | `spec-driven-dev`, `cross-artifact-analysis`, RTM |
+| **Govern AI coding agents** — what to delegate, human-in-the-loop by risk, eval/guardrails, reviewing AI output | `ai-orchestrator` (pairs with `spec-steward` + `code-reviewer`) |
+| **Architect the autonomous loop** — stop conditions (end state/evidence/constraints/budget), maker/checker, autonomy ladder | `ai-orchestrator` → "Autonomous loop architecture" |
+| **Keep specs authoritative against drift** | `spec-steward`, `cross-artifact-analysis`, RTM |
 | **AI-native minimal team** — the 3–5 pod with an AI-orchestrator role | `doc-strategy-advisor` Tier 0 |
 | **Frontend craft** — components, state, accessibility (WCAG), design system, anti-"AI-slop" UI | `frontend-developer` |
 | **Backend craft** — service design, reliability, idempotency, security, observability, scaling | `backend-developer` |
 | **API as a first-class contract** (OpenAPI/GraphQL) | `api-designer` |
 | **Data model depth** — conceptual→physical schema, ERD, indexing, migrations | `data-modeler` |
-| **Architect's technical direction** — standing guardrails, pre-build proposals, sanctioned tech, owned debt | `/constitution`, `rfc`, `tech-radar`, `tech-debt-register` |
+| **Architect's technical direction** — standing guardrails, pre-build proposals, sanctioned tech, owned debt | `/constitution`, `rfc-facilitator`, `tech-radar-curator`, `tech-debt-keeper` |
 | **Delivery-loop health metrics** (DORA + cycle time) | `status-reporter` + `engineering-metrics-template` |
 
 On **stack-agnostic vs stack-specific**: the spec/design spine (`sdd-writer` arc42/C4, `tsd-writer`) stays deliberately stack-agnostic so the toolkit works for any language; the `frontend-developer`/`backend-developer`/`api-designer`/`data-modeler` agents add depth *on top* when the work is web/app development.
 
 ## 6. The honest take
 
-The toolkit is strong on **process, governance, and specs** — exactly the half that *grows* in importance as AI writes more of the code. It now also carries the **stack-depth** layer (FE/BE/API/data) and the **agentic-SDLC guardrail + autonomous-loop** layer (`ai-orchestration`). Net: it covers the full 2026 picture — *define the right thing, design it, govern who (human or AI) builds it, and verify what comes back* — for both a classic 9-person team and a 4–5 AI-native pod.
+The toolkit is strong on **process, governance, and specs** — exactly the half that *grows* in importance as AI writes more of the code. It now also carries the **stack-depth** layer (FE/BE/API/data) and the **agentic-SDLC guardrail + autonomous-loop** layer (`ai-orchestrator`). Net: it covers the full 2026 picture — *define the right thing, design it, govern who (human or AI) builds it, and verify what comes back* — for both a classic 9-person team and a 4–5 AI-native pod.
 
 ## Sources
 - [Agentic Software Development Takes the Lead — Forrester](https://www.forrester.com/blogs/agentic-software-development-takes-the-lead-from-code-assistants-to-orchestrated-sdlc-agents/)

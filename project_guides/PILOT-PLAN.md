@@ -7,7 +7,7 @@ Move the toolkit from "excellent design" to "proven practice" by running one rea
 
 ## Scope (deliberately small)
 - **One project / one team.** Pick a real, self-contained initiative of ~1–2 epics (not the most critical system, not a toy). A web/app build is ideal so the FE/BE/API/data agents are exercised.
-- **Lean agent set first**, not all 31: `doc-strategy-advisor` → `prd-writer` → `backlog-manager` → `estimation-facilitator` → `sprint-planner` → `code-reviewer` + `coding-standards` → `ci-cd-pipeline` → `qa-tester` → `release-manager` → `retrospective-facilitator`, with `raid-log` + `status-reporter` for governance. Add `sdd-writer`/`api-designer`/`data-modeler` if the design warrants.
+- **Lean agent set first**, not all 31: `doc-strategy-advisor` → `prd-writer` → `backlog-manager` → `estimation-facilitator` → `sprint-planner` → `code-reviewer` + `coding-standards-writer` → `pipeline-engineer` → `qa-tester` → `release-manager` → `retrospective-facilitator`, with `raid-keeper` + `status-reporter` for governance. Add `sdd-writer`/`api-designer`/`data-modeler` if the design warrants.
 - **On Azure DevOps** as the system of record (Boards, Repos, Pipelines, Wiki) — toolkit is the authoring/standardization layer.
 
 ## Team

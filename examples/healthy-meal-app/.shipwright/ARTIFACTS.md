@@ -22,4 +22,4 @@
 | `RETROSPECTIVE` | retrospective | Sprint 1 Retrospective — FreshDesk | `15-retrospective.md` | Lead (facilitator) | Closed | — | 2026-06-25 | 3 |
 | `RAID-LOG` | raid-log | RAID Log — FreshDesk | `16-raid-log.md` | PM | Living | — | 2026-06-25 | 4 |
 | `STATUS-REPORT` | status-report | Status Report — FreshDesk — Sprint 1 | `17-status-report.md` | PM | Issued | — | 2026-06-25 | 6 |
-| `RTM` | rtm | RTM: FreshDesk — Requirements Traceability Matrix | `RTM.md` | — | — | — | — | 17 |
+| `RTM` | rtm | RTM: FreshDesk — Requirements Traceability Matrix | `RTM.md` | — | — | — | — | 19 |

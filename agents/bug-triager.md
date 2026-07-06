@@ -7,6 +7,8 @@ examples:
   - "Triage today's incoming bug queue: set severity and priority on each, flag dupes, assign owners, and call out any S1/S2 release blockers."
   - "Groom the bug backlog and tell me what's stale, un-owned, or mis-severitized, plus any duplicate clusters worth merging."
 phase: test
+loop: outer-integrate
+agentic_role: facilitator
 inputs: [bug reports]
 outputs: triaged bug queue
 rtm_column: "—"

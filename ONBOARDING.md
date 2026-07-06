@@ -21,7 +21,7 @@ Top MCP Servers:
 ## Your Setup Checklist
 
 ### Codebases
-- [ ] project_managment_agents — local workspace (the "Spindleloom" SDLC agent fleet; no git remote)
+- [ ] spindleloom — local workspace (the "Spindleloom" SDLC agent fleet; no git remote)
 - [ ] IDP-Accelerator / idp-orchestrator — additional working dir (Python/LangGraph document-processing engine)
 - [ ] IDP-Accelerator / idp-skills — additional working dir
 
@@ -31,7 +31,7 @@ Top MCP Servers:
 ### Skills to Know About
 - [ ] /deep-research — fan-out web research with adversarial fact-checking and a cited report. Used for multi-source investigation before deciding.
 - [ ] /spec-new, /pbi-next, /rtm-check, /adr-new — the Spindleloom fleet's own slash commands (in `commands/`) for scaffolding specs, pulling the next backlog item, auditing the RTM, and recording decisions.
-- [ ] The 49-agent fleet auto-delegates by description (e.g. "write a PRD" → `prd-writer`); model-invoked skills like `requirement-elicitation` and `ubiquitous-language` fire automatically.
+- [ ] The 52-agent fleet auto-delegates by description (e.g. "write a PRD" → `prd-writer`); model-invoked skills like `requirement-elicitation` and `ubiquitous-language` fire automatically.
 
 ## Team Tips
 

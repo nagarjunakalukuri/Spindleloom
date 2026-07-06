@@ -96,7 +96,7 @@ Store the resolved command in a variable (e.g., `PYTHON=.venv/Scripts/python.exe
 The maker (`backend-developer` / `frontend-developer` / `test-author`) hands the change here; you gate it before `pr-author` opens the PR and `code-reviewer` does the static review; `debugger` receives anything that fails.
 
 ## Feedback loop (hill-climbing)
-Recurring verification failures aren't just per-change bugs — feed the pattern to `retrospective-facilitator`, the team `skills`, and the `/constitution`, so the harness gets harder where it keeps failing (the layer-4 loop in `ai-orchestration`). An acceptance criterion that's impossible to verify by execution signals a vague spec — push back to `frd-writer`.
+Recurring verification failures aren't just per-change bugs — feed the pattern to `retrospective-facilitator`, the team `skills`, and the `/constitution`, so the harness gets harder where it keeps failing (the layer-4 loop in `ai-orchestrator`). An acceptance criterion that's impossible to verify by execution signals a vague spec — push back to `frd-writer`.
 
 ## Style rules
 - Run it; a verdict without execution is an opinion.

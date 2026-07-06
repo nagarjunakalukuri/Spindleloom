@@ -1,6 +1,6 @@
 ---
 name: requirement-elicitation
-description: Interview the user one question at a time to stress-test a plan, design, or set of requirements before it is written down — surfacing gaps, contradictions, and unstated assumptions. Use before drafting or approving a BRD/PRD/FRD/SDD, when a requirement feels vague or the intent is ambiguous, or on a "interview me about this / stress-test these requirements / pressure-test the plan" request. Returns resolved decisions, open questions, and flagged assumptions ready to drop into the document and the RTM. Pairs with the brd/prd/frd-writer and rfc agents.
+description: Interview the user one question at a time to stress-test a plan, design, or set of requirements before it is written down — surfacing gaps, contradictions, and unstated assumptions. Use before drafting or approving a BRD/PRD/FRD/SDD, when a requirement feels vague or the intent is ambiguous, or on a "interview me about this / stress-test these requirements / pressure-test the plan" request. Returns resolved decisions, open questions, and flagged assumptions ready to drop into the document and the RTM. Pairs with the brd/prd/frd-writer and rfc-facilitator agents.
 ---
 
 # Requirement elicitation — relentless interview before the doc
@@ -41,4 +41,4 @@ Assumptions to flag:
 Each resolved decision is a requirement-in-waiting; each open question is a row for the RAID log or the doc's "Open questions" table; each assumption is something the writer agent must flag rather than silently bake in.
 
 ## Tie-in
-Sits in front of the requirements funnel: the brd/prd/frd-writer agents elicit intent, then draft and run `requirement-quality` on the result. `ubiquitous-language` runs alongside to capture the vocabulary the interview surfaces. Unresolved items flow to the `raid-log`; load-bearing decisions become ADRs via `adr-writer`.
+Sits in front of the requirements funnel: the brd/prd/frd-writer agents elicit intent, then draft and run `requirement-quality` on the result. `ubiquitous-language` runs alongside to capture the vocabulary the interview surfaces. Unresolved items flow to the `raid-keeper`; load-bearing decisions become ADRs via `adr-writer`.

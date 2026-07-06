@@ -345,15 +345,15 @@
  <div class="io"><b>In:</b> MRD, BRD &nbsp;.&nbsp; <b>Reviews:</b> backlog readiness, sprint demos &nbsp;.&nbsp; <b>Out:</b> PRD, prioritised backlog, story acceptance</div></div>
  <div class="card"><span class="role">Responsible . Delivery &amp; process</span><h3>Project Manager</h3>
  <p class="muted" style="font-size:.88rem">Owns delivery &amp; process: doc strategy, schedule, the Azure board, risk &amp; reporting, ceremonies. Partners with the PO on scope.</p>
- <ul><li>doc-strategy-advisor . sprint-planner</li><li>backlog-manager (mechanics) . retrospective</li><li>raid-log . status-reporter</li></ul>
+ <ul><li>doc-strategy-advisor . sprint-planner</li><li>backlog-manager (mechanics) . retrospective</li><li>raid-keeper . status-reporter</li></ul>
  <div class="io"><b>In:</b> BRD, the PO's PRD &nbsp;.&nbsp; <b>Reviews:</b> estimates, sprint scope, status &nbsp;.&nbsp; <b>Out:</b> sprint plan, RAID, status reports, schedule</div></div>
  <div class="card"><span class="role">Accountable . Technical</span><h3>Architect</h3>
  <p class="muted" style="font-size:.88rem">Owns architecture &amp; significant decisions; sets technical constraints &amp; the DoD bar.</p>
- <ul><li>sdd-writer (arc42/C4) . srs-writer</li><li>adr-writer . spec-driven-dev</li><li>reviews significant changes</li></ul>
+ <ul><li>sdd-writer (arc42/C4) . srs-writer</li><li>adr-writer . spec-steward</li><li>reviews significant changes</li></ul>
  <div class="io"><b>In:</b> PRD, FRD &nbsp;.&nbsp; <b>Reviews:</b> key PRs &amp; designs &nbsp;.&nbsp; <b>Out:</b> SRS, SDD, ADRs</div></div>
  <div class="card"><span class="role">Responsible . Specs &amp; quality</span><h3>2 Leads</h3>
  <p class="muted" style="font-size:.88rem">Translate specs to functional/build detail; facilitate estimation; review code; mentor.</p>
- <ul><li>frd-writer . tsd-writer</li><li>estimation-facilitator . backlog refine</li><li>code-reviewer . coding-standards</li></ul>
+ <ul><li>frd-writer . tsd-writer</li><li>estimation-facilitator . backlog refine</li><li>code-reviewer . coding-standards-writer</li></ul>
  <div class="io"><b>In:</b> PRD, SRS, SDD &nbsp;.&nbsp; <b>Reviews:</b> PRs (code review) &nbsp;.&nbsp; <b>Out:</b> FRD, TSD, estimates</div></div>
  <div class="card"><span class="role">Responsible . Implementation</span><h3>5 Developers</h3>
  <p class="muted" style="font-size:.88rem">Build stories, estimate as the doing-team, raise ADRs, keep the board &amp; tests honest.</p>
@@ -375,11 +375,11 @@
  <div class="io"><b>In:</b> PRD, user research &nbsp;.&nbsp; <b>Reviews:</b> the built UI &nbsp;.&nbsp; <b>Out:</b> wireframes, design system</div></div>
  <div class="card"><span class="role">Ops . Platform</span><h3>DevOps / SRE <span style="font-weight:400;font-size:.66rem;color:var(--faint)">(Site Reliability Engineering)</span></h3>
  <p class="muted" style="font-size:.88rem">Owns CI/CD infra, environments, observability, on-call, reliability. The work lives in our agents; this actor runs it.</p>
- <ul><li>ci-cd-pipeline . incident-postmortem</li><li>release-manager (rollout/rollback) . SLOs</li></ul>
+ <ul><li>pipeline-engineer . incident-responder</li><li>release-manager (rollout/rollback) . SLOs</li></ul>
  <div class="io"><b>In:</b> SDD, TSD &nbsp;.&nbsp; <b>Reviews:</b> deploy readiness &nbsp;.&nbsp; <b>Out:</b> CI/CD pipeline, runbooks, SLOs</div></div>
  <div class="card"><span class="role">Security</span><h3>Security Engineer</h3>
  <p class="muted" style="font-size:.88rem">Threat modeling, security review, pen testing, secrets &amp; compliance posture. Security is in the SRS/backend/CI -- this actor drives it.</p>
- <ul><li>srs-writer (security non-functional reqs) . backend-developer</li><li>ci-cd-pipeline (SAST security scan) . review gate</li></ul>
+ <ul><li>srs-writer (security non-functional reqs) . backend-developer</li><li>pipeline-engineer (SAST security scan) . review gate</li></ul>
  <div class="io"><b>In:</b> SRS, SDD &nbsp;.&nbsp; <b>Reviews:</b> PRs &amp; threat model &nbsp;.&nbsp; <b>Out:</b> security requirements, scan gates</div></div>
  <div class="card"><span class="role">Process</span><h3>Scrum Master</h3>
  <p class="muted" style="font-size:.88rem">Facilitates ceremonies, removes blockers, and guards the process &amp; team health. Today the PM absorbs this; split it out as the team grows. (The Product Owner is now a dedicated core role above.)</p>
@@ -410,7 +410,7 @@
  <li><b>Product Lead</b> (AI-literate) -- PRD, backlog priority, acceptance</li>
  <li><b>Data / Integration specialist</b> -- data quality &amp; integrations</li>
  <li><b>QA / Validation lead</b> -- validation strategy &amp; sign-off</li>
- <li><b>+ AI agents</b> -- most implementation, under <code>ai-orchestration</code> guardrails</li>
+ <li><b>+ AI agents</b> -- most implementation, under <code>ai-orchestrator</code> guardrails</li>
  </ul></div>
  <div class="card"><h3>How a pod maps to the loops</h3>
  <ul>
@@ -424,11 +424,11 @@
  <p class="lead2" style="font-size:.95rem">Each sprint, the pod runs the <b>whole outer loop on its own slice and ships</b> -- no waiting on other teams. Same cadence as the 11-person team, just fewer hands per lap.</p>
  <div class="oflow">
  <div class="orow"><span class="ostage" style="color:var(--accent2)">Plan</span><span class="oseq">Product Lead sets the sprint goal &amp; pulls Ready PBIs <span class="omuted">(sprint-planner . estimation-facilitator)</span></span></div>
- <div class="orow"><span class="ostage" style="color:var(--teal)">Build</span><span class="oseq">AI Orchestrator delegates to AI agents; the pod codes &amp; unit-tests <span class="omuted">(inner loop . ai-orchestration . coding-standards)</span></span></div>
+ <div class="orow"><span class="ostage" style="color:var(--teal)">Build</span><span class="oseq">AI Orchestrator delegates to AI agents; the pod codes &amp; unit-tests <span class="omuted">(inner loop . ai-orchestrator . coding-standards-writer)</span></span></div>
  <div class="orow"><span class="ostage" style="color:var(--accent)">Review</span><span class="oseq">Orchestrator / peers review PRs against the bar <span class="omuted">(code-reviewer)</span></span></div>
  <div class="orow"><span class="ostage" style="color:var(--amber)">Test</span><span class="oseq">QA / Validation lead runs tests, logs bugs, signs off <span class="omuted">(test-plan-writer . qa-tester)</span></span></div>
- <div class="orow"><span class="ostage" style="color:var(--green)">Ship</span><span class="oseq">Pod releases its slice via CI/CD with go/no-go <span class="omuted">(ci-cd-pipeline . release-manager)</span></span></div>
- <div class="orow"><span class="ostage" style="color:var(--accent2)">Improve </span><span class="oseq">Retro tunes the loop; Operate feedback &amp; new PBIs return to the backlog <span class="omuted">(retrospective . incident-postmortem)</span></span></div>
+ <div class="orow"><span class="ostage" style="color:var(--green)">Ship</span><span class="oseq">Pod releases its slice via CI/CD with go/no-go <span class="omuted">(pipeline-engineer . release-manager)</span></span></div>
+ <div class="orow"><span class="ostage" style="color:var(--accent2)">Improve </span><span class="oseq">Retro tunes the loop; Operate feedback &amp; new PBIs return to the backlog <span class="omuted">(retrospective . incident-responder)</span></span></div>
  </div>
  <p class="muted" style="font-size:.84rem;margin-top:8px">The pod owns this loop end to end for its slice, so the sprint completes <b>inside the pod</b> -- that's what keeps the delivery loop fast. Larger products run several pods, each on this same sprint loop in parallel.</p>
 
@@ -468,25 +468,25 @@
  <div class="spine">
  <div class="cluster" style="border-top-color:var(--teal)"><h5>Discover &amp; Define <span style="color:var(--faint);font-weight:400;font-size:.66rem">. 5</span></h5><div class="ags">mrd . brd . prd . frd . urs</div></div>
  <div class="carr">'</div>
- <div class="cluster" style="border-top-color:var(--accent)"><h5>Design <span style="color:var(--faint);font-weight:400;font-size:.66rem">. 7</span></h5><div class="ags">srs . sdd . tsd . adr . spec-driven-dev . solution-recon . rfc</div></div>
+ <div class="cluster" style="border-top-color:var(--accent)"><h5>Design <span style="color:var(--faint);font-weight:400;font-size:.66rem">. 7</span></h5><div class="ags">srs . sdd . tsd . adr . spec-steward . solution-recon . rfc-facilitator</div></div>
  <div class="carr">'</div>
  <div class="cluster" style="border-top-color:var(--accent2)"><h5>Plan &amp; Deliver <span style="color:var(--faint);font-weight:400;font-size:.66rem">. 4</span></h5><div class="ags">backlog-manager . estimation . sprint-planner . retrospective</div></div>
  <div class="carr">'</div>
- <div class="cluster" style="border-top-color:var(--amber)"><h5>Build, Review &amp; Test <span style="color:var(--faint);font-weight:400;font-size:.66rem">. 15</span></h5><div class="ags">dev-onboarding . coding-standards . code-reviewer . security-reviewer . accessibility-auditor . performance-engineer . ci-cd . test-plan . qa-tester<br><span style="color:var(--amber)">+ pr-author . test-author . debugger . test-automation . bug-triager . flaky-test-detective</span></div></div>
+ <div class="cluster" style="border-top-color:var(--amber)"><h5>Build, Review &amp; Test <span style="color:var(--faint);font-weight:400;font-size:.66rem">. 15</span></h5><div class="ags">dev-onboarding . coding-standards-writer . code-reviewer . security-reviewer . accessibility-auditor . performance-engineer . ci-cd . test-plan . qa-tester<br><span style="color:var(--amber)">+ pr-author . test-author . debugger . test-automation . bug-triager . flaky-test-detective</span></div></div>
  <div class="carr">'</div>
- <div class="cluster" style="border-top-color:#f0883e"><h5>Stack depth &amp; AI-native <span style="color:var(--faint);font-weight:400;font-size:.66rem">. 7</span></h5><div class="ags">ux-ui-designer . frontend . backend . api-designer . data-modeler . ai-orchestration . ai-eval</div></div>
+ <div class="cluster" style="border-top-color:#f0883e"><h5>Stack depth &amp; AI-native <span style="color:var(--faint);font-weight:400;font-size:.66rem">. 7</span></h5><div class="ags">ux-ui-designer . frontend . backend . api-designer . data-modeler . ai-orchestrator . ai-eval</div></div>
  <div class="carr">'</div>
- <div class="cluster" style="border-top-color:var(--green)"><h5>Ship &amp; Operate <span style="color:var(--faint);font-weight:400;font-size:.66rem">. 7</span></h5><div class="ags">release-manager . sre . incident-postmortem . product-analytics . feature-docs-writer . tech-radar . tech-debt-register</div></div>
+ <div class="cluster" style="border-top-color:var(--green)"><h5>Ship &amp; Operate <span style="color:var(--faint);font-weight:400;font-size:.66rem">. 7</span></h5><div class="ags">release-manager . sre . incident-responder . product-analytics . feature-docs-writer . tech-radar-curator . tech-debt-keeper</div></div>
  </div></div>
  <div class="clayer"><div class="clab">Across all</div>
  <div style="display:flex;gap:6px;flex-wrap:wrap">
- <div class="band cc">Governance . 2 -- <code>raid-log</code> . <code>status-reporter</code></div>
+ <div class="band cc">Governance . 2 -- <code>raid-keeper</code> . <code>status-reporter</code></div>
  <div class="band cc">Knowledge . 1 -- <code>wiki-curator</code> indexes every output</div>
  </div></div>
  <div class="clayer"><div class="clab"> Loop</div>
  <div class="band fb">retros &amp; incidents feed new PBIs back into Plan &amp; Deliver</div></div>
  </div>
- <p class="muted" style="font-size:.78rem;margin-top:2px">All 52 agents: 7 Discover &amp; Define + 7 Design + 4 Plan &amp; Deliver + 15 Build/Review/Test + 9 Ship/Operate/Govern + 7 Stack-depth &amp; AI-native (the 06 phase totals below). The spine factors out the cross-cutting agents -- the router (Orchestrate . 1), Governance . 2 and Knowledge . 1 -- so two spine counts are lower than their 06 phase total: <b>Discover shows 5</b> here (+ <code>doc-strategy-advisor</code> + <code>wiki-curator</code> = 7) and <b>Ship &amp; Operate shows 7</b> (+ <code>raid-log</code> + <code>status-reporter</code> = 9). Spine 45 + router 1 + governance 2 + knowledge 1 = 49. Specialists hand off along the spine; the router selects them; governance &amp; knowledge span everything; the loop closes.</p>
+ <p class="muted" style="font-size:.78rem;margin-top:2px">All 52 agents: 7 Discover &amp; Define + 7 Design + 4 Plan &amp; Deliver + 15 Build/Review/Test + 9 Ship/Operate/Govern + 7 Stack-depth &amp; AI-native (the 06 phase totals below). The spine factors out the cross-cutting agents -- the router (Orchestrate . 1), Governance . 2 and Knowledge . 1 -- so two spine counts are lower than their 06 phase total: <b>Discover shows 5</b> here (+ <code>doc-strategy-advisor</code> + <code>wiki-curator</code> = 7) and <b>Ship &amp; Operate shows 7</b> (+ <code>raid-keeper</code> + <code>status-reporter</code> = 9). Spine 45 + router 1 + governance 2 + knowledge 1 = 49. Specialists hand off along the spine; the router selects them; governance &amp; knowledge span everything; the loop closes.</p>
 
  <div class="phase p-disc"><div class="head"><span class="badge b-disc">Discover &amp; Define</span> <span class="pcount">. 7 agents</span></div>
  <p class="phasenote"><b>Benefit:</b> build the <b>right thing</b> -- wrong scope is caught before any code, where it's cheapest to fix.</p>
@@ -507,9 +507,9 @@
  <div class="agent"><code>sdd-writer</code><p>Architecture blueprint: arc42 + C4 + HLD'LLD.</p><div class="ameta"><b>Owner:</b> Architect . <b>Output:</b> SDD</div><div class="aq">How is it architected?"</div></div>
  <div class="agent"><code>tsd-writer</code><p>Build spec: stack, API contracts, schemas, deploy.</p><div class="ameta"><b>Owner:</b> Senior engineer . <b>Output:</b> TSD</div><div class="aq">How is it built?"</div></div>
  <div class="agent"><code>adr-writer</code><p>Append-only Architecture Decision Records (the why).</p><div class="ameta"><b>Owner:</b> Architect / tech lead . <b>Output:</b> ADRs</div><div class="aq">Why did we choose this?"</div></div>
- <div class="agent"><code>spec-driven-dev</code><p>Keep a living spec so AI tools don't drift from intent.</p><div class="ameta"><b>Owner:</b> Architect / lead . <b>Output:</b> living spec + maturity score</div><div class="aq">Is the spec keeping AI on intent?"</div></div>
+ <div class="agent"><code>spec-steward</code><p>Keep a living spec so AI tools don't drift from intent.</p><div class="ameta"><b>Owner:</b> Architect / lead . <b>Output:</b> living spec + maturity score</div><div class="aq">Is the spec keeping AI on intent?"</div></div>
  <div class="agent"><code>solution-recon</code><p>Reads the codebase before a brownfield spec/PBI -- ground truth, real contracts/data, FE-only vs backend-first.</p><div class="ameta"><b>Owner:</b> Senior engineer . <b>Output:</b> code-grounded recon + task breakdown</div><div class="aq">What actually exists in the code?"</div></div>
- <div class="agent"><code>rfc</code><p>Forward-looking design proposal opened for comment before building; an accepted RFC produces an ADR.</p><div class="ameta"><b>Owner:</b> Architect / senior . <b>Output:</b> RFC</div><div class="aq">Should we build it this way?"</div></div>
+ <div class="agent"><code>rfc-facilitator</code><p>Forward-looking design proposal opened for comment before building; an accepted RFC produces an ADR.</p><div class="ameta"><b>Owner:</b> Architect / senior . <b>Output:</b> RFC</div><div class="aq">Should we build it this way?"</div></div>
  </div></div>
 
  <div class="phase p-plan"><div class="head"><span class="badge b-plan">Plan &amp; Deliver</span> <span class="pcount">. 4 agents</span></div>
@@ -525,12 +525,12 @@
  <p class="phasenote"><b>Benefit:</b> quality built in + the IC's daily chores automated -- consistent code, a shared review bar, automated gates, PRs/tests/debugging/triage assisted, fewer escaped defects.</p>
  <div class="agents">
  <div class="agent"><code>dev-onboarding</code><p>CONTRIBUTING + git/branch/commit/PR conventions.</p><div class="ameta"><b>Owner:</b> Leads . <b>Output:</b> CONTRIBUTING guide</div><div class="aq">How do I get productive here?"</div></div>
- <div class="agent"><code>coding-standards</code><p>What good code looks like-- automate what tools can.</p><div class="ameta"><b>Owner:</b> Architect / leads . <b>Output:</b> standards doc</div><div class="aq">What does good code look like?"</div></div>
+ <div class="agent"><code>coding-standards-writer</code><p>What good code looks like-- automate what tools can.</p><div class="ameta"><b>Owner:</b> Architect / leads . <b>Output:</b> standards doc</div><div class="aq">What does good code look like?"</div></div>
  <div class="agent"><code>code-reviewer</code><p>PR review vs the bar; severity-grouped, kind, actionable.</p><div class="ameta"><b>Owner:</b> Leads / seniors . <b>Output:</b> PR review + verdict</div><div class="aq">Is this ready to merge?"</div></div>
  <div class="agent"><code>security-reviewer</code><p>Threat modeling (STRIDE), security requirements, authz-design review, AppSec checklist -- the judgement above CI's scanners.</p><div class="ameta"><b>Owner:</b> Security engineer . <b>Output:</b> threat model + security review</div><div class="aq">Is this secure by design?"</div></div>
  <div class="agent"><code>accessibility-auditor</code><p>Independent WCAG 2.1 AA audit + sign-off (keyboard/screen-reader/contrast) -- the a11y gate.</p><div class="ameta"><b>Owner:</b> Accessibility auditor . <b>Output:</b> a11y audit + sign-off</div><div class="aq">Is it accessible, and can we sign off?"</div></div>
  <div class="agent"><code>performance-engineer</code><p>Profile &amp; optimize against a budget: bottlenecks, memory, slow queries (N+1), bundle/Core Web Vitals -- behavior-preserving, load-verified.</p><div class="ameta"><b>Owner:</b> Performance engineer . <b>Output:</b> performance audit + optimizations</div><div class="aq">Where's the bottleneck, and is it under budget?"</div></div>
- <div class="agent"><code>ci-cd-pipeline</code><p>Automated stages &amp; gates; makes DoD enforceable.</p><div class="ameta"><b>Owner:</b> DevOps / SRE . <b>Output:</b> pipeline + merge gates</div><div class="aq">What must pass to ship?"</div></div>
+ <div class="agent"><code>pipeline-engineer</code><p>Automated stages &amp; gates; makes DoD enforceable.</p><div class="ameta"><b>Owner:</b> DevOps / SRE . <b>Output:</b> pipeline + merge gates</div><div class="aq">What must pass to ship?"</div></div>
  <div class="agent"><code>test-plan-writer</code><p>Test plan &amp; cases traced to requirements; IQ/OQ/PQ.</p><div class="ameta"><b>Owner:</b> QA / lead . <b>Output:</b> test plan + cases</div><div class="aq">How do we verify each requirement?"</div></div>
  <div class="agent"><code>qa-tester</code><p>Run tests, report bugs, defect lifecycle, QA sign-off.</p><div class="ameta"><b>Owner:</b> QA / tester . <b>Output:</b> bug reports + QA sign-off</div><div class="aq">Does it work, and is it release-ready?"</div></div>
  <div class="agent"><code>pr-author</code><p>Drafts PR descriptions &amp; commit messages from a diff.</p><div class="ameta"><b>Owner:</b> Developer . <b>Output:</b> PR body + commits</div><div class="aq">How do I describe this change?"</div></div>
@@ -546,13 +546,13 @@
  <div class="agents">
  <div class="agent"><code>release-manager</code><p>Release plan, evidence-based go/no-go, release notes.</p><div class="ameta"><b>Owner:</b> PM / release mgr . <b>Output:</b> release + go/no-go + notes</div><div class="aq">Are we go for launch?"</div></div>
  <div class="agent"><code>sre</code><p>Proactive reliability: SLO/SLIs + error budgets, observability, alerting, runbooks, deploy/rollback.</p><div class="ameta"><b>Owner:</b> DevOps / SRE . <b>Output:</b> reliability plan</div><div class="aq">Will it stay up, and how do we recover?"</div></div>
- <div class="agent"><code>incident-postmortem</code><p>Incident response + blameless postmortem + runbooks.</p><div class="ameta"><b>Owner:</b> On-call / SRE . <b>Output:</b> postmortem + runbook</div><div class="aq">What broke, and how do we prevent it?"</div></div>
- <div class="agent"><code>raid-log</code><p>Living Risks/Assumptions/Issues/Decisions register.</p><div class="ameta"><b>Owner:</b> Project Manager . <b>Output:</b> RAID register</div><div class="aq">What could derail us?"</div></div>
+ <div class="agent"><code>incident-responder</code><p>Incident response + blameless postmortem + runbooks.</p><div class="ameta"><b>Owner:</b> On-call / SRE . <b>Output:</b> postmortem + runbook</div><div class="aq">What broke, and how do we prevent it?"</div></div>
+ <div class="agent"><code>raid-keeper</code><p>Living Risks/Assumptions/Issues/Decisions register.</p><div class="ameta"><b>Owner:</b> Project Manager . <b>Output:</b> RAID register</div><div class="aq">What could derail us?"</div></div>
  <div class="agent"><code>status-reporter</code><p>RAG status reports grounded in metrics &amp; RAID.</p><div class="ameta"><b>Owner:</b> Project Manager . <b>Output:</b> RAG status report</div><div class="aq">How's the project really doing?"</div></div>
  <div class="agent"><code>product-analytics</code><p>Instrument the PRD's success metrics: events, funnels, A/B tests -- closes the build'learn loop.</p><div class="ameta"><b>Owner:</b> Product analyst / PM . <b>Output:</b> analytics &amp; instrumentation spec</div><div class="aq">Did the feature move the metric?"</div></div>
  <div class="agent"><code>feature-docs-writer</code><p>End-user / feature docs in the Ditaxis model (tutorial . how-to . reference . explanation) from shipped features.</p><div class="ameta"><b>Owner:</b> Tech writer / dev . <b>Output:</b> user &amp; feature docs</div><div class="aq">How does someone use this?"</div></div>
- <div class="agent"><code>tech-radar</code><p>Adopt/Trial/Assess/Hold of sanctioned tech across teams; ring moves driven by ADRs.</p><div class="ameta"><b>Owner:</b> Architect . <b>Output:</b> technology radar</div><div class="aq">What are we allowed to use?"</div></div>
- <div class="agent"><code>tech-debt-register</code><p>Owned, quantified debt (impact -- interest vs effort), negotiable with the PM, promotable to the backlog.</p><div class="ameta"><b>Owner:</b> Architect / eng lead . <b>Output:</b> tech-debt register</div><div class="aq">What's rotting, and what do we pay down?"</div></div>
+ <div class="agent"><code>tech-radar-curator</code><p>Adopt/Trial/Assess/Hold of sanctioned tech across teams; ring moves driven by ADRs.</p><div class="ameta"><b>Owner:</b> Architect . <b>Output:</b> technology radar</div><div class="aq">What are we allowed to use?"</div></div>
+ <div class="agent"><code>tech-debt-keeper</code><p>Owned, quantified debt (impact -- interest vs effort), negotiable with the PM, promotable to the backlog.</p><div class="ameta"><b>Owner:</b> Architect / eng lead . <b>Output:</b> tech-debt register</div><div class="aq">What's rotting, and what do we pay down?"</div></div>
  </div></div>
 
  <div class="phase p-ai"><div class="head"><span class="badge b-ai">Stack depth &amp; AI-native (2026)</span> <span class="pcount">. 7 agents</span></div>
@@ -563,7 +563,7 @@
  <div class="agent"><code>backend-developer</code><p>Service design, idempotency/failure handling, security, observability, scaling.</p><div class="ameta"><b>Owner:</b> Backend dev . <b>Output:</b> services + service notes</div><div class="aq">Reliable &amp; secure at scale?"</div></div>
  <div class="agent"><code>api-designer</code><p>Contract-first OpenAPI/GraphQL: error model, versioning, pagination, auth.</p><div class="ameta"><b>Owner:</b> Architect / leads . <b>Output:</b> API contract</div><div class="aq">What's the front/back contract?"</div></div>
  <div class="agent"><code>data-modeler</code><p>Conceptual'physical model, ERD, indexing, reversible migrations.</p><div class="ameta"><b>Owner:</b> Data modeler / architect . <b>Output:</b> schema + migrations</div><div class="aq">How is data structured &amp; evolved?"</div></div>
- <div class="agent"><code>ai-orchestration</code><p>Govern AI coding agents: delegate by risk, human-in-loop, guardrails/evals.</p><div class="ameta"><b>Owner:</b> Architect / leads . <b>Output:</b> AI policy + guardrails</div><div class="aq">How do we use AI agents safely?"</div></div>
+ <div class="agent"><code>ai-orchestrator</code><p>Govern AI coding agents: delegate by risk, human-in-loop, guardrails/evals.</p><div class="ameta"><b>Owner:</b> Architect / leads . <b>Output:</b> AI policy + guardrails</div><div class="aq">How do we use AI agents safely?"</div></div>
  <div class="agent"><code>ai-eval</code><p>Evals for shipped AI features: golden datasets, scorers (LLM-as-judge), regression-eval CI gates.</p><div class="ameta"><b>Owner:</b> ML/AI engineer / SDET . <b>Output:</b> eval suite + golden datasets</div><div class="aq">Is the AI output good enough, still?"</div></div>
  </div></div>
 
@@ -613,15 +613,15 @@
  <div class="step"><div class="num">4</div><div><h4>Pulled into a sprint</h4><p>The <code>sprint-planner</code> selects it only if it meets the <b>Definition of Ready</b>, fits capacity, and serves the sprint goal.<span class="gate">Gate: Definition of Ready</span><br><span class="who"><b>Agent:</b> sprint-planner . <b>Artifact:</b> sprint plan . <b>Role:</b> PM / Scrum Master</span></p></div></div>
  </div>
  <div class="jgroup g-build"><div class="jphase" style="color:var(--amber)">Build, review &amp; test -- steps 5-8</div>
- <div class="step"><div class="num">5</div><div><h4>Built</h4><p>A developer branches (<code>feature/PBI-007-</code>), writes code to the <code>coding-standards</code>, and self-tests in a fast inner loop. The <code>dev-onboarding</code> guide got them productive on day one.<br><span class="who"><b>Agent:</b> dev-onboarding + coding-standards . <b>Artifact:</b> code + branch . <b>Role:</b> developer</span></p></div></div>
+ <div class="step"><div class="num">5</div><div><h4>Built</h4><p>A developer branches (<code>feature/PBI-007-</code>), writes code to the <code>coding-standards</code>, and self-tests in a fast inner loop. The <code>dev-onboarding</code> guide got them productive on day one.<br><span class="who"><b>Agent:</b> dev-onboarding + coding-standards-writer . <b>Artifact:</b> code + branch . <b>Role:</b> developer</span></p></div></div>
  <div class="step"><div class="num">6</div><div><h4>Reviewed</h4><p>A PR opens with the template; <code>code-reviewer</code> checks it against the standard &amp; DoD with severity-grouped feedback. Blockers fixed before merge.<span class="gate">Gate: peer review (DoD)</span><br><span class="who"><b>Agent:</b> code-reviewer . <b>Artifact:</b> PR review . <b>Role:</b> lead / senior</span></p></div></div>
- <div class="step"><div class="num">7</div><div><h4>Integrated</h4><p>The <code>ci-cd-pipeline</code> runs lint -> tests -> build -> scan as required-to-merge checks, then deploys to staging. Green is automatic, not a promise.<span class="gate">Gate: CI green</span><br><span class="who"><b>Agent:</b> ci-cd-pipeline . <b>Artifact:</b> pipeline run . <b>Role:</b> DevOps / SRE</span></p></div></div>
+ <div class="step"><div class="num">7</div><div><h4>Integrated</h4><p>The <code>pipeline-engineer</code> runs lint -> tests -> build -> scan as required-to-merge checks, then deploys to staging. Green is automatic, not a promise.<span class="gate">Gate: CI green</span><br><span class="who"><b>Agent:</b> pipeline-engineer . <b>Artifact:</b> pipeline run . <b>Role:</b> DevOps / SRE</span></p></div></div>
  <div class="step"><div class="num">8</div><div><h4>Tested &amp; bug-reported</h4><p>The <code>qa-tester</code> executes the <code>test-plan-writer</code> cases + exploratory testing, logs reproducible bugs (severity vs priority), verifies fixes, and signs off against exit criteria.<span class="gate">Gate: QA sign-off</span><br><span class="who"><b>Agent:</b> qa-tester + test-plan-writer . <b>Artifact:</b> test results + bugs . <b>Role:</b> QA / tester</span></p></div></div>
  </div>
  <div class="jgroup g-ship"><div class="jphase" style="color:var(--green)">Accept, ship &amp; operate -- steps 9-11</div>
  <div class="step"><div class="num">9</div><div><h4>Accepted</h4><p>The story meets the <b>Definition of Done</b> and the Product Owner accepts it -- value confirmed, not just code merged.<span class="gate">Gate: Definition of Done + PO accept</span><br><span class="who"><b>Agent:</b> definition-of-ready-done . <b>Artifact:</b> DoD check . <b>Role:</b> Product Owner</span></p></div></div>
  <div class="step"><div class="num">10</div><div><h4>Released</h4><p>The <code>release-manager</code> runs the evidence-based <b>go/no-go</b> (QA sign-off + CI + RAID + rollback ready), ships with progressive rollout, and writes release notes.<span class="gate">Gate: Go/No-Go</span><br><span class="who"><b>Agent:</b> release-manager . <b>Artifact:</b> release + notes . <b>Role:</b> PM . Director (approver)</span></p></div></div>
- <div class="step"><div class="num">11</div><div><h4>Operated &amp; learned</h4><p>In production it's monitored. If it breaks, <code>incident-postmortem</code> runs a blameless review whose actions feed the backlog; the <code>retrospective-facilitator</code> tunes the process. The loop closes.<br><span class="who"><b>Agent:</b> incident-postmortem + retrospective . <b>Artifact:</b> postmortem + retro . <b>Role:</b> on-call / team</span></p></div></div>
+ <div class="step"><div class="num">11</div><div><h4>Operated &amp; learned</h4><p>In production it's monitored. If it breaks, <code>incident-responder</code> runs a blameless review whose actions feed the backlog; the <code>retrospective-facilitator</code> tunes the process. The loop closes.<br><span class="who"><b>Agent:</b> incident-responder + retrospective . <b>Artifact:</b> postmortem + retro . <b>Role:</b> on-call / team</span></p></div></div>
  </div>
  </div>
 </div></section>
@@ -684,9 +684,9 @@
  <div class="card" style="border-top:3px solid var(--amber)"><h3>A developer's day</h3>
  <ol class="dayflow">
  <li>Pull a <b>Ready</b> story from the sprint board <span class="t">board / backlog</span></li>
- <li>Read its acceptance criteria + the rules; branch <code>feature/PBI-</code> <span class="t">dev-onboarding . coding-standards</span></li>
+ <li>Read its acceptance criteria + the rules; branch <code>feature/PBI-</code> <span class="t">dev-onboarding . coding-standards-writer</span></li>
  <li>Work the <b>inner loop</b>: edit -> build -> unit-test -> debug (seconds) <span class="t">inner loop</span></li>
- <li>Open a PR with the template; CI runs lint/test/scan <span class="t">ci-cd-pipeline</span></li>
+ <li>Open a PR with the template; CI runs lint/test/scan <span class="t">pipeline-engineer</span></li>
  <li>Address review feedback, iterate until approved <span class="t">code-reviewer</span></li>
  <li>Merge on green + approval -> deploys to staging <span class="t">DoD gate</span></li>
  <li>Raise an <b>ADR</b> if a real decision came up; pick up the next story <span class="t">adr-writer</span></li>
@@ -780,8 +780,8 @@
  <div class="card"><h3>Definition &amp; design</h3><p class="muted" style="font-size:.9rem">PM/PO writes the PRD; Architect + Leads produce SRS/SDD/TSD; Architect logs ADRs. Constraints become testable targets.</p><div class="io"><b>When:</b> once -- upfront &nbsp;.&nbsp; <b>Owner:</b> PO + Architect + Leads &nbsp;.&nbsp; <b>Gate:</b> design sign-off</div></div>
  <div class="card"><h3>Breakdown &amp; estimate</h3><p class="muted" style="font-size:.9rem">PM/Leads run <code>backlog-manager</code> (' epics/PBIs in Azure Boards); whole team runs Planning Poker. Story points -> the Effort field.</p><div class="io"><b>When:</b> once, then refined each sprint &nbsp;.&nbsp; <b>Owner:</b> PO + team &nbsp;.&nbsp; <b>Gate:</b> Definition of Ready</div></div>
  <div class="card" style="border-color:var(--accent2)"><h3>Sprint loop &nbsp;</h3><p class="muted" style="font-size:.9rem"><code>sprint-planner</code> each Iteration; devs build &amp; PR; <code>code-reviewer</code>; CI gates; <code>qa-tester</code>; standup daily; <code>retrospective</code> at the end. Repeat.</p><div class="io"><b>When:</b> <b style="color:var(--accent2)"> every sprint</b> &nbsp;.&nbsp; <b>Owner:</b> whole team (SM facilitates) &nbsp;.&nbsp; <b>Gate:</b> Definition of Done</div></div>
- <div class="card"><h3>Govern &amp; report</h3><p class="muted" style="font-size:.9rem">PM keeps the <code>raid-log</code> and sends RAG <code>status-reporter</code> updates; Azure analytics gives velocity / burndown / CFD / DORA for free.</p><div class="io"><b>When:</b> continuous &nbsp;.&nbsp; <b>Owner:</b> PM &nbsp;.&nbsp; <b>Gate:</b> "</div></div>
- <div class="card"><h3>Release &amp; operate</h3><p class="muted" style="font-size:.9rem"><code>release-manager</code> go/no-go with the Director; progressive rollout; <code>incident-postmortem</code> if prod breaks -> actions back to the backlog.</p><div class="io"><b>When:</b> per release / on incident &nbsp;.&nbsp; <b>Owner:</b> PM + Director + on-call &nbsp;.&nbsp; <b>Gate:</b> Go/No-Go</div></div>
+ <div class="card"><h3>Govern &amp; report</h3><p class="muted" style="font-size:.9rem">PM keeps the <code>raid-keeper</code> and sends RAG <code>status-reporter</code> updates; Azure analytics gives velocity / burndown / CFD / DORA for free.</p><div class="io"><b>When:</b> continuous &nbsp;.&nbsp; <b>Owner:</b> PM &nbsp;.&nbsp; <b>Gate:</b> "</div></div>
+ <div class="card"><h3>Release &amp; operate</h3><p class="muted" style="font-size:.9rem"><code>release-manager</code> go/no-go with the Director; progressive rollout; <code>incident-responder</code> if prod breaks -> actions back to the backlog.</p><div class="io"><b>When:</b> per release / on incident &nbsp;.&nbsp; <b>Owner:</b> PM + Director + on-call &nbsp;.&nbsp; <b>Gate:</b> Go/No-Go</div></div>
  </div>
  <p class="muted" style="font-size:.84rem;margin-top:12px"><b>Read the cadence:</b> -> "' are <b>one-time setup</b>, <b style="color:var(--accent2)">' repeats every sprint</b> (the engine), -> runs <b>continuously</b>, and -> fires <b>per release</b>. An <b>AI-native pod</b> (section 05) collapses -> "' into a 1-pager + lean RFC and runs -> with fewer hands. The <b>Gate</b> on each phase is the milestone to advance: funding -> design sign-off -> Definition of Ready -> Definition of Done -> Go/No-Go.</p>
  <table>

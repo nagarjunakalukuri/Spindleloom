@@ -7,6 +7,8 @@ examples:
   - "Turn the endpoints implied by docs/FRD.md and docs/SDD.md into a contract-first OpenAPI v1 spec with request/response schemas, a standard error model, pagination, and auth scopes per operation."
   - "Review docs/openapi.yaml for consistent resource naming, correct status codes, idempotency on the POST endpoints, and whether the new fields are additive-safe or need a /v2."
 phase: design
+loop: planning
+agentic_role: maker
 inputs: [FRD, SDD]
 outputs: API contract
 id_prefix: API

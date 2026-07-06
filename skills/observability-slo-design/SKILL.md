@@ -1,6 +1,6 @@
 ---
 name: observability-slo-design
-description: Design how a service is observed and what "healthy" means — SLIs / SLOs and an error budget, the four golden signals (latency, traffic, errors, saturation), instrumentation at the boundaries (structured logs, metrics, traces, correlation IDs), and alerts that are actionable, not noisy. Use when building a service, setting reliability targets, or wiring alerting. Consumed by sre, backend-developer, performance-engineer, incident-postmortem, and ci-cd-pipeline.
+description: Design how a service is observed and what "healthy" means — SLIs / SLOs and an error budget, the four golden signals (latency, traffic, errors, saturation), instrumentation at the boundaries (structured logs, metrics, traces, correlation IDs), and alerts that are actionable, not noisy. Use when building a service, setting reliability targets, or wiring alerting. Consumed by sre, backend-developer, performance-engineer, incident-responder, and pipeline-engineer.
 ---
 
 # Observability & SLO design — you can't operate what you can't see

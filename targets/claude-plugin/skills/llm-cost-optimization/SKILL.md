@@ -1,6 +1,6 @@
 ---
 name: llm-cost-optimization
-description: Four levers for reducing LLM API spend without degrading quality — model selection/routing, token efficiency, prompt caching, and batching. Code examples for the Anthropic API. Pricing-aware model routing pattern, per-feature cost instrumentation, and the cost-vs-quality trade-off framework. For ai-orchestration and ai-eval agents.
+description: Four levers for reducing LLM API spend without degrading quality — model selection/routing, token efficiency, prompt caching, and batching. Code examples for the Anthropic API. Pricing-aware model routing pattern, per-feature cost instrumentation, and the cost-vs-quality trade-off framework. For ai-orchestrator and ai-eval agents.
 ---
 
 > Auto-fires when an agent is designing or reviewing an AI system and cost, token usage, or model selection is in scope.

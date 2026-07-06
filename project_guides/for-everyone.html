@@ -344,7 +344,7 @@ PRD -> backlog-manager
         <h3>Decide</h3>
         <p class="q">What did we choose, and why?</p>
         <p class="get">You get: proposals <b>debated before building</b>, decisions <b>recorded</b> so the reasoning survives, and the <b>sanctioned tech</b> every team aligns to.</p>
-        <div class="agents"><code>architect</code><code>rfc</code><code>adr-writer</code><code>tech-radar</code></div>
+        <div class="agents"><code>architect</code><code>rfc-facilitator</code><code>adr-writer</code><code>tech-radar-curator</code></div>
       </div>
     </div>
 
@@ -374,7 +374,7 @@ PRD -> backlog-manager
         <h3>Ship</h3>
         <p class="q">Get it out safely.</p>
         <p class="get">You get: <b>automated delivery</b>, a QA <b>sign-off</b>, an evidence-based <b>go/no-go</b> gate, and <b>live monitoring</b> once it's out.</p>
-        <div class="agents"><code>ci-cd-pipeline</code><code>qa-tester</code><code>release-manager</code><code>sre</code></div>
+        <div class="agents"><code>pipeline-engineer</code><code>qa-tester</code><code>release-manager</code><code>sre</code></div>
       </div>
     </div>
 
@@ -384,7 +384,7 @@ PRD -> backlog-manager
         <h3>Learn</h3>
         <p class="q">What did we learn -- and what's next?</p>
         <p class="get">You get: <b>real usage metrics</b>, a blameless <b>retro</b> with owned actions, and a tracked <b>tech-debt register</b>.</p>
-        <div class="agents"><code>product-analytics</code><code>retrospective-facilitator</code><code>tech-debt-register</code></div>
+        <div class="agents"><code>product-analytics</code><code>retrospective-facilitator</code><code>tech-debt-keeper</code></div>
       </div>
     </div>
 
@@ -493,21 +493,21 @@ Write a PRD for X.</span>
       <div class="rc-head"><h3>Project Manager <span style="color:var(--mut);font-size:.8rem">(+ acting PO)</span></h3><span class="raci">Responsible  -  delivery</span></div>
       <p class="rc-help">Pick the doc set, own the PRD and backlog, run the cadence, track and report. The busiest seat.</p>
       <div class="rc-row"><span class="rc-lbl">Type</span><div class="rc-chips cmds"><code>/spec-new</code><code>/spec-status</code><code>/rtm-check</code><code>/pbi-next</code></div></div>
-      <div class="rc-row"><span class="rc-lbl">Drives</span><div class="rc-chips"><code>doc-strategy-advisor</code><code>prd-writer</code><code>backlog-manager</code><code>sprint-planner</code><code>retrospective-facilitator</code><code>raid-log</code></div></div>
+      <div class="rc-row"><span class="rc-lbl">Drives</span><div class="rc-chips"><code>doc-strategy-advisor</code><code>prd-writer</code><code>backlog-manager</code><code>sprint-planner</code><code>retrospective-facilitator</code><code>raid-keeper</code></div></div>
     </div>
 
     <div class="role-card">
       <div class="rc-head"><h3>Architect</h3><span class="raci acc">Accountable  -  technical</span></div>
       <p class="rc-help">Set the constraints and the blueprint, propose and record decisions, align tech across the teams.</p>
       <div class="rc-row"><span class="rc-lbl">Type</span><div class="rc-chips cmds"><code>/constitution</code><code>/rfc</code><code>/adr-new</code><code>/tech-radar</code><code>/spec-analyze</code></div></div>
-      <div class="rc-row"><span class="rc-lbl">Drives</span><div class="rc-chips"><code>architect</code><code>srs-writer</code><code>sdd-writer</code><code>adr-writer</code><code>spec-driven-dev</code></div></div>
+      <div class="rc-row"><span class="rc-lbl">Drives</span><div class="rc-chips"><code>architect</code><code>srs-writer</code><code>sdd-writer</code><code>adr-writer</code><code>spec-steward</code></div></div>
     </div>
 
     <div class="role-card">
       <div class="rc-head"><h3>Tech Lead <span style="color:var(--mut);font-size:.8rem">(x2)</span></h3><span class="raci">Responsible  -  specs &amp; quality</span></div>
       <p class="rc-help">Turn product into build-ready specs, set the code bar, review PRs, facilitate estimation.</p>
       <div class="rc-row"><span class="rc-lbl">Type</span><div class="rc-chips cmds"><code>/spec-analyze</code><code>/test-plan</code><code>/tech-debt</code></div></div>
-      <div class="rc-row"><span class="rc-lbl">Drives</span><div class="rc-chips"><code>frd-writer</code><code>tsd-writer</code><code>api-designer</code><code>data-modeler</code><code>coding-standards</code><code>code-reviewer</code><code>estimation-facilitator</code></div></div>
+      <div class="rc-row"><span class="rc-lbl">Drives</span><div class="rc-chips"><code>frd-writer</code><code>tsd-writer</code><code>api-designer</code><code>data-modeler</code><code>coding-standards-writer</code><code>code-reviewer</code><code>estimation-facilitator</code></div></div>
     </div>
 
     <div class="role-card">
@@ -529,9 +529,9 @@ Write a PRD for X.</span>
   <div class="hats">
     <div class="hats-lbl">Specialist hats -- on a 9-person team these are worn by the people above; add headcount only as the work needs</div>
     <div class="hat"><span class="hn">Security</span><span class="hd">Threat-model the risky flows, write testable <code>SEC-</code> requirements, review designs &amp; PRs. -- <code>security-reviewer</code>, <code>ai-eval</code></span></div>
-    <div class="hat"><span class="hn">DevOps / SRE</span><span class="hd">SLOs &amp; runbooks before it breaks, the CI/CD pipeline &amp; gates, blameless postmortems after. -- <code>sre</code>, <code>ci-cd-pipeline</code>, <code>incident-postmortem</code></span></div>
+    <div class="hat"><span class="hn">DevOps / SRE</span><span class="hd">SLOs &amp; runbooks before it breaks, the CI/CD pipeline &amp; gates, blameless postmortems after. -- <code>sre</code>, <code>pipeline-engineer</code>, <code>incident-responder</code></span></div>
     <div class="hat"><span class="hn">UX/UI Designer</span><span class="hd">User flows, wireframes, hi-fi visuals, and the design system the frontend builds. -- <code>ux-ui-designer</code>, <code>accessibility-auditor</code></span></div>
-    <div class="hat"><span class="hn">AI / Data</span><span class="hd">Govern AI coding agents, build evals for shipped AI features, model the data, instrument metrics. -- <code>ai-orchestration</code>, <code>ai-eval</code>, <code>data-modeler</code>, <code>product-analytics</code></span></div>
+    <div class="hat"><span class="hn">AI / Data</span><span class="hd">Govern AI coding agents, build evals for shipped AI features, model the data, instrument metrics. -- <code>ai-orchestrator</code>, <code>ai-eval</code>, <code>data-modeler</code>, <code>product-analytics</code></span></div>
   </div>
 
   <div class="spotlight">
@@ -780,8 +780,8 @@ python hooks/build_harness_artifacts.py          <span class="c"># rebuild targe
   <div class="tscroll"><table class="wtable">
     <thead><tr><th>Output type</th><th>Agents (examples)</th><th>Lands in</th><th>Metadata header</th></tr></thead>
     <tbody>
-      <tr><td><b>Durable / living docs</b></td><td>mrd  -  brd  -  prd  -  frd  -  srs  -  sdd  -  tsd-writer, adr, rfc, api-designer, data-modeler, ux-ui-designer, the registers</td><td><code>docs/</code> (the cadence planes)</td><td>[v] Owner/Status/Version + Req-ID</td></tr>
-      <tr><td><b>Code &amp; tests</b></td><td>frontend- / backend-developer, test-author, test-automation-engineer, ci-cd-pipeline</td><td>the repo</td><td>-- it's code; traced via the RTM Build column</td></tr>
+      <tr><td><b>Durable / living docs</b></td><td>mrd  -  brd  -  prd  -  frd  -  srs  -  sdd  -  tsd-writer, adr, rfc-facilitator, api-designer, data-modeler, ux-ui-designer, the registers</td><td><code>docs/</code> (the cadence planes)</td><td>[v] Owner/Status/Version + Req-ID</td></tr>
+      <tr><td><b>Code &amp; tests</b></td><td>frontend- / backend-developer, test-author, test-automation-engineer, pipeline-engineer</td><td>the repo</td><td>-- it's code; traced via the RTM Build column</td></tr>
       <tr><td><b>Verification &amp; reviews</b></td><td>change-verifier, code-reviewer, security-reviewer, accessibility-auditor, qa-tester, performance-engineer</td><td>a verdict + inline on the PR / ticket</td><td>-- transient, exempt (anti-fatigue)</td></tr>
       <tr><td><b>Analysis &amp; findings</b></td><td>solution-recon, architect, doc-strategy-advisor, estimation-facilitator</td><td>feeds a writer (recon -> <code>recon.md</code>; architect -> an ADR)</td><td>partial -- <code>recon.md</code> is living</td></tr>
       <tr><td><b>Tracker items</b></td><td>backlog-manager, bug-triager</td><td>the work tracker (linked by ID)</td><td>-- lives on the item</td></tr>
@@ -828,7 +828,7 @@ python hooks/build_harness_artifacts.py          <span class="c"># rebuild targe
       <tr><td>Priority / MoSCoW</td><td>Backlog stack-rank order + the Priority field or a <code>MoSCoW</code> tag</td></tr>
       <tr><td>RTM / traceability</td><td>Work-item <b>links</b> -- parent-child (Epic->Story->Task) + <b>"Tested By"</b> -> Test Plans + commit/PR links</td></tr>
       <tr><td>Retro actions -- <code>retrospective-facilitator</code></td><td>Work items tagged <code>retro-action</code>, assigned to the next iteration</td></tr>
-      <tr><td>RAID / risk -- <code>raid-log</code></td><td>A custom Risk work item or a Wiki RAID page; Decisions link to ADRs in Repos</td></tr>
+      <tr><td>RAID / risk -- <code>raid-keeper</code></td><td>A custom Risk work item or a Wiki RAID page; Decisions link to ADRs in Repos</td></tr>
       <tr><td>BRD / PRD / FRD / SRS / SDD / TSD</td><td>Azure <b>Wiki</b> pages (or Repos as Markdown), each linked from the Epic it governs</td></tr>
       <tr><td>ADRs / RFCs</td><td><code>docs/adr/</code> &amp; <code>docs/rfc/</code> in <b>Repos</b>, reviewed in PRs</td></tr>
     </tbody>

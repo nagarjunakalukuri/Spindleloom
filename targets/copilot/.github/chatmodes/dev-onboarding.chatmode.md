@@ -18,7 +18,7 @@ You write the **onboarding / CONTRIBUTING guide** — the single doc a new devel
 - **Codebase map:** where the main pieces live (link the SDD), how to find things.
 - **Branching strategy:** trunk-based or GitHub-flow style; branch naming (`feature/PBI-123-short`, `fix/...`).
 - **Commit convention:** e.g. Conventional Commits (`feat:`, `fix:`, `chore:`); small, logical commits; reference the PBI ID.
-- **PR process:** size expectations, the PR template, who reviews, how many approvals, how CI gates merge (link code-reviewer + ci-cd-pipeline).
+- **PR process:** size expectations, the PR template, who reviews, how many approvals, how CI gates merge (link code-reviewer + pipeline-engineer).
 - **Definition of Ready/Done:** link the team artifact so they know when to start and when they're finished.
 - **Getting help:** channels, code owners, office hours, the "stuck for 30 min → ask" rule.
 
@@ -39,7 +39,7 @@ If any box fails, the inner loop is **not ready** — fix the tooling before bui
 ### When asked to CREATE onboarding/CONTRIBUTING
 1. Gather the stack, repo layout, run/test commands, and the team's git/PR norms (ask what's missing).
 2. Write the guide from the template; use real commands; add a setup script recommendation.
-3. Link out to coding-standards, DoR/DoD, code-reviewer, and ci-cd-pipeline rather than duplicating.
+3. Link out to the coding-standards, DoR/DoD, code-reviewer, and pipeline-engineer rather than duplicating.
 4. Save as `CONTRIBUTING.md`; recommend it live at the repo root.
 
 ### When asked to REVIEW/UPDATE

@@ -4,7 +4,7 @@
 
 > **The three `-wright`s.** **Spindleloom** builds the fleet (market → spec → build → ship → operate); **Shipwright** generates the per-harness bundles from that single source (`hooks/build_harness_artifacts.py` → `targets/`); **Loopwright** is this layer — the fleet running inside the delivery feedback loop, tightening each loop so feedback arrives fast and clear. *Build it, ship it, loop it.*
 
-> **Scope note — two senses of "loop engineering".** This document is about the **human delivery loop**: a developer's inner loop (edit→build→test→debug) and the team's outer loop (PR→CI→review→deploy). The term is also used for a *different* discipline — engineering **autonomous AI-agent loops** (scheduling an agent against a goal, with stop conditions, maker/checker verification, and an autonomy ladder). In that sense, "inner loop" is one agent turn and "outer loop" is the orchestration system around it. For the **agent** loop, see `agents/ai-orchestration.md` → "Autonomous loop architecture". This file is the **human** loop.
+> **Scope note — two senses of "loop engineering".** This document is about the **human delivery loop**: a developer's inner loop (edit→build→test→debug) and the team's outer loop (PR→CI→review→deploy). The term is also used for a *different* discipline — engineering **autonomous AI-agent loops** (scheduling an agent against a goal, with stop conditions, maker/checker verification, and an autonomy ladder). In that sense, "inner loop" is one agent turn and "outer loop" is the orchestration system around it. For the **agent** loop, see `agents/ai-orchestrator.md` → "Autonomous loop architecture". This file is the **human** loop.
 
 ---
 
@@ -81,10 +81,10 @@ Rule of thumb: **DORA tells you the outer loop's speed and safety; cycle-time br
 
 ### Outer loop — reduce frequency and duration of interruptions
 - **Small PRs:** the highest-leverage outer-loop move. Small PRs review faster, merge faster, and break less. Big PRs stall the loop and hide defects.
-- **Fast CI, cheap checks first:** order pipeline stages so format/lint/unit fail in the first minute; reserve slow e2e/security for later. (This is `ci-cd-pipeline`.)
-- **Automate the gates:** lint/format/coverage/security as required CI checks, so humans review *design and intent*, not style. (`coding-standards` + `ci-cd-pipeline` + `code-reviewer`.)
+- **Fast CI, cheap checks first:** order pipeline stages so format/lint/unit fail in the first minute; reserve slow e2e/security for later. (This is `pipeline-engineer`.)
+- **Automate the gates:** lint/format/coverage/security as required CI checks, so humans review *design and intent*, not style. (`coding-standards-writer` + `pipeline-engineer` + `code-reviewer`.)
 - **Cut wait time:** review SLAs, async review norms, and a clear "stuck → ask" rule so PRs don't sit. Wait time is usually the biggest chunk of cycle time.
-- **Progressive delivery:** canary/blue-green deploys with auto-rollback shrink the deploy loop and its blast radius. (`release-manager`, `ci-cd-pipeline`.)
+- **Progressive delivery:** canary/blue-green deploys with auto-rollback shrink the deploy loop and its blast radius. (`release-manager`, `pipeline-engineer`.)
 - **Platform engineering / self-service:** by 2025, ~90% of orgs run an internal developer platform. The point is to let developers self-serve infra/deploys (a fast loop) instead of filing tickets and waiting (a slow loop).
 
 ### The unifying move: shift detection left
@@ -100,27 +100,27 @@ This toolkit is **Loopwright** — loop engineering as a set of agents — each 
 OUTER-OUTER (product/planning loop) ── slowest, most expensive to get wrong
   mrd → brd → prd → frd → srs → sdd → tsd          (spec the right thing)
   backlog-manager → estimation → sprint-planner     (plan the loop)
-  status-reporter · raid-log · retrospective         (track & learn)
+  status-reporter · raid-keeper · retrospective         (track & learn)
         │
         ▼
 OUTER (integration/delivery loop) ── minutes to days
-  code-reviewer → ci-cd-pipeline → qa-tester → release-manager → incident-postmortem
+  code-reviewer → pipeline-engineer → qa-tester → release-manager → incident-responder
         │
         ▼
 INNER (developer loop) ── seconds to minutes
   dev-onboarding sets up + GATES the loop (one-command env; build/test/lint verified fast & non-flaky);
-  coding-standards sets the bar; then the cycle:
+  coding-standards-writer sets the bar; then the cycle:
   backend/frontend-developer EDIT → build → test-author's fast tests RUN → debugger / flaky-test-detective on red
   (debugger + flaky-test-detective serve both loops — cheapest here, at the keyboard)
 ```
 
 | Loop | Agents that tighten it | How |
 |---|---|---|
-| **Inner** | `dev-onboarding` (setup + **readiness gate**), `coding-standards`, `backend-developer`/`frontend-developer`, `test-author`, `debugger`, `flaky-test-detective` | One-command env + a *verified* fast/non-flaky loop (the gate) + a clear bar; then edit→build→test→debug at the keyboard. `debugger` and `flaky-test-detective` are **dual-loop** — invoked here first (cheapest), and from CI/QA when something escapes. |
-| **Outer (integrate)** | `code-reviewer`, `ci-cd-pipeline`, `qa-tester` | Severity-grouped reviews + automated gates + reproducible bug reports = faster, clearer feedback on a change |
-| **Outer (ship/operate)** | `release-manager`, `incident-postmortem` | Evidence-based go/no-go + blameless postmortems = safe fast deploys and learning that closes the loop |
+| **Inner** | `dev-onboarding` (setup + **readiness gate**), `coding-standards-writer`, `backend-developer`/`frontend-developer`, `test-author`, `debugger`, `flaky-test-detective` | One-command env + a *verified* fast/non-flaky loop (the gate) + a clear bar; then edit→build→test→debug at the keyboard. `debugger` and `flaky-test-detective` are **dual-loop** — invoked here first (cheapest), and from CI/QA when something escapes. |
+| **Outer (integrate)** | `code-reviewer`, `pipeline-engineer`, `qa-tester` | Severity-grouped reviews + automated gates + reproducible bug reports = faster, clearer feedback on a change |
+| **Outer (ship/operate)** | `release-manager`, `incident-responder` | Evidence-based go/no-go + blameless postmortems = safe fast deploys and learning that closes the loop |
 | **Planning loop** | `backlog-manager`, `estimation-facilitator`, `sprint-planner`, `retrospective-facilitator` | Ready, estimated, goal-aligned work = the team iterates on the *right* things; retro tunes the loop itself |
-| **Governance** | `raid-log`, `status-reporter` | Fast, honest feedback to stakeholders shortens the *decision* loop |
+| **Governance** | `raid-keeper`, `status-reporter` | Fast, honest feedback to stakeholders shortens the *decision* loop |
 
 Two project features are pure loop engineering:
 - **The RTM + Req-ID thread** makes the *correction* loop fast: when something changes, traceability shows the blast radius instantly instead of a manual hunt.
@@ -133,9 +133,9 @@ Two project features are pure loop engineering:
 - **The 25-minute CI run:** the outer loop is so slow developers batch work and context-switch; cycle time balloons. Fix: parallelize, cache, cheap-checks-first.
 - **Flaky tests:** feedback becomes untrustworthy, so people ignore red — the loop still runs but no longer *means* anything. Fix: quarantine and fix flakes ruthlessly.
 - **Giant PRs:** review takes days, defects hide, merge conflicts pile up. Fix: small, single-concern PRs (`code-reviewer` flags oversize).
-- **Bug found in prod that a unit test could've caught:** detection happened in the most expensive loop. Fix: postmortem action → add the test (`incident-postmortem` → backlog).
+- **Bug found in prod that a unit test could've caught:** detection happened in the most expensive loop. Fix: postmortem action → add the test (`incident-responder` → backlog).
 - **Ticket-driven infra:** every environment/deploy is a wait-on-another-team loop. Fix: self-service platform.
-- **Reviewing style by hand:** humans spending the review loop on formatting tools should enforce. Fix: automate in CI (`coding-standards` + `ci-cd-pipeline`).
+- **Reviewing style by hand:** humans spending the review loop on formatting tools should enforce. Fix: automate in CI (`coding-standards-writer` + `pipeline-engineer`).
 - **"Watermelon" status:** the stakeholder feedback loop returns "green" while reality is red, so course-correction comes too late. Fix: honest RAG grounded in metrics (`status-reporter`).
 
 ---
@@ -149,7 +149,7 @@ Two project features are pure loop engineering:
 
 **Outer loop**
 - [ ] PRs small and single-concern; review SLA agreed (`code-reviewer`)
-- [ ] CI: cheap checks first, required to merge; runs in a few minutes (`ci-cd-pipeline`, Azure Pipelines + branch policies)
+- [ ] CI: cheap checks first, required to merge; runs in a few minutes (`pipeline-engineer`, Azure Pipelines + branch policies)
 - [ ] Automated deploy to staging + progressive prod rollout with rollback (`release-manager`)
 - [ ] QA handoff + bug reports reproducible; sign-off feeds go/no-go (`qa-tester`)
 
@@ -159,8 +159,8 @@ Two project features are pure loop engineering:
 - [ ] A periodic DevEx/SPACE pulse so speed gains aren't burning the team
 
 **Close the loops**
-- [ ] Every production incident spawns a test or guardrail (`incident-postmortem` → backlog)
-- [ ] Recurring review nits get automated (`coding-standards`)
+- [ ] Every production incident spawns a test or guardrail (`incident-responder` → backlog)
+- [ ] Recurring review nits get automated (`coding-standards-writer`)
 - [ ] Retro picks one loop to shorten each sprint (`retrospective-facilitator`)
 
 ---

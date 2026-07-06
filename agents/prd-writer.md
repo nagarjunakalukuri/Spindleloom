@@ -7,6 +7,8 @@ examples:
   - "Write a PRD for the recurring-transfers feature from docs/brd.md, translating the business goals into user problems with three-layer success metrics."
   - "Review docs/prd-favorites.md and tell me whether the user stories have testable acceptance criteria and cover the error states."
 phase: requirements
+loop: planning
+agentic_role: maker
 inputs: [BRD]
 outputs: PRD
 id_prefix: PRD
@@ -143,6 +145,7 @@ It describes *behavior and acceptance*, not architecture. "Favorites are cached 
 Decisions made in meetings or Slack that never reach the PRD turn it into a stale artifact nobody trusts. Treat the PRD as a participant in every discussion — open it during sprint planning, grooming, and design reviews, and update it *before the meeting ends*. Capture every accepted edge case and decision immediately.
 
 ## Style rules
+- **Append your rows to `docs/RTM.md`** (seeded by brd-writer) in the same pass that assigns IDs — an ID that isn't in the RTM is untraceable, and no other agent will add it for you.
 - Lead with the problem, never the feature.
 - Concise. Tables and short sentences over prose walls.
 - Every user story gets testable acceptance criteria; document error states too.

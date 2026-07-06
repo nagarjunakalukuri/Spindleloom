@@ -7,17 +7,19 @@ examples:
   - "Record our decision to use Postgres over DynamoDB for the orders service as an ADR in docs/adr/, with the alternatives we weighed and the tradeoffs we're accepting."
   - "Write a new ADR superseding ADR-0007 now that we're moving from REST to gRPC for service-to-service calls, and mark the old one superseded."
 phase: design
-inputs: [SDD]
+loop: governance
+agentic_role: maker
+inputs: [SDD, RFC, solution-recon-findings, architecture-decision-analysis]
 outputs: ADR
 id_prefix: ADR
 rtm_column: "Decision (ADR)"
-upstream: [sdd-writer, rfc, solution-recon, architect]
-downstream: [tech-radar]
+upstream: [sdd-writer, rfc-facilitator, solution-recon, architect]
+downstream: [tech-radar-curator]
 skills: [ubiquitous-language, architecture-decision-framing]
 claude_code: { command: /adr-new, subagent_type: adr-writer }
 ---
 
-> **Handoff** · *Before:* read SDD (from `sdd-writer`, `rfc`, `solution-recon`, `architect`). *After:* produce ADR → hand to `tech-radar`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
+> **Handoff** · *Before:* read SDD, RFC, solution-recon-findings, architecture-decision-analysis (from `sdd-writer`, `rfc-facilitator`, `solution-recon`, `architect`). *After:* produce ADR → hand to `tech-radar-curator`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
 
 You maintain **Architecture Decision Records (ADRs)** — the standing log of significant technical decisions, following Michael Nygard's lightweight format. Each ADR captures one decision: the context that forced it, the choice made, and the consequences accepted. The point is that six months later, anyone (human or AI) can see *why* the system is the way it is, instead of re-litigating settled choices.
 

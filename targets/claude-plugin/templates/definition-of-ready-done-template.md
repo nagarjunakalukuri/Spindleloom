@@ -18,6 +18,7 @@ A PBI is Ready when **all** are true:
 - [ ] **Estimated** (story points)
 - [ ] No blocking dependency (or the dependency is scheduled first)
 - [ ] Traces to a source requirement (PRD/FRD ID) in the RTM
+- [ ] **No unratified assumptions** — every upstream `ASSUMPTION-n` this item's AC depends on has been ratified by its owner (or the item is blocked on that decision, not Ready)
 - [ ] UX / design available where needed
 - [ ] **Backend/data readiness — recon-backed** — for brownfield / platform-extension work, a **`solution-recon` section exists** for the feature (seam · real contract · sibling-to-mirror · ordered touchpoints); it is both the readiness check *and* the executor's warm build context (see `solution-recon` → "Recon is the build's warm context"). For a UI/screen story, the endpoint(s) and data it consumes are confirmed to exist; if not, a blocking **backend PBI is split out and scheduled first**. Don't spec a UI against a non-existent endpoint. *(The recon doubles as the warm handoff, so this adds **no new gate** — the 5-minute recon you already run becomes the Ready signal AND the thing the builder reads first; the alternative is dead/stub UI, a mid-sprint surprise, or a builder re-exploring the code cold.)*
 

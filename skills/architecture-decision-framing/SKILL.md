@@ -1,6 +1,6 @@
 ---
 name: architecture-decision-framing
-description: Turn one forced, hard-to-reverse technical choice into an evidence-grounded recommendation — frame the real options (including do-nothing), weigh them on cost / risk / reversibility / blast-radius / precedent-fit, recommend one, and state the strongest objection to it. Use when weighing extend-vs-rebuild, sync-vs-async, build-vs-buy, a data store, or an auth model. Output maps 1:1 to an ADR. Consumed by architect, adr-writer, rfc, sdd-writer, and tsd-writer.
+description: Turn one forced, hard-to-reverse technical choice into an evidence-grounded recommendation — frame the real options (including do-nothing), weigh them on cost / risk / reversibility / blast-radius / precedent-fit, recommend one, and state the strongest objection to it. Use when weighing extend-vs-rebuild, sync-vs-async, build-vs-buy, a data store, or an auth model. Output maps 1:1 to an ADR. Consumed by architect, adr-writer, rfc-facilitator, sdd-writer, and tsd-writer.
 ---
 
 # Framing an architecture decision — recommend, don't survey
@@ -26,7 +26,7 @@ Cost-to-build · **reversibility** · blast-radius · risk · precedent-fit (doe
 End with **one** recommendation stated plainly, the trigger that would change it, and the **strongest honest objection** to your own pick (so the reviewer/ADR sees the trade-off, not a sales pitch).
 
 ## Hand-off
-The analysis feeds `adr-writer` (records the decision + rationale, immutably) and, when it needs socializing first, `rfc` (opens it for comment). You analyze and recommend; the ADR is the record.
+The analysis feeds `adr-writer` (records the decision + rationale, immutably) and, when it needs socializing first, `rfc-facilitator` (opens it for comment). You analyze and recommend; the ADR is the record.
 
 ## Smells
 - Options that are all-strawmen-but-one → not a real comparison.

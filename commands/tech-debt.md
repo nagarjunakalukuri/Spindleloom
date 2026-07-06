@@ -3,7 +3,7 @@ description: Maintain the technical-debt register — owned, quantified debt ite
 argument-hint: [add|review|groom]
 ---
 
-Manage the **technical-debt register** (`templates/tech-debt-register-template.md`). Mode: **$1** (default: `review`). See `agents/tech-debt-register.md`.
+Manage the **technical-debt register** (`templates/tech-debt-register-template.md`). Mode: **$1** (default: `review`). See `agents/tech-debt-keeper.md`.
 
 ## add
 Capture a new item: description, **location** (service/file), **type** (design/code/test/infra/doc), **impact** (cost now), **interest** (quantified worsening rate — e.g. "+20 ms/release"), **effort** (S/M/L), source (postmortem/retro/review), owner. Assign the next `DEBT-NNN` and set a decision (pay now / schedule / accept / monitor).

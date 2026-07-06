@@ -48,8 +48,5 @@ For each flow: entry → steps → success, plus error/empty/edge states.
 ## Accessibility intent (WCAG 2.1 AA)
 - Keyboard path & focus order · contrast · input labels & errors · motion/animation considerations
 
-## Design system
-- **Reused:** <components/tokens> · **New patterns (flag for the system):** <…>
-
 ## Open questions
 - <gaps surfaced during design → route to prd/frd-writer>

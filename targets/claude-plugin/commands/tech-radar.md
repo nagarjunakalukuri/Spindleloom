@@ -3,7 +3,7 @@ description: Create or maintain the technology radar — the architect-owned Ado
 argument-hint: [create|update|review]
 ---
 
-Manage the **technology radar** (`templates/tech-radar-template.md`) — the cross-team snapshot of sanctioned tech choices. Mode: **$1** (default: `create` if none exists, else `review`). See `agents/tech-radar.md`.
+Manage the **technology radar** (`templates/tech-radar-template.md`) — the cross-team snapshot of sanctioned tech choices. Mode: **$1** (default: `create` if none exists, else `review`). See `agents/tech-radar-curator.md`.
 
 ## create
 1. Seed from existing decisions: scan `docs/adr/`, `coding-standards`, and the TSD for chosen tech; place each as a blip in its quadrant (Languages & Frameworks / Tools / Platforms / Techniques) and ring (Adopt / Trial / Assess / Hold) with a one-line rationale.

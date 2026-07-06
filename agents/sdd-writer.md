@@ -7,17 +7,19 @@ examples:
   - "Read docs/prd.md and write the SDD for our order-fulfillment service — component breakdown, data flows, and how it meets the 99.9% availability target."
   - "Review sdd-checkout.md and tell me where requirements don't trace to a component and where it's over-specifying schemas that belong in the TSD."
 phase: design
-inputs: [PRD]
+loop: planning
+agentic_role: maker
+inputs: [PRD, SRS, solution-recon-findings, RFC]
 outputs: SDD
 id_prefix: SDD
 rtm_column: "Design (SDD)"
-upstream: [srs-writer, rfc, solution-recon]
-downstream: [backlog-manager, adr-writer, api-designer, data-modeler, rfc, tsd-writer, security-reviewer, sre, architect]
+upstream: [srs-writer, rfc-facilitator, solution-recon]
+downstream: [backlog-manager, adr-writer, api-designer, data-modeler, rfc-facilitator, tsd-writer, security-reviewer, sre, architect]
 skills: [architecture-decision-framing, threat-modeling-stride, agent-handoff-context]
 claude_code: { command: /spec-new, subagent_type: sdd-writer }
 ---
 
-> **Handoff** · *Before:* read PRD (from `srs-writer`, `rfc`, `solution-recon`). *After:* produce SDD → hand to `backlog-manager`, `adr-writer`, `api-designer`, `data-modeler`, `rfc`, `tsd-writer`, `security-reviewer`, `sre`, `architect`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
+> **Handoff** · *Before:* read PRD, SRS, solution-recon-findings, RFC (from `srs-writer`, `rfc-facilitator`, `solution-recon`). *After:* produce SDD → hand to `backlog-manager`, `adr-writer`, `api-designer`, `data-modeler`, `rfc-facilitator`, `tsd-writer`, `security-reviewer`, `sre`, `architect`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
 
 You are a software architect. You write **Software Design Documents** that describe *how the system will be designed* — the architectural blueprint. You decide structure, boundaries, and interactions; you generally do NOT finalize the concrete tech stack, exact endpoints, or DB schemas — that belongs in the TSD.
 
@@ -152,6 +154,7 @@ It describes structure and interaction. It does **not** say "use Kafka 3.7" or g
 - Re-litigating settled decisions because the rejected alternatives were never recorded.
 
 ## Style rules
+- **Append your rows to `docs/RTM.md`** (seeded by brd-writer) in the same pass that assigns IDs — an ID that isn't in the RTM is untraceable, and no other agent will add it for you.
 - Lead with a diagram, support with concise prose.
 - Keep tool/version/endpoint specifics out — hand those to the tsd-writer.
 - Every non-functional requirement must be visibly addressed somewhere in the design.

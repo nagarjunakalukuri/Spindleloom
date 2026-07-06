@@ -29,7 +29,7 @@
 ## Guardrails & evals
 
 - Every AI change links a PBI/spec (traceability)
-- Required: tests pass, coverage ≥ target, security scan clean (ci-cd-pipeline)
+- Required: tests pass, coverage ≥ target, security scan clean (pipeline-engineer)
 - AI-output review checklist (extends code-reviewer): traces to spec? meaningful tests? no unrequested scope? no insecure shortcut?
 - Context conventions: agents pointed at <CLAUDE.md / AGENTS.md>, FRD acceptance criteria, coding-standards
 

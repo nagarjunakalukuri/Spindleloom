@@ -6,7 +6,7 @@
 
 ### `doc-strategy-advisor`
 **Owns:** Use this agent to decide WHICH software-engineering documents a team should actually maintain, and who owns each.
-**Run when:** After `spec-driven-dev` → hands to `mrd-writer`, `brd-writer`, `prd-writer`, `solution-recon`, `urs-writer`, `wiki-curator`
+**Run when:** After `spec-steward` → hands to `mrd-writer`, `brd-writer`, `prd-writer`, `solution-recon`, `urs-writer`, `wiki-curator`
 **Try:**
 - `We're a 14-person startup drowning in docs across Confluence and Notion — tell us the minimum doc set to keep and who should own each.`
 - `Audit the docs in our wiki for duplicates and altitude mismatches, then recommend what to merge or drop now that we've grown to three squads.`
@@ -22,7 +22,7 @@
 
 ### `brd-writer`
 **Owns:** Use this agent to create, review, or update Business Requirement Documents (BRDs).
-**Run when:** After `mrd-writer`, `doc-strategy-advisor` → hands to `prd-writer`
+**Run when:** After `mrd-writer`, `doc-strategy-advisor` → hands to `prd-writer`, `urs-writer`
 **Try:**
 - `Turn this client brief for the meal-delivery app into a BRD with measurable goals, stakeholders, and an explicit out-of-scope list before we hand off to the PRD.`
 - `Review brd-onboarding-revamp.md and flag any goals that aren't tied to a KPI, missing risk mitigations, or requirements that drift into technical how.`
@@ -43,14 +43,14 @@
 
 ### `srs-writer`
 **Owns:** Use this agent to create, review, or update a Software Requirements Specification (SRS/SRD) — the technical constraints and rules the software must meet.
-**Run when:** After `frd-writer`, `solution-recon`, `urs-writer` → hands to `sdd-writer`, `test-plan-writer`, `backlog-manager`, `data-modeler`, `security-reviewer`, `sre`, `performance-engineer`
+**Run when:** After `frd-writer`, `solution-recon`, `urs-writer` → hands to `sdd-writer`, `test-plan-writer`, `backlog-manager`, `data-modeler`, `security-reviewer`, `sre`, `performance-engineer`, `rfc-facilitator`
 **Try:**
 - `Turn docs/frd.md into an SRS with measurable performance, scale, and uptime targets, and HIPAA compliance constraints for our patient-records platform.`
 - `Review docs/srs.md and flag any non-functional requirement that isn't testable or that quietly prescribes an architecture instead of stating the target.`
 
 ### `urs-writer`
 **Owns:** Use this agent to create, review, or update a User Requirements Specification (URS) — the user-and-environment-centric requirements document required in regulated industries (pharma, medical devices, lab/manufacturing systems).
-**Run when:** After `doc-strategy-advisor` → hands to `srs-writer`, `frd-writer`
+**Run when:** After `doc-strategy-advisor`, `brd-writer` → hands to `srs-writer`, `frd-writer`
 **Try:**
 - `Draft a URS from docs/brd.md for our benchtop glucose analyzer under FDA 21 CFR 820.30 and Part 11, covering intended use, operator tasks, and ALCOA+ data integrity.`
 - `Review docs/urs.md and check that every requirement is user/environment-centric, has a verification method, and traces to a validation protocol for GAMP 5 sign-off.`
@@ -59,7 +59,7 @@
 
 ### `adr-writer`
 **Owns:** Use this agent to create, review, supersede, or maintain Architecture Decision Records (ADRs) — short, append-only records of a single significant technical decision and its rationale.
-**Run when:** After `sdd-writer`, `rfc`, `solution-recon`, `architect` → hands to `tech-radar`
+**Run when:** After `sdd-writer`, `rfc-facilitator`, `solution-recon`, `architect` → hands to `tech-radar-curator`
 **Try:**
 - `Record our decision to use Postgres over DynamoDB for the orders service as an ADR in docs/adr/, with the alternatives we weighed and the tradeoffs we're accepting.`
 - `Write a new ADR superseding ADR-0007 now that we're moving from REST to gRPC for service-to-service calls, and mark the old one superseded.`
@@ -73,7 +73,7 @@
 
 ### `architect`
 **Owns:** Use this agent to ANALYZE a significant, hard-to-reverse technical decision before it is recorded — framing the real options, weighing them on cost / risk / reversibility / blast-radius (grounded in the code, usually via solution-recon), and recommending one.
-**Run when:** After `solution-recon`, `sdd-writer`, `frd-writer` → hands to `adr-writer`, `rfc`, `backend-developer`, `frontend-developer`, `raid-log`
+**Run when:** After `solution-recon`, `sdd-writer`, `frd-writer` → hands to `adr-writer`, `rfc-facilitator`, `backend-developer`, `frontend-developer`, `raid-keeper`
 **Try:**
 - `Decide whether Phase-C operational classes extend the existing regulatory workflow or get a new one — analyze the options against the code and recommend, then hand the decision to adr-writer.`
 - `Two execution paths overlap (a live ReAct agent vs a dormant pattern layer). Frame the options, give the blast radius of retiring each, and recommend retire-or-bound.`
@@ -85,30 +85,30 @@
 - `Design the data model for the orders feature in docs/sdd.md — conceptual through physical schema, an ERD, and indexes for our lookup-by-customer and date-range queries.`
 - `Review the schema in db/schema.sql: are the foreign keys and constraints right, do the indexes match our real queries, and are the migrations reversible?`
 
-### `rfc`
+### `rfc-facilitator`
 **Owns:** Use this agent to propose a significant technical change and get reactions BEFORE building it — the forward-looking "request for comments" / design-review process.
-**Run when:** After `sdd-writer`, `architect` → hands to `adr-writer`, `sdd-writer`
+**Run when:** After `sdd-writer`, `architect`, `srs-writer` → hands to `adr-writer`, `sdd-writer`
 **Try:**
 - `Write an RFC proposing we move our session store from Postgres to Redis, weighing alternatives and a migration path, before I build it.`
 - `Review docs/rfc/0007-event-driven-orders.md — does it weigh real alternatives including do-nothing, and is the impact and decider clear before it goes out for comment?`
 
 ### `sdd-writer`
 **Owns:** Use this agent to create, review, or update Software Design Documents (SDDs).
-**Run when:** After `srs-writer`, `rfc`, `solution-recon` → hands to `backlog-manager`, `adr-writer`, `api-designer`, `data-modeler`, `rfc`, `tsd-writer`, `security-reviewer`, `sre`, `architect`
+**Run when:** After `srs-writer`, `rfc-facilitator`, `solution-recon` → hands to `backlog-manager`, `adr-writer`, `api-designer`, `data-modeler`, `rfc-facilitator`, `tsd-writer`, `security-reviewer`, `sre`, `architect`
 **Try:**
 - `Read docs/prd.md and write the SDD for our order-fulfillment service — component breakdown, data flows, and how it meets the 99.9% availability target.`
 - `Review sdd-checkout.md and tell me where requirements don't trace to a component and where it's over-specifying schemas that belong in the TSD.`
 
 ### `solution-recon`
 **Owns:** Use this agent BEFORE writing or accepting a spec/PBI for work on an EXISTING codebase (brownfield / platform extension) — it reads the code to establish ground truth so the spec isn't built on assumptions.
-**Run when:** After `doc-strategy-advisor`, `prd-writer`, `frd-writer` → hands to `frd-writer`, `srs-writer`, `sdd-writer`, `backlog-manager`, `adr-writer`, `architect`, `estimation-facilitator`, `backend-developer`, `frontend-developer`, `raid-log`
+**Run when:** After `doc-strategy-advisor`, `prd-writer`, `frd-writer` → hands to `frd-writer`, `srs-writer`, `sdd-writer`, `backlog-manager`, `adr-writer`, `architect`, `estimation-facilitator`, `backend-developer`, `frontend-developer`, `raid-keeper`
 **Try:**
 - `Before we spec PBI-214, recon the codebase: does the /aep/rag endpoint and the reconciliation_result data this dashboard needs actually exist, and is this FE-only or backend-first?`
 - `The FRD says the status field is pass/fail — verify that against the route and model code, flag any mismatch upstream, and give me an ordered task breakdown for the new screen.`
 
 ### `tsd-writer`
 **Owns:** Use this agent to create, review, or update Technical Specification Documents (TSDs).
-**Run when:** After `sdd-writer` → hands to `backlog-manager`
+**Run when:** After `sdd-writer` → hands to `backlog-manager`, `backend-developer`, `pipeline-engineer`
 **Try:**
 - `Turn the approved SDD in docs/sdd.md into a TSD with the pinned tech stack, endpoint specs, data models, and a deploy/rollback plan engineers can build from.`
 - `Review tsd-checkout-service.md against the SDD and flag missing endpoint error cases, unversioned dependencies, and any gaps in the testing strategy.`
@@ -124,7 +124,7 @@
 
 ### `backlog-manager`
 **Owns:** Use this agent to turn requirements into a product backlog — breaking a PRD/FRD into epics, user stories (PBIs), and tasks, writing INVEST-compliant stories with acceptance criteria, splitting oversized stories, and ordering the backlog.
-**Run when:** After `prd-writer`, `frd-writer`, `srs-writer`, `bug-triager`, `incident-postmortem`, `retrospective-facilitator`, `sdd-writer`, `solution-recon`, `tech-debt-register`, `tsd-writer` → hands to `estimation-facilitator`, `sprint-planner`, `status-reporter`, `test-author`
+**Run when:** After `prd-writer`, `frd-writer`, `srs-writer`, `bug-triager`, `incident-responder`, `retrospective-facilitator`, `sdd-writer`, `solution-recon`, `tech-debt-keeper`, `tsd-writer` → hands to `estimation-facilitator`, `sprint-planner`, `status-reporter`, `test-author`
 **Try:**
 - `Break docs/prd.md and the checkout FRD into epics and INVEST user stories with Given/When/Then acceptance criteria, ordered by MoSCoW, and save it as the backlog.`
 - `This PBI-CHECKOUT-007 story is too big to estimate, split it into 2-4 independently valuable stories that still trace back to FRD-ORD-001.`
@@ -138,14 +138,14 @@
 
 ### `sprint-planner`
 **Owns:** Use this agent to plan a sprint — setting a sprint goal, selecting a capacity-fit set of backlog items, applying the Definition of Ready, and producing the sprint backlog.
-**Run when:** After `estimation-facilitator`, `backlog-manager` → hands to `frontend-developer`, `backend-developer`, `retrospective-facilitator`, `raid-log`
+**Run when:** After `estimation-facilitator`, `backlog-manager` → hands to `frontend-developer`, `backend-developer`, `retrospective-facilitator`, `raid-keeper`
 **Try:**
 - `Plan sprint 7 for the checkout project — set a sprint goal and pull the top estimated backlog items that fit our 32-point capacity.`
 - `Check whether the top five stories in the backlog meet our Definition of Ready before we commit them to the next sprint.`
 
 ## Build
 
-### `ai-orchestration`
+### `ai-orchestrator`
 **Owns:** Use this agent to govern how AI coding agents are used in the development loop — what to delegate, how to keep a human in the loop, how to set guardrails and evals, and how to review AI-generated output safely.
 **Run when:** Top of the funnel → hands to `ai-eval`
 **Try:**
@@ -154,14 +154,14 @@
 
 ### `backend-developer`
 **Owns:** Use this agent for backend engineering — service design, API implementation, data access, reliability, security, and scaling patterns.
-**Run when:** After `solution-recon`, `architect`, `sprint-planner`, `api-designer`, `data-modeler`, `coding-standards`, `dev-onboarding`, `code-reviewer`, `security-reviewer` → hands to `change-verifier`, `code-reviewer`, `qa-tester`, `pr-author`, `performance-engineer`, `debugger`
+**Run when:** After `solution-recon`, `architect`, `sprint-planner`, `api-designer`, `data-modeler`, `coding-standards-writer`, `dev-onboarding`, `code-reviewer`, `security-reviewer`, `tsd-writer` → hands to `change-verifier`, `code-reviewer`, `qa-tester`, `pr-author`, `performance-engineer`, `debugger`
 **Try:**
 - `Build the order-checkout service from docs/SDD.md and the OpenAPI contract, with idempotent writes and retries on the payment call.`
 - `Review the backend in this PR for missing authz, N+1 queries, and whether it meets the SRS latency targets.`
 
-### `coding-standards`
+### `coding-standards-writer`
 **Owns:** Use this agent to author or maintain a team's coding standards / engineering guidelines — "what good code looks like here".
-**Run when:** Top of the funnel → hands to `code-reviewer`, `frontend-developer`, `backend-developer`, `ci-cd-pipeline`
+**Run when:** Top of the funnel → hands to `code-reviewer`, `frontend-developer`, `backend-developer`, `pipeline-engineer`
 **Try:**
 - `Write our coding standards for a TypeScript + Go backend, anchoring on the community style guides and only documenting our deviations and team rules.`
 - `Review our coding-standards.md against recent PRs and promote the naming and error-handling nits reviewers keep flagging into automated lint rules.`
@@ -175,7 +175,7 @@
 
 ### `frontend-developer`
 **Owns:** Use this agent for frontend engineering — component architecture, state management, accessibility, responsive/design-system discipline, performance, and distinctive (non-generic) UI.
-**Run when:** After `solution-recon`, `architect`, `sprint-planner`, `api-designer`, `coding-standards`, `dev-onboarding`, `ux-ui-designer`, `code-reviewer`, `security-reviewer` → hands to `change-verifier`, `code-reviewer`, `qa-tester`, `pr-author`, `accessibility-auditor`, `performance-engineer`, `debugger`
+**Run when:** After `solution-recon`, `architect`, `sprint-planner`, `api-designer`, `coding-standards-writer`, `dev-onboarding`, `ux-ui-designer`, `code-reviewer`, `security-reviewer` → hands to `change-verifier`, `code-reviewer`, `qa-tester`, `pr-author`, `accessibility-auditor`, `performance-engineer`, `debugger`
 **Try:**
 - `Build the checkout flow from docs/prd.md and the Figma design — propose the component tree and state plan first, then handle the loading, empty, and error states.`
 - `Review the frontend in this PR for component boundaries, keyboard accessibility, and missing UI states, and flag anywhere it reads like generic AI-slop UI.`
@@ -198,7 +198,7 @@
 
 ### `ai-eval`
 **Owns:** Use this agent to build the EVALS for AI/LLM features — golden datasets, eval suites, scoring rubrics, and regression-eval gates that run in CI.
-**Run when:** After `ai-orchestration`, `prd-writer` → hands to `ci-cd-pipeline`
+**Run when:** After `ai-orchestrator`, `prd-writer` → hands to `pipeline-engineer`
 **Try:**
 - `Build an eval suite for our RAG support-bot from docs/prd.md — golden dataset, a groundedness LLM-as-judge with a rubric, and a CI gate at 95% on the core set.`
 - `Review our eval setup in evals/ and tell me if the judge is calibrated and the failure modes are covered, then turn this week's hallucination escape into a new golden case.`
@@ -226,7 +226,7 @@
 
 ### `flaky-test-detective`
 **Owns:** Use this agent to find, quarantine, and fix flaky tests — tests that pass and fail without code changes.
-**Run when:** After `test-author`, `dev-onboarding`, `ci-cd-pipeline` → hands to `test-automation-engineer`
+**Run when:** After `test-author`, `dev-onboarding`, `pipeline-engineer` → hands to `test-automation-engineer`
 **Try:**
 - `The login_e2e test keeps passing locally but fails intermittently in CI with no code change — figure out the cause, quarantine it, and propose a fix.`
 - `Audit our suite for the flakiest tests and give me a register with suspected causes, owners, our flake rate trend, and quarantine debt.`
@@ -247,7 +247,7 @@
 
 ### `test-automation-engineer`
 **Owns:** Use this agent to author and maintain automated tests — end-to-end, integration, and contract suites — and the automation strategy.
-**Run when:** After `test-plan-writer`, `api-designer`, `flaky-test-detective` → hands to `ci-cd-pipeline`
+**Run when:** After `test-plan-writer`, `api-designer`, `flaky-test-detective` → hands to `pipeline-engineer`
 **Try:**
 - `Write a Playwright e2e for the checkout-to-payment flow in docs/test-plan.md and wire it into the PR stage of CI.`
 - `Our automated suite is slow and flaky — review it for an all-e2e imbalance and tell me what to demote to contract tests or move to nightly.`
@@ -263,7 +263,7 @@
 
 ### `code-reviewer`
 **Owns:** Use this agent to review a pull request or set of code changes against a shared bar.
-**Run when:** After `change-verifier`, `pr-author`, `frontend-developer`, `backend-developer`, `coding-standards`, `test-author`, `security-reviewer` → hands to `ci-cd-pipeline`, `release-manager`, `tech-debt-register`, `backend-developer`, `frontend-developer`
+**Run when:** After `change-verifier`, `pr-author`, `frontend-developer`, `backend-developer`, `coding-standards-writer`, `test-author`, `security-reviewer` → hands to `pipeline-engineer`, `release-manager`, `tech-debt-keeper`, `backend-developer`, `frontend-developer`
 **Try:**
 - `Review the diff on my checkout-refactor PR against our coding standards and the DoD, and tell me if it's ready to merge.`
 - `Set up a PR template and reviewer checklist so everyone reviews against the same bar instead of leaving LGTM rubber-stamps.`
@@ -275,55 +275,55 @@
 - `The dashboard menu endpoint feels slow under load — profile it, find the bottleneck, and get P95 under the 1s budget in the SRS without changing behavior.`
 - `Review this PR diff for performance risks like N+1 queries and bundle bloat, and flag what we should measure before merging.`
 
-### `raid-log`
+### `raid-keeper`
 **Owns:** Use this agent to maintain a RAID log — the living register of Risks, Assumptions, Issues, and Decisions for a project.
-**Run when:** After `solution-recon`, `architect`, `sprint-planner`, `incident-postmortem` → hands to `status-reporter`
+**Run when:** After `solution-recon`, `architect`, `sprint-planner`, `incident-responder` → hands to `status-reporter`
 **Try:**
 - `Start a RAID log for the Atlas project, seeding risks and assumptions from docs/brd.md and decisions from the existing ADRs.`
 - `Log a risk that the payments vendor integration may slip past the API freeze date, owned by the integrations lead, and re-score our open risks for this sprint's review.`
 
 ### `security-reviewer`
 **Owns:** Use this agent for application security — threat modeling (STRIDE), security requirements, authn/authz design review, and an AppSec / dependency-scan checklist.
-**Run when:** After `srs-writer`, `sdd-writer` → hands to `code-reviewer`, `ci-cd-pipeline`, `backend-developer`, `frontend-developer`
+**Run when:** After `srs-writer`, `sdd-writer` → hands to `code-reviewer`, `pipeline-engineer`, `backend-developer`, `frontend-developer`
 **Try:**
 - `STRIDE this payments service against docs/sdd.md and write the SEC- mitigation requirements as a threat model I can trace to the RTM.`
 - `Review the auth changes in this PR diff for broken access control, server-side authz, and leaked secrets, and give me a verdict with severity-grouped fixes.`
 
 ### `status-reporter`
 **Owns:** Use this agent to produce project status reports and a project-health snapshot.
-**Run when:** After `backlog-manager`, `raid-log`, `product-analytics`
+**Run when:** After `backlog-manager`, `raid-keeper`, `product-analytics`
 **Try:**
 - `Write this week's status report for the Atlas project with a RAG rating, pulling Sprint 6 velocity, the top RAID risks, and our open asks.`
 - `Turn this draft into an exec version for the steering committee — health, top 3 risks, and asks only, no ticket-level detail.`
 
 ## Release
 
-### `ci-cd-pipeline`
+### `pipeline-engineer`
 **Owns:** Use this agent to design or document a CI/CD pipeline — the automated stages and gates code passes through from commit to production.
-**Run when:** After `test-automation-engineer`, `coding-standards`, `code-reviewer`, `security-reviewer`, `ai-eval` → hands to `release-manager`, `flaky-test-detective`, `sre`
+**Run when:** After `test-automation-engineer`, `coding-standards-writer`, `code-reviewer`, `security-reviewer`, `ai-eval`, `tsd-writer` → hands to `release-manager`, `flaky-test-detective`, `sre`
 **Try:**
 - `Design our CI/CD pipeline from the TSD and coding-standards — lay out the stages from commit to prod and mark which checks are required to merge.`
 - `Review our GitHub Actions pipeline: are the cheap checks running first, are the security gates actually blocking merge, and is the prod deploy set up with automated rollback?`
 
 ### `release-manager`
 **Owns:** Use this agent to plan and ship a release — building a release plan, running the go/no-go decision, and writing release notes.
-**Run when:** After `qa-tester`, `code-reviewer`, `ci-cd-pipeline`, `sre`, `accessibility-auditor`, `performance-engineer` → hands to `incident-postmortem`, `feature-docs-writer`, `wiki-curator`
+**Run when:** After `qa-tester`, `code-reviewer`, `pipeline-engineer`, `sre`, `accessibility-auditor`, `performance-engineer` → hands to `incident-responder`, `feature-docs-writer`, `wiki-curator`
 **Try:**
 - `Are we go for launch on v2.4? Run the go/no-go checklist against the QA sign-off, CI/CD status, and open RAID items and name the approver.`
 - `Write the release notes for v2.4 from the PBIs merged since last release, with a plain-language section for users and a changelog plus rollback steps for the team.`
 
 ## Operate
 
-### `incident-postmortem`
+### `incident-responder`
 **Owns:** Use this agent for production incidents — running the response and writing a blameless postmortem, plus maintaining runbooks.
-**Run when:** After `release-manager`, `sre` → hands to `backlog-manager`, `retrospective-facilitator`, `tech-debt-register`, `raid-log`
+**Run when:** After `release-manager`, `sre` → hands to `backlog-manager`, `retrospective-facilitator`, `tech-debt-keeper`, `raid-keeper`
 **Try:**
 - `We're getting paged for a checkout outage right now — help me declare severity, find the fastest mitigation, and keep a timeline.`
 - `Write a blameless postmortem for yesterday's SEV1 payments outage with a UTC timeline, 5-whys root cause, and owned action items.`
 
 ### `sre`
 **Owns:** Use this agent for PROACTIVE operations & reliability engineering — defining SLO/SLIs and error budgets, observability (metrics/logs/traces) design, alerting, runbooks, deploy/rollback strategy, capacity, and cloud cost.
-**Run when:** After `srs-writer`, `sdd-writer`, `ci-cd-pipeline`, `performance-engineer` → hands to `incident-postmortem`, `release-manager`
+**Run when:** After `srs-writer`, `sdd-writer`, `pipeline-engineer`, `performance-engineer` → hands to `incident-responder`, `release-manager`
 **Try:**
 - `Using docs/SRS.md and docs/SDD.md, set up SLOs, error budgets, symptom-based alerts, and runbooks for our checkout service and save a reliability plan.`
 - `Review whether we're ready to operate the payments service before next week's launch and give release-manager a go/no-go verdict on rollback, alerts, and capacity headroom.`
@@ -346,7 +346,7 @@
 
 ### `retrospective-facilitator`
 **Owns:** Use this agent to run a sprint retrospective — structuring a blameless reflection on what went well and what didn't, and turning it into a few concrete, owned action items that get tracked sprint to sprint.
-**Run when:** After `sprint-planner`, `incident-postmortem` → hands to `backlog-manager`, `tech-debt-register`
+**Run when:** After `sprint-planner`, `incident-responder` → hands to `backlog-manager`, `tech-debt-keeper`
 **Try:**
 - `Run a blameless retro for Sprint 14 using Start/Stop/Continue, and review whether last sprint's action items actually landed.`
 - `Follow up on the action items from our last retrospective and flag any themes that keep coming back sprint after sprint.`
@@ -358,21 +358,21 @@
 - `Orchestrate building the live-tracking feature from docs/prd.md: set up the run-state with a stop contract, then propose the next agent at each step and wait for my go before dispatching.`
 - `Continue the FreshDesk run — read .shipwright/run-state.json, tell me which agents are now runnable (required upstreams done, gate passed) and what's blocked, and propose the next dispatch.`
 
-### `spec-driven-dev`
+### `spec-steward`
 **Owns:** Use this agent to adopt or improve Spec-Driven Development (Spec-DD) with AI coding tools.
 **Run when:** Top of the funnel → hands to `doc-strategy-advisor`
 **Try:**
 - `We have a loose CLAUDE.md but the agent keeps drifting from intent — assess what spec maturity rung we're on and what gets us to the next one.`
 - `Write a living spec for our orders feature and make it the source of truth our AI tool reads before it touches the code.`
 
-### `tech-debt-register`
+### `tech-debt-keeper`
 **Owns:** Use this agent to maintain a technical-debt register — a living, owned list of what's rotting and why, so debt is negotiable with the PM instead of invisible.
-**Run when:** After `retrospective-facilitator`, `incident-postmortem`, `code-reviewer` → hands to `backlog-manager`
+**Run when:** After `retrospective-facilitator`, `incident-responder`, `code-reviewer` → hands to `backlog-manager`
 **Try:**
 - `Log the auth-service retry hack we shipped this sprint as a debt item with impact, interest, and an owner.`
 - `Groom our debt register and give me the impact-by-interest-vs-effort view I can take to the PM to negotiate paydown capacity.`
 
-### `tech-radar`
+### `tech-radar-curator`
 **Owns:** Use this agent to create and maintain a technology radar — the architect-owned, team-consumed snapshot of what to Adopt / Trial / Assess / Hold across Languages & Frameworks, Tools, Platforms, and Techniques.
 **Run when:** After `adr-writer`
 **Try:**

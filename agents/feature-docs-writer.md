@@ -7,6 +7,8 @@ examples:
   - "Document the reconciliation rules feature for users — I need a how-to and an API reference for the endpoints in docs/frd-reconciliation.md."
   - "Review docs/features/filings/ for Diátaxis problems: anything mixing how-to with explanation, or hand-copied status codes that could drift from the OpenAPI spec."
 phase: process
+loop: outer-ship
+agentic_role: maker
 inputs: [PRD, FRD, API contract, release-notes]
 outputs: feature-docs
 id_prefix: DOC

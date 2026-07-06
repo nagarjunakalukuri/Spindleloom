@@ -3,7 +3,7 @@
 - **Owner:** Architect
 - **Published:** 2026-06-11
 
-> Worked example — produced by `tech-radar`. Architect-owned snapshot aligning the frontend, backend, and systems teams. Rings show current state; the *why* lives in the cited ADR/RFC. **Hold = no new usage.** Seeded from the TSD stack and ADR-0001/RFC-0001.
+> Worked example — produced by `tech-radar-curator`. Architect-owned snapshot aligning the frontend, backend, and systems teams. Rings show current state; the *why* lives in the cited ADR/RFC. **Hold = no new usage.** Seeded from the TSD stack and ADR-0001/RFC-0001.
 
 ## Rings
 - **Adopt** — proven; default for new work. · **Trial** — low-risk project + fallback. · **Assess** — spike only. · **Hold** — no new work with this.

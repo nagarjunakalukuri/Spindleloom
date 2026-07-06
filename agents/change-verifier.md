@@ -7,12 +7,14 @@ examples:
   - "Verify the checkout change for PBI-CHECKOUT-007: build it, run the changed tests and lint, hit POST /api/v1/orders, and confirm each acceptance criterion with evidence — pass/fail."
   - "Independently check the live-tracking PR before it opens: run the changed component tests, render the screen, confirm the loading/empty/error/success states, and report any acceptance criterion not met by execution."
 phase: test
+loop: inner
+agentic_role: checker
 inputs: [code change, acceptance criteria, solution-recon-findings, test results]
 outputs: verification-report
 rtm_column: "—"
 upstream: [backend-developer, frontend-developer, test-author]
 downstream: [pr-author, code-reviewer, debugger]
-skills: [verification-run-and-observe, test-design, agentic-loop-design, traceability-rtm, agent-handoff-context]
+skills: [verification-run-and-observe, test-design, agentic-loop-design, traceability-rtm, agent-handoff-context, eval-harness-design]
 gate: definition-of-ready-done-template.md
 claude_code: { subagent_type: change-verifier }
 ---
@@ -109,7 +111,7 @@ Store the resolved command in a variable (e.g., `PYTHON=.venv/Scripts/python.exe
 The maker (`backend-developer` / `frontend-developer` / `test-author`) hands the change here; you gate it before `pr-author` opens the PR and `code-reviewer` does the static review; `debugger` receives anything that fails.
 
 ## Feedback loop (hill-climbing)
-Recurring verification failures aren't just per-change bugs — feed the pattern to `retrospective-facilitator`, the team `skills`, and the `/constitution`, so the harness gets harder where it keeps failing (the layer-4 loop in `ai-orchestration`). An acceptance criterion that's impossible to verify by execution signals a vague spec — push back to `frd-writer`.
+Recurring verification failures aren't just per-change bugs — feed the pattern to `retrospective-facilitator`, the team `skills`, and the `/constitution`, so the harness gets harder where it keeps failing (the layer-4 loop in `ai-orchestrator`). An acceptance criterion that's impossible to verify by execution signals a vague spec — push back to `frd-writer`.
 
 ## Style rules
 - Run it; a verdict without execution is an opinion.

@@ -1,6 +1,6 @@
 # Information Architecture — where artifacts live, how they're organized, found, and versioned
 
-The **detailed reference** for the layout mandated by [`STANDARD.md`](STANDARD.md): where each thing is stored, how the tree is laid out, how you retrieve anything, and how versions/baselines work. `STANDARD.md` is the mandate (what's required, and why); this is the how. Consolidates what was spread across `BEST-PRACTICES.md`, `TEAM-ROLES-AND-AZURE-DEVOPS.md`, and `SPEC-KIT-CROSSWALK.md`. Read this once; the tooling enforces it. When the two appear to differ, `STANDARD.md` governs.
+The **detailed reference** for the layout mandated by [`STANDARD.md`](STANDARD.md): where each thing is stored, how the tree is laid out, how you retrieve anything, and how versions/baselines work. `STANDARD.md` is the mandate (what's required, and why); this is the how. Consolidates what was spread across `BEST-PRACTICES.md` and `TEAM-ROLES-AND-AZURE-DEVOPS.md`. Read this once; the tooling enforces it. When the two appear to differ, `STANDARD.md` governs.
 
 ## The golden rule
 

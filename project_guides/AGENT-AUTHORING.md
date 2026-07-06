@@ -16,7 +16,7 @@ How every agent in this project is written, so the fleet stays consistent as it 
 
 ```yaml
 ---
-name: <kebab-case; `-writer` for document agents, a role/action name for others (e.g. doc-strategy-advisor, backlog-manager, estimation-facilitator, sprint-planner, retrospective-facilitator, spec-driven-dev)>
+name: <kebab-case; `-writer` for document agents, a role/action name for others (e.g. doc-strategy-advisor, backlog-manager, estimation-facilitator, sprint-planner, retrospective-facilitator, spec-steward)>
 description: One sentence on purpose + explicit trigger phrases the user might say + any aliases (e.g. FSD→frd/sdd, TRD→srs) + where it sits in the funnel.
 tools: Read, Write, Edit, Glob, Grep[, WebSearch, WebFetch]   # add web tools only if the agent verifies external facts
 model: inherit
@@ -36,6 +36,8 @@ The framework's value is an unbroken handoff chain feeding one RTM — but that 
 
 ```yaml
 phase: planning                       # discovery|requirements|design|planning|build|test|review|release|operate|process
+loop: planning                        # which delivery loop it tightens: inner|outer-integrate|outer-ship|planning|governance (LOOPWRIGHT.md §6)
+agentic_role: facilitator             # role in the agentic loop: maker|checker|facilitator|keeper|orchestrator|advisor
 inputs: [PRD, FRD]                    # upstream artifacts this agent reads
 outputs: backlog                      # the artifact it produces/maintains
 id_prefix: PBI                        # ID convention it owns (omit if it produces no IDs)
@@ -48,14 +50,16 @@ claude_code: { command: /pbi-next, subagent_type: backlog-manager }   # portabil
 ```
 
 - **Additive and convention-only** — no behavior change; it makes the handoff/traceability data that was prose into something a hook, an index generator, or `/agents` can read.
+- **`loop` + `agentic_role`** classify the agent along the two loop dimensions: which *delivery* loop it tightens (`LOOPWRIGHT.md` §6 — `inner` = the developer's edit/build/test cycle, `outer-integrate` = PR→CI→QA, `outer-ship` = release→operate, `planning` = the spec/agile planning loop, `governance` = cross-cutting registers and orchestration) and which *agentic* role it plays in a maker/checker loop (`maker` produces an artifact, `checker` returns a verdict without patching the work under review, `facilitator` runs a ceremony/process, `keeper` maintains a living register, `orchestrator` dispatches other agents, `advisor` analyzes and recommends). `validate_graph.py` enforces both fields exist with valid values; the run-orchestrator and generators may route or group by them.
 - Build/design agents that produce ad-hoc notes still get an `id_prefix` (e.g. `API-`, `DM-`, `FE-`, `BE-`) so the RTM chain doesn't dead-end at the design/build layer.
 - Top-of-funnel and log agents set `upstream: []` / `rtm_column: "—"` as appropriate — empty is a valid, explicit answer.
+- **Edge semantics.** `upstream`/`downstream` model **artifact handoffs and routing** in the forward direction only. Two flows are deliberately *not* graph edges: (a) **feedback flag-backs** — the prose "Feedback loop" sections route push-backs (e.g. sdd-writer's reality-check to prd/srs-writer) out-of-band, so a run driver must read them from the body, not the graph; (b) **the recon context pack** — developers receive FRD/SRS/SDD content via `solution-recon-findings` (the warm build context), not via direct edges from each writer. Advisor/router agents' downstream edges mean "routes to", not "hands an artifact to".
 
 ## Agent classes
 
 - **Document agents** (`*-writer`): produce a versioned document; body = role → principles → create/review/update → embedded template → who participates → common pitfalls → feedback loop (if it has meaningful upstream feedback) → style rules. Always ship a matching `templates/` file.
 - **Facilitator/delivery agents** (backlog-manager, estimation-facilitator, sprint-planner, retrospective-facilitator): run a recurring agile activity and maintain living state (backlog, estimates, sprint plan, retro log). Same body shape, but the "template" is the artifact they maintain, and they chain to each other rather than feeding the document funnel.
-- **Router/practice agents** (doc-strategy-advisor, spec-driven-dev): advise or assess rather than produce a fixed artifact; a template is optional.
+- **Router/practice agents** (doc-strategy-advisor, spec-steward): advise or assess rather than produce a fixed artifact; a template is optional.
 - **model:** `inherit` unless a task needs a specific model.
 
 ## Shared standards every agent points to

@@ -6,7 +6,7 @@
 - **Comments by:** 2026-06-10
 - **Related:** 06-sdd.md §4, FRD-TRK-001, SR-FUNC-003
 
-> Worked example — produced by `rfc`. The *proposal and debate* that preceded the decision; the outcome was recorded as ADR-0001 (`08-adr-0001-event-driven-tracking.md`). RFCs and ADRs run continuously, outside the linear MRD→TSD funnel.
+> Worked example — produced by `rfc-facilitator`. The *proposal and debate* that preceded the decision; the outcome was recorded as ADR-0001 (`08-adr-0001-event-driven-tracking.md`). RFCs and ADRs run continuously, outside the linear MRD→TSD funnel.
 
 ## Summary
 I propose we consume the logistics partner's location feed asynchronously via events, in a dedicated Tracking Service, rather than calling the partner synchronously on the order/request path. This isolates a third-party latency we don't control from our core flow.

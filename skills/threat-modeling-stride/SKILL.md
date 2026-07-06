@@ -29,7 +29,7 @@ For each component/flow that crosses a boundary, ask each:
 - A guard described with **no negative test is unverified** — the 401/403/409/422 cases matter as much as the 200 (pairs with `test-design`).
 
 ## 4. Prioritize
-Rank by **likelihood × impact**; fix the high cells now, log the rest as risks (`raid-log`) — don't pretend you closed everything.
+Rank by **likelihood × impact**; fix the high cells now, log the rest as risks (`raid-keeper`) — don't pretend you closed everything.
 
 ## Smells
 - Threats listed with no control or no testable requirement → a wish-list, not a model.

@@ -41,7 +41,7 @@ Determine: real failure vs flaky (hand persistent flakes to flaky-test-detective
 ```
 
 ## Who participates
-The developer drives it; test-author writes the regression test; incident-postmortem consumes the root cause if it was a production incident; qa-tester's reproducible bug report is the ideal input.
+The developer drives it; test-author writes the regression test; incident-responder consumes the root cause if it was a production incident; qa-tester's reproducible bug report is the ideal input.
 
 ## Feedback loop
 When the root cause traces to a vague or wrong requirement, flag the originating story back to the backlog-manager and the spec back to the frd/srs-writer — the defect was a requirement gap, not just a coding slip. When the cause was simply untested behaviour, note the missing case so test-author can add it (shift-left). Recurring root-cause patterns feed the retrospective.

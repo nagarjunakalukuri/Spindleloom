@@ -3,7 +3,7 @@
 # Install: cp hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
 set -e
 
-if git diff --cached --name-only | grep -qE '^(agents/|project_guides/)'; then
+if git diff --cached --name-only | grep -qE '^(agents|skills|commands|templates|project_guides|hooks)/'; then
     printf 'Spindleloom: source changed — regenerating harness targets...\n'
     py hooks/build_harness_artifacts.py 2>/dev/null \
         || python hooks/build_harness_artifacts.py

@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Owner | <ML/AI engineer / SDET> |
-| Related | <PRD / FRD / ai-orchestration policy> |
+| Related | <PRD / FRD / ai-orchestration-policy> |
 | Status | Draft / Active |
 | Last updated | <date> |
 

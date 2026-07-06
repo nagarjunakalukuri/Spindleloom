@@ -3,7 +3,7 @@
 - **Owner:** Architect
 - **Last groomed:** 2026-06-11
 
-> Worked example — produced by `tech-debt-register`. Owned, quantified debt negotiable with the PM. Two items below trace directly to the `/spec-analyze` run on this example: the idempotency gap (a fixed blocker) and the PII-in-logs residual (a deliberately accepted gap).
+> Worked example — produced by `tech-debt-keeper`. Owned, quantified debt negotiable with the PM. Two items below trace directly to the `/spec-analyze` run on this example: the idempotency gap (a fixed blocker) and the PII-in-logs residual (a deliberately accepted gap).
 
 ## Register
 | ID | Description | Location | Type | Impact | Interest (worsening) | Effort | Owner | Decision | Backlog link |

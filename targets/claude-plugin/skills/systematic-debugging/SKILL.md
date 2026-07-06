@@ -1,6 +1,6 @@
 ---
 name: systematic-debugging
-description: Root-cause a failure with a repeatable method instead of flailing — reproduce it reliably, read the actual error, bisect to the smallest failing case, form one hypothesis at a time, fix the cause (not the symptom), and lock it with a regression test. Use on a failing test, a stack trace, a log, or a production incident. Consumed by debugger, backend-developer, frontend-developer, flaky-test-detective, and incident-postmortem.
+description: Root-cause a failure with a repeatable method instead of flailing — reproduce it reliably, read the actual error, bisect to the smallest failing case, form one hypothesis at a time, fix the cause (not the symptom), and lock it with a regression test. Use on a failing test, a stack trace, a log, or a production incident. Consumed by debugger, backend-developer, frontend-developer, flaky-test-detective, and incident-responder.
 ---
 
 # Systematic debugging — method over flailing
@@ -26,7 +26,7 @@ A `try/catch` that hides the error, a retry that masks a race, a null-check that
 Add a test that **fails before the fix and passes after** (red→green) — that proves you fixed the real thing and stops it returning. Hand it to `test-author` if it belongs in the suite.
 
 ## 7. Capture the lesson
-Recurring root causes are signal: feed them to `coding-standards`, the backlog, or a postmortem so the *class* of bug gets prevented, not just this instance.
+Recurring root causes are signal: feed them to `coding-standards-writer`, the backlog, or a postmortem so the *class* of bug gets prevented, not just this instance.
 
 ## Smells
 - "I changed some things and it works now" → you don't know what fixed it; it'll be back.

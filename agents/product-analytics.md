@@ -7,6 +7,8 @@ examples:
   - "Read docs/prd.md and write the analytics spec: events, precise metric definitions, and the funnel to track the \"3 orders per active user per week\" target."
   - "Design an A/B test for the new one-tap reorder feature with a primary metric, guardrails, sample size, and a stop rule."
 phase: process
+loop: governance
+agentic_role: maker
 inputs: [PRD, FRD]
 outputs: analytics & instrumentation spec
 id_prefix: PA

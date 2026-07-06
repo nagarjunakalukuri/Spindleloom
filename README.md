@@ -17,7 +17,7 @@ MRD (market)  → BRD (business) → PRD (product) → FRD (behavior)
 
 Two agents sit outside this linear flow: **urs-writer** runs in parallel for regulated/validated systems (a user-requirements alternative entry point), and **adr-writer** runs continuously, logging significant decisions as they're made.
 
-You rarely need all of these. Run **doc-strategy-advisor** to pick the right set for your team size, then **spec-driven-dev** to keep whatever you keep from drifting.
+You rarely need all of these. Run **doc-strategy-advisor** to pick the right set for your team size, then **spec-steward** to keep whatever you keep from drifting.
 
 ## Document agents
 
@@ -51,7 +51,7 @@ Run continuously alongside delivery.
 
 | Agent | File | Purpose |
 |---|---|---|
-| raid-log | `agents/raid-log.md` | Living register of Risks, Assumptions, Issues, Decisions; one owner + action per item; decisions link to ADRs. |
+| raid-keeper | `agents/raid-keeper.md` | Living register of Risks, Assumptions, Issues, Decisions; one owner + action per item; decisions link to ADRs. |
 | status-reporter | `agents/status-reporter.md` | Audience-tailored status reports with a RAG health rating, grounded in metrics and the RAID log. |
 | product-analytics | `agents/product-analytics.md` | Instruments the PRD's success metrics: event/telemetry spec, funnels, A/B-test design. Closes the build→learn loop (product metrics, vs status-reporter's delivery metrics). |
 | test-plan-writer | `agents/test-plan-writer.md` | Test plan, test cases, and QA strategy traced to FRD/SRS/PBI requirements; IQ/OQ/PQ for regulated systems. |
@@ -63,15 +63,15 @@ The developer's daily cycle — write, review, ship, operate.
 | Agent | File | Purpose |
 |---|---|---|
 | dev-onboarding | `agents/dev-onboarding.md` | CONTRIBUTING / onboarding guide + git branching, commit, and PR conventions. Day-one productivity for new devs. |
-| coding-standards | `agents/coding-standards.md` | "What good code looks like here" — enforceable engineering guidelines; automate what tools can. |
+| coding-standards-writer | `agents/coding-standards-writer.md` | "What good code looks like here" — enforceable engineering guidelines; automate what tools can. |
 | code-reviewer | `agents/code-reviewer.md` | Reviews PRs against the standard & DoD; severity-grouped, kind, actionable feedback + PR template. |
 | security-reviewer | `agents/security-reviewer.md` | Threat modeling (STRIDE), security requirements, authz-design review, AppSec checklist. The human-judgement security owner above CI's scanners. |
 | qa-tester | `agents/qa-tester.md` | Tester actor: dev→QA handoff, test execution, bug reporting, defect lifecycle, QA sign-off → go/no-go. |
 | accessibility-auditor | `agents/accessibility-auditor.md` | Independent WCAG 2.1 AA audit + sign-off gate (keyboard/screen-reader/contrast). Verifies what ux-ui-designer intends and frontend-developer builds. |
 | performance-engineer | `agents/performance-engineer.md` | Profiles and optimizes against a budget — bottlenecks, memory, slow queries (N+1), bundle/Core Web Vitals; behavior-preserving, verified under load. |
-| ci-cd-pipeline | `agents/ci-cd-pipeline.md` | Automated build→deploy stages and gates; makes DoD/coding-standards enforced, not aspirational. |
+| pipeline-engineer | `agents/pipeline-engineer.md` | Automated build→deploy stages and gates; makes DoD/coding-standards enforced, not aspirational. |
 | sre | `agents/sre.md` | **Proactive** reliability: SLO/SLIs + error budgets, observability design, alerting, runbooks, deploy/rollback strategy, capacity & cost. The run-and-operate owner. |
-| incident-postmortem | `agents/incident-postmortem.md` | Production incident response + blameless postmortem + runbooks (reactive — improves the SRE runbooks after a failure). |
+| incident-responder | `agents/incident-responder.md` | Production incident response + blameless postmortem + runbooks (reactive — improves the SRE runbooks after a failure). |
 | release-manager | `agents/release-manager.md` | Release plan, evidence-based go/no-go gate, and release notes. |
 | pr-author | `agents/pr-author.md` | Drafts PR descriptions & Conventional-Commit messages from a diff. |
 | test-author | `agents/test-author.md` | Unit/integration tests from acceptance criteria + code (the dev's own tests). |
@@ -92,10 +92,10 @@ Frontend/backend craft and the 2026 agentic-SDLC layer.
 | backend-developer | `agents/backend-developer.md` | Service design, reliability (idempotency/failure handling), security, observability, scaling. |
 | api-designer | `agents/api-designer.md` | Contract-first API design (OpenAPI/GraphQL): resources, error model, versioning, pagination, auth. |
 | data-modeler | `agents/data-modeler.md` | Conceptual→logical→physical data model, ERD, indexing for access patterns, reversible migrations. |
-| ai-orchestration | `agents/ai-orchestration.md` | Governs AI coding agents: what to delegate, human-in-the-loop by risk, guardrails/evals, reviewing AI output. |
-| ai-eval | `agents/ai-eval.md` | Builds the eval harness for shipped AI/LLM features: golden datasets, scorers (incl. LLM-as-judge), and regression-eval CI gates. The execution counterpart to ai-orchestration's policy. |
+| ai-orchestrator | `agents/ai-orchestrator.md` | Governs AI coding agents: what to delegate, human-in-the-loop by risk, guardrails/evals, reviewing AI output. |
+| ai-eval | `agents/ai-eval.md` | Builds the eval harness for shipped AI/LLM features: golden datasets, scorers (incl. LLM-as-judge), and regression-eval CI gates. The execution counterpart to ai-orchestrator's policy. |
 
-Inner loop: **dev-onboarding/coding-standards** (set the bar) → build → **code-reviewer** + **security-reviewer** → **ci-cd-pipeline** → **qa-tester** → **release-manager** (go/no-go) → operate (**sre** SLOs/runbooks) → **incident-postmortem** → (feeds backlog/retro). **ux-ui-designer** feeds the build from the design phase.
+Inner loop: **dev-onboarding/coding-standards-writer** (set the bar) → build → **code-reviewer** + **security-reviewer** → **pipeline-engineer** → **qa-tester** → **release-manager** (go/no-go) → operate (**sre** SLOs/runbooks) → **incident-responder** → (feeds backlog/retro). **ux-ui-designer** feeds the build from the design phase.
 
 ## Practice agents
 
@@ -105,13 +105,13 @@ Inner loop: **dev-onboarding/coding-standards** (set the bar) → build → **co
 | solution-recon | `agents/solution-recon.md` | **Brownfield ground-truth.** Reads the codebase before a spec/PBI is written or accepted — confirms what exists, extracts the real contract/data shapes/status values, names the pattern to mirror, enumerates real scenarios, classifies FE-only vs backend-first, and produces a codebase-grounded PBI→task breakdown. Feeds frd/pbi/sdd-writer *verified facts* and flags spec↔code mismatches upstream. The missing code-grounded layer (greenfield doesn't need it). |
 | wiki-curator | `agents/wiki-curator.md` | Builds & maintains the project wiki — home/index, navigation, links to each system of record, discoverability. (advisor decides *which* docs; this *builds* the wiki). |
 | feature-docs-writer | `agents/feature-docs-writer.md` | Writes end-user / feature documentation in the Diátaxis model (tutorial · how-to · reference · explanation) from shipped features. |
-| architect | `agents/architect.md` | **Decision analysis.** Takes a single architecturally-significant, hard-to-reverse choice and turns it into an evidence-grounded recommendation — frames the real options, weighs them on cost/risk/reversibility/blast-radius (grounded in the code via `solution-recon`), and recommends one. Sits between design/recon and the ADR: it produces the decision *analysis*; `adr-writer` *records* it. Distinct from `rfc` (socialize for comment) and `sdd-writer` (describe the chosen design). |
+| architect | `agents/architect.md` | **Decision analysis.** Takes a single architecturally-significant, hard-to-reverse choice and turns it into an evidence-grounded recommendation — frames the real options, weighs them on cost/risk/reversibility/blast-radius (grounded in the code via `solution-recon`), and recommends one. Sits between design/recon and the ADR: it produces the decision *analysis*; `adr-writer` *records* it. Distinct from `rfc-facilitator` (socialize for comment) and `sdd-writer` (describe the chosen design). |
 | adr-writer | `agents/adr-writer.md` | Records Architecture Decision Records — one immutable, append-only file per significant decision, capturing the *why*. Complements the SDD/TSD. |
-| rfc | `agents/rfc.md` | Runs the **RFC / design-review** process — the forward-looking proposal opened for comment *before* building. An accepted RFC produces an ADR. The home for the "RFC" the funnel references. |
-| tech-radar | `agents/tech-radar.md` | Architect-owned **technology radar** (Adopt/Trial/Assess/Hold) aligning tech choices across frontend/backend/systems teams. Ring moves are driven by ADRs. |
-| tech-debt-register | `agents/tech-debt-register.md` | Living, owned **tech-debt register** — impact × interest vs effort, negotiable with the PM, promotable to the backlog. Fed by postmortems, retros, and reviews. |
-| spec-driven-dev | `agents/spec-driven-dev.md` | Assesses Spec Driven Development maturity and keeps a living spec so AI tools don't drift from intent. |
-| run-orchestrator | `agents/run-orchestrator.md` | **The conductor.** Drives a multi-agent run end-to-end against a goal — reads the contract graph + a run-state spine, proposes the next runnable agent (required upstreams done + gate passed), enforces the stop contract, and dispatches with confirmation (`/run`). Makes the implicit funnel an explicit, resumable run; pairs with `change-verifier` (its build-phase gate) and `ai-orchestration` (its policy). |
+| rfc-facilitator | `agents/rfc-facilitator.md` | Runs the **RFC / design-review** process — the forward-looking proposal opened for comment *before* building. An accepted RFC produces an ADR. The home for the "RFC" the funnel references. |
+| tech-radar-curator | `agents/tech-radar-curator.md` | Architect-owned **technology radar** (Adopt/Trial/Assess/Hold) aligning tech choices across frontend/backend/systems teams. Ring moves are driven by ADRs. |
+| tech-debt-keeper | `agents/tech-debt-keeper.md` | Living, owned **tech-debt register** — impact × interest vs effort, negotiable with the PM, promotable to the backlog. Fed by postmortems, retros, and reviews. |
+| spec-steward | `agents/spec-steward.md` | Assesses Spec Driven Development maturity and keeps a living spec so AI tools don't drift from intent. |
+| run-orchestrator | `agents/run-orchestrator.md` | **The conductor.** Drives a multi-agent run end-to-end against a goal — reads the contract graph + a run-state spine, proposes the next runnable agent (required upstreams done + gate passed), enforces the stop contract, and dispatches with confirmation (`/run`). Makes the implicit funnel an explicit, resumable run; pairs with `change-verifier` (its build-phase gate) and `ai-orchestrator` (its policy). |
 
 Each document agent can **create**, **review**, or **update** its document, reads the upstream doc(s) before drafting, and flags discoveries back upstream (see feedback loops in `project_guides/BEST-PRACTICES.md`).
 
@@ -175,7 +175,7 @@ Blank, fill-in-the-blank versions of each document:
 - `templates/data-model-template.md`
 - `templates/ai-orchestration-policy-template.md`
 - `templates/wiki-home-template.md` — project wiki home / IA-map page
-- `templates/spec-driven-maturity-assessment.md` — Spec-Driven Development maturity scorecard
+- `templates/spec-driven-maturity-assessment-template.md` — Spec-Driven Development maturity scorecard
 - `templates/constitution-template.md` — the durable, AI-read-first project guardrails (principles, boundaries, non-goals)
 
 ## Worked example
@@ -192,12 +192,12 @@ Blank, fill-in-the-blank versions of each document:
 
 `project_guides/BEST-PRACTICES.md` — the funnel, feedback loops, team-size doc tiers, ownership matrix, the requirement quality standard (ISO/IEC/IEEE 29148 + INCOSE checklist and the "system shall" rule), the traceability backbone with Req-ID convention, change control & baselines, and frameworks (arc42, C4, Diátaxis, Docs-as-Code) that all agents follow.
 
-`project_guides/AGENT-AUTHORING.md` — the prompting conventions every agent follows (role, context, calm instructions, grounding, right-sized output) and a checklist for adding a new agent. Read this before creating or editing an agent.
+`project_guides/FLEET-EVAL.md` — the fleet's behavioral regression test: a chained, contract-strict E2E run over a golden feature brief with per-handoff verdicts and an independent judge. Complements `validate_graph.py` (structural) with coordination evidence.
 
-`SPEC-KIT-CROSSWALK.md` — how this toolkit maps to [GitHub Spec Kit](https://github.com/github/spec-kit): a command-by-command crosswalk, the per-feature vs per-document structural choice, and three adoption paths (Spec Kit container + this toolkit's depth).
+`project_guides/AGENT-AUTHORING.md` — the prompting conventions every agent follows (role, context, calm instructions, grounding, right-sized output) and a checklist for adding a new agent. Read this before creating or editing an agent.
 
 `project_guides/TEAM-ROLES-AND-AZURE-DEVOPS.md` — who drives which agents on a 9-person team (Director/PM/Architect/Leads/Devs), and how the artifacts map onto Azure DevOps Boards/Repos/Wiki/Test Plans as the system of record.
 
-`how-to-use.html` — a standalone, role-by-role usage guide (open in a browser): for each role — Director, PM, Architect, Lead, UX/UI Designer, Developer, QA, Security, SRE, AI/Data — the agents they drive, a typical flow, and copy-paste **sample prompts**, plus an end-to-end FreshDesk walkthrough.
+`project_guides/how-to-use.html` — a standalone, role-by-role usage guide (open in a browser): for each role — Director, PM, Architect, Lead, UX/UI Designer, Developer, QA, Security, SRE, AI/Data — the agents they drive, a typical flow, and copy-paste **sample prompts**, plus an end-to-end FreshDesk walkthrough.
 
-`for-everyone.html` — a plain-language, end-to-end overview (open in a browser or share the link): the SDLC as a turning wheel, the eight stages, how to use it by role, the slash commands, configuration with per-platform install steps, the hooks reference, where artifacts live (the four cadence planes), and the Azure DevOps mapping. The "explain it to anyone" companion to the role-by-role `how-to-use.html`.
+`project_guides/for-everyone.html` — a plain-language, end-to-end overview (open in a browser or share the link): the SDLC as a turning wheel, the eight stages, how to use it by role, the slash commands, configuration with per-platform install steps, the hooks reference, where artifacts live (the four cadence planes), and the Azure DevOps mapping. The "explain it to anyone" companion to the role-by-role `how-to-use.html`.

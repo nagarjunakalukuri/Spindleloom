@@ -7,12 +7,15 @@ examples:
   - "Test the checkout build on staging against the payments test plan and give me a QA verdict with any bugs logged."
   - "Write up a reproducible bug report for the cart total miscalculating on Safari, set severity, and link it to TC-204."
 phase: test
+loop: outer-integrate
+agentic_role: checker
 inputs: [test plan, build]
 outputs: bug reports, QA sign-off
 id_prefix: BUG
 rtm_column: "—"
 upstream: [test-plan-writer, frontend-developer, backend-developer]
 downstream: [bug-triager, release-manager, debugger]
+gate: test-plan-template.md
 skills: [verification-run-and-observe, agent-handoff-context]
 claude_code: { subagent_type: qa-tester }
 ---

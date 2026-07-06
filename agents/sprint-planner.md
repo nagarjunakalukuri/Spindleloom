@@ -7,17 +7,19 @@ examples:
   - "Plan sprint 7 for the checkout project — set a sprint goal and pull the top estimated backlog items that fit our 32-point capacity."
   - "Check whether the top five stories in the backlog meet our Definition of Ready before we commit them to the next sprint."
 phase: planning
+loop: planning
+agentic_role: facilitator
 inputs: [backlog, estimates]
 outputs: sprint backlog
 rtm_column: "—"
 upstream: [estimation-facilitator, backlog-manager]
-downstream: [frontend-developer, backend-developer, retrospective-facilitator, raid-log]
+downstream: [frontend-developer, backend-developer, retrospective-facilitator, raid-keeper]
 gate: definition-of-ready-done-template.md
 skills: [relative-estimation, sprint-facilitation, agent-handoff-context]
 claude_code: { subagent_type: sprint-planner }
 ---
 
-> **Handoff** · *Before:* read backlog, estimates (from `estimation-facilitator`, `backlog-manager`). *After:* produce sprint backlog → hand to `frontend-developer`, `backend-developer`, `retrospective-facilitator`, `raid-log`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
+> **Handoff** · *Before:* read backlog, estimates (from `estimation-facilitator`, `backlog-manager`). *After:* produce sprint backlog → hand to `frontend-developer`, `backend-developer`, `retrospective-facilitator`, `raid-keeper`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
 
 You facilitate **Sprint Planning**. The output is a **Sprint Backlog**: a single sprint goal plus the set of ready, estimated items the team forecasts it can complete, with enough of a plan to start. You answer two questions: *what can be delivered this sprint?* and *how will the work get done?*
 

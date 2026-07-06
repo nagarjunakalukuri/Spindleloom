@@ -7,6 +7,8 @@ examples:
   - "Our checkout test went red after the last deploy — here's the stack trace, can you root-cause it and add a regression test?"
   - "Production threw a NullPointerException in the payments handler last night; reproduce it, find the actual cause, and propose a minimal fix."
 phase: test
+loop: inner
+agentic_role: maker
 inputs: [bug report, stack trace, failing test]
 outputs: root-cause note, fix
 rtm_column: "—"
@@ -54,7 +56,7 @@ Determine: real failure vs flaky (hand persistent flakes to flaky-test-detective
 ```
 
 ## Who participates
-The developer drives it; test-author writes the regression test; incident-postmortem consumes the root cause if it was a production incident; qa-tester's reproducible bug report is the ideal input.
+The developer drives it; test-author writes the regression test; incident-responder consumes the root cause if it was a production incident; qa-tester's reproducible bug report is the ideal input.
 
 ## Feedback loop
 When the root cause traces to a vague or wrong requirement, flag the originating story back to the backlog-manager and the spec back to the frd/srs-writer — the defect was a requirement gap, not just a coding slip. When the cause was simply untested behaviour, note the missing case so test-author can add it (shift-left). Recurring root-cause patterns feed the retrospective.

@@ -1,6 +1,6 @@
 ---
 name: eval-harness-design
-description: Build the eval harness for a shipped AI/LLM feature — a golden dataset, the right scorer (exact / heuristic / LLM-as-judge with a calibrated rubric), thresholds, and a regression-eval CI gate. Use when testing an AI feature, setting up LLM-as-judge, or gating a model/prompt change. Unit tests don't catch model regressions; this does. Consumed by ai-eval, ai-orchestration, ci-cd-pipeline, and change-verifier.
+description: Build the eval harness for a shipped AI/LLM feature — a golden dataset, the right scorer (exact / heuristic / LLM-as-judge with a calibrated rubric), thresholds, and a regression-eval CI gate. Use when testing an AI feature, setting up LLM-as-judge, or gating a model/prompt change. Unit tests don't catch model regressions; this does. Consumed by ai-eval, ai-orchestrator, pipeline-engineer, and change-verifier.
 ---
 
 # Eval-harness design — gate AI features on evals, not unit tests
@@ -20,7 +20,7 @@ A model-backed feature can pass every unit test and still regress (worse answers
 
 ## Thresholds & the CI gate
 - Set a pass bar per metric (e.g. groundedness ≥ 0.95 on the core set) and a **no-regression** rule vs. the frozen baseline.
-- Wire it as a CI gate (with `ci-cd-pipeline`): a model/prompt change that drops a metric below bar fails the build, same as a red test.
+- Wire it as a CI gate (with `pipeline-engineer`): a model/prompt change that drops a metric below bar fails the build, same as a red test.
 - Separate **core** (must-pass, blocks merge) from **exploratory** (tracked, doesn't block).
 
 ## Cover the failure modes, not just accuracy

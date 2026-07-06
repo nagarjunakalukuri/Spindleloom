@@ -7,7 +7,7 @@
 | Status | Draft / Active / Superseded |
 | Last updated | <YYYY-MM-DD> |
 
-> The durable, AI-read-first source of project law. Every contributor — human or AI agent — reads this before changing anything. It holds *standing principles*, not feature details; per-feature behavior lives in the funnel docs (PRD/FRD/SRS). Promote scattered guardrails here; **link** to `coding-standards` and the `ai-orchestration-policy` rather than copying them. The constitution is the rung-1→rung-2 anchor in the `spec-driven-dev` maturity ladder.
+> The durable, AI-read-first source of project law. Every contributor — human or AI agent — reads this before changing anything. It holds *standing principles*, not feature details; per-feature behavior lives in the funnel docs (PRD/FRD/SRS). Promote scattered guardrails here; **link** to `coding-standards` and the `ai-orchestration-policy` rather than copying them. The constitution is the rung-1→rung-2 anchor in the `spec-steward` maturity ladder.
 
 ## Purpose & intent
 <What this system is for and the outcomes it must achieve. The "why" that should outlive any individual feature.>

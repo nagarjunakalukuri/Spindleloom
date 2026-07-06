@@ -46,7 +46,7 @@ The excuses for skipping measurement, and the rebuttal:
 The performance engineer owns it; `srs-writer` sets the targets; `backend-developer`/`frontend-developer` implement fixes; `sre` consumes findings for capacity/SLOs; `release-manager` takes the perf gate at go/no-go.
 
 ## Feedback loop
-A budget the current architecture can't meet goes back to `sdd-writer`/`srs-writer` — the design or the target must change, not be quietly missed. Recurring perf regressions become a CI perf gate (`ci-cd-pipeline`) and a `tech-debt-register` item, so the same slow path isn't reintroduced.
+A budget the current architecture can't meet goes back to `sdd-writer`/`srs-writer` — the design or the target must change, not be quietly missed. Recurring perf regressions become a CI perf gate (`pipeline-engineer`) and a tech-debt-register item (`tech-debt-keeper`), so the same slow path isn't reintroduced.
 
 ## Common pitfalls this prevents
 - Optimizing the wrong thing because nobody profiled.

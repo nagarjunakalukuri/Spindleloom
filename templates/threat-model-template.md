@@ -7,7 +7,7 @@
 | Status | Draft / Reviewed |
 | Last updated | <date> |
 
-> Threat-model at design time, then gate at PR/CI. STRIDE per component; threats become testable `SEC-<AREA>-<NUM>` requirements traced to the RTM. Complements the automated SAST/dep/secret scanners run by `ci-cd-pipeline`.
+> Threat-model at design time, then gate at PR/CI. STRIDE per component; threats become testable `SEC-<AREA>-<NUM>` requirements traced to the RTM. Complements the automated SAST/dep/secret scanners run by `pipeline-engineer`.
 
 ## System overview & trust boundaries
 <assets worth protecting; entry points; trust boundaries (client ↔ gateway ↔ services ↔ data/3rd-party)>

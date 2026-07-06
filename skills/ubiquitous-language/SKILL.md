@@ -1,6 +1,6 @@
 ---
 name: ubiquitous-language
-description: Establish and maintain one ubiquitous language for the project — a living glossary of canonical terms — and record the decisions that shape it as ADRs. Use when terms are overloaded or used inconsistently across documents, when a new concept needs a precise name before it spreads, or when a hard-to-reverse choice needs capturing. Returns glossary updates and, where warranted, an ADR. Pairs with the adr-writer and spec-driven-dev agents; the proactive counterpart to cross-artifact-analysis's terminology-drift check.
+description: Establish and maintain one ubiquitous language for the project — a living glossary of canonical terms — and record the decisions that shape it as ADRs. Use when terms are overloaded or used inconsistently across documents, when a new concept needs a precise name before it spreads, or when a hard-to-reverse choice needs capturing. Returns glossary updates and, where warranted, an ADR. Pairs with the adr-writer and spec-steward agents; the proactive counterpart to cross-artifact-analysis's terminology-drift check.
 ---
 
 # Ubiquitous language — one vocabulary, recorded decisions
@@ -30,4 +30,4 @@ Capture a decision as an ADR (`/adr-new`, `adr-writer`) only when all three hold
 A naming choice that meets all three (e.g. modeling "order" and "fulfillment" as separate concepts) is worth an ADR; a routine term definition is not — it just goes in the glossary.
 
 ## Tie-in
-The proactive half of the terminology pair with `cross-artifact-analysis` (which audits drift after the fact). ADRs route through the existing `adr-writer` / `/adr-new` machinery and the RAID log's decisions index; `spec-driven-dev` keeps the glossary authoritative so AI tools read one vocabulary. `requirement-elicitation` surfaces the terms this skill pins down.
+The proactive half of the terminology pair with `cross-artifact-analysis` (which audits drift after the fact). ADRs route through the existing `adr-writer` / `/adr-new` machinery and the RAID log's decisions index; `spec-steward` keeps the glossary authoritative so AI tools read one vocabulary. `requirement-elicitation` surfaces the terms this skill pins down.

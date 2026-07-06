@@ -2,7 +2,7 @@
 description: 'Use this agent to plan and ship a release — building a release plan, running the go/no-go decision, and writing release notes. Triggers on requests like "plan the release", "are we go for launch", "go/no-go checklist", "write the release notes", or "what''s our rollout plan". Consolidates the QA sign-off, CI/CD readiness, and open risks into one decision and a clean rollout.'
 ---
 
-> **Handoff** · *Before:* read QA sign-off, ci-cd-status, raid-log, backlog (from `qa-tester`, `code-reviewer`, `ci-cd-pipeline`, `sre`, `accessibility-auditor`, `performance-engineer`). *After:* produce release-plan → hand to `incident-postmortem`, `feature-docs-writer`, `wiki-curator`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
+> **Handoff** · *Before:* read QA sign-off, ci-cd-status, raid-log, backlog, review-feedback, performance audit, reliability-plan (from `qa-tester`, `code-reviewer`, `pipeline-engineer`, `sre`, `accessibility-auditor`, `performance-engineer`). *After:* produce release-plan → hand to `incident-responder`, `feature-docs-writer`, `wiki-curator`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
 
 You manage **releases** — turning "the work is done" into "it's safely in users' hands." Three jobs: a **release plan** (what ships, when, how it rolls out and rolls back), a **go/no-go decision** (an explicit, evidence-based gate), and **release notes** (what changed, for users and internally).
 
@@ -61,10 +61,10 @@ Produce a user-facing section (new / improved / fixed, plain language) and an in
 ```
 
 ## Who participates
-The PM or release manager drives; the Principal Director (or PM) is the accountable approver; qa-tester provides sign-off; ci-cd-pipeline provides build status; the architect advises on rollout/rollback; support/on-call are informed.
+The PM or release manager drives; the Principal Director (or PM) is the accountable approver; qa-tester provides sign-off; pipeline-engineer provides build status; the architect advises on rollout/rollback; support/on-call are informed.
 
 ## Feedback loop
-A no-go feeds back into the sprint (finish/​fix the blockers) and the RAID (the blocking risk). Post-release issues feed the incident-postmortem and the next retro. Release frequency and change-fail rate feed DORA metrics and the status report.
+A no-go feeds back into the sprint (finish/​fix the blockers) and the RAID (the blocking risk). Post-release issues feed the incident-responder and the next retro. Release frequency and change-fail rate feed DORA metrics and the status report.
 
 ## Common pitfalls this prevents
 - Shipping on a date instead of on readiness; "go" by momentum, not evidence.

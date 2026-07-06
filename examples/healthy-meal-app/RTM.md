@@ -31,3 +31,16 @@ Each PBI from `12-backlog.md` traced to the requirement it implements — extend
 | ID | Decision | Where |
 |---|---|---|
 | ADR-0001 | Event-driven tracking | 08-adr-0001-event-driven-tracking.md |
+| `FRD-FAV-001` | FRD | `04-frd.md` |  |  |  |
+| `FRD-FILT-001` | FRD | `04-frd.md` |  |  |  |
+| `FRD-FILT-002` | FRD | `04-frd.md` |  |  |  |
+| `FRD-ORD-001` | FRD | `04-frd.md` |  |  |  |
+| `FRD-ORD-002` | FRD | `04-frd.md` |  |  |  |
+| `FRD-TRK-001` | FRD | `04-frd.md` |  |  |  |
+| `OBS-PII-1` | OBS | `11-tech-debt-register.md` |  |  |  |
+| `ORD-IDEM-1` | ORD | `11-tech-debt-register.md` |  |  |  |
+| `SR-FUNC-001` | SR | `05-srs.md` |  |  |  |
+| `SR-FUNC-002` | SR | `05-srs.md` |  |  |  |
+| `SR-FUNC-003` | SR | `05-srs.md` |  |  |  |
+| `SR-FUNC-004` | SR | `05-srs.md` |  |  |  |
+| `TRK-BE-001` | TRK | `12-backlog.md` |  |  |  |

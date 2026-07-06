@@ -3,7 +3,7 @@ description: Propose a significant technical change for comment before building 
 argument-hint: [create|review|close] [topic]
 ---
 
-Run the **RFC (Request for Comments)** process for **$2** (topic). Mode: **$1** (default: `create`). An RFC is the proposal/debate that happens *before* building; once accepted, the decision is recorded as an ADR and the SDD is updated. See `agents/rfc.md`.
+Run the **RFC (Request for Comments)** process for **$2** (topic). Mode: **$1** (default: `create`). An RFC is the proposal/debate that happens *before* building; once accepted, the decision is recorded as an ADR and the SDD is updated. See `agents/rfc-facilitator.md`.
 
 ## create
 1. Confirm the change is RFC-worthy (significant + affects others). If it's routine, suggest a PR note; if the decision is already made, route to `/adr-new`.

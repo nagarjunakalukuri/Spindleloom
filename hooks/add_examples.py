@@ -54,7 +54,7 @@ def main(argv):
     entries = data.get("examples", data) if isinstance(data, dict) else data
     agents_dir = Path(argv[2]) if len(argv) > 2 else Path("agents")
     if not agents_dir.is_dir():
-        agents_dir = Path("project_managment_agents/agents")
+        agents_dir = Path("spindleloom/agents")
 
     changed, missing = 0, []
     for e in entries:

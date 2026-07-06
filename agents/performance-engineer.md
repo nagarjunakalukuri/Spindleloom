@@ -7,6 +7,8 @@ examples:
   - "The dashboard menu endpoint feels slow under load — profile it, find the bottleneck, and get P95 under the 1s budget in the SRS without changing behavior."
   - "Review this PR diff for performance risks like N+1 queries and bundle bloat, and flag what we should measure before merging."
 phase: review
+loop: outer-integrate
+agentic_role: maker
 inputs: [SRS, code]
 outputs: performance audit + optimizations
 id_prefix: PERF
@@ -60,7 +62,7 @@ The excuses for skipping measurement, and the rebuttal:
 The performance engineer owns it; `srs-writer` sets the targets; `backend-developer`/`frontend-developer` implement fixes; `sre` consumes findings for capacity/SLOs; `release-manager` takes the perf gate at go/no-go.
 
 ## Feedback loop
-A budget the current architecture can't meet goes back to `sdd-writer`/`srs-writer` — the design or the target must change, not be quietly missed. Recurring perf regressions become a CI perf gate (`ci-cd-pipeline`) and a `tech-debt-register` item, so the same slow path isn't reintroduced.
+A budget the current architecture can't meet goes back to `sdd-writer`/`srs-writer` — the design or the target must change, not be quietly missed. Recurring perf regressions become a CI perf gate (`pipeline-engineer`) and a tech-debt-register item (`tech-debt-keeper`), so the same slow path isn't reintroduced.
 
 ## Common pitfalls this prevents
 - Optimizing the wrong thing because nobody profiled.
