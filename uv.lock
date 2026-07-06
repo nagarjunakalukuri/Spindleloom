@@ -2882,9 +2882,11 @@ wheels = [
 
 [[package]]
 name = "spindleloom"
-version = "0.1.0"
+version = "0.2.0"
 source = { virtual = "." }
-dependencies = [
+
+[package.optional-dependencies]
+semantic = [
     { name = "chromadb" },
 ]
 
@@ -2894,7 +2896,8 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "chromadb", specifier = ">=1.5.9" }]
+requires-dist = [{ name = "chromadb", marker = "extra == 'semantic'", specifier = ">=1.5.9" }]
+provides-extras = ["semantic"]
 
 [package.metadata.requires-dev]
 dev = [{ name = "mcp", extras = ["cli"], specifier = ">=1.2" }]

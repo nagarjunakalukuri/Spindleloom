@@ -1,0 +1,13 @@
+{
+  "name": "spindleloom",
+  "owner": {
+    "name": "Spindleloom"
+  },
+  "plugins": [
+    {
+      "name": "spindleloom",
+      "source": "./targets/claude-plugin",
+      "description": "The full Spindleloom SDLC agent fleet (agents, skills, commands, hooks, templates)."
+    }
+  ]
+}
