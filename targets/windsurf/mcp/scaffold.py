@@ -38,6 +38,8 @@ import os
 import posixpath
 import re
 import sys
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -100,6 +102,18 @@ def scaffold(root, profile=None, feature="feature-1", templates=None, tier=None)
                     json.dumps({"standard_version": rtm_core.STANDARD_VERSION,
                                 "profile": profile, "docs_root": lay["docs_root"]}, indent=2) + "\n",
                     created)
+    # committed-vs-local split: the JSONL log is the shared, git-mergeable context store;
+    # the SQLite index + chroma vectors are per-machine (binary — git can't merge them)
+    write_if_absent(root / ".spindleloom" / ".gitignore",
+                    "# Local, rebuildable indexes — never committed. The shared context store\n"
+                    "# is context-log.jsonl (committed); rebuild these from it: sloom context . --import\n"
+                    "context.db\nchroma/\n",
+                    created)
+    # the PR gate — merging to main must PROVE the gates ran, not assume it
+    ci_src = templates / "ci" / "sloom-gate.yml"
+    if ci_src.is_file():
+        write_if_absent(root / ".github" / "workflows" / "sloom-gate.yml",
+                        ci_src.read_text(encoding="utf-8", errors="ignore"), created)
 
     # RTM backbone
     write_if_absent(docs / lay["rtm_file"], RTM_HEADER, created)
@@ -362,6 +376,17 @@ def migrate(root, feature="feature-1", apply=False, force=False):
     cfgp = canonical / "config.json"
     cfgp.parent.mkdir(parents=True, exist_ok=True)
     cfgp.write_text(json.dumps(cfg, indent=2) + "\n", encoding="utf-8")
+    gi = canonical / ".gitignore"
+    if not gi.exists():  # same committed-vs-local split scaffold() writes
+        gi.write_text(
+            "# Local, rebuildable indexes — never committed. The shared context store\n"
+            "# is context-log.jsonl (committed); rebuild these from it: sloom context . --import\n"
+            "context.db\nchroma/\n", encoding="utf-8")
+    ci_src = Path(__file__).resolve().parent.parent / "templates" / "ci" / "sloom-gate.yml"
+    ci_dst = root / ".github" / "workflows" / "sloom-gate.yml"
+    if ci_src.is_file() and not ci_dst.exists():  # same PR gate scaffold() writes
+        ci_dst.parent.mkdir(parents=True, exist_ok=True)
+        ci_dst.write_text(ci_src.read_text(encoding="utf-8", errors="ignore"), encoding="utf-8")
 
     plan["applied"] = True
     return plan

@@ -7,6 +7,11 @@ description: Prove a change works by running it and observing real behavior — 
 
 In an AI-driven loop, **verification is the bottleneck, not authoring.** Writing code is cheap; the expensive failure is handing off code that was never run. This skill is the "observe" half of plan → edit → **run → observe** → fix. The rule: *the running program is the source of truth, never your reading of the source.*
 
+## Resolve the toolchain/runner first
+Before any command, resolve how *this* project runs — don't assume a bare `python`/`node`/`go` is on PATH (virtual environments and version managers aren't auto-activated, least of all on Windows). If a project `CLAUDE.md` or `dev-onboarding` documents the incantation, follow it exactly; otherwise detect it, **resolve once, and reuse the resolved command for the whole run** — never re-detect per command.
+
+*Worked example (Python):* try `uv run python --version` — if the project uses `uv`, use `uv run python` / `uv run pytest` for **all** invocations; else call `.venv/Scripts/python.exe` (Windows) or `.venv/bin/python` (Unix/Mac) directly, and set `PYTHONPATH` per `pyproject.toml` if imports fail. Store it in a variable (`PYTHON=...`) and substitute throughout.
+
 ## The loop
 1. **Build / compile.** If it doesn't build, nothing else matters — fix that first.
 2. **Run the changed tests** — the narrow set first, then the package suite (per `dev-onboarding`'s per-package collect rule). Read the actual output, not the exit code alone.

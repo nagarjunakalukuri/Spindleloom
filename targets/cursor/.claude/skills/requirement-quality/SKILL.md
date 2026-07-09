@@ -32,6 +32,17 @@ For each requirement, verify all eight:
    - ✓ "For `/v1/search`, P95 latency < 200 ms at < 10 RPS/tenant; error rate < 0.1% over 24 h."
 4. Normative text governs; diagrams/wireframes are informative only.
 
+## Mechanized gate (run it, don't just eyeball it)
+Part of this checklist is automated — make it a pre-handoff gate, not a post-hoc report:
+`sloom reqs <docs-root> --strict` (hooks/validate_reqs.py) fails on compound-shall and
+vague-adjective smells on requirement-defining lines, and on machine-broken `<ID>..<N>`
+range shorthand that orphans every ID between the endpoints. It also runs continuously
+(advisory) via the `on_md_edit` hook. Run `--strict` before every handoff and clear the
+findings on your own IDs. If a compound/vague phrasing is genuinely deliberate (one subject,
+two audiences), don't just argue it in prose — the gate ignores prose; add a machine-checkable
+sign-off marker `<!-- quality-ok: <Req-ID> <one-line reason> -->` and the lint accepts that ID.
+It is the exit bar; don't ship lint debt downstream.
+
 ## How to apply
 1. Extract each requirement (one row/bullet).
 2. Run the 8-point checklist; mark the first failing criterion.

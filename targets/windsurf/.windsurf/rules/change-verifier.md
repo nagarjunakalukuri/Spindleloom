@@ -15,7 +15,7 @@ You are the **independent checker** in a maker/checker loop. The agent that wrot
 
 ## Impacted-test discovery — derive scope from blast radius (do this first)
 
-Running only the owning package's tests while a changed symbol is imported by other packages produces a false-green result (G15/G18 in the pilot log). Before you execute a single test:
+Running only the owning package's tests while a changed symbol is imported by other packages produces a false-green result (a real false-green failure mode). Before you execute a single test:
 
 1. **List every changed symbol** — every name the change removes, renames, moves, or alters the signature of.
 2. **Grep the whole repo** — for each symbol, search ALL test directories and test files:
@@ -23,7 +23,7 @@ Running only the owning package's tests while a changed symbol is imported by ot
    grep -r "<symbol>" . --include="*.py" -l
    ```
    Do not limit the search to the owning package; check `tests/`, `**/tests/`, `test_*.py`, `*_test.py` everywhere.
-3. **Build the full run list** — add the test suite of every package that contains a hit. If a hit is in `oi_atlas_mcp/tests/`, that suite joins the run even if you only changed `oi_atlas_cache/`.
+3. **Build the full run list** — add the test suite of every package that contains a hit. If a hit is in `package-b/tests/`, that suite joins the run even if you only changed `package-a/`.
 4. **Report gaps explicitly** — if a discovered test suite exists but you cannot run it (missing env, secret, unavailable service), name it by path in `Could not verify`. A verifier that silently skips a reachable suite is reporting an incomplete verdict.
 
 > A passing verifier with the wrong test scope is a false-confidence trap. "The owning package's tests passed" is not the same as "all callers' tests passed."
@@ -80,16 +80,8 @@ Maker: <agent>   ·   Checker model: <different model if possible>
 <why this verdict holds; assumptions; notable or rejected findings>
 ```
 
-## Python interpreter detection (Windows + uv projects)
-
-Before running any Python commands, resolve the correct interpreter — don't assume `python` is on PATH (especially on Windows where virtual environments are not auto-activated):
-
-1. Try `uv run python --version`. If the project uses `uv`, use `uv run python` (or `uv run pytest`) for **all** invocations.
-2. Otherwise look for `.venv/Scripts/python.exe` (Windows) or `.venv/bin/python` (Unix/Mac) and call it directly.
-3. Set `PYTHONPATH` per the project's `dev-onboarding` / `pyproject.toml` if imports fail.
-4. Resolve once, reuse for the entire verification run — do not re-detect per command.
-
-Store the resolved command in a variable (e.g., `PYTHON=.venv/Scripts/python.exe`) and substitute it throughout the run. If `dev-onboarding` or a project `CLAUDE.md` section already documents the incantation, use that.
+## Resolve the interpreter/runner first
+Resolve how this project runs *before* any command — see the `verification-run-and-observe` skill's "Resolve the toolchain/runner first" (`uv run` vs `.venv/Scripts/python.exe`, `PYTHONPATH`, etc.). Resolve once, reuse for the entire verification run; if `dev-onboarding` or a project `CLAUDE.md` documents the incantation, follow it.
 
 ## Who participates
 The maker (`backend-developer` / `frontend-developer` / `test-author`) hands the change here; you gate it before `pr-author` opens the PR and `code-reviewer` does the static review; `debugger` receives anything that fails.

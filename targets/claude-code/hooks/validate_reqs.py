@@ -30,6 +30,8 @@ Claude Code hook (see HOOKS.md). It only reads files; it never writes.
 """
 import re
 import sys
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -40,16 +42,33 @@ VAGUE = re.compile(r"\b(fast|user-friendly|intuitive|robust|seamless|easy|easily
 SHALL_COMPOUND = re.compile(r"\bshall\b[^.|]*\b(and|or)\b", re.I)
 
 
+QUALITY_OK = re.compile(r"quality-ok:\s*([A-Z][A-Z0-9]*-[A-Z0-9]+-\d+)", re.I)
+
+
+def _quality_ok_ids(files, root):
+    """Req-IDs a human has explicitly signed off on a deliberate phrasing for, via a
+    machine-checkable `<!-- quality-ok: <ID> <reason> -->` marker. B4's teeth: a retained
+    compound-shall/vague requirement is accepted ONLY with this marker — free-text prose
+    justifying a smell (run3's escape hatch) no longer suppresses the finding."""
+    ok = set()
+    for f in files:
+        for m in QUALITY_OK.finditer(f.read_text(encoding="utf-8", errors="ignore")):
+            ok.add(m.group(1).upper())
+    return ok
+
+
 def quality_lint(root):
-    """Lint requirement-DEFINING lines: vague adjectives and compound shall-clauses.
-    Returns advisory strings; the caller decides whether they fail the run."""
+    """Lint requirement-DEFINING lines: vague adjectives and compound shall-clauses. A finding
+    stands unless the ID carries a `quality-ok:` sign-off marker. Advisory strings; the caller
+    decides whether they fail the run (`--strict`)."""
     findings = []
     files = rtm_core.markdown_files(root)
     all_ids = rtm_core.collect_ids(files, root)
     defined_in = rtm_core.definition_files(all_ids)
+    accepted = _quality_ok_ids(files, root)
     seen = set()
     for rid, fs in sorted(defined_in.items()):
-        if rid.split("-", 1)[0] not in rtm_core.COVERED_DOCS or not fs:
+        if rid.split("-", 1)[0] not in rtm_core.COVERED_DOCS or not fs or rid.upper() in accepted:
             continue
         for rel in fs:
             p = root / rel
@@ -61,12 +80,62 @@ def quality_lint(root):
                 m = VAGUE.search(line)
                 if m and (rid, "vague") not in seen:
                     seen.add((rid, "vague"))
-                    findings.append(f"QUALITY    {rid} ({rel}): vague adjective '{m.group(1)}' — replace with a measurable target")
+                    findings.append(f"QUALITY    {rid} ({rel}): vague adjective '{m.group(1)}' — replace with a measurable target (or mark `quality-ok: {rid}`)")
                 if SHALL_COMPOUND.search(line) and (rid, "compound") not in seen:
                     seen.add((rid, "compound"))
-                    findings.append(f"QUALITY    {rid} ({rel}): 'shall … and/or …' — may bundle two obligations; split if so")
+                    findings.append(f"QUALITY    {rid} ({rel}): 'shall … and/or …' — may bundle two obligations; split it (or mark `quality-ok: {rid}` with a reason)")
                 break  # lint the first (defining) line per file only
     return findings
+
+
+RANGE_SHORTHAND = re.compile(r"\b([A-Z][A-Z0-9]*-[A-Z0-9]+-)(\d+)\s*(?:\.\.\.?|…)\s*-?(\d+)\b")
+
+
+def range_shorthand_lint(root):
+    """Flag `<ID>..<N>` range shorthand in the specs/RTM/backlog. It reads fine to a human
+    but is machine-broken: only the first and last atomic IDs exist as tokens, so every ID
+    between them is invisible to every validator (the run2 PBI-REM-001..006 orphan). Write
+    each ID out in full."""
+    findings = []
+    for p in rtm_core.markdown_files(root):
+        try:
+            rel = p.relative_to(root).as_posix()
+        except ValueError:
+            rel = p.name
+        for m in RANGE_SHORTHAND.finditer(p.read_text(encoding="utf-8", errors="ignore")):
+            prefix, lo, hi = m.group(1), m.group(2), m.group(3)
+            findings.append(
+                f"RANGE-SHORTHAND {prefix}{lo}..{hi} ({rel}): range shorthand orphans the "
+                f"atomic IDs between {prefix}{lo} and {prefix}{hi} — write each ID out in full")
+    return findings
+
+
+PBI_ID = re.compile(r"\bPBI-[A-Z0-9]+-\d+\b")
+
+
+def backlog_completeness_lint(root):
+    """Flag PBIs that are REFERENCED (RTM rows, dependency cells, sprint mentions, prose) but
+    never DEFINED. A PBI is 'defined' only when it is the SUBJECT of a table row — its id sits
+    in the first two columns (a ranked, AC-bearing backlog entry). The run3 PBI-PLAT-004
+    'phantom' was referenced 5x and defined nowhere, yet machine-invisible because it had an
+    RTM row — build_rtm/validate_reqs stayed green. This closes that hole."""
+    ac = re.compile(r"\b(Given|When|Then)\b")
+    defined, referenced = set(), set()
+    for p in rtm_core.markdown_files(root):
+        if p.name.lower() in ("verdict.md", "readme.md"):
+            continue  # judge / commentary, not spec artifacts
+        text = p.read_text(encoding="utf-8", errors="ignore")
+        referenced |= set(PBI_ID.findall(text))
+        for t in rtm_core.parse_tables(text):
+            for row in t["rows"]:
+                # A real backlog row carries acceptance criteria (Given/When/Then). An
+                # estimation/sprint/RTM row that merely lists the PBI in column 1 does NOT
+                # define it — that was the run3 hole where PBI-PLAT-004 looked "defined".
+                if ac.search(" ".join(row)):
+                    for cell in row[:2]:  # subject columns of an AC-bearing backlog row
+                        defined |= set(PBI_ID.findall(cell))
+    return [f"PBI-UNDEFINED {pid}: referenced but has no defining backlog-table row with "
+            f"acceptance criteria — a phantom PBI that ID/RTM checks miss" for pid in sorted(referenced - defined)]
 
 
 def find_spec_root(args):
@@ -91,7 +160,7 @@ def main(argv):
     problems = [p["message"] for p in rep["problems"]] + conf["problems"]
     test_cov_line = rep["test_coverage_line"]
     advisories = rep["advisories"] + conf["advisories"]
-    quality = quality_lint(root)
+    quality = quality_lint(root) + range_shorthand_lint(root) + backlog_completeness_lint(root)
     if strict:
         problems += quality
     else:

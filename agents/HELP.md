@@ -103,7 +103,7 @@
 **Owns:** Use this agent BEFORE writing or accepting a spec/PBI for work on an EXISTING codebase (brownfield / platform extension) — it reads the code to establish ground truth so the spec isn't built on assumptions.
 **Run when:** After `doc-strategy-advisor`, `prd-writer`, `frd-writer` → hands to `frd-writer`, `srs-writer`, `sdd-writer`, `backlog-manager`, `adr-writer`, `architect`, `estimation-facilitator`, `backend-developer`, `frontend-developer`, `raid-keeper`
 **Try:**
-- `Before we spec PBI-214, recon the codebase: does the /aep/rag endpoint and the reconciliation_result data this dashboard needs actually exist, and is this FE-only or backend-first?`
+- `Before we spec PBI-087, recon the codebase: does the /meals/plan endpoint and the weekly_menu data this screen needs actually exist, and is this FE-only or backend-first?`
 - `The FRD says the status field is pass/fail — verify that against the route and model code, flag any mismatch upstream, and give me an ordered task breakdown for the new screen.`
 
 ### `tsd-writer`
@@ -356,7 +356,7 @@
 **Run when:** Top of the funnel
 **Try:**
 - `Orchestrate building the live-tracking feature from docs/prd.md: set up the run-state with a stop contract, then propose the next agent at each step and wait for my go before dispatching.`
-- `Continue the FreshDesk run — read .spindleloom/run-state.json, tell me which agents are now runnable (required upstreams done, gate passed) and what's blocked, and propose the next dispatch.`
+- `Continue the FreshDesk run — read .spindleloom/runs/run-20260709-freshdesk.json, tell me which agents are now runnable (required upstreams done, gate passed) and what's blocked, and propose the next dispatch.`
 
 ### `spec-steward`
 **Owns:** Use this agent to adopt or improve Spec-Driven Development (Spec-DD) with AI coding tools.

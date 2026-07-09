@@ -136,7 +136,7 @@ def check_conformance() -> dict:
     """Does this repo match the Spindleloom Standard? Returns the conformance report
     (declared profile/version vs the toolkit's, plus duplicate artifact IDs — e.g. two
     RTMs or two ADR files claiming one id) alongside the RTM/Req-ID audit (which now
-    flags duplicate ADRs and multiple ADR directories). See project_guides/STANDARD.md §10."""
+    flags duplicate ADRs and multiple ADR directories). See project_guides/STANDARD.md §11."""
     return {"conformance": rtm_core.conformance(_project_root()), "audit": rtm_core.audit(_root())}
 
 
@@ -212,6 +212,19 @@ def _ctx_db_path() -> str:
     return str(ww / "context.db")
 
 
+def _ctx_log_append(agent_id, task_id, facts, tags, saved_at, source):
+    """Mirror every save to the append-only, git-committed context log. The JSONL log is
+    the CROSS-MACHINE source of truth (SQLite is binary — git can't merge it; this can:
+    appends rarely conflict and a conflict is a trivial keep-both). Teammates rebuild
+    their local DB from it via `sloom context <root> --import` after a pull."""
+    line = json.dumps({"agent_id": agent_id, "task_id": task_id, "facts": facts,
+                       "tags": tags, "saved_at": saved_at, "source": source},
+                      ensure_ascii=False)
+    log = Path(_ctx_db_path()).parent / "context-log.jsonl"
+    with open(log, "a", encoding="utf-8") as f:
+        f.write(line + "\n")
+
+
 def _ctx_con():
     con = sqlite3.connect(_ctx_db_path())
     con.row_factory = sqlite3.Row
@@ -283,6 +296,10 @@ def save_context(agent_id: str, task_id: str, facts: str, tags: str = "", source
     )
     con.commit()
     row_id = str(cur.lastrowid)
+    try:  # the committed cross-machine mirror; a log failure never blocks the save
+        _ctx_log_append(agent_id, task_id, facts, tags, saved_at, source)
+    except OSError:
+        pass
 
     col = _chroma_col()
     if col is not None:

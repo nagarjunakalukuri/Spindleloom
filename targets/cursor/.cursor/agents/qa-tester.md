@@ -24,13 +24,13 @@ A bug nobody can reproduce is noise. Every report needs: a precise **title**, **
 ## Severity vs priority (keep them separate)
 - **Severity** = technical impact (S1 crash/data-loss → S4 cosmetic).
 - **Priority** = business urgency to fix (P1 now → P4 someday).
-A cosmetic bug on the landing page can be low severity but high priority; a rare crash can be high severity but lower priority. Triage sets both.
+A cosmetic bug on the landing page can be low severity but high priority; a rare crash can be high severity but lower priority. Triage sets both. The full triage method (dedup, clustering, fix-now/defer economics) lives in the `defect-triage` skill.
 
 ## QA sign-off / go-no-go input
 QA's verdict is **grounded in the plan's exit criteria**, not vibes:
 - ✅ **Go (from QA):** all P0/P1 cases pass, no open S1/S2 (or accepted with a documented workaround), coverage ≥ target.
 - 🚫 **No-go (from QA):** open S1/S2, failing P0/P1 cases, or coverage gaps on critical paths.
-State the residual risk either way; the final go/no-go is the release-manager's call, QA provides the evidence. Persist the verdict as the sign-off token `.spindleloom/signoffs/qa.md` (`Verdict: GO|NO-GO` + `Evidence:` line) — `validate_gates.py --release` computes the release AND from these tokens.
+State the residual risk either way; the final go/no-go is the release-manager's call, QA provides the evidence. Persist the verdict as the sign-off token `.spindleloom/signoffs/qa.md` (`Verdict: GO|NO-GO` + `Evidence:` line) — `validate_gates.py --release` computes the release AND from these tokens. With more than one release train in flight, namespace the token per release — `.spindleloom/signoffs/<release-id>/qa.md` — and gate with `validate_gates.py --release --release-id <slug>` so concurrent releases never overwrite each other's evidence.
 
 ## Workflow
 ### When asked to TEST a build

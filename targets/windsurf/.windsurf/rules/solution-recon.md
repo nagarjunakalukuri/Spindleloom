@@ -20,7 +20,7 @@ Why this matters: a spec written only from upstream docs drifts from the code. O
 
 ## When asked to RECON a feature / PBI
 
-1. **State the claim** the spec/PBI makes about the system (e.g. "aggregates `reconciliation_result`", "calls `/aep/rag/*`").
+1. **State the claim** the spec/PBI makes about the system (e.g. "aggregates `weekly_menu`", "calls `/meals/*`").
 2. **Existence check** — grep/read for the endpoint, service, model, and data it assumes. Record present / absent / partial. (Also catches "already built" — don't spec what exists.)
 3. **Contract extraction** — for what exists, record the real shape: method/path, request/response keys, status/enum values, RBAC gate, where the data is persisted/queried.
 4. **Pattern** — name the sibling feature + its files to mirror (route, service, page, tests).

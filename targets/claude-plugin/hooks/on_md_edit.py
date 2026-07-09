@@ -15,6 +15,8 @@ import json
 import os
 import subprocess
 import sys
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -40,7 +42,8 @@ def main():
         if not p.is_file():
             continue
         r = subprocess.run([sys.executable, str(p), *args],
-                           capture_output=True, text=True, timeout=60)
+                           capture_output=True, text=True, timeout=60,
+                           encoding="utf-8", errors="replace")
         if r.returncode != 0:
             problems.append(f"[{script}]\n{(r.stdout + r.stderr).strip()}")
 

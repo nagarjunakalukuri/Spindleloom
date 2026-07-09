@@ -40,6 +40,12 @@ def adr_file_num(relpath):
 COVERED_DOCS = {"FRD", "SR", "SRS", "BR", "PRD", "URS"}
 RTM_NAME = "RTM.md"
 
+# Req-ID DOC prefix -> the artifact kind whose files *define* (mint) that ID. Used by the
+# DUP-REQID collision check: two same-kind files defining one ID is a mint collision;
+# any other kind citing it is normal downstream referencing.
+_DEFINING_KIND = {"BR": "brd", "PRD": "prd", "FRD": "frd", "URS": "urs",
+                  "SR": "srs", "SRS": "srs", "PBI": "backlog"}
+
 # Tool machinery + content-location config (the .spindleloom / docs split).
 # `.spindleloom/` is the ONE tool-state home (config, catalog, baselines, verifications,
 # signoffs, context DB). `.shipwright/` is the pre-0.3 name — still readable so existing
@@ -201,6 +207,21 @@ def audit(root):
                     add("PBI-ORPHAN", rid, f"PBI-ORPHAN {rid} (in {', '.join(fs)}) is not traced in {RTM_NAME}")
     else:
         add("NO-RTM", None, f"NO-RTM     {RTM_NAME} not found in {root} — traceability cannot be proven")
+
+    # DUP-REQID: the same Req-ID minted independently in two same-kind files (the
+    # two-branches race: both mint FRD-AUTH-004, git merges clean, IDs silently collide).
+    # Only same-kind files count as *defining* — an SDD/TSD/test-plan citing an FRD id is
+    # normal downstream referencing, never a collision.
+    for rid, fs in defined_in.items():
+        doc = rid.split("-", 1)[0]
+        kind = _DEFINING_KIND.get(doc)
+        if kind is None or not fs:
+            continue
+        definers = sorted(f for f in fs if detect_kind(f) == kind)
+        if len(definers) > 1:
+            add("DUP-REQID", rid,
+                f"DUP-REQID  {rid} is defined in {len(definers)} {kind} files: "
+                f"{', '.join(definers)} — Req-IDs are immutable and unique; renumber one side")
 
     # ADR reference integrity + collision detection (Standard: one global ADR sequence, one home)
     adr_def_files = {}
@@ -584,7 +605,7 @@ def conformance(project_root):
     profile/version vs the toolkit's, plus duplicate artifact IDs across the catalog
     (e.g. two RTMs, or two ADR files claiming one id). Complements audit(), which checks
     the RTM/Req-ID graph; together they answer 'does this repo match the Standard?'
-    (project_guides/STANDARD.md §10)."""
+    (project_guides/STANDARD.md §11)."""
     project_root = Path(project_root)
     lay = layout(project_root)
     docs = resolve_docs_root(project_root)
