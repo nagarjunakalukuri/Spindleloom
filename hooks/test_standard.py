@@ -262,8 +262,28 @@ def test_quality_ok_marker_gates_compound_shall():
     print("  PASS  B4 quality-ok marker gates compound-shall")
 
 
+def test_nested_rtm_scope_excluded_from_parent():
+    """A subdir owning its own RTM.md is an independent traceability scope — its files must
+    not pollute the parent's coverage (the run3/run4-under-medremind-fleet-eval case that
+    otherwise flags every sub-run PBI as an orphan against the parent RTM)."""
+    import rtm_core
+    tmp = Path(tempfile.mkdtemp(prefix="scope_"))
+    _w(tmp / "RTM.md", "# RTM\n| FRD-A-001 |\n")
+    _w(tmp / "frd.md", "# FRD\nFRD-A-001 the system shall x.\n")
+    _w(tmp / "run3" / "RTM.md", "# RTM\n| PBI-B-001 |\n")
+    _w(tmp / "run3" / "08-backlog.md",
+       "# Backlog\n| PBI | AC |\n|---|---|\n| PBI-B-001 | Given x When y Then z |\n")
+    names = {p.name for p in rtm_core.markdown_files(tmp)}
+    assert "frd.md" in names, names                 # parent scope kept
+    assert "08-backlog.md" not in names, names       # nested self-scoped run excluded
+    names_nested = {p.name for p in rtm_core.markdown_files(tmp / "run3")}
+    assert "08-backlog.md" in names_nested, names_nested  # validates standalone
+    print("  PASS  nested-RTM subdir is its own scope (excluded from parent)")
+
+
 def main():
-    for t in (test_scaffold_default, test_scaffold_config_override, test_collisions,
+    for t in (test_nested_rtm_scope_excluded_from_parent,
+              test_scaffold_default, test_scaffold_config_override, test_collisions,
               test_conformance_clean, test_migrate, test_migrate_refuses_on_collision,
               test_migrate_self_exemption, test_migrate_exempt_root, test_migrate_dest_collision,
               test_migrate_refuses_on_existing_dest, test_migrate_routes_sprint_plan,

@@ -136,16 +136,25 @@ COMMENTARY = {"verdict.md", "readme.md"}  # judge/commentary — never spec arti
 
 
 def markdown_files(root):
-    """All .md under root, recursively — excluding any dotdir (.spindleloom, .git, …) so
-    machinery is never mistaken for content, and excluding commentary (README.md, verdict.md)
-    so a judge verdict quoting a prior run's ID can't register as a defined/orphaned Req-ID.
-    Flat folders behave as before."""
+    """All .md under root, recursively, EXCEPT:
+      - anything in a dotdir (.spindleloom, .git, …) — machinery, never content;
+      - commentary (README.md, verdict.md) — a judge verdict quoting a prior run's ID must
+        not register as a defined/orphaned Req-ID;
+      - anything under a nested subdir that owns its OWN RTM.md — an RTM defines a traceability
+        SCOPE, so a self-contained sub-run (e.g. examples/.../run3/ with its own RTM) is its
+        own scope and must not pollute the parent's coverage (the parent would otherwise see
+        every sub-run PBI as an orphan against its own RTM).
+    Flat single-RTM folders (the common case) behave exactly as before."""
     root = Path(root)
-    return sorted(
-        p for p in root.rglob("*.md")
-        if not any(part.startswith(".") for part in p.relative_to(root).parts)
-        and p.name.lower() not in COMMENTARY
-    )
+    out = []
+    for p in root.rglob("*.md"):
+        rel = p.relative_to(root)
+        if any(part.startswith(".") for part in rel.parts) or p.name.lower() in COMMENTARY:
+            continue
+        if any((root / d / RTM_NAME).is_file() for d in rel.parents if d != Path(".")):
+            continue  # lives inside a nested traceability scope
+        out.append(p)
+    return sorted(out)
 
 
 def _relname(f, root):
