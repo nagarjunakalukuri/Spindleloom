@@ -2,7 +2,7 @@
 
 All notable changes to Spindleloom. Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow SemVer (pre-1.0: minor bumps may break).
 
-## [Unreleased]
+## [0.3.0] — 2026-07-09
 
 ### ⚠ Breaking
 
