@@ -132,13 +132,19 @@ def _read(f):
         return ""
 
 
+COMMENTARY = {"verdict.md", "readme.md"}  # judge/commentary — never spec artifacts
+
+
 def markdown_files(root):
-    """All .md under root, recursively — excluding any dotdir (.spindleloom, .git, …)
-    so machinery is never mistaken for content. Flat folders behave as before."""
+    """All .md under root, recursively — excluding any dotdir (.spindleloom, .git, …) so
+    machinery is never mistaken for content, and excluding commentary (README.md, verdict.md)
+    so a judge verdict quoting a prior run's ID can't register as a defined/orphaned Req-ID.
+    Flat folders behave as before."""
     root = Path(root)
     return sorted(
         p for p in root.rglob("*.md")
         if not any(part.startswith(".") for part in p.relative_to(root).parts)
+        and p.name.lower() not in COMMENTARY
     )
 
 
