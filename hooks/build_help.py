@@ -11,9 +11,12 @@ except for writing agents/HELP.md.
 
 Usage:
     python hooks/build_help.py [agents-dir]
+    python hooks/build_help.py --check   # exit 1 if agents/HELP.md is stale (no writes)
 """
 import re
 import sys
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 from pathlib import Path
 
 PHASE_ORDER = [
@@ -80,7 +83,8 @@ def when_to_run(up, down):
 
 
 def main(argv):
-    root = Path(argv[1]) if len(argv) > 1 else Path("agents")
+    args = [a for a in argv[1:] if not a.startswith("--")]
+    root = Path(args[0]) if args else Path("agents")
     if not root.is_dir():
         root = Path("spindleloom/agents")
 
@@ -122,8 +126,17 @@ def main(argv):
                 no_examples.append(a["name"])
             out.append("")
 
-    (root / "HELP.md").write_text("\n".join(out), encoding="utf-8")
-    msg = f"build_help: wrote {root / 'HELP.md'} — {len(agents)} agents"
+    content = "\n".join(out)
+    help_path = root / "HELP.md"
+    if "--check" in argv:
+        current = help_path.read_text(encoding="utf-8") if help_path.exists() else ""
+        if current != content:
+            print(f"build_help --check: FAIL — {help_path} is stale (run build_help.py)")
+            return 1
+        print(f"build_help --check: OK — {help_path} current ({len(agents)} agents)")
+        return 0
+    help_path.write_text(content, encoding="utf-8")
+    msg = f"build_help: wrote {help_path} — {len(agents)} agents"
     if no_examples:
         msg += f"; {len(no_examples)} missing examples: {', '.join(no_examples)}"
     print(msg)
