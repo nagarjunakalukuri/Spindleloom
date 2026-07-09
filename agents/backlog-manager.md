@@ -107,6 +107,8 @@ The docs↔tracker relationship is **one-way after seeding**, with a defined fie
 
 **Tasks are tracker-only.** Below-story decomposition (Tasks) is created and owned on the tracker; it is **not** mirrored into the backlog markdown (the doc hierarchy stops at PBI — `project_guides/STORY-CRAFT.md` §6). Shape: `templates/task-template.md` (lean — no AC of its own; rolls up to the parent story).
 
+**Who pushes (the multi-user rule).** One role pushes — this one — and only from **merged `main`**: mint PBIs on a branch → merge (the PR gates run, incl. DUP-REQID) → push to the tracker from main → write back → commit the mapping immediately. Two people pushing from unmerged branches is how one PBI becomes two tracker items. The adapters enforce the second half mechanically: with `--rtm`, already-mapped PBIs are **skipped** (idempotent re-push; `--force-repush` overrides), and `emit_backlog.py check <backlog.md> --rtm <RTM.md>` reports drift (NEW = unpushed, GONE = orphaned mapping).
+
 **Drift rule.** If the doc and the tracker disagree on a PBI's AC or status, the **tracker wins**; resolve by updating the RTM / a one-line doc note — never by hand-maintaining the same fact in both. *(Pilot: a grooming pass rewrote 30 stories' AC into the native field + cut 29 Tasks board-first; without this contract none of it traced back, and `backlog.md` still claimed to be "the AC reference".)*
 
 ## PBI ID convention

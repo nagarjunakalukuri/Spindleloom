@@ -67,7 +67,7 @@ The excuses for skipping the a11y gate, and the rebuttal:
 - Legal/conformance exposure discovered after launch instead of at the gate.
 - Findings with no WCAG criterion — unactionable and indefensible.
 
-For a release-gating audit, persist the sign-off as `.spindleloom/signoffs/accessibility.md` (`Verdict:` + `Evidence:`) — the release-manager's `validate_gates.py --release` reads it.
+For a release-gating audit, persist the sign-off as `.spindleloom/signoffs/accessibility.md` (`Verdict:` + `Evidence:`) — the release-manager's `validate_gates.py --release` reads it. With more than one release train in flight, namespace the token per release — `.spindleloom/signoffs/<release-id>/accessibility.md` — and gate with `validate_gates.py --release --release-id <slug>` so concurrent releases never overwrite each other's evidence.
 
 ## Style rules
 - Cite the specific WCAG 2.1 AA success criterion on every finding.

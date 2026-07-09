@@ -78,6 +78,71 @@ def test_writeback_fills_existing_azure_column_idempotently():
     assert any("UNMAPPED-009 | —" in ln for ln in out.split("\n"))
 
 
+RTM_MAPPED = ("| PBI ID | Story | Azure (work-item id) |\n"
+              "|---|---|---|\n"
+              "| PBI-CHECKOUT-001 | pay with saved card | 12345 |\n"
+              "| PBI-CHECKOUT-002 | declined card error | — |\n")
+
+
+def test_read_id_map_inverts_writeback():
+    m = emit_backlog.read_id_map(RTM_MAPPED)
+    assert m == {"PBI-CHECKOUT-001": "12345"}, m  # placeholder cell = unmapped
+
+
+def test_filter_pushed_skips_mapped_pbis():
+    """The idempotency guard: already-RTM-mapped PBIs are skipped, never re-created."""
+    p = emit_backlog.plan(SAMPLE)
+    filtered, skipped = emit_backlog.filter_pushed(p, RTM_MAPPED)
+    assert skipped == [("PBI-CHECKOUT-001", "12345")]
+    assert [wi["pbi_id"] for wi in filtered["work_items"]] == ["PBI-CHECKOUT-002"]
+    assert filtered["count"] == 1
+    # fully-mapped RTM -> zero creates
+    both = RTM_MAPPED.replace("declined card error | — |", "declined card error | 12346 |")
+    filtered2, skipped2 = emit_backlog.filter_pushed(p, both)
+    assert filtered2["count"] == 0 and len(skipped2) == 2
+
+
+def test_check_drift_flags_new_and_gone():
+    d = emit_backlog.check_drift(SAMPLE, RTM_MAPPED)
+    assert d["new_unpushed"] == ["PBI-CHECKOUT-002"]      # in backlog, unmapped
+    assert d["gone_orphaned"] == [] and d["ok"]
+    # a mapped PBI that vanished from the backlog is GONE (orphaned tracker item)
+    gone_rtm = RTM_MAPPED.replace("PBI-CHECKOUT-001", "PBI-RETIRED-001")
+    d2 = emit_backlog.check_drift(SAMPLE, gone_rtm)
+    assert d2["gone_orphaned"] == ["PBI-RETIRED-001"] and not d2["ok"]
+
+
+def test_writeback_fills_tracker_named_column_not_appends_azure():
+    # A team may name the mapping column for its own tracker; writeback FILLS it rather
+    # than appending a second 'Azure' column (tracker-aware; read/fill side is permissive).
+    table = """| PBI ID | Jira |
+|---|---|
+| PBI-CHECKOUT-001 | - |
+"""
+    out = emit_backlog.writeback(table, {"PBI-CHECKOUT-001": "PROJ-9"})
+    assert "PROJ-9" in out
+    assert "Azure" not in out           # reused the existing column, appended nothing
+    assert out.count("Jira") == 1
+
+
+def test_read_id_map_reads_tracker_named_column():
+    rtm = """| PBI ID | Story | Jira |
+|---|---|---|
+| PBI-CHECKOUT-001 | pay | PROJ-9 |
+"""
+    assert emit_backlog.read_id_map(rtm) == {"PBI-CHECKOUT-001": "PROJ-9"}
+
+
+def test_atomic_write_replaces_and_cleans_temp():
+    import tempfile
+    d = Path(tempfile.mkdtemp())
+    target = d / "RTM.md"
+    target.write_text("old", encoding="utf-8")
+    emit_backlog.atomic_write(target, "new content")
+    assert target.read_text(encoding="utf-8") == "new content"
+    assert not (d / "RTM.md.tmp").exists()   # temp file consumed by os.replace
+
+
 def _run():
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for fn in fns:

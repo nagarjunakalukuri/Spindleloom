@@ -46,12 +46,33 @@ Adapter contract (write ~20 lines against your tracker's REST/SDK):
         # then: writeback(rtm_md, push(plan))  to record the ids.
 """
 import json
+import os
 import re
 import sys
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import rtm_core  # noqa: E402  (reuse the stdlib markdown-table parser)
+
+
+def _is_map_col(header_cell):
+    """A column holding tracker work-item ids. 'Azure (work-item id)' is the written
+    default, but a team may name it for its own tracker — match those too so the
+    idempotency guard never misses a mapping. Read/fill side is permissive; the header
+    that gets *written* is unchanged."""
+    h = header_cell.strip().lower()
+    return any(k in h for k in ("azure", "jira", "work-item id", "tracker"))
+
+
+def atomic_write(path, text):
+    """Write `text` to `path` atomically (temp file + os.replace) so a crash mid-write
+    never leaves the RTM — the traceability backbone — truncated."""
+    path = Path(path)
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_text(text, encoding="utf-8")
+    os.replace(tmp, path)
 
 # MoSCoW -> tracker numeric priority (1 = highest). Tracker-configurable; this is the default.
 _MOSCOW = {"must": 1, "should": 2, "could": 3, "won't": 4, "wont": 4, "would": 4}
@@ -178,7 +199,7 @@ def _writeback_block(block, id_map):
     if len(block) < 2 or not _is_sep(block[1]):
         return block
     header = _cells(block[0])
-    az = next((i for i, h in enumerate(header) if "azure" in h.strip().lower()), None)
+    az = next((i for i, h in enumerate(header) if _is_map_col(h)), None)
     appended = az is None
     if appended:
         az = len(header)
@@ -216,6 +237,53 @@ def writeback(md, id_map):
     return "\n".join(out)
 
 
+# ---------------------------------------------------------------- id-map read + drift check
+
+def read_id_map(md):
+    """The inverse of writeback: {PBI-ID: work-item-id} from any pipe-table's 'Azure'
+    column. The committed mapping is the source of truth for 'already pushed' — adapters
+    consult it before creating, so a re-run (or a second teammate) never duplicates
+    tracker items."""
+    id_map = {}
+    for t in rtm_core.parse_tables(md):
+        az = next((i for i, h in enumerate(t["header"]) if _is_map_col(h)), None)
+        if az is None:
+            continue
+        for row in t["rows"]:
+            wid = row[az].strip() if az < len(row) else ""
+            if not wid or wid in ("—", "-", "_", "n/a", "N/A", "TBD", "TODO"):
+                continue  # placeholder = not yet pushed
+            for m in _PBI_FULL.finditer(" | ".join(row[:az] + row[az + 1:])):
+                id_map.setdefault(m.group(0).upper(), wid)
+    return id_map
+
+
+def filter_pushed(plan_dict, rtm_md):
+    """Drop work items whose PBI is already mapped in the RTM — the idempotency guard
+    both adapters apply before creating. Returns (filtered_plan, [(pbi_id, work_item_id)
+    skipped]). Re-running --apply, or a second teammate pushing, then creates nothing."""
+    id_map = read_id_map(rtm_md)
+    keep, skipped = [], []
+    for wi in plan_dict["work_items"]:
+        wid = id_map.get(wi["pbi_id"].upper())
+        (skipped.append((wi["pbi_id"], wid)) if wid else keep.append(wi))
+    return {**plan_dict, "count": len(keep), "work_items": keep}, skipped
+
+
+def check_drift(backlog_md, rtm_md):
+    """Offline md↔tracker drift report. NEW = a backlog PBI with no tracker mapping
+    (unpushed); GONE = a mapped PBI that no longer exists in the backlog (the tracker
+    item is orphaned, or the PBI was renamed — both need a human). 'Tracker wins' on
+    content disagreement is policy (INFORMATION-ARCHITECTURE.md); this makes the
+    *coverage* half of that policy checkable."""
+    backlog_ids = {p["id"] for p in parse_backlog(backlog_md)}
+    id_map = read_id_map(rtm_md)
+    new = sorted(backlog_ids - set(id_map))
+    gone = sorted(set(id_map) - backlog_ids)
+    return {"backlog_count": len(backlog_ids), "mapped_count": len(id_map),
+            "new_unpushed": new, "gone_orphaned": gone, "ok": not gone}
+
+
 # ---------------------------------------------------------------- CLI
 
 def _print_table(p):
@@ -230,6 +298,25 @@ def _print_table(p):
 
 
 def main(argv):
+    if len(argv) >= 2 and argv[1] == "check":
+        if len(argv) < 3:
+            print("usage: emit_backlog.py check <backlog.md> [--rtm <RTM.md>]")
+            return 2
+        backlog_p = Path(argv[2])
+        rtm_p = Path(argv[argv.index("--rtm") + 1]) if "--rtm" in argv else backlog_p
+        d = check_drift(backlog_p.read_text(encoding="utf-8"),
+                        rtm_p.read_text(encoding="utf-8"))
+        for pid in d["new_unpushed"]:
+            print(f"  NEW   {pid} — in the backlog, no tracker mapping yet (unpushed)")
+        for pid in d["gone_orphaned"]:
+            print(f"  GONE  {pid} — mapped to a tracker item but absent from the backlog "
+                  f"(orphaned item or renamed PBI — reconcile by hand)")
+        verdict = "OK" if d["ok"] else "FAIL"
+        print(f"emit_backlog check: {verdict} — {d['backlog_count']} backlog PBI(s), "
+              f"{d['mapped_count']} mapped, {len(d['new_unpushed'])} unpushed, "
+              f"{len(d['gone_orphaned'])} orphaned")
+        return 0 if d["ok"] else 1
+
     if len(argv) >= 2 and argv[1] == "writeback":
         if len(argv) < 4:
             print("usage: emit_backlog.py writeback <table.md> <idmap.json> [--apply]")
@@ -238,7 +325,7 @@ def main(argv):
         id_map = json.loads(idmap_p.read_text(encoding="utf-8"))
         updated = writeback(table_p.read_text(encoding="utf-8"), id_map)
         if "--apply" in argv:
-            table_p.write_text(updated, encoding="utf-8")
+            atomic_write(table_p, updated)
             print(f"writeback: filled Azure column for {len(id_map)} id(s) in {table_p}")
         else:
             sys.stdout.write(updated)
@@ -246,7 +333,8 @@ def main(argv):
 
     if len(argv) < 2:
         print(__doc__.strip().split("\n\n")[0])
-        print("\nusage: emit_backlog.py <backlog.md> [--table] | writeback <table.md> <idmap.json> [--apply]")
+        print("\nusage: emit_backlog.py <backlog.md> [--table] | writeback <table.md> <idmap.json> [--apply]"
+          "\n       emit_backlog.py check <backlog.md> [--rtm <RTM.md>]     # md<->tracker drift")
         return 2
     md = Path(argv[1]).read_text(encoding="utf-8")
     p = plan(md)

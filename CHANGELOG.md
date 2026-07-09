@@ -2,6 +2,19 @@
 
 All notable changes to Spindleloom. Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow SemVer (pre-1.0: minor bumps may break).
 
+## [Unreleased]
+
+### Added — multi-user concurrency + the phase-acceptance layer
+
+- **Phase-boundary acceptance, mechanized** (the centerpiece): the four upstream phases (discovery, requirements, design, planning) had no gate but prose — now the accountable role records acceptance via **`sloom approve <phase> --feature <slug> --role <role> --by "<name>"`** → `.spindleloom/approvals/<feature>/<phase>.md`, enforced identically by `validate_gates --accepted <phase>`, `sloom run advance` (refuses to cross an unaccepted boundary), and run-orchestrator's runnable computation. Default phase→approver matrix overridable via config `"approvals"`; `--notify-tracker` mirrors the acceptance as a **comment** on the mapped Azure/Jira items (`add_comment()` in both adapters — comment-only; item state stays the tracker's). "Can I start?" becomes a file check, not a meeting — and because gates are files, an autonomous loop and a human teammate hit the same gates.
+- **DUP-REQID collision gate**: two teammates on two branches independently minting the same Req-ID merged clean and silently collided — `audit()` now flags a same-kind double-mint (`rtm_core._DEFINING_KIND`); downstream citations (SDD citing an FRD id) are never false positives.
+- **Shared context that actually crosses machines**: every `save_context` also appends to the committed, git-mergeable **`.spindleloom/context-log.jsonl`** (the cross-machine source of truth); `context.db` + `chroma/` become local rebuildable indexes (gitignored by scaffold). New **`sloom context <root> --import`** (`hooks/sync_context_log.py`) replays teammates' entries after a pull; `--export` backfills a pre-log DB; merge-mangled lines are skipped, not fatal.
+- **Per-run + per-release namespacing**: run-state moves to **`.spindleloom/runs/<run-id>.json`** (one file pair per run — concurrent runs never clobber); release sign-offs gain **`--release-id`** (`signoffs/<release-id>/<gate>.md`) so two release trains never overwrite each other's tokens.
+- **`sloom run status|advance <run-id>`** — a teammate checks/advances a distributed run without an LLM; `advance` refuses when a required upstream isn't done or a crossed phase boundary lacks acceptance (the graph is the gate, hand-editing can't skip it).
+- **Idempotent tracker push + drift check**: both adapters now consult the RTM's committed mapping before creating (`skip PBI-X → #1234`; `--force-repush` overrides) — re-running `--apply` or a second teammate pushing no longer duplicates work items. New **`emit_backlog.py check`** reports NEW (unpushed) / GONE (orphaned) drift; wired into `sloom check`. Role rule: backlog-manager is the sole pusher, from merged `main` only.
+- **The adopter CI gate** (`templates/ci/sloom-gate.yml`, written by scaffold/migrate to `.github/workflows/`): merging to `main` now *proves* the spec battery ran — incl. DUP-REQID and the per-PBI verification requirement when the branch names one. Previously no adopter repo got any gate workflow; "merged = gates passed" was a convention.
+- **STANDARD.md §9 "Concurrency & ownership"**: the resource-ownership table (owner role, namespace key, merge strategy, enforcing gate per shared resource), the 10-phase acceptance graph + approver matrix, and the branch=local / main=global / PR-merge=promotion model; §3's tree now annotates every `.spindleloom/` path committed-vs-local.
+
 ## [0.3.0] — 2026-07-09
 
 ### ⚠ Breaking

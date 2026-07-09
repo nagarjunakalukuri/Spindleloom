@@ -30,6 +30,8 @@ import base64
 import json
 import os
 import sys
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 import urllib.request
 import urllib.parse
 from pathlib import Path
@@ -91,7 +93,35 @@ def _create(org_url, project, pat, wi_type, patch):
     return _post(url, patch, pat)
 
 
-def push(plan, dry_run=True, link_epics=False):
+def build_comment(text):
+    """Work-item comment payload (comments API, plain application/json). Pure & offline-testable."""
+    return {"text": text}
+
+
+def comment_url(org_url, project, work_item_id):
+    return (f"{org_url}/{urllib.parse.quote(project)}/_apis/wit/workItems/"
+            f"{work_item_id}/comments?api-version=7.1-preview.3")
+
+
+def add_comment(work_item_id, text):
+    """POST one comment to a work item (e.g. a phase-acceptance mirror from `sloom
+    approve --notify-tracker`). Comment-only by design: item STATE stays owned by the
+    board's own workflow — we never fight the tracker for status. Returns False (no
+    network) when creds are missing."""
+    org_url, project, pat = _cfg()
+    if not all((org_url, project, pat)):
+        return False
+    req = urllib.request.Request(
+        comment_url(org_url, project, work_item_id),
+        data=json.dumps(build_comment(text)).encode("utf-8"), method="POST",
+        headers={"Content-Type": "application/json",
+                 "Authorization": "Basic " + base64.b64encode((":" + pat).encode()).decode()})
+    with urllib.request.urlopen(req) as r:  # noqa: S310
+        json.loads(r.read().decode("utf-8"))
+    return True
+
+
+def push(plan, dry_run=True, link_epics=False, id_map=None):
     """Create one Azure Boards work item per plan['work_items']; return {PBI-ID: work-item-id}.
     dry_run (default) makes NO network calls — it prints the per-item plan and returns {}."""
     org_url, project, pat = _cfg()
@@ -100,7 +130,7 @@ def push(plan, dry_run=True, link_epics=False):
         print("!! refusing to --apply: set AZURE_DEVOPS_ORG_URL (or ORG), AZURE_DEVOPS_PROJECT, "
               "AZURE_DEVOPS_PAT (Work Items read+write scope)", file=sys.stderr)
         return {}
-    id_map, epics = {}, {}
+    id_map, epics = ({} if id_map is None else id_map), {}
     for wi in plan["work_items"]:
         parent_url = None
         if link_epics and wi.get("parent_epic"):
@@ -126,22 +156,36 @@ def main(argv):
     flags = {a for a in argv[1:] if a.startswith("--")}
     if not args:
         print(__doc__.strip().split("\n\n")[0])
-        print("\nusage: azure_boards_adapter.py <backlog.md> [--apply] [--link-epics] [--rtm <file>]")
+        print("\nusage: azure_boards_adapter.py <backlog.md> [--apply] [--link-epics] [--rtm <file>] [--force-repush]")
         return 2
     p = emit_backlog.plan(Path(args[0]).read_text(encoding="utf-8"))
     print(f"{p['count']} work item(s) planned; {len(p['warnings'])} warning(s).")
     for w in p["warnings"]:
         print("  warn:", w)
+    # Idempotency guard: the RTM's committed Azure column is the source of truth for
+    # "already pushed" — skip mapped PBIs so a re-run (or a second teammate) creates nothing.
+    if "--rtm" in argv and "--force-repush" not in flags:
+        rtm_md = Path(argv[argv.index("--rtm") + 1]).read_text(encoding="utf-8")
+        p, skipped = emit_backlog.filter_pushed(p, rtm_md)
+        for pid, wid in skipped:
+            print(f"  skip {pid} → #{wid} (already mapped in the RTM; --force-repush overrides)")
     dry = "--apply" not in flags
-    id_map = push(p, dry_run=dry, link_epics="--link-epics" in flags)
+    id_map = {}
+    try:
+        push(p, dry_run=dry, link_epics="--link-epics" in flags, id_map=id_map)
+    finally:
+        # Record whatever was created — even if push() raised partway through — so a
+        # retry sees the already-made items in the RTM and never duplicates them.
+        if not dry and id_map and "--rtm" in argv:
+            rtm = Path(argv[argv.index("--rtm") + 1])
+            emit_backlog.atomic_write(
+                rtm, emit_backlog.writeback(rtm.read_text(encoding="utf-8"), id_map))
+            print(f"writeback: recorded {len(id_map)} id(s) in {rtm}")
+
     if dry:
         print("Dry-run — no network calls. Re-run with --apply (and creds) to create + write back.")
         return 0
-    if id_map and "--rtm" in argv:
-        rtm = Path(argv[argv.index("--rtm") + 1])
-        rtm.write_text(emit_backlog.writeback(rtm.read_text(encoding="utf-8"), id_map), encoding="utf-8")
-        print(f"writeback: recorded {len(id_map)} id(s) in {rtm}")
-    elif id_map:
+    if id_map and "--rtm" not in argv:
         print(json.dumps(id_map, indent=2))
     return 0
 

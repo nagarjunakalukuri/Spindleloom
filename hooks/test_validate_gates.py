@@ -96,6 +96,60 @@ def test_release_all_go_passes():
         shutil.rmtree(tmp, ignore_errors=True)
 
 
+def test_release_id_scopes_tokens():
+    """Two release trains: tokens under signoffs/v1.2/ satisfy --release-id v1.2 and
+    are invisible to --release-id v1.3 — concurrent releases never share tokens."""
+    tmp = _project(GOOD_VER)
+    try:
+        rdir = tmp / ".spindleloom" / "signoffs" / "v1.2"
+        rdir.mkdir(parents=True)
+        for g in ("qa", "security", "raid"):
+            (rdir / f"{g}.md").write_text(GO_TOKEN.format(gate=g), encoding="utf-8")
+        ok = _run(tmp, "--release", "--gates", "qa,security,raid", "--release-id", "v1.2")
+        assert ok.returncode == 0 and "for release 'v1.2'" in ok.stdout, ok.stdout
+        other = _run(tmp, "--release", "--gates", "qa,security,raid", "--release-id", "v1.3")
+        assert other.returncode == 1 and "signoffs/v1.3/" in other.stdout, other.stdout
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+ACCEPT_TOKEN = """# Acceptance — requirements (user-auth)
+Verdict: ACCEPTED
+By: N. Kalukuri
+Role: product-owner
+Date: 2026-07-09
+"""
+
+
+def test_accepted_gate_trips_then_passes():
+    tmp = _project(GOOD_VER)
+    try:
+        r = _run(tmp, "--accepted", "requirements", "--feature", "user-auth")
+        assert r.returncode == 1 and "no token for phase 'requirements'" in r.stdout, r.stdout
+        tok = tmp / ".spindleloom" / "approvals" / "user-auth"
+        tok.mkdir(parents=True)
+        (tok / "requirements.md").write_text(ACCEPT_TOKEN, encoding="utf-8")
+        r2 = _run(tmp, "--accepted", "requirements", "--feature", "user-auth")
+        assert r2.returncode == 0 and "phase 'requirements' accepted" in r2.stdout, r2.stdout
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def test_accepted_gate_enforces_configured_approver_role():
+    tmp = _project(GOOD_VER)
+    try:
+        (tmp / ".spindleloom" / "config.json").write_text(
+            '{"approvals": {"design": "architect"}}', encoding="utf-8")
+        tok = tmp / ".spindleloom" / "approvals" / "user-auth"
+        tok.mkdir(parents=True)
+        (tok / "design.md").write_text(
+            ACCEPT_TOKEN.replace("requirements", "design"), encoding="utf-8")  # Role: product-owner
+        r = _run(tmp, "--accepted", "design", "--feature", "user-auth")
+        assert r.returncode == 1 and "must be accepted by 'architect'" in r.stdout, r.stdout
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 def _ctx_db(tmp, task_id=None):
     import sqlite3
     db = tmp / ".spindleloom" / "context.db"
@@ -138,5 +192,6 @@ if __name__ == "__main__":
             except AssertionError as e:
                 failures += 1
                 print(f"  FAIL {name}: {str(e)[:200]}")
-    print(f"{'FAIL' if failures else 'OK'} — validate_gates tests: {7 - failures}/7 passed")
+    total = sum(1 for n, f in globals().items() if n.startswith("test_") and callable(f))
+    print(f"{'FAIL' if failures else 'OK'} — validate_gates tests: {total - failures}/{total} passed")
     sys.exit(1 if failures else 0)

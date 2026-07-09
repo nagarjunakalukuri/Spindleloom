@@ -93,7 +93,7 @@ Material risks and issues feed the status-reporter (top-risks section) and may f
 - A risk list where everything is "high" and nothing is prioritized.
 - Items with no owner that quietly rot.
 
-At release time, persist `.spindleloom/signoffs/raid.md` (`Verdict: GO` only when no open risk blocks the release, with the accepted risks named as `Evidence:`).
+At release time, persist `.spindleloom/signoffs/raid.md` (`Verdict: GO` only when no open risk blocks the release, with the accepted risks named as `Evidence:`). With more than one release train in flight, namespace the token per release — `.spindleloom/signoffs/<release-id>/raid.md` — and gate with `validate_gates.py --release --release-id <slug>` so concurrent releases never overwrite each other's evidence.
 
 ## Style rules
 - Every item: owner + next action + date. No orphans.
