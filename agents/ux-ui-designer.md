@@ -15,7 +15,7 @@ id_prefix: UX
 rtm_column: "Design (UX)"
 upstream: [prd-writer, frd-writer]
 downstream: [frontend-developer, accessibility-auditor]
-skills: []
+skills: [ux-design-method]
 claude_code: { subagent_type: ux-ui-designer }
 ---
 

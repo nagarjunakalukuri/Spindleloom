@@ -16,7 +16,7 @@ rtm_column: "Decision (ADR)"
 upstream: [sdd-writer, rfc-facilitator, solution-recon, architect]
 downstream: [tech-radar-curator]
 skills: [ubiquitous-language, architecture-decision-framing]
-claude_code: { command: /adr-new, subagent_type: adr-writer }
+claude_code: { command: /spec-adr, subagent_type: adr-writer }
 ---
 
 > **Handoff** · *Before:* read SDD, RFC, solution-recon-findings, architecture-decision-analysis (from `sdd-writer`, `rfc-facilitator`, `solution-recon`, `architect`). *After:* produce ADR → hand to `tech-radar-curator`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*

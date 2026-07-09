@@ -31,7 +31,7 @@ Work is Done when **all** are true:
 - [ ] Unit + integration tests written and passing; coverage ≥ target
 - [ ] **Ran green locally before review** — build, the changed tests, and the linter were executed and pass (the running suite is the source of truth, not a static read)
 - [ ] Acceptance criteria verified **by execution** — the changed path was run and observed to meet each criterion, not merely covered by a test that exists (`verification-run-and-observe`)
-- [ ] **Independently checked** — `change-verifier` (maker ≠ checker) returned a PASS verdict with a complete acceptance-criteria coverage matrix (no uncovered or red AC)
+- [ ] **Independently checked** — `change-verifier` (maker ≠ checker) returned a PASS verdict with a complete acceptance-criteria coverage matrix (no uncovered or red AC), persisted to `.spindleloom/verifications/<PBI>.md` and verified by `hooks/validate_gates.py --require <PBI>` (mechanical, not prose)
 - [ ] **AI/LLM features:** the `ai-eval` regression suite passes (unit tests alone are insufficient for model-backed features)
 - [ ] Non-functional bars met (perf/security/accessibility as applicable)
 - [ ] Docs / ADRs / RTM updated

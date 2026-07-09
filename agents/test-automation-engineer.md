@@ -14,7 +14,7 @@ outputs: automated test suites
 rtm_column: "—"
 upstream: [test-plan-writer, api-designer, flaky-test-detective]
 downstream: [pipeline-engineer]
-skills: [test-design, verification-run-and-observe]
+skills: [test-design, verification-run-and-observe, test-data]
 claude_code: { subagent_type: test-automation-engineer }
 ---
 

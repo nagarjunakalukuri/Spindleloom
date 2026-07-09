@@ -22,7 +22,7 @@ Active discipline, not passive documentation: challenge imprecise terms, test th
 - **Feeds the funnel.** A sharp glossary is what makes a requirement *Unambiguous* (`requirement-quality`) and keeps IDs and terms consistent across the RTM.
 
 ## When to record an ADR
-Capture a decision as an ADR (`/adr-new`, `adr-writer`) only when all three hold:
+Capture a decision as an ADR (`/spec-adr`, `adr-writer`) only when all three hold:
 1. **Hard to reverse** — real cost to change later.
 2. **Surprising without context** — a future reader would question the choice.
 3. **Genuine trade-off** — real alternatives existed.
@@ -30,4 +30,4 @@ Capture a decision as an ADR (`/adr-new`, `adr-writer`) only when all three hold
 A naming choice that meets all three (e.g. modeling "order" and "fulfillment" as separate concepts) is worth an ADR; a routine term definition is not — it just goes in the glossary.
 
 ## Tie-in
-The proactive half of the terminology pair with `cross-artifact-analysis` (which audits drift after the fact). ADRs route through the existing `adr-writer` / `/adr-new` machinery and the RAID log's decisions index; `spec-steward` keeps the glossary authoritative so AI tools read one vocabulary. `requirement-elicitation` surfaces the terms this skill pins down.
+The proactive half of the terminology pair with `cross-artifact-analysis` (which audits drift after the fact). ADRs route through the existing `adr-writer` / `/spec-adr` machinery and the RAID log's decisions index; `spec-steward` keeps the glossary authoritative so AI tools read one vocabulary. `requirement-elicitation` surfaces the terms this skill pins down.

@@ -16,8 +16,8 @@ rtm_column: "—"
 upstream: [doc-strategy-advisor, prd-writer, frd-writer]
 downstream: [frd-writer, srs-writer, sdd-writer, backlog-manager, adr-writer, architect, estimation-facilitator, backend-developer, frontend-developer, raid-keeper]
 gate: —
-skills: [api-contract, brownfield-recon, agent-handoff-context]
-claude_code: { subagent_type: solution-recon }
+skills: [api-contract, brownfield-recon, agent-handoff-context, context-engineering]
+claude_code: { command: /build-recon, subagent_type: solution-recon }
 ---
 
 > **Handoff** · *Before:* read PRD, FRD, prototype/design, the codebase (from `doc-strategy-advisor`, `prd-writer`, `frd-writer`). *After:* produce solution-recon-findings → hand to `frd-writer`, `srs-writer`, `sdd-writer`, `backlog-manager`, `adr-writer`, `architect`, `estimation-facilitator`, `backend-developer`, `frontend-developer`, `raid-keeper`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*

@@ -77,6 +77,8 @@ Material risks and issues feed the status-reporter (top-risks section) and may f
 - A risk list where everything is "high" and nothing is prioritized.
 - Items with no owner that quietly rot.
 
+At release time, persist `.spindleloom/signoffs/raid.md` (`Verdict: GO` only when no open risk blocks the release, with the accepted risks named as `Evidence:`).
+
 ## Style rules
 - Every item: owner + next action + date. No orphans.
 - Score and rank risks; mitigate the top few.

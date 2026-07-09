@@ -6,7 +6,7 @@
 
 *An AI agent fleet for the entire software development lifecycle — market → spec → design → build → test → ship → operate, one traceable chain.*
 
-A *spindleloom* weaves many threads — every role and artifact — into one cloth on a loop that never stops turning, and the SDLC is exactly that loop (build → ship → operate → learn → repeat). The project comes in three `-wright`s: **Spindleloom** is the fleet that builds the wheel, **Shipwright** ships it to every harness (`hooks/build_harness_artifacts.py` → `targets/`), and **Loopwright** runs it inside the delivery feedback loop (`project_guides/LOOPWRIGHT.md`). Spindleloom is a tool-agnostic fleet of **52 role-specialist AI agents** (plus 50 templates, commands, and self-validating hooks) that carry a product from the market problem at 30,000 feet down to build-ready, shipped, monitored code. Each agent owns one role, reads the artifact above it, and **hands off to the next** along a single traceable chain — and pushes discoveries back upstream. Run only the subset your team needs (`doc-strategy-advisor`).
+A *spindleloom* weaves many threads — every role and artifact — into one cloth on a loop that never stops turning, and the SDLC is exactly that loop (build → ship → operate → learn → repeat). **Spindleloom** is the fleet that builds the wheel; its harness generator (`hooks/build_harness_artifacts.py` → `targets/`) ships it natively to every AI coding tool, and **Loopwright** (`project_guides/LOOPWRIGHT.md`) is the delivery-feedback-loop layer the fleet runs inside. Spindleloom is a tool-agnostic fleet of **52 role-specialist AI agents** (plus 50 templates, commands, and self-validating hooks) that carry a product from the market problem at 30,000 feet down to build-ready, shipped, monitored code. Each agent owns one role, reads the artifact above it, and **hands off to the next** along a single traceable chain — and pushes discoveries back upstream. Run only the subset your team needs (`doc-strategy-advisor`).
 
 ## The funnel
 
@@ -38,7 +38,7 @@ Bridge the specs into running agile work.
 
 | Agent | File | Purpose |
 |---|---|---|
-| backlog-manager | `agents/backlog-manager.md` | Turns the PRD/FRD/SRS into a product backlog — epics → user stories (PBIs) → tasks, INVEST-checked, with acceptance criteria, ordering, Definition of Ready, and the next pull-able item (`/pbi-next`). The single canonical backlog agent. |
+| backlog-manager | `agents/backlog-manager.md` | Turns the PRD/FRD/SRS into a product backlog — epics → user stories (PBIs) → tasks, INVEST-checked, with acceptance criteria, ordering, Definition of Ready, and the next pull-able item (`/plan-next`). The single canonical backlog agent. |
 | estimation-facilitator | `agents/estimation-facilitator.md` | Sizes backlog items via story points / Planning Poker (modified Fibonacci); computes velocity & capacity. |
 | sprint-planner | `agents/sprint-planner.md` | Sets a sprint goal, selects a capacity-fit sprint backlog from Ready items, flags deferrals and risks. |
 | retrospective-facilitator | `agents/retrospective-facilitator.md` | Runs a blameless retro grounded in sprint data; produces 1–3 owned, tracked action items. |
@@ -182,13 +182,15 @@ Blank, fill-in-the-blank versions of each document:
 
 `examples/healthy-meal-app/` — a full run of the chain (MRD → TSD + an ADR) for one app, tied together by a shared RTM. Use it as a reference for how the documents interlock, and as the canonical exemplar when authoring or testing agents.
 
+`examples/medremind-fleet-eval/` — the fleet's **behavioral E2E evaluation** reference run (protocol: `project_guides/FLEET-EVAL.md`): ten agents chained contract-strict over a deliberately tricky brief, with per-agent handoff reports, an independent judge's verdict, a living RTM, and a tagged assumption ledger. Graded C+ → B+ across two runs as coordination fixes landed — the honest "what the fleet actually produces" companion to the polished exemplar.
+
 ## Shared conventions
 
-`project_guides/STANDARD.md` — **the authoritative, versioned layout standard**: the one project-agnostic `docs/` + `.shipwright/` tree, the profiles (lean/mid/enterprise), the four cadence planes (durable/living/cyclic/snapshot), naming + ID immutability, backlog system-of-record, and the sanctioned-exception config. Greenfield scaffolds it; existing repos **convert** via `scaffold.py migrate` (never by hand).
+`project_guides/STANDARD.md` — **the authoritative, versioned layout standard**: the one project-agnostic `docs/` + `.spindleloom/` tree, the profiles (lean/mid/enterprise), the four cadence planes (durable/living/cyclic/snapshot), naming + ID immutability, backlog system-of-record, and the sanctioned-exception config. Greenfield scaffolds it; existing repos **convert** via `scaffold.py migrate` (never by hand).
 
 `project_guides/INFORMATION-ARCHITECTURE.md` — the **detailed reference** under `project_guides/STANDARD.md`: where artifacts live and how they're organized, found, and versioned — the canonical tree, the profiles, the metadata convention, baselines, and the four retrieval paths (RTM · catalog · MCP · wiki).
 
-`project_guides/HARNESS-MATRIX.md` — the 7-surface × 4-tool convergence matrix (Claude Code · Cursor · Copilot · Windsurf): which customization surface each tool exposes and which Spindleloom source maps onto it. What `hooks/build_harness_artifacts.py` (Shipwright) targets.
+`project_guides/HARNESS-MATRIX.md` — the 7-surface × 4-tool convergence matrix (Claude Code · Cursor · Copilot · Windsurf): which customization surface each tool exposes and which Spindleloom source maps onto it. What `hooks/build_harness_artifacts.py` targets.
 
 `project_guides/BEST-PRACTICES.md` — the funnel, feedback loops, team-size doc tiers, ownership matrix, the requirement quality standard (ISO/IEC/IEEE 29148 + INCOSE checklist and the "system shall" rule), the traceability backbone with Req-ID convention, change control & baselines, and frameworks (arc42, C4, Diátaxis, Docs-as-Code) that all agents follow.
 

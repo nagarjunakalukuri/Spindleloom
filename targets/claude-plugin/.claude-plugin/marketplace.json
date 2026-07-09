@@ -5,7 +5,7 @@
   },
   "plugins": [
     {
-      "name": "spindleloom",
+      "name": "sloom",
       "source": ".",
       "description": "The full Spindleloom SDLC agent fleet (agents, skills, commands, hooks, templates)."
     }

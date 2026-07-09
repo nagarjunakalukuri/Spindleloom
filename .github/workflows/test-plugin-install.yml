@@ -26,6 +26,8 @@ jobs:
 
       - name: Harness bundles not stale
         run: python hooks/build_harness_artifacts.py --check
+      - name: Harness conformance (per-tool format rules)
+        run: python hooks/validate_targets.py
 
   # ── Spec traceability ────────────────────────────────────────────────────────
   validate-traceability:

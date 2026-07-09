@@ -78,7 +78,7 @@ For teams rolling out Spindleloom across multiple repos or to 10+ developers.
 - [ ] Pin to a release tag so teams don't get breaking changes on `main`
 - [ ] Wire `build_harness_artifacts.py --check` as a CI drift gate so stale bundles can't merge
 - [ ] After any Spindleloom source update: re-run `build_harness_artifacts.py` and re-distribute
-- [ ] Use `run-orchestrator` + `.shipwright/run-state.json` for any autonomous fleet runs
+- [ ] Use `run-orchestrator` + `.spindleloom/run-state.json` for any autonomous fleet runs
 - [ ] Review `project_guides/PILOT-READOUT.md` for known adjustment areas before wider rollout
 
 ### Size your adoption
@@ -138,7 +138,7 @@ If this passes, the source is intact and ready to bundle.
 
 ## Step 3 — Build harness bundles (one-time, then after source changes)
 
-Shipwright reads the single-source `agents/`, `skills/`, `commands/` and emits each tool's native bundle under `targets/`:
+The harness generator reads the single-source `agents/`, `skills/`, `commands/` and emits each tool's native bundle under `targets/`:
 
 ```bash
 # Windows
@@ -161,14 +161,14 @@ One command installs everything: agents + skills + commands + hooks + templates 
 ```
 /plugin marketplace add <owner/repo>          # GitHub slug, or a local path:
 /plugin marketplace add C:\path\to\Spindleloom
-/plugin install spindleloom@spindleloom
+/plugin install sloom@spindleloom
 ```
 
 Both the **repo root** and the built bundle (`<repo>/targets/claude-plugin`) work as the
 marketplace path — the root `.claude-plugin/marketplace.json` points at the bundle. (From a
 terminal the same commands are `claude plugin marketplace add …` / `claude plugin install …`.)
 
-After install: agents auto-trigger by description, every `/spec-new` `/rtm-check` etc. works, and the traceability hook fires on spec edits.
+After install: agents auto-trigger by description, every `/spec-new` `/spec-check` etc. works, and the traceability hook fires on spec edits.
 
 **Verify:**
 ```
@@ -323,7 +323,7 @@ The cross-tool router any `AGENTS.md`-aware tool reads.
 
 ## Step 5 — Wire the MCP server (optional, recommended)
 
-The MCP server exposes **18 tools** in two groups. **RTM / catalog / conformance (12):** `trace_requirement`, `rtm_coverage`, `funnel_status`, `list_requirements`, `search_specs`, `scaffold_project`, and more. **Agent context memory (6):** `save_context`, `recall_context`, `list_contexts`, `get_context`, `delete_context`, `sync_contexts` — agents store decisions and retrieve them in one call, no re-reading upstream docs.
+The MCP server exposes **19 tools** in two groups. **RTM / catalog / conformance (12):** `trace_requirement`, `rtm_coverage`, `funnel_status`, `list_requirements`, `search_specs`, `scaffold_project`, and more. **Agent context memory (7):** `save_context`, `recall_context`, `list_contexts`, `get_context`, `delete_context`, `delete_context_entry`, `sync_contexts` — agents store decisions and retrieve them in one call, no re-reading upstream docs.
 
 **Prerequisite: uv** — provisions the MCP SDK on first run (no manual `pip install`).
 
@@ -341,13 +341,18 @@ The generated `.mcp.json` auto-discovers and launches the server. Set `SPINDLELO
 // .mcp.json (already generated — just set the env var)
 {
   "mcpServers": {
-    "spindleloom": {
+    "sloom": {
       "command": "uv",
       "args": ["run", "--with", "mcp[cli]", "python", "mcp/mcp_server.py"],
       "env": { "SPINDLELOOM_SPEC_ROOT": "${CLAUDE_PROJECT_DIR}/docs" }
     }
   }
 }
+```
+
+**One-command gate battery** (repo-type aware):
+```bash
+python hooks/sloom.py check
 ```
 
 **Smoke test:**
@@ -520,7 +525,7 @@ py -3 hooks/build_harness_artifacts.py
 python3 hooks/build_harness_artifacts.py
 ```
 
-Then re-copy the updated bundle for your tool (same Step 4 commands). The plugin install auto-updates if you run `/plugin install spindleloom@spindleloom` again.
+Then re-copy the updated bundle for your tool (same Step 4 commands). The plugin install auto-updates if you run `/plugin install sloom@spindleloom` again.
 
 ---
 

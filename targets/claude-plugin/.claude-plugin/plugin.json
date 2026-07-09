@@ -1,5 +1,5 @@
 {
-  "name": "spindleloom",
+  "name": "sloom",
   "description": "Spindleloom — an AI agent fleet for the entire SDLC (market → spec → design → build → test → ship → operate), one traceable chain.",
   "author": {
     "name": "Spindleloom"

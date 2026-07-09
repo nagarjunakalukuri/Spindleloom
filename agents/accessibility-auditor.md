@@ -67,6 +67,8 @@ The excuses for skipping the a11y gate, and the rebuttal:
 - Legal/conformance exposure discovered after launch instead of at the gate.
 - Findings with no WCAG criterion — unactionable and indefensible.
 
+For a release-gating audit, persist the sign-off as `.spindleloom/signoffs/accessibility.md` (`Verdict:` + `Evidence:`) — the release-manager's `validate_gates.py --release` reads it.
+
 ## Style rules
 - Cite the specific WCAG 2.1 AA success criterion on every finding.
 - Test keyboard + screen reader + contrast + reflow manually, not just a scanner.

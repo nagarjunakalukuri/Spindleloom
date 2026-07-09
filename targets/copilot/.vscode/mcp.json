@@ -1,6 +1,6 @@
 {
   "servers": {
-    "spindleloom": {
+    "sloom": {
       "type": "stdio",
       "command": "uv",
       "args": [

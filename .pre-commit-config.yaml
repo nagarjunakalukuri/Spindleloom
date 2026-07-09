@@ -20,7 +20,7 @@ repos:
 
       - id: validate-example-traceability
         name: Example spec traceability (validate_reqs)
-        entry: python hooks/validate_reqs.py examples/healthy-meal-app
+        entry: bash -c 'python hooks/validate_reqs.py examples/healthy-meal-app && python hooks/validate_reqs.py examples/medremind-fleet-eval'
         language: python
         pass_filenames: false
         files: ^examples/

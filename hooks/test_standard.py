@@ -37,7 +37,7 @@ def test_scaffold_default():
         check((root / "docs/product/prd.md").exists(), "scaffold(mid): docs/product/prd.md")
         check((root / "docs/specs/feature-1/frd.md").exists(), "scaffold(mid): docs/specs/feature-1/frd.md")
         check((root / "docs/sprints").is_dir(), "scaffold(mid): cyclic docs/sprints/ created")
-        cfg = (root / ".shipwright/config.json").read_text(encoding="utf-8")
+        cfg = (root / ".spindleloom/config.json").read_text(encoding="utf-8")
         check('"standard_version"' in cfg and '"profile"' in cfg,
               "scaffold writes standard_version + profile to config")
 
@@ -45,7 +45,7 @@ def test_scaffold_default():
 def test_scaffold_config_override():
     with tempfile.TemporaryDirectory() as d:
         root = Path(d)
-        _w(root / ".shipwright/config.json",
+        _w(root / ".spindleloom/config.json",
            '{"profile":"enterprise","specs_dir":"features","sprints_dir":"iterations"}')
         scaffold.scaffold(root)
         check((root / "docs/product/constitution.md").exists(), "config override: enterprise -> constitution")

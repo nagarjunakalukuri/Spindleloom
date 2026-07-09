@@ -24,7 +24,7 @@ Documents form a waterfall from 30,000 feet (business) to the trenches (code). E
 
 `doc-strategy-advisor` decides which of these a given team should actually maintain; `spec-steward` keeps whichever you keep from drifting.
 
-Above the funnel sits the **constitution** (`templates/constitution-template.md`) — the standing, AI-read-first guardrails (principles, boundaries, non-goals) that hold across all features. The funnel describes *this release*; the constitution describes *the system's durable law*. Build it once via the `/constitution` command and keep it versioned.
+Above the funnel sits the **constitution** (`templates/constitution-template.md`) — the standing, AI-read-first guardrails (principles, boundaries, non-goals) that hold across all features. The funnel describes *this release*; the constitution describes *the system's durable law*. Build it once via the `/spec-constitution` command and keep it versioned.
 
 Alongside the funnel run the **engineering-craft lanes** the doc spine only touches generically: `ux-ui-designer` sits in the design phase doing UX **and** UI (PRD → flows/wireframes/hi-fi visuals + design system → `frontend-developer` implements them); `security-reviewer` is continuous (threat-models at the SDD, gates at review/CI); and `sre` owns proactive operate-phase reliability (SLOs/runbooks, feeding `incident-responder`). Four further specialists by need: `accessibility-auditor` (independent WCAG sign-off gate), `performance-engineer` (profiles and optimizes against a budget, behavior-preserving), `product-analytics` (instruments the PRD's success metrics to close the build→learn loop), and `ai-eval` (golden datasets + regression-eval gates for shipped AI features). Add each by what you're building (see `doc-strategy-advisor`).
 
@@ -98,7 +98,7 @@ Documents are living, but changes should be deliberate, not silent:
 
 ## Where artifacts live (information architecture)
 
-> **See [`INFORMATION-ARCHITECTURE.md`](INFORMATION-ARCHITECTURE.md)** for the full, consolidated reference — the canonical `docs/` + `.shipwright/` layout, per-document vs per-feature, the metadata convention, versioning/baselines, and how to find anything. This section is the summary.
+> **See [`INFORMATION-ARCHITECTURE.md`](INFORMATION-ARCHITECTURE.md)** for the full, consolidated reference — the canonical `docs/` + `.spindleloom/` layout, per-document vs per-feature, the metadata convention, versioning/baselines, and how to find anything. This section is the summary.
 
 The golden rule: **one system of record per kind of thing.** Don't duplicate; link by ID (the RTM).
 
@@ -189,7 +189,7 @@ Running the full funnel (decompose → recon → SDD → backlog split → sprin
 
 Key project-specific facts — Python interpreter path, test run incantation, repo root layout, per-package test commands — are re-derived by each new agent in a session if they're not persisted. This wastes tokens and causes friction (G8):
 
-- **Use `save_agent_context` (MCP tool):** at session start, one agent resolves and saves the incantation; every subsequent agent calls `load_agent_context` first before running commands.
+- **Use `save_context` (MCP tool):** at session start, one agent resolves and saves the incantation under `task_id="project-ops"`; every subsequent agent calls `recall_context(task_id="project-ops")` first before running commands (dev-onboarding seeds this at its readiness gate).
 - **Use a project `CLAUDE.md` addendum:** add a `## Running tests` section with the literal, resolved commands for this repo (e.g., `uv run pytest oi_atlas_cache/tests/ -x`). Every agent reads CLAUDE.md at start.
 - **On Windows with `uv`:** the interpreter is typically `.venv/Scripts/python.exe` and the test runner is `uv run pytest`. Write the resolved form once and reference it everywhere rather than re-probing per agent.
 

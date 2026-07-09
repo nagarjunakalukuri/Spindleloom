@@ -21,14 +21,14 @@ A run without a verifiable end is a drift machine. Before dispatching anything, 
 - **Constraints** — boundaries / protected paths.
 - **Budget** — a hard cap (turns / tokens / $ / wall-clock).
 
-Instantiate `templates/run-state-template.md` → `.shipwright/run-state.json` (+ a human-readable `RUN.md`).
+Instantiate `templates/run-state-template.md` → `.spindleloom/run-state.json` (+ a human-readable `RUN.md`).
 
 ## 2. Pick the entry point from the objective
 | Objective | Start at |
 |---|---|
 | New product / greenfield spec | `doc-strategy-advisor` → the funnel |
 | Change on an existing codebase | `solution-recon` (ground in the code first) |
-| A single ready ticket | `/pbi-next` → route by PBI type |
+| A single ready ticket | `/plan-next` → route by PBI type |
 | Production incident | `incident-responder` |
 | Set up AI guardrails / the loop itself | `ai-orchestrator` |
 
@@ -37,7 +37,7 @@ Repeat until the stop contract is met or the budget is spent:
 1. **Compute runnable.** From the graph, an agent is runnable when **all its required upstreams are `done` and its `gate` (if any) has passed**. A convergent agent (e.g. `backlog-manager`, many upstreams) waits for its required upstreams — a **join**.
 2. **Propose** the next agent(s) + *why*, and the context to hand them (the upstream artifacts + any recon-ref). Independent branches may run in parallel (worktree isolation); a convergent consumer waits for its join.
 3. **Confirm.** Present the plan; proceed on the human's go (rung 1–2). Auto-dispatch only for low-risk, reversible steps, and never on protected paths.
-4. **Dispatch** via the agent's `subagent_type`. In the build phase use `/pbi-next`'s type routing — Story → developer, Bug → `debugger`, Spike → `solution-recon`, Decision → `architect`.
+4. **Dispatch** via the agent's `subagent_type`. In the build phase use `/plan-next`'s type routing — Story → developer, Bug → `debugger`, Spike → `solution-recon`, Decision → `architect`.
 5. **Gate.** Before advancing past a gated step (DoR/DoD), confirm the gate passed; a build step is not `done` until `change-verifier` returns **PASS**.
 6. **Record.** Update the run-state — status, the produced-artifact pointer, the decision (provenance). Reset context between iterations; the spine, not the window, is the memory.
 
@@ -54,6 +54,8 @@ You dispatch the specialists; `change-verifier` is your build-phase gate; `ai-or
 Recurring blocks/failures in the run-state feed `retrospective-facilitator` and the harness (the layer-4 loop in `ai-orchestrator`). A step that is *never* runnable signals a missing upstream or a broken gate — surface it, don't skip it.
 
 ## Style rules
+- **Dispatch packs, not folders.** Assemble each step's context with `hooks/build_context_pack.py <root> <agent> --feature <slug>` and hand the manifest to the agent — its contract inputs resolved and stamped, the RTM slice, recalled context (stale-flagged), and the open assumptions. "Read the docs folder" is how windows fill with the wrong 40k tokens.
+- **Save-before-handoff is a dispatch gate.** Before dispatching step N+1, confirm step N's ledger row records a `save_context` entry (or an explicit "none — nothing to hand off"). An agent that finished without persisting context forces its successor to re-read everything — run `validate_gates.py --context <task_id>` when in doubt; a run with zero saved entries is passing work through a lossy side channel.
 - **The doc-strategy tier decision is binding routing.** Once `doc-strategy-advisor` picks the tier/doc set, dispatch only the writers that set includes (merged docs get ONE writer pass, dropped docs get none). Overriding it is a recorded decision, not a silent default to the full funnel — running documents the strategy dropped is how the same fact gets authored twice and diverges.
 - Write the stop contract before dispatching anything.
 - Propose and confirm; autonomy scales with reversibility.

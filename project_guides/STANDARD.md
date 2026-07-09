@@ -8,7 +8,7 @@
 | Last updated | 2026-06-20 |
 | Detailed reference | [`INFORMATION-ARCHITECTURE.md`](INFORMATION-ARCHITECTURE.md) |
 
-> **This is the standard, not a default.** Spindleloom defines **one** project-agnostic way to lay out, name, and version SDLC artifacts. Every project that adopts Spindleloom targets this shape: greenfield projects **scaffold** it; existing projects **convert** to it (`scaffold.py migrate`). The layout is not a menu — where a project genuinely cannot use a canonical path, it declares the deviation in `.shipwright/config.json` (the sanctioned exception, §8), never by improvising a new tree. Nothing here is specific to any product, domain, or tool.
+> **This is the standard, not a default.** Spindleloom defines **one** project-agnostic way to lay out, name, and version SDLC artifacts. Every project that adopts Spindleloom targets this shape: greenfield projects **scaffold** it; existing projects **convert** to it (`scaffold.py migrate`). The layout is not a menu — where a project genuinely cannot use a canonical path, it declares the deviation in `.spindleloom/config.json` (the sanctioned exception, §8), never by improvising a new tree. Nothing here is specific to any product, domain, or tool.
 >
 > **This repository is exempt.** Spindleloom's own source repo *ships* the standard — it is the toolkit distribution, not a consuming project. The standard governs the repos that **adopt** Spindleloom.
 
@@ -19,7 +19,7 @@ Knowledge is owned by exactly one party — never both, never duplicated.
 | Layer | What | Lives in | Edited by |
 |---|---|---|---|
 | **Toolkit knowledge** (global) | The standard, conventions, requirement-quality rules, ceremony, and the agents / skills / commands / templates themselves | The Spindleloom **bundle / plugin** (referenced, updated centrally) | The toolkit maintainer — **never** the adopting team |
-| **Project knowledge** | The artifacts a team produces — product docs, specs, RTM, ADRs, backlog, sprint docs | The **adopter's repo** (`docs/` + `.shipwright/`) + the work tracker | The adopting team |
+| **Project knowledge** | The artifacts a team produces — product docs, specs, RTM, ADRs, backlog, sprint docs | The **adopter's repo** (`docs/` + `.spindleloom/`) + the work tracker | The adopting team |
 
 **The rule that keeps them clean:** the toolkit ships the *how*; the project holds the *what*. Toolkit knowledge is **never copied into a project's `docs/`** — it is referenced through the installed bundle and updates centrally. A project never stores its own artifacts inside the toolkit.
 
@@ -28,7 +28,7 @@ Knowledge is owned by exactly one party — never both, never duplicated.
 The standard is a set of **invariant rules** plus one chosen **profile** that varies only *which documents are populated* — never the tree shape or the names.
 
 **Invariant — every profile, always:**
-- the `docs/` (visible deliverables) + `.shipwright/` (hidden machinery) split;
+- the `docs/` (visible deliverables) + `.spindleloom/` (hidden machinery) split;
 - the four cadence planes (§4);
 - the naming + traceability rules (§5);
 - the metadata header on every durable / living document (§6);
@@ -58,7 +58,7 @@ repo/
 │   │   └── plan.md  retro.md
 │   ├── adr/  rfc/                #   LIVING — append-only decision logs (one global ADR sequence)
 │   └── RTM.md                    #   LIVING — the one traceability backbone (one per initiative root)
-└── .shipwright/                  # HIDDEN — tool machinery (project knowledge, generated)
+└── .spindleloom/                  # HIDDEN — tool machinery (project knowledge, generated)
     ├── config.json               #   profile, standard_version, and any sanctioned path deviations
     ├── artifacts.json            #   generated catalog (the registry)
     ├── ARTIFACTS.md              #   human-readable catalog
@@ -72,10 +72,10 @@ Project knowledge is organized by how often it changes, so recurring work never 
 
 | Plane | What | Cadence | Home |
 |---|---|---|---|
-| **Durable** | constitution, MRD, BRD, PRD, roadmap, velocity baseline | set once, rarely changes | `docs/product/` (+ `.shipwright/velocity.json`) |
+| **Durable** | constitution, MRD, BRD, PRD, roadmap, velocity baseline | set once, rarely changes | `docs/product/` (+ `.spindleloom/velocity.json`) |
 | **Living** | FRD, SRS, SDD, TSD, RTM, ADR/RFC logs, recon findings, backlog | edited continuously in place | `docs/specs/<feature>/`, `docs/RTM.md`, `docs/adr/` |
 | **Cyclic** | sprint plan, retro — a fresh set **each sprint** | new instance per sprint | `docs/sprints/<sprint>/` |
-| **Snapshot** | frozen baselines | immutable, per sprint / release | `.shipwright/baselines/<tag>` |
+| **Snapshot** | frozen baselines | immutable, per sprint / release | `.spindleloom/baselines/<tag>` |
 
 - **Recon findings** live with the feature they de-risk — `docs/specs/<feature>/recon.md` — and are cited by the PBIs/specs they inform.
 - **Recurring sprint docs** get their own cyclic home so they never mix with durable knowledge; at sprint close they freeze to a baseline.
@@ -97,7 +97,7 @@ When a work tracker (Azure Boards / Jira) is connected, **the tracker is the sys
 
 ## 8. The sanctioned exception
 
-The only legitimate way to deviate from the canonical paths is `.shipwright/config.json`. Every knob defaults to the canonical tree, so an **absent config means "the standard."**
+The only legitimate way to deviate from the canonical paths is `.spindleloom/config.json`. Every knob defaults to the canonical tree, so an **absent config means "the standard."**
 
 ```json
 {
@@ -128,7 +128,7 @@ A repo is conformant when it matches the standard for its declared `profile` / `
 - **`validate_reqs.py`** — Req-ID format, RTM coverage, ADR-reference integrity, **duplicate-ID and multiple-ADR-directory detection**, and a **layout / version conformance check**;
 - **`build_artifact_registry.py --check`** — fails CI on any conformance violation.
 
-Conformance is also queryable live via the `spindleloom` MCP server.
+Conformance is also queryable live via the `sloom` MCP server.
 
 ## 11. This document vs. INFORMATION-ARCHITECTURE.md
 

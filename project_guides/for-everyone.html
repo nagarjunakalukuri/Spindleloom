@@ -463,15 +463,25 @@ Write a PRD for X.</span>
       <tr><td><code>/help-role</code></td><td>Find your agents + copy-paste example prompts for your role.</td><td><span class="who">Anyone -- start here</span></td></tr>
       <tr><td><code>/run</code></td><td>Drive a whole multi-agent run against a goal -- set a stop contract, then propose &amp; dispatch the next agent through the fleet (the conductor).</td><td><span class="who">Anyone  -  run-orchestrator</span></td></tr>
       <tr><td><code>/spec-new</code></td><td>Scaffold the right document set for your team size (lean / mid / enterprise).</td><td><span class="who">Project Manager</span></td></tr>
-      <tr><td><code>/constitution</code></td><td>Set the durable, AI-read-first project guardrails every feature inherits.</td><td><span class="who">Architect / Director</span></td></tr>
+      <tr><td><code>/spec-constitution</code></td><td>Set the durable, AI-read-first project guardrails every feature inherits.</td><td><span class="who">Architect / Director</span></td></tr>
       <tr><td><code>/spec-status</code></td><td>Which docs exist, where the coverage gaps are, and where they've drifted.</td><td><span class="who">PM / Tech Lead</span></td></tr>
       <tr><td><code>/spec-analyze</code></td><td>Find contradictions across the documents before anyone builds.</td><td><span class="who">Lead / Architect</span></td></tr>
-      <tr><td><code>/rtm-check</code></td><td>Prove every requirement traces to a design and a test -- nothing dropped.</td><td><span class="who">PM / QA</span></td></tr>
-      <tr><td><code>/adr-new</code></td><td>Record an architecture decision, auto-numbered, so the "why" survives.</td><td><span class="who">Architect</span></td></tr>
-      <tr><td><code>/rfc</code></td><td>Propose a significant change for comment <em>before</em> building it.</td><td><span class="who">Architect / Lead</span></td></tr>
+      <tr><td><code>/spec-check</code></td><td>Prove every requirement traces to a design and a test -- nothing dropped.</td><td><span class="who">PM / QA</span></td></tr>
+      <tr><td><code>/spec-adr</code></td><td>Record an architecture decision, auto-numbered, so the "why" survives.</td><td><span class="who">Architect</span></td></tr>
+      <tr><td><code>/spec-rfc</code></td><td>Propose a significant change for comment <em>before</em> building it.</td><td><span class="who">Architect / Lead</span></td></tr>
       <tr><td><code>/tech-radar</code></td><td>The Adopt / Trial / Assess / Hold snapshot that aligns tech across teams.</td><td><span class="who">Architect</span></td></tr>
       <tr><td><code>/tech-debt</code></td><td>The owned, quantified debt register -- negotiable, promotable to the backlog.</td><td><span class="who">Architect / Lead</span></td></tr>
-      <tr><td><code>/pbi-next</code></td><td>Pull the next ready story from the backlog, with its acceptance criteria.</td><td><span class="who">Developer / PM</span></td></tr>
+      <tr><td><code>/plan-next</code></td><td>Pull the next ready story from the backlog, with its acceptance criteria.</td><td><span class="who">Developer / PM</span></td></tr>
+      <tr><td><code>/plan-estimate</code></td><td>Story-point the backlog (reference story, Fibonacci, split/spike flags) and compute capacity.</td><td><span class="who">Lead / Team</span></td></tr>
+      <tr><td><code>/plan-sprint</code></td><td>One sprint goal + a capacity-fit set of Ready items; honest committed-vs-capacity math.</td><td><span class="who">PM / Team</span></td></tr>
+      <tr><td><code>/plan-retro</code></td><td>Blameless retrospective grounded in sprint data; 1-3 owned action items.</td><td><span class="who">Team</span></td></tr>
+      <tr><td><code>/build-recon</code></td><td>Codebase ground truth before spec or build -- real contracts, sibling to mirror, task breakdown.</td><td><span class="who">Developer / Lead</span></td></tr>
+      <tr><td><code>/build-verify</code></td><td>Independently verify a change by RUNNING it -- PASS/FAIL against the acceptance criteria.</td><td><span class="who">Developer (checker)</span></td></tr>
+      <tr><td><code>/ship-release</code></td><td>Evidence-based go/no-go, rollout plan, and release notes.</td><td><span class="who">PM / Director</span></td></tr>
+      <tr><td><code>/ops-status</code></td><td>Audience-tailored status report with an honest RAG rating.</td><td><span class="who">PM</span></td></tr>
+      <tr><td><code>/ops-raid</code></td><td>The Risks / Assumptions / Issues / Decisions register -- one owner per item.</td><td><span class="who">PM</span></td></tr>
+      <tr><td><code>/ops-metrics</code></td><td>DORA + cycle-time snapshot from CI/board data -- the delivery-loop health check.</td><td><span class="who">Lead / DevOps</span></td></tr>
+      <tr><td><code>/ops-incident</code></td><td>Declare and run a production incident; blameless postmortem + runbook.</td><td><span class="who">On-call / SRE</span></td></tr>
       <tr><td><code>/test-plan</code></td><td>A test plan + traceable test cases generated from the specs.</td><td><span class="who">QA / Tester</span></td></tr>
     </tbody>
   </table></div>
@@ -485,21 +495,21 @@ Write a PRD for X.</span>
     <div class="role-card">
       <div class="rc-head"><h3>Principal Director</h3><span class="raci acc">Accountable  -  business</span></div>
       <p class="rc-help">Justify the investment, set the guardrails, read status, own the launch gate. Accountable, not hands-on.</p>
-      <div class="rc-row"><span class="rc-lbl">Type</span><div class="rc-chips cmds"><code>/help-role</code><code>/constitution</code></div></div>
+      <div class="rc-row"><span class="rc-lbl">Type</span><div class="rc-chips cmds"><code>/help-role</code><code>/spec-constitution</code></div></div>
       <div class="rc-row"><span class="rc-lbl">Drives</span><div class="rc-chips"><code>mrd-writer</code><code>brd-writer</code><code>status-reporter</code><code>release-manager</code></div></div>
     </div>
 
     <div class="role-card">
       <div class="rc-head"><h3>Project Manager <span style="color:var(--mut);font-size:.8rem">(+ acting PO)</span></h3><span class="raci">Responsible  -  delivery</span></div>
       <p class="rc-help">Pick the doc set, own the PRD and backlog, run the cadence, track and report. The busiest seat.</p>
-      <div class="rc-row"><span class="rc-lbl">Type</span><div class="rc-chips cmds"><code>/spec-new</code><code>/spec-status</code><code>/rtm-check</code><code>/pbi-next</code></div></div>
+      <div class="rc-row"><span class="rc-lbl">Type</span><div class="rc-chips cmds"><code>/spec-new</code><code>/spec-status</code><code>/spec-check</code><code>/plan-next</code></div></div>
       <div class="rc-row"><span class="rc-lbl">Drives</span><div class="rc-chips"><code>doc-strategy-advisor</code><code>prd-writer</code><code>backlog-manager</code><code>sprint-planner</code><code>retrospective-facilitator</code><code>raid-keeper</code></div></div>
     </div>
 
     <div class="role-card">
       <div class="rc-head"><h3>Architect</h3><span class="raci acc">Accountable  -  technical</span></div>
       <p class="rc-help">Set the constraints and the blueprint, propose and record decisions, align tech across the teams.</p>
-      <div class="rc-row"><span class="rc-lbl">Type</span><div class="rc-chips cmds"><code>/constitution</code><code>/rfc</code><code>/adr-new</code><code>/tech-radar</code><code>/spec-analyze</code></div></div>
+      <div class="rc-row"><span class="rc-lbl">Type</span><div class="rc-chips cmds"><code>/spec-constitution</code><code>/spec-rfc</code><code>/spec-adr</code><code>/tech-radar</code><code>/spec-analyze</code></div></div>
       <div class="rc-row"><span class="rc-lbl">Drives</span><div class="rc-chips"><code>architect</code><code>srs-writer</code><code>sdd-writer</code><code>adr-writer</code><code>spec-steward</code></div></div>
     </div>
 
@@ -513,14 +523,14 @@ Write a PRD for X.</span>
     <div class="role-card">
       <div class="rc-head"><h3>Developer <span style="color:var(--mut);font-size:.8rem">(x5)</span></h3><span class="raci">Responsible  -  build</span></div>
       <p class="rc-help">Pull the next ticket, ground it in the real code, build, test, open a clean PR -- debug when it breaks.</p>
-      <div class="rc-row"><span class="rc-lbl">Type</span><div class="rc-chips cmds"><code>/pbi-next</code><code>/help-role</code></div></div>
+      <div class="rc-row"><span class="rc-lbl">Type</span><div class="rc-chips cmds"><code>/plan-next</code><code>/help-role</code></div></div>
       <div class="rc-row"><span class="rc-lbl">Drives</span><div class="rc-chips"><code>solution-recon</code><code>frontend-developer</code><code>backend-developer</code><code>test-author</code><code>pr-author</code><code>debugger</code></div></div>
     </div>
 
     <div class="role-card">
       <div class="rc-head"><h3>QA / Tester</h3><span class="raci">Responsible  -  verification</span></div>
       <p class="rc-help">Plan verification traced to the specs, execute and report bugs, automate the critical paths, own sign-off.</p>
-      <div class="rc-row"><span class="rc-lbl">Type</span><div class="rc-chips cmds"><code>/test-plan</code><code>/rtm-check</code></div></div>
+      <div class="rc-row"><span class="rc-lbl">Type</span><div class="rc-chips cmds"><code>/test-plan</code><code>/spec-check</code></div></div>
       <div class="rc-row"><span class="rc-lbl">Drives</span><div class="rc-chips"><code>test-plan-writer</code><code>qa-tester</code><code>test-automation-engineer</code><code>bug-triager</code><code>flaky-test-detective</code></div></div>
     </div>
 
@@ -541,7 +551,7 @@ Write a PRD for X.</span>
     <ol>
       <li><code>/help-role director</code> <span>-- see your agents and prompts first.</span></li>
       <li><span>Justify the investment --</span> <i>"Write an MRD, then a BRD for &lt;product&gt;: market, goals, ROI, top risks. Keep it non-technical."</i> <span>-> mrd-writer -> brd-writer</span></li>
-      <li><code>/constitution create</code> <span>-- set the standing rules every feature inherits (or approve the architect's).</span></li>
+      <li><code>/spec-constitution create</code> <span>-- set the standing rules every feature inherits (or approve the architect's).</span></li>
       <li><span>Stay informed --</span> <i>"Write an executive status report: RAG health, milestones, top 3 risks, what you need from me."</i> <span>-> status-reporter</span></li>
       <li><span>Own the gate --</span> <i>"Are we go for launch? Run the go/no-go for 1.0 and show the evidence."</i> <span>-> release-manager</span></li>
     </ol>
@@ -556,7 +566,7 @@ Write a PRD for X.</span>
   <p class="sub">The plugin is one command and brings everything. Below it: the files it drops in, the quality gates you can switch on, live spec queries, and how to bring the same fleet to Cursor, Copilot, or Windsurf.</p>
 
   <h3 class="cfg-sub">1  -  Install -- by platform</h3>
-  <p class="cfg-note">The fleet is authored once; <code>python hooks/build_harness_artifacts.py</code> (Shipwright) regenerates every tool's native bundle under <code>targets/</code> -- so no hand-porting.</p>
+  <p class="cfg-note">The fleet is authored once; <code>python hooks/build_harness_artifacts.py</code> regenerates every tool's native bundle under <code>targets/</code> -- so no hand-porting.</p>
   <div class="tscroll"><table class="wtable">
     <thead><tr><th>Tool</th><th>Adopt by</th><th>What you get</th></tr></thead>
     <tbody>
@@ -612,7 +622,7 @@ copy  targets/agents-md/AGENTS.md  ->  repo root</div>
       <tr><td><code>.claude-plugin/marketplace.json</code></td><td>Marketplace entry so <code>/plugin install</code> can find it</td></tr>
       <tr><td><code>.mcp.json</code></td><td>Points the live-traceability server at your project (auto-discovered)</td></tr>
       <tr><td><code>.claude/settings.json</code></td><td>Wires the hooks / quality gates -- use <code>settings.local.json</code> for personal or platform-specific entries</td></tr>
-      <tr><td><code>.shipwright/config.json</code></td><td>Where docs live + project machinery (created by <code>/spec-new</code>)</td></tr>
+      <tr><td><code>.spindleloom/config.json</code></td><td>Where docs live + project machinery (created by <code>/spec-new</code>)</td></tr>
     </tbody>
   </table></div>
 
@@ -673,8 +683,8 @@ powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
       <tr><td><code>build_agent_index.py</code></td><td><code>agents/INDEX.md</code> -- the lifecycle-phase index + handoff graph.</td><td>After a contract-block edit</td></tr>
       <tr><td><code>build_help.py</code></td><td><code>agents/HELP.md</code> -- each agent's Owns / Run-when / Try prompts. The source behind <code>/help-role</code>.</td><td>After editing a description / examples</td></tr>
       <tr><td><code>build_handoffs.py</code></td><td>The one-line "Handoff" note atop each agent body (read X -> produce Y -> hand to Z). <code>--check</code> flags stale.</td><td>After an upstream/downstream change</td></tr>
-      <tr><td><code>build_artifact_registry.py</code></td><td>The catalog in <code>.shipwright/</code> (<code>artifacts.json</code> + <code>ARTIFACTS.md</code>). <code>--baseline &lt;tag&gt;</code> freezes a snapshot.</td><td>After spec changes; <code>--check</code> in CI</td></tr>
-      <tr><td><code>build_harness_artifacts.py</code></td><td><b>Shipwright</b> -- one source -> each tool's native bundle (agents, skills, commands, hooks, plugin, MCP) under <code>targets/</code>.</td><td>After any source change</td></tr>
+      <tr><td><code>build_artifact_registry.py</code></td><td>The catalog in <code>.spindleloom/</code> (<code>artifacts.json</code> + <code>ARTIFACTS.md</code>). <code>--baseline &lt;tag&gt;</code> freezes a snapshot.</td><td>After spec changes; <code>--check</code> in CI</td></tr>
+      <tr><td><code>build_harness_artifacts.py</code></td><td><b>Harness generator</b> -- one source -> each tool's native bundle (agents, skills, commands, hooks, plugin, MCP) under <code>targets/</code>.</td><td>After any source change</td></tr>
       <tr><td><code>add_examples.py</code></td><td>Injects an <code>examples:</code> block (1--2 prompts) into each agent's frontmatter from a JSON file. Additive + idempotent.</td><td>One-off, after authoring prompts</td></tr>
     </tbody>
   </table></div>
@@ -683,7 +693,7 @@ powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
   <div class="tscroll"><table class="wtable">
     <thead><tr><th>Script</th><th>What it does</th><th>When</th></tr></thead>
     <tbody>
-      <tr><td><code>scaffold.py</code></td><td>Lays down the <code>docs/</code> + <code>.shipwright/</code> layout -- tier-aware (lean/mid/enterprise), seeds <code>RTM.md</code> + <code>config.json</code>, copies template stubs. Idempotent. The deterministic half of <code>/spec-new</code>.</td><td>Once per new project / feature</td></tr>
+      <tr><td><code>scaffold.py</code></td><td>Lays down the <code>docs/</code> + <code>.spindleloom/</code> layout -- tier-aware (lean/mid/enterprise), seeds <code>RTM.md</code> + <code>config.json</code>, copies template stubs. Idempotent. The deterministic half of <code>/spec-new</code>.</td><td>Once per new project / feature</td></tr>
     </tbody>
   </table></div>
 
@@ -731,7 +741,7 @@ python hooks/build_harness_artifacts.py          <span class="c"># rebuild targe
       <tr><td><b>ADRs, RFCs, per-feature specs</b></td><td><code>docs/adr/</code> <code>docs/rfc/</code> <code>docs/specs/</code></td><td>Versioned with the code they govern</td></tr>
       <tr><td><b>Backlog, PBIs, bugs</b></td><td>The work tracker (Azure Boards / Jira)</td><td>Status, workflow, capacity live on the item</td></tr>
       <tr><td><b>Code, tests, pipelines</b></td><td>The repo</td><td>Obvious</td></tr>
-      <tr><td><b>Catalog, config, baselines</b></td><td><code>.shipwright/</code></td><td>Tool machinery -- derived, never hand-edited</td></tr>
+      <tr><td><b>Catalog, config, baselines</b></td><td><code>.spindleloom/</code></td><td>Tool machinery -- derived, never hand-edited</td></tr>
     </tbody>
   </table></div>
 
@@ -740,7 +750,7 @@ python hooks/build_harness_artifacts.py          <span class="c"># rebuild targe
   <div class="retr">
     <div class="r"><b>1  -  On the item itself</b><p><code>emit_backlog.py</code> maps the story -> Description, the <b>acceptance criteria -> its own field</b> (never buried in Description), and the <b>Source -> a trace ref</b> -- the FRD/SRS ID it implements. The item says what it is and where it came from.</p></div>
     <div class="r"><b>2  -  The trace ref -> full context</b><p>Follow that <code>FRD-TRK-001</code> through <code>RTM.md</code> to the behavior (FRD), constraints (SRS), design (SDD), and the decision (ADR). The deep context stays in one place; the item just points at it.</p></div>
-    <div class="r"><b>3  -  <code>/pbi-next</code> assembles it</b><p>Returns the next ready PBI in full -- story, acceptance criteria, Definition of Done, the upstream IDs -- then reads those spec sections and summarizes the exact behavior to satisfy, so you start without re-reading everything. Routes by type: Story->dev, Bug->debugger, Spike->recon, Decision->architect.</p></div>
+    <div class="r"><b>3  -  <code>/plan-next</code> assembles it</b><p>Returns the next ready PBI in full -- story, acceptance criteria, Definition of Done, the upstream IDs -- then reads those spec sections and summarizes the exact behavior to satisfy, so you start without re-reading everything. Routes by type: Story->dev, Bug->debugger, Spike->recon, Decision->architect.</p></div>
     <div class="r"><b>4  -  <code>solution-recon</code> = warm context</b><p>On an existing codebase, recon reads the real code first -- actual endpoints, field names, enum/status values, the pattern to mirror, FE-only vs backend-first. You build from spec <i>plus</i> verified code ground-truth, not assumptions.</p></div>
   </div>
   <p class="cfg-note">And the link stays live both ways: <code>emit_backlog.py</code> writes the tracker IDs back into the RTM's Azure column, and the MCP server answers <code>trace_requirement(...)</code> / <code>check_conformance()</code> on demand -- so the item in Azure and the spec in the repo never drift apart.</p>
@@ -754,7 +764,7 @@ python hooks/build_harness_artifacts.py          <span class="c"># rebuild targe
 â”‚   â”œâ”€â”€ sprints/&lt;sprint&gt;/      <span class="c">CYCLIC -- fresh each sprint: plan  -  retro</span>
 â”‚   â”œâ”€â”€ adr/  rfc/             <span class="c">LIVING -- append-only logs (one ADR sequence)</span>
 â”‚   â””â”€â”€ RTM.md                 <span class="c">LIVING -- the traceability backbone</span>
-â””â”€â”€ <span class="k">.shipwright/</span>                <span class="c">HIDDEN -- tool machinery (the .git analog)</span>
+â””â”€â”€ <span class="k">.spindleloom/</span>                <span class="c">HIDDEN -- tool machinery (the .git analog)</span>
     â”œâ”€â”€ config.json            <span class="c">profile + standard_version + path deviations</span>
     â”œâ”€â”€ artifacts.json         <span class="c">generated catalog</span>
     â”œâ”€â”€ velocity.json          <span class="c">durable capacity baseline the planner reads</span>
@@ -769,7 +779,7 @@ python hooks/build_harness_artifacts.py          <span class="c"># rebuild targe
       <tr><td><b>Durable</b></td><td>Constitution, MRD/BRD/PRD, roadmap, velocity baseline -- the "briefs" &amp; decisions of record</td><td>set once, rarely changes</td><td><code>docs/product/</code></td></tr>
       <tr><td><b>Living</b></td><td>FRD, SRS, SDD, TSD, RTM, ADR/RFC logs, recon, the backlog source</td><td>edited continuously</td><td><code>docs/specs/&lt;feature&gt;/</code>, <code>docs/adr/</code></td></tr>
       <tr><td><b>Cyclic</b></td><td>Sprint plan + retro -- a fresh set <b>each sprint</b></td><td>new instance per sprint</td><td><code>docs/sprints/&lt;sprint&gt;/</code></td></tr>
-      <tr><td><b>Snapshot</b></td><td>Frozen baselines</td><td>immutable, per sprint/release</td><td><code>.shipwright/baselines/</code></td></tr>
+      <tr><td><b>Snapshot</b></td><td>Frozen baselines</td><td>immutable, per sprint/release</td><td><code>.spindleloom/baselines/</code></td></tr>
     </tbody>
   </table></div>
   <div class="callout"><b>The per-sprint folder holds the sprint's <i>documents</i> (plan, retro) -- not the work items.</b> PBIs &amp; bugs stay in the tracker (the system of record); the sprint folder references them by ID and freezes to a baseline at close. Per-sprint copies of items in the repo would duplicate the tracker -- exactly what the golden rule forbids.</div>
@@ -792,8 +802,8 @@ python hooks/build_harness_artifacts.py          <span class="c"># rebuild targe
   <h3 class="cfg-sub">Four ways to find anything</h3>
   <p class="cfg-note">You should never have to <i>know where a doc lives</i>:</p>
   <div class="retr">
-    <div class="r"><b>1  -  By ID</b><p>Follow a <code>FRD-TRK-001</code> up to its source and down to its tests through <code>RTM.md</code>. Run <code>/rtm-check</code>.</p></div>
-    <div class="r"><b>2  -  By catalog</b><p>Open <code>.shipwright/ARTIFACTS.md</code> -- every artifact with its id, kind, path, owner, status, version.</p></div>
+    <div class="r"><b>1  -  By ID</b><p>Follow a <code>FRD-TRK-001</code> up to its source and down to its tests through <code>RTM.md</code>. Run <code>/spec-check</code>.</p></div>
+    <div class="r"><b>2  -  By catalog</b><p>Open <code>.spindleloom/ARTIFACTS.md</code> -- every artifact with its id, kind, path, owner, status, version.</p></div>
     <div class="r"><b>3  -  Live, from any tool</b><p>Ask the MCP server: <code>find_artifact("PRD")</code>, <code>trace_requirement(...)</code>, <code>rtm_coverage()</code>.</p></div>
     <div class="r"><b>4  -  By navigation</b><p>The project wiki (<code>wiki-curator</code>) and the role-by-role <code>how-to-use.html</code>.</p></div>
   </div>

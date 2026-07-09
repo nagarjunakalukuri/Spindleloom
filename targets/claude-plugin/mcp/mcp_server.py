@@ -11,7 +11,7 @@ validator and rtm_core stay stdlib-only):
     pip install "mcp[cli]"
 
 $SPINDLELOOM_SPEC_ROOT (default: current dir) is the *project root*, set in the
-harness's .mcp.json; the actual docs folder is resolved from .shipwright/config.json
+harness's .mcp.json; the actual docs folder is resolved from .spindleloom/config.json
 (`docs_root`, default `docs/`, falling back to the project root for a flat layout).
 Read-only.
 """
@@ -31,7 +31,7 @@ try:
 except ImportError:
     sys.exit('mcp_server: the MCP SDK is not installed. Run:  pip install "mcp[cli]"')
 
-mcp = FastMCP("spindleloom")
+mcp = FastMCP("sloom")
 
 
 def _root():
@@ -144,7 +144,7 @@ def check_conformance() -> dict:
 def scaffold_project(profile: str = "mid", feature: str = "feature-1") -> dict:
     """WRITE TOOL (opt-in) — lay down the canonical Spindleloom doc layout under the
     project root: the docs/ funnel, the RTM backbone, the cyclic sprints/ home, and the
-    .shipwright/ machinery (per project_guides/STANDARD.md). profile is 'lean' | 'mid' | 'enterprise'.
+    .spindleloom/ machinery (per project_guides/STANDARD.md). profile is 'lean' | 'mid' | 'enterprise'.
     Idempotent: never overwrites an existing file. Disabled unless the server was started
     with SPINDLELOOM_WRITABLE=1."""
     if not _writable():
@@ -181,6 +181,30 @@ def _CHROMA() -> bool:
     return _chromadb is not None
 
 
+def _artifact_updated(path_str):
+    """The registry's Last-updated stamp (YYYY-MM-DD) for an artifact path, or None.
+    Reads <tool-dir>/artifacts.json once per call; missing registry -> None."""
+    try:
+        reg = Path(rtm_core.tool_dir(_project_root())) / "artifacts.json"
+        if not reg.exists():
+            return None
+        data = json.loads(reg.read_text(encoding="utf-8", errors="ignore"))
+        for a in (data if isinstance(data, list) else data.get("artifacts", [])):
+            if a.get("path") == path_str:
+                return a.get("updated") or None
+    except Exception:
+        return None
+    return None
+
+
+def _stale(source, saved_at):
+    """True when the cited source artifact was updated after this entry was saved."""
+    if not source:
+        return False
+    upd = _artifact_updated(source)
+    return bool(upd and saved_at and upd > saved_at[:10])
+
+
 def _ctx_db_path() -> str:
     root = Path(_project_root())
     ww = root / ".spindleloom"
@@ -203,6 +227,10 @@ def _ctx_con():
         )
     """)
     con.execute("CREATE INDEX IF NOT EXISTS idx_ctx_task  ON agent_context(task_id)")
+    try:  # lazy migration: entries may cite a source artifact for freshness checks
+        con.execute("ALTER TABLE agent_context ADD COLUMN source TEXT NOT NULL DEFAULT ''")
+    except sqlite3.OperationalError:
+        pass  # column already exists
     con.execute("CREATE INDEX IF NOT EXISTS idx_ctx_agent ON agent_context(agent_id)")
     # Migrate older DBs that predate the chroma_synced column
     try:
@@ -226,12 +254,15 @@ def _chroma_col():
 
 
 @mcp.tool()
-def save_context(agent_id: str, task_id: str, facts: str, tags: str = "") -> dict:
+def save_context(agent_id: str, task_id: str, facts: str, tags: str = "", source: str = "") -> dict:
     """Save compressed handoff context so downstream agents recall it without re-reading
     full documents. Keep facts to <=5 bullets: decisions + reason, outputs + path,
     blockers, inherited constraints, open questions for the next agent. task_id groups
     facts for a feature/sprint (e.g. 'user-auth', 'sprint-3'). Deduplicates: if the
     same agent_id+task_id+facts already exists, returns the existing entry unchanged.
+    Optional `source` cites the artifact path these facts summarize (e.g.
+    'specs/auth/frd.md'): recall then flags the entry STALE if the registry shows the
+    artifact was updated after the save — stale context becomes visible, not authoritative.
     Stored in SQLite + ChromaDB when installed (local semantic search, no API calls)."""
     con = _ctx_con()
     # Deduplication: skip if identical facts already saved for this agent+task
@@ -246,9 +277,9 @@ def save_context(agent_id: str, task_id: str, facts: str, tags: str = "") -> dic
     saved_at = datetime.now(timezone.utc).isoformat()
     chroma_synced = 0 if _CHROMA() else 1  # 0 = pending Chroma write; 1 = done / not needed
     cur = con.execute(
-        "INSERT INTO agent_context (agent_id, task_id, facts, tags, saved_at, chroma_synced)"
-        " VALUES (?,?,?,?,?,?)",
-        (agent_id, task_id, facts, tags, saved_at, chroma_synced),
+        "INSERT INTO agent_context (agent_id, task_id, facts, tags, saved_at, chroma_synced, source)"
+        " VALUES (?,?,?,?,?,?,?)",
+        (agent_id, task_id, facts, tags, saved_at, chroma_synced, source),
     )
     con.commit()
     row_id = str(cur.lastrowid)
@@ -260,7 +291,7 @@ def save_context(agent_id: str, task_id: str, facts: str, tags: str = "") -> dic
                 ids=[row_id],
                 documents=[facts],
                 metadatas=[{"agent_id": agent_id, "task_id": task_id,
-                            "tags": tags, "saved_at": saved_at}],
+                            "tags": tags, "saved_at": saved_at, "source": source}],
             )
             con.execute("UPDATE agent_context SET chroma_synced=1 WHERE id=?", (int(row_id),))
             con.commit()
@@ -292,6 +323,8 @@ def recall_context(query: str, task_id: str = "", limit: int = 5) -> list:
                 return [
                     {"agent_id": m["agent_id"], "task_id": m["task_id"],
                      "facts": d, "tags": m["tags"], "saved_at": m["saved_at"],
+                     "source": m.get("source", ""),
+                     "stale": _stale(m.get("source", ""), m["saved_at"]),
                      "score": round(1.0 - dist, 4)}
                     for d, m, dist in zip(docs, metas, dists)
                 ]
@@ -311,7 +344,7 @@ def recall_context(query: str, task_id: str = "", limit: int = 5) -> list:
         )
         score_params = [p for kw in kws for p in (f"%{kw}%", f"%{kw}%")]
         rows = con.execute(
-            f"SELECT agent_id, task_id, facts, tags, saved_at, relevance FROM ("
+            f"SELECT agent_id, task_id, facts, tags, saved_at, source, relevance FROM ("
             f"  SELECT *, ({score_expr}) AS relevance"
             f"  FROM agent_context {inner_where}"
             f") WHERE relevance > 0 ORDER BY relevance DESC, saved_at DESC LIMIT ?",
@@ -320,17 +353,18 @@ def recall_context(query: str, task_id: str = "", limit: int = 5) -> list:
         n_kws = len(kws)
         return [
             {"agent_id": r["agent_id"], "task_id": r["task_id"], "facts": r["facts"],
-             "tags": r["tags"], "saved_at": r["saved_at"],
+             "tags": r["tags"], "saved_at": r["saved_at"], "source": r["source"],
+             "stale": _stale(r["source"], r["saved_at"]),
              "score": round(r["relevance"] / n_kws, 4)}
             for r in rows
         ]
     else:
         rows = con.execute(
-            f"SELECT agent_id, task_id, facts, tags, saved_at FROM agent_context "
+            f"SELECT agent_id, task_id, facts, tags, saved_at, source FROM agent_context "
             f"{inner_where} ORDER BY saved_at DESC LIMIT ?",
             inner_params + [limit],
         ).fetchall()
-        return [dict(r) for r in rows]
+        return [dict(r) | {"stale": _stale(r["source"], r["saved_at"])} for r in rows]
 
 
 @mcp.tool()
@@ -348,7 +382,7 @@ def list_contexts(task_id: str = "", agent_id: str = "") -> list:
         params.append(agent_id)
     clause = ("WHERE " + " AND ".join(where)) if where else ""
     rows = con.execute(
-        f"SELECT agent_id, task_id, substr(facts,1,120) AS facts_preview, "
+        f"SELECT id, agent_id, task_id, substr(facts,1,120) AS facts_preview, "
         f"tags, saved_at FROM agent_context {clause} ORDER BY saved_at DESC LIMIT 200",
         params,
     ).fetchall()
@@ -362,7 +396,7 @@ def get_context(agent_id: str, task_id: str) -> dict:
     Returns the latest snapshot for that agent+task combination."""
     con = _ctx_con()
     row = con.execute(
-        "SELECT agent_id, task_id, facts, tags, saved_at FROM agent_context "
+        "SELECT id, agent_id, task_id, facts, tags, saved_at FROM agent_context "
         "WHERE agent_id=? AND task_id=? ORDER BY saved_at DESC LIMIT 1",
         (agent_id, task_id),
     ).fetchone()
@@ -407,6 +441,30 @@ def delete_context(task_id: str, agent_id: str = "") -> dict:
 
 
 @mcp.tool()
+def delete_context_entry(entry_id: int) -> dict:
+    """Delete ONE saved context entry by its id (shown by list_contexts/get_context).
+    Use to surgically remove a single bad/superseded note without wiping the task's
+    or agent's whole set — for bulk cleanup use delete_context instead. Removes the
+    matching ChromaDB document too (best-effort; sync_contexts repairs strays)."""
+    con = _ctx_con()
+    row = con.execute(
+        "SELECT id, agent_id, task_id FROM agent_context WHERE id=?", (entry_id,)
+    ).fetchone()
+    if row is None:
+        return {"deleted": False, "id": entry_id, "reason": "no entry with that id"}
+    con.execute("DELETE FROM agent_context WHERE id=?", (entry_id,))
+    con.commit()
+    col = _chroma_col()
+    if col is not None:
+        try:
+            col.delete(ids=[str(entry_id)])
+        except Exception:
+            pass  # SQLite delete succeeded; Chroma cleanup is best-effort
+    return {"deleted": True, "id": entry_id,
+            "agent_id": row["agent_id"], "task_id": row["task_id"]}
+
+
+@mcp.tool()
 def sync_contexts() -> dict:
     """Re-sync SQLite rows that failed to write to ChromaDB (chroma_synced=0). Only
     relevant when SPINDLELOOM_SEMANTIC=1 is set. Call after a Chroma outage or first
@@ -444,19 +502,19 @@ def rtm_resource() -> str:
     return json.dumps(rtm_core.parse_rtm(_root()), ensure_ascii=False, indent=2)
 
 
-@mcp.resource("spindleloom://requirements")
+@mcp.resource("sloom://requirements")
 def requirements_resource() -> str:
     """The full requirement list as JSON (every Req-ID + where defined)."""
     return json.dumps(rtm_core.list_requirements(_root()), ensure_ascii=False, indent=2)
 
 
-@mcp.resource("spindleloom://artifacts")
+@mcp.resource("sloom://artifacts")
 def artifacts_resource() -> str:
     """The artifact catalog as JSON (every artifact + location/owner/status/version)."""
     return json.dumps(rtm_core.artifacts(_root()), ensure_ascii=False, indent=2)
 
 
-@mcp.resource("spindleloom://decisions")
+@mcp.resource("sloom://decisions")
 def decisions_resource() -> str:
     """The RTM decisions table (ADR/RFC ledger) as JSON."""
     return json.dumps(rtm_core.decisions(_root()), ensure_ascii=False, indent=2)

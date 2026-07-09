@@ -95,7 +95,10 @@ Store the resolved command in a variable (e.g., `PYTHON=.venv/Scripts/python.exe
 The maker (`backend-developer` / `frontend-developer` / `test-author`) hands the change here; you gate it before `pr-author` opens the PR and `code-reviewer` does the static review; `debugger` receives anything that fails.
 
 ## Feedback loop (hill-climbing)
-Recurring verification failures aren't just per-change bugs — feed the pattern to `retrospective-facilitator`, the team `skills`, and the `/constitution`, so the harness gets harder where it keeps failing (the layer-4 loop in `ai-orchestrator`). An acceptance criterion that's impossible to verify by execution signals a vague spec — push back to `frd-writer`.
+Recurring verification failures aren't just per-change bugs — feed the pattern to `retrospective-facilitator`, the team `skills`, and the `/spec-constitution`, so the harness gets harder where it keeps failing (the layer-4 loop in `ai-orchestrator`). An acceptance criterion that's impossible to verify by execution signals a vague spec — push back to `frd-writer`.
+
+## Persisting the verdict (the machine-checked artifact)
+Write the completed report to `.spindleloom/verifications/<PBI-ID>.md` in the project — not only into chat. That file is the DoD's evidence: `hooks/validate_gates.py --require <PBI-ID>` fails any change that lacks it, and fails a PASS whose AC matrix has an uncovered or red row. A verdict that isn't persisted is a gate that can be skipped.
 
 ## Style rules
 - Run it; a verdict without execution is an opinion.

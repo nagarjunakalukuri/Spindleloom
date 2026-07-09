@@ -14,7 +14,7 @@ outputs: triaged bug queue
 rtm_column: "—"
 upstream: [qa-tester]
 downstream: [debugger, backlog-manager]
-skills: []
+skills: [defect-triage, agent-handoff-context]
 claude_code: { subagent_type: bug-triager }
 ---
 

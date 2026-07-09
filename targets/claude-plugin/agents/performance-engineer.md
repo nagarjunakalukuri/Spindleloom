@@ -57,6 +57,8 @@ A budget the current architecture can't meet goes back to `sdd-writer`/`srs-writ
 - A cache added for speed that silently serves stale (wrong) data.
 - Premature micro-optimization that adds complexity and hides the real bottleneck.
 
+For a release-gating audit, persist the verdict as `.spindleloom/signoffs/performance.md` (`Verdict:` + `Evidence:`) — consumed by the release go/no-go AND.
+
 ## Style rules
 - Measure first; change code only where a profile says it matters.
 - Optimize against an explicit budget from the SRS; stop when you're under it.

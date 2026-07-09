@@ -16,7 +16,7 @@ rtm_column: "—"
 upstream: [sdd-writer, architect, srs-writer]
 downstream: [adr-writer, sdd-writer]
 skills: [architecture-decision-framing, requirement-elicitation]
-claude_code: { command: /rfc, subagent_type: rfc-facilitator }
+claude_code: { command: /spec-rfc, subagent_type: rfc-facilitator }
 ---
 
 > **Handoff** · *Before:* read SDD, SRS, architecture-decision-analysis (from `sdd-writer`, `architect`, `srs-writer`). *After:* produce RFC → hand to `adr-writer`, `sdd-writer`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*

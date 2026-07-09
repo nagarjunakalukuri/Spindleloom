@@ -80,6 +80,9 @@ Postmortem actions feed the backlog (preventive work) and the RAID log (new risk
 - Postmortems whose action items are never tracked, so it recurs.
 - On-call reinventing remediation each time because there's no runbook.
 
+## The escaped-defect row
+Every production incident with a code/config root cause is, by definition, an escape past every gate: add a row to the escaped-defect register (`templates/escaped-defect-register-template.md`) naming the gate that should have caught it, alongside the postmortem's action items. The postmortem fixes this incident; the register row fixes the gate.
+
 ## Style rules
 - Mitigate first; diagnose in the postmortem.
 - Blameless — systems and conditions, never individuals.

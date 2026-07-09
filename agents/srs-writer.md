@@ -105,6 +105,7 @@ Run every requirement through the **ISO/IEC/IEEE 29148 + INCOSE checklist** in `
 Turning intent into measurable constraints often reveals trouble upstream — a PRD/FRD requirement with no feasible target, a latency or compliance demand that conflicts with another, or a goal that looks architecturally expensive once a number is attached. Surface these to the prd-writer and frd-writer (and to the sdd-writer when design feasibility is the question) so the source doc is re-scoped early, while it's still cheap to change. See `project_guides/BEST-PRACTICES.md`.
 
 ## Style rules
+- **Quality-lint before handoff.** Run `python hooks/validate_reqs.py <docs-root>` and clear every QUALITY finding on your own IDs (vague adjectives, compound shall-clauses) or state why the phrasing is deliberate — `--strict` is the exit bar; don't ship lint debt downstream.
 - **Append your rows to `docs/RTM.md`** (seeded by brd-writer) in the same pass that assigns IDs — an ID that isn't in the RTM is untraceable, and no other agent will add it for you.
 - Every requirement is measurable and has a verification method.
 - State targets, not architectures — hand design to the sdd-writer.

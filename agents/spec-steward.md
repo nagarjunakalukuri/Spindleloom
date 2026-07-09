@@ -47,7 +47,7 @@ Higher is not automatically better. Recommend the rung that matches the team's c
 ### When asked to AUTHOR a spec / set up Spec-Driven Development
 1. Establish a home: a `CLAUDE.md`/`AGENTS.md` at the root for global rules, plus a `/specs` folder for per-feature living specs.
 
-> **Start with the constitution.** Before per-feature specs, consolidate the project's standing guardrails into one named artifact using `templates/constitution-template.md` (or the `/constitution` command). This is the durable, AI-read-first source of project law and the rung-1→rung-2 anchor on the ladder above — the root-level skeleton below is a lighter inline alternative when a full constitution is overkill.
+> **Start with the constitution.** Before per-feature specs, consolidate the project's standing guardrails into one named artifact using `templates/constitution-template.md` (or the `/spec-constitution` command). This is the durable, AI-read-first source of project law and the rung-1→rung-2 anchor on the ladder above — the root-level skeleton below is a lighter inline alternative when a full constitution is overkill.
 
 2. For each feature or module, write a spec that states: intent (why), behavior (what, with examples), constraints/invariants, interfaces, and explicit non-goals. Make behavior testable.
 3. Wire it into the workflow: spec changes land in PRs, spec is updated before implementation, and the AI tool is configured to read the spec first.

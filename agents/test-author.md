@@ -14,7 +14,7 @@ outputs: unit tests, integration tests
 rtm_column: "—"
 upstream: [backlog-manager, test-plan-writer, debugger]
 downstream: [change-verifier, code-reviewer, debugger, flaky-test-detective]
-skills: [test-design, verification-run-and-observe, agent-handoff-context]
+skills: [test-design, verification-run-and-observe, agent-handoff-context, test-data]
 claude_code: { subagent_type: test-author }
 ---
 

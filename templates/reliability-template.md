@@ -31,8 +31,22 @@ Dashboards: <links/owners>
 | <name> | SLO burn / error-budget alert | page / ticket | <link> |
 
 ## Runbooks (critical paths)
-For each: **detect → diagnose → mitigate → roll back → escalate.**
-- <path>: <steps>
+For each: **detect → diagnose → mitigate → roll back → escalate.** One runbook per
+recurring failure mode, at `docs/runbooks/<service>/<symptom>.md`, shaped as:
+
+```markdown
+# Runbook — <Service>: <Symptom>
+**Alert:** <alert name/condition> · **SEV default:** <1/2/3> · **Last updated:** <date>
+
+## Symptoms            <observable signals>
+## Quick checks        <command or URL to verify, numbered>
+## Mitigation steps    <exact commands/actions, numbered>
+## If mitigation fails <escalate to whom; manual fallback>
+## Root-cause clues    <log pattern / metric that distinguishes known causes>
+## Prevention          <post-incident action items / ADR links>
+```
+
+- <path>: <runbook link>
 
 ## Deploy & rollback
 - Strategy: <canary / blue-green / feature flags> · rollback tested? <y/n> · trigger: <SLO breach>

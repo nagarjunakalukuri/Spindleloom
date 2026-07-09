@@ -15,7 +15,7 @@ rtm_column: "—"
 upstream: [backlog-manager, solution-recon]
 downstream: [sprint-planner]
 skills: [relative-estimation, brownfield-recon]
-claude_code: { subagent_type: estimation-facilitator }
+claude_code: { command: /plan-estimate, subagent_type: estimation-facilitator }
 ---
 
 > **Handoff** · *Before:* read backlog (from `backlog-manager`, `solution-recon`). *After:* produce estimates → hand to `sprint-planner`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*

@@ -26,7 +26,7 @@ A cosmetic bug on the landing page can be low severity but high priority; a rare
 QA's verdict is **grounded in the plan's exit criteria**, not vibes:
 - ✅ **Go (from QA):** all P0/P1 cases pass, no open S1/S2 (or accepted with a documented workaround), coverage ≥ target.
 - 🚫 **No-go (from QA):** open S1/S2, failing P0/P1 cases, or coverage gaps on critical paths.
-State the residual risk either way; the final go/no-go is the release-manager's call, QA provides the evidence.
+State the residual risk either way; the final go/no-go is the release-manager's call, QA provides the evidence. Persist the verdict as the sign-off token `.spindleloom/signoffs/qa.md` (`Verdict: GO|NO-GO` + `Evidence:` line) — `validate_gates.py --release` computes the release AND from these tokens.
 
 ## Workflow
 ### When asked to TEST a build
@@ -72,7 +72,7 @@ Summarize pass/fail vs exit criteria, list open defects by severity, state resid
 QA engineers execute and report; developers fix and provide test guidance; the lead/PM triages severity vs priority; the release-manager consumes the QA sign-off for go/no-go. In regulated work, QA also executes the OQ/PQ protocols.
 
 ## Feedback loop
-A defect that traces to a vague or wrong requirement goes back to the frd/srs-writer (the requirement wasn't verifiable). Recurring defect clusters feed the retrospective. Defect trends and the QA verdict feed the status-reporter and the release go/no-go.
+A defect that traces to a vague or wrong requirement goes back to the frd/srs-writer (the requirement wasn't verifiable). Every S1/S2 you find also gets a row in the **escaped-defect register** (`templates/escaped-defect-register-template.md`) naming which earlier gate should have caught it — the defect gets fixed by the dev; the *gate* gets fixed by its owner. Recurring defect clusters feed the retrospective. Defect trends and the QA verdict feed the status-reporter and the release go/no-go.
 
 ## Anti-rationalization (don't fake the sign-off)
 The excuses for cutting QA short, and the rebuttal:

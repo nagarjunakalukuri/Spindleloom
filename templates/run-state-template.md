@@ -1,11 +1,13 @@
 # Run State — <objective / feature>
 
-> The `run-orchestrator`'s spine for one fleet run — the single source of truth for *where the run is*. The machine copy lives at `.shipwright/run-state.json`; this `RUN.md` is the human-readable mirror. The orchestrator reads and updates it each step, and resets context between steps — **this file is the memory** (state lives on disk, not in the context window).
+> The `run-orchestrator`'s spine for one fleet run — the single source of truth for *where the run is*. The machine copy lives at `.spindleloom/run-state.json`; this `RUN.md` is the human-readable mirror. The orchestrator reads and updates it each step, and resets context between steps — **this file is the memory** (state lives on disk, not in the context window).
 
 | Field | Value |
 |---|---|
 | Run id | `run-YYYYMMDD-<slug>` |
 | Objective | <one line> |
+| Handoff context | each completed ledger step records the `save_context` entry (agent_id + task_id) it saved, or an explicit `none — nothing to hand off`; `validate_gates.py --context <task_id>` proves the stream is non-empty |
+| Sign-off tokens | `.spindleloom/signoffs/{qa,security,performance,accessibility,raid,dod}.md` — written by the owning gate agents; `validate_gates.py --release` computes the AND |
 | Entry point | doc-strategy-advisor / solution-recon / pbi-next / incident-responder / ai-orchestrator |
 | Autonomy rung | 0 manual · 1 triage · 2 draft · 3 verified-PR · 4 auto-merge |
 | Status | active / blocked / done / stopped |
@@ -25,7 +27,7 @@ status: `pending` · `running` · `done` · `blocked`
 | 2 | prd-writer | done | — | docs/product/prd.md (PRD) | |
 | 3 | frd-writer | running | — | — | |
 | 4 | backlog-manager | pending | DoR | — | join: waits on FRD + SRS |
-| 5 | backend-developer | pending | — | — | routed via /pbi-next by PBI type |
+| 5 | backend-developer | pending | — | — | routed via /plan-next by PBI type |
 | 6 | change-verifier | pending | DoD | — | build-phase gate before PR |
 
 ## Runnable now
