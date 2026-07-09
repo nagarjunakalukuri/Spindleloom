@@ -40,6 +40,12 @@ def test_scaffold_default():
         cfg = (root / ".spindleloom/config.json").read_text(encoding="utf-8")
         check('"standard_version"' in cfg and '"profile"' in cfg,
               "scaffold writes standard_version + profile to config")
+        gi = root / ".spindleloom/.gitignore"
+        check(gi.exists() and "context.db" in gi.read_text(encoding="utf-8"),
+              "scaffold gitignores the local context indexes (context.db, chroma/)")
+        ci = root / ".github/workflows/sloom-gate.yml"
+        check(ci.exists() and "sloom.py" in ci.read_text(encoding="utf-8"),
+              "scaffold writes the sloom-gate PR workflow")
 
 
 def test_scaffold_config_override():
@@ -59,10 +65,21 @@ def test_collisions():
         _w(root / "docs/adr/adr-0004-a.md", "# ADR-0004: a\n\n- **Status:** Accepted\n")
         _w(root / "docs/decisions/adr-0004-b.md", "# ADR-0004: b\n\n- **Status:** Accepted\n")
         _w(root / "docs/RTM.md", "# RTM\n\n| g | p | f |\n|---|---|---|\n| x | y | z |\n")
+        _w(root / "docs/specs/auth/frd.md",
+           "# FRD auth\n| FRD-AUTH-004 | The system shall log in |\n")
+        _w(root / "docs/specs/profile/frd.md",
+           "# FRD profile\n| FRD-AUTH-004 | The system shall edit avatar |\n")
+        # same ID cited downstream (different kind) — must NOT count as a collision
+        _w(root / "docs/specs/auth/sdd.md", "# SDD\nImplements FRD-AUTH-004.\n")
         a = rtm_core.audit(rtm_core.resolve_docs_root(root))
         codes = {p["code"] for p in a["problems"]}
         check("DUP-ADR" in codes, "audit flags DUP-ADR")
         check("MULTI-ADR-DIR" in codes, "audit flags MULTI-ADR-DIR")
+        dup = [p for p in a["problems"] if p["code"] == "DUP-REQID"]
+        check(len(dup) == 1 and dup[0]["id"] == "FRD-AUTH-004",
+              "audit flags DUP-REQID for a two-frd mint collision")
+        check(all("sdd.md" not in p["message"] for p in dup),
+              "a downstream SDD citation is not counted as a defining file")
         c = rtm_core.conformance(root)
         check(any("DUP-ARTIFACT-ID" in p for p in c["problems"]), "conformance flags DUP-ARTIFACT-ID")
         check(c["ok"] is False, "conformance not ok on collisions")
@@ -189,12 +206,69 @@ def test_migrate_routes_recon():
               "recon: a recon already under specs/ is classified and left in place")
 
 
+def test_range_shorthand_lint():
+    """A3: `<ID>..<N>` range shorthand is flagged (machine-broken orphan); atomic IDs are not.
+    Real asserts (not check()) so this genuinely gates under pytest."""
+    import validate_reqs
+    tmp = Path(tempfile.mkdtemp(prefix="range_"))
+    d = tmp / "docs"
+    _w(d / "RTM.md", "# RTM\n| Req-ID | Downstream |\n|---|---|\n| FRD-REM-001 | PBI-REM-001..006 |\n")
+    hits = validate_reqs.range_shorthand_lint(d)
+    assert any("PBI-REM-001..006" in h for h in hits), hits
+    assert any("orphans" in h for h in hits), hits
+    _w(d / "RTM.md", "# RTM\n| Req-ID | Downstream |\n|---|---|\n| FRD-REM-001 | PBI-REM-001 |\n")
+    assert validate_reqs.range_shorthand_lint(d) == [], "atomic IDs must not be flagged"
+    print("  PASS  A3 range-shorthand lint flags ranges, ignores atomic IDs")
+
+
+def test_backlog_completeness_lint():
+    """B2: a PBI referenced only in deps / an estimation row (no AC-bearing backlog row) is a
+    phantom and is flagged; a PBI defined by an acceptance-criteria row is not."""
+    import validate_reqs
+    tmp = Path(tempfile.mkdtemp(prefix="phantom_"))
+    d = tmp / "docs"
+    _w(d / "08-backlog.md",
+       "# Backlog\n| Rank | PBI | Story | AC | Deps |\n|---|---|---|---|---|\n"
+       "| 1 | PBI-QUE-001 | approve | Given a request, When I approve, Then it is audited | PBI-PLAT-004 |\n")
+    _w(d / "09-estimation.md",
+       "# Estimation\n| PBI | Notes | Pts |\n|---|---|---|\n| PBI-PLAT-004 | enabler audit store | 5 |\n")
+    hits = validate_reqs.backlog_completeness_lint(d)
+    assert any("PBI-PLAT-004" in h for h in hits), hits      # dep-only + estimate row -> phantom
+    assert not any("PBI-QUE-001" in h for h in hits), hits   # AC-bearing subject row -> defined
+    print("  PASS  B2 backlog-completeness flags phantom PBI, ignores AC-defined PBI")
+
+
+def test_range_shorthand_ellipsis():
+    """B5: ellipsis range forms (PBI-X-001…006 and ...006) are flagged too, not just ASCII '..'."""
+    import validate_reqs
+    d = Path(tempfile.mkdtemp(prefix="ellip_")) / "docs"
+    _w(d / "frd.md", "# FRD\n| id | dn |\n|---|---|\n| FRD-A-001 | PBI-PLAT-001…006 |\n")
+    assert validate_reqs.range_shorthand_lint(d), "ellipsis range must be flagged"
+    _w(d / "frd.md", "# FRD\n| id | dn |\n|---|---|\n| FRD-A-001 | PBI-PLAT-001...006 |\n")
+    assert validate_reqs.range_shorthand_lint(d), "'...' range must be flagged"
+    print("  PASS  B5 ellipsis / '...' range shorthand flagged")
+
+
+def test_quality_ok_marker_gates_compound_shall():
+    """B4: a compound-shall requirement is flagged unless it carries a machine-checkable
+    `quality-ok: <ID>` sign-off marker — free-text justification no longer suppresses it."""
+    import validate_reqs
+    d = Path(tempfile.mkdtemp(prefix="qok_")) / "docs"
+    _w(d / "frd.md", "# FRD\nFRD-B-001 The system shall log the attempt and notify the admin.\n")
+    assert any("FRD-B-001" in f and "shall" in f for f in validate_reqs.quality_lint(d)), "unmarked compound-shall must flag"
+    _w(d / "frd.md", "# FRD\nFRD-B-001 The system shall log the attempt and notify the admin.\n"
+                     "<!-- quality-ok: FRD-B-001 one subject, two audiences -->\n")
+    assert not any("FRD-B-001" in f for f in validate_reqs.quality_lint(d)), "quality-ok marker must suppress"
+    print("  PASS  B4 quality-ok marker gates compound-shall")
+
+
 def main():
     for t in (test_scaffold_default, test_scaffold_config_override, test_collisions,
               test_conformance_clean, test_migrate, test_migrate_refuses_on_collision,
               test_migrate_self_exemption, test_migrate_exempt_root, test_migrate_dest_collision,
               test_migrate_refuses_on_existing_dest, test_migrate_routes_sprint_plan,
-              test_migrate_routes_recon):
+              test_migrate_routes_recon, test_range_shorthand_lint, test_backlog_completeness_lint,
+              test_range_shorthand_ellipsis, test_quality_ok_marker_gates_compound_shall):
         print(f"# {t.__name__}")
         t()
     print()

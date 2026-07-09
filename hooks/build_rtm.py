@@ -16,7 +16,6 @@ Usage:
     python hooks/build_rtm.py <project-root> --check  # exit 1 if IDs are missing from RTM.md
 Stdlib-only; writes only <docs_root>/RTM.md.
 """
-import re
 import sys
 
 if hasattr(sys.stdout, "reconfigure"):
@@ -45,9 +44,9 @@ HEADER = """# RTM — Requirements Traceability Matrix
 |---|---|---|---|---|---|
 """
 
-# Presence = the ID appears ANYWHERE in RTM.md (matrix-shaped RTMs put IDs in any
-# column, not just the first) — same semantics as rtm_core's coverage grep.
-ID_RE = re.compile(r"\b([A-Z][A-Z0-9]{1,7}-[A-Z0-9]{2,12}-\d{1,4})\b")
+# Req-ID grammar lives in rtm_core.REQ_ID — use it so build_rtm and validate_reqs
+# agree on what counts as an ID. Presence = the ID appears ANYWHERE in RTM.md
+# (matrix-shaped RTMs put IDs in any column, not just the first).
 
 
 def collect_ids(root):
@@ -60,8 +59,8 @@ def collect_ids(root):
         if p.name == "RTM.md":
             continue
         text = p.read_text(encoding="utf-8", errors="ignore")
-        for m in re.finditer(r"\b([A-Z][A-Z0-9]{1,7}-[A-Z0-9]{2,12}-\d{1,4})\b", text):
-            found.setdefault(m.group(1), p.relative_to(docs_root))
+        for m in rtm_core.REQ_ID.finditer(text):
+            found.setdefault(m.group(0), p.relative_to(docs_root))
     return docs_root, found
 
 
@@ -76,7 +75,8 @@ def main(argv):
 
     existing = set()
     if rtm.exists():
-        existing = set(ID_RE.findall(rtm.read_text(encoding="utf-8", errors="ignore")))
+        existing = {m.group(0) for m in rtm_core.REQ_ID.finditer(
+            rtm.read_text(encoding="utf-8", errors="ignore"))}
     missing = sorted(i for i in ids if i not in existing)
 
     if check:

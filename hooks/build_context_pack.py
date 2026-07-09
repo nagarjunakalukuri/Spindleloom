@@ -32,21 +32,64 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import rtm_core  # noqa: E402
 
 DEFAULT_BUDGET = 60_000  # chars of full-read material (~15k tokens) before demotion advice
+PHASE_ORDER = ["discovery", "requirements", "design", "planning",
+               "build", "test", "review", "release", "operate", "process"]
 ASSUMPTION = re.compile(r"\bASSUMPTION-[A-Z0-9-]*\d+\b")
 DIGEST = re.compile(r"(?ms)^## Digest\s*\n(.*?)(?=^## |\Z)")
 
 
-def agent_contract(agent):
-    """The agent's declared inputs, from its definition (toolkit or bundled copy)."""
+def _frontmatter(agent):
+    """The raw frontmatter block of an agent's definition (toolkit or bundled copy)."""
     for base in (Path(__file__).resolve().parent.parent / "agents",
                  Path("agents"), Path(".claude") / "agents"):
         p = base / f"{agent}.md"
         if p.is_file():
             fm = p.read_text(encoding="utf-8", errors="ignore")
-            fm = fm[3:fm.find("\n---", 3)]
-            m = re.search(r"(?m)^inputs: \[(.*)\]$", fm)
-            return [x.strip() for x in m.group(1).split(",") if x.strip()] if m else []
+            return fm[3:fm.find("\n---", 3)]
     return None
+
+
+def _inline_list(fm, key):
+    m = re.search(rf"(?m)^{key}: \[(.*)\]$", fm)
+    return [x.strip() for x in m.group(1).split(",") if x.strip()] if m else []
+
+
+def _scalar(fm, key):
+    m = re.search(rf"(?m)^{key}:\s*(.+?)\s*$", fm)
+    return m.group(1).strip() if m else ""
+
+
+def agent_contract(agent):
+    """The agent's declared inputs (None if the agent definition isn't found)."""
+    fm = _frontmatter(agent)
+    return _inline_list(fm, "inputs") if fm is not None else None
+
+
+def upstream_chain(agent):
+    """The transitive upstream ancestors of `agent` (breadth-first, deduped, cycle-safe) and
+    the artifact each produces. Lets a pack show what the agent's whole spec chain decided —
+    not only its directly-declared inputs — fixing the class the run2 eval named (SDD blind
+    to FRD, estimation blind to FRD/SRS) at the root, without adding N^2 contract edges."""
+    fm0 = _frontmatter(agent)
+    if fm0 is None:
+        return []
+    order, seen, queue = [], {agent}, list(_inline_list(fm0, "upstream"))
+    while queue:
+        a = queue.pop(0)
+        if a in seen:
+            continue
+        seen.add(a)
+        fm = _frontmatter(a)
+        if fm is None:
+            continue
+        order.append({"agent": a, "outputs": _scalar(fm, "outputs"),
+                      "phase": _scalar(fm, "phase")})
+        queue.extend(_inline_list(fm, "upstream"))
+    return order
+
+
+def _phase_idx(phase):
+    return PHASE_ORDER.index(phase) if phase in PHASE_ORDER else len(PHASE_ORDER)
 
 
 def registry(root):
@@ -60,10 +103,21 @@ def registry(root):
         return []
 
 
+def _stem(t):
+    """Crude morphological stem so a declared input name matches its on-disk artifact across
+    plural/‑ion forms — `estimates` and `estimation` both stem to `estimat`. Prevents the
+    run3 silent estimation→sprint drop (the pack keyed `estimates`, the file was
+    `09-estimation.md`, and no token matched)."""
+    for suf in ("ing", "ion", "ed", "es", "s"):
+        if len(t) - len(suf) >= 3 and t.endswith(suf):
+            return t[:-len(suf)]
+    return t
+
+
 def match_inputs(inputs, arts, docs_root, feature):
     """Resolve declared input names to on-disk artifacts (registry first, then scan)."""
     hits = []
-    norm = lambda s: re.sub(r"[^a-z0-9]+", " ", s.lower()).split()
+    norm = lambda s: [_stem(w) for w in re.sub(r"[^a-z0-9]+", " ", s.lower()).split()]
     known = {a["path"]: a for a in arts}
     files = rtm_core.markdown_files(docs_root)
     for inp in inputs:
@@ -74,7 +128,7 @@ def match_inputs(inputs, arts, docs_root, feature):
             if feature and f"/{feature}/" not in f"/{rel}" and feature not in rel:
                 pass  # non-feature files still eligible (durable docs)
             stem_toks = set(norm(Path(rel).stem))
-            if toks & stem_toks or any(t in Path(rel).stem.lower() for t in toks if len(t) > 2):
+            if toks & stem_toks or any(t in " ".join(norm(Path(rel).stem)) for t in toks if len(t) > 2):
                 # prefer the feature-scoped match when both exist
                 if found is None or (feature and feature in rel):
                     found = rel
@@ -124,6 +178,35 @@ def main(argv):
         else:
             out.append(f"- **{h['input']}** → *not found on disk* — flag the missing handoff "
                        f"before inventing its content")
+    out.append("")
+
+    # 1b. transitive upstream chain — spec-chain ancestors (an EARLIER funnel phase) whose
+    #     output the agent depends on but that isn't a directly-declared input. Digest-first,
+    #     on-disk only, deduped: phase-bounding drops the fleet's feedback-edge cycles and the
+    #     later-phase noise, leaving just the funnel above this agent.
+    agent_fm = _frontmatter(agent) or ""
+    my_idx = _phase_idx(_scalar(agent_fm, "phase"))
+    direct_names = {h["input"] for h in resolved}
+    extra, seen_names = [], set()
+    for anc in upstream_chain(agent):
+        o = anc["outputs"]
+        if o and o not in direct_names and o not in seen_names and _phase_idx(anc["phase"]) < my_idx:
+            extra.append(o)
+            seen_names.add(o)
+    out.append("## 1b · Upstream chain (spec-chain ancestors — digest-first; read fully only if the trace demands it)")
+    seen_paths, shown = set(), 0
+    for h in match_inputs(extra, arts, docs_root, feature):
+        if h["path"] and h["path"] not in seen_paths:
+            seen_paths.add(h["path"])
+            p = docs_root / h["path"]
+            out.append(f"- **{h['input']}** → `{h['path']}` (ancestor output)")
+            dg = DIGEST.search(p.read_text(encoding="utf-8", errors="ignore")) if p.exists() else None
+            if dg:
+                for ln in dg.group(1).strip().splitlines()[:3]:
+                    out.append(f"    {ln.strip()}")
+            shown += 1
+    if not shown:
+        out.append("- (every upstream artifact is already among your contract inputs above)")
     out.append("")
 
     # 2. RTM slice
