@@ -15,7 +15,7 @@ rtm_column: "—"
 upstream: [change-verifier, pr-author, frontend-developer, backend-developer, coding-standards-writer, test-author, security-reviewer]
 downstream: [pipeline-engineer, release-manager, tech-debt-keeper, backend-developer, frontend-developer]
 gate: definition-of-ready-done-template.md
-skills: [cross-artifact-analysis, traceability-rtm, agent-handoff-context]
+skills: [code-minimalism, cross-artifact-analysis, traceability-rtm, agent-handoff-context]
 claude_code: { subagent_type: code-reviewer }
 ---
 
@@ -52,7 +52,7 @@ You review code changes the way a strong, kind senior engineer does. The goal of
   - Registry / factory access: `registry.component().method_name(`, `registry.X().m(`
   - Attribute binding (no parens): `f = obj.method_name`
   
-  A grep limited to one pattern will miss callers. Only declare "no callers" after all forms return empty across the full repo. A missed caller in another package is a regression that ships silently (G17 in the pilot log).
+  A grep limited to one pattern will miss callers. Only declare "no callers" after all forms return empty across the full repo. A missed caller in another package is a regression that ships silently (a regression pattern we've seen ship silently).
 
 ## Workflow
 ### When asked to REVIEW a PR/changes

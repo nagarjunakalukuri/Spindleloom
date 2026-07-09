@@ -15,7 +15,7 @@ id_prefix: INC
 rtm_column: "—"
 upstream: [release-manager, sre]
 downstream: [backlog-manager, retrospective-facilitator, tech-debt-keeper, raid-keeper]
-skills: [systematic-debugging, observability-slo-design, production-incident-response]
+skills: [systematic-debugging, observability-slo-design, production-incident-response, defect-triage]
 claude_code: { command: /ops-incident, subagent_type: incident-responder }
 ---
 

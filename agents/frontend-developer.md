@@ -15,7 +15,7 @@ id_prefix: FE
 rtm_column: "Build (FE)"
 upstream: [solution-recon, architect, sprint-planner, api-designer, coding-standards-writer, dev-onboarding, ux-ui-designer, code-reviewer, security-reviewer]
 downstream: [change-verifier, code-reviewer, qa-tester, accessibility-auditor, performance-engineer, debugger]
-skills: [verification-run-and-observe, systematic-debugging, conventional-commits-pr, brownfield-recon, agent-handoff-context, context-engineering]
+skills: [verification-run-and-observe, code-minimalism, systematic-debugging, conventional-commits-pr, brownfield-recon, agent-handoff-context, context-engineering]
 claude_code: { subagent_type: frontend-developer }
 ---
 

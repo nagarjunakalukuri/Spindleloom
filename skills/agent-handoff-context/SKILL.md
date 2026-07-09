@@ -90,8 +90,15 @@ choose what survives; a saved entry is deliberate compression), **tool switches*
 (their context starts at zero). Rule of thumb: one agent + one sitting = conversation is
 enough; anything chained, resumed, or shared = save before handoff.
 
+**How teammate sharing actually works:** every `save_context` also appends to
+`.spindleloom/context-log.jsonl` — the committed, git-mergeable, cross-machine source of
+truth (the SQLite `context.db` is a local index, gitignored — git can't merge binary).
+After `git pull`, run `sloom context <root> --import` to replay teammates' entries into
+your local DB so `recall_context` sees them. The log is append-only: deletions
+(`delete_context`/`delete_context_entry`) are local-machine cleanups and do not propagate.
+
 ## Which context goes where (the boundary rule)
-Facts of record (requirements, decisions, designs) live in the **docs tree** — never re-state them here; cite the path. This store holds only **compressed working notes**: decisions-in-flight + reason, output paths, blockers, inherited constraints, open questions. Orchestration state (stop contract, ledger) lives in `.spindleloom/run-state.json`. The same fact in two stores is a defect. When your facts summarize one artifact, pass `source="<its path>"` — recall then flags the entry **stale** if the registry shows the artifact changed after you saved, so outdated summaries are visible instead of authoritative.
+Facts of record (requirements, decisions, designs) live in the **docs tree** — never re-state them here; cite the path. This store holds only **compressed working notes**: decisions-in-flight + reason, output paths, blockers, inherited constraints, open questions. Orchestration state (stop contract, ledger) lives in `.spindleloom/runs/<run-id>.json` — one file per run. The same fact in two stores is a defect. When your facts summarize one artifact, pass `source="<its path>"` — recall then flags the entry **stale** if the registry shows the artifact changed after you saved, so outdated summaries are visible instead of authoritative.
 
 ## task_id convention
 
