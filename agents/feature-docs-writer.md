@@ -15,7 +15,7 @@ id_prefix: DOC
 rtm_column: "—"
 upstream: [frd-writer, release-manager]
 downstream: [wiki-curator]
-skills: []
+skills: [agent-handoff-context]
 claude_code: { subagent_type: feature-docs-writer }
 ---
 

@@ -5,6 +5,7 @@
 | Owner | Toolkit maintainer |
 | Status | Active protocol (v1, from the 2026-07-07 MedRemind run) |
 | Complements | `validate_graph.py` (structural), this = behavioral |
+| Reference run | `examples/medremind-fleet-eval/` — run 2 (B+), artifacts + handoff log + judge verdict |
 
 The validators prove the contract graph is *well-formed*; this protocol proves the fleet
 *coordinates* — that each agent, given only what the graph routes to it, produces work the
@@ -23,12 +24,13 @@ guarded by validator check 13 — a re-run should grade higher.
    files the contract graph routes to it (its upstream edges' artifacts + the brief), is told
    to follow its `agents/<name>.md` definition exactly, and must NOT read other artifacts in
    the run dir even if present. Cap each artifact (~90–120 lines) to keep the run lean.
-4. **Handoff report** — every agent appends to `handoff-log.md`:
+4. **Context memory** — when the `sloom` MCP server is available, every agent calls `recall_context(task_id=<run slug>)` at start and `save_context(...)` before finishing (with `source=` citing its artifact); the tooling pass runs `validate_gates.py <run-dir> --context <run slug>`. The handoff log below is the *judge's instrument*, not the transport.
+5. **Handoff report** — every agent appends to `handoff-log.md`:
    `Inputs received / Inputs my definition expects / Missing at my handoff /
    Facts I assumed-or-invented (each, specifically) / Quality impact (one line)`.
-5. **Tooling pass** — run `hooks/build_rtm.py <run-dir> --check` and
+6. **Tooling pass** — run `hooks/build_rtm.py <run-dir> --check` and
    `hooks/validate_reqs.py <run-dir>` against the generated artifacts.
-6. **Independent judge** — a fresh subagent reads everything and scores per the rubric.
+7. **Independent judge** — a fresh subagent reads everything and scores per the rubric.
 
 ## Judge rubric
 
@@ -39,7 +41,8 @@ guarded by validator check 13 — a re-run should grade higher.
 3. **Invented-fact cascade** — which flagged assumptions propagated downstream and were
    treated as ratified? (Convergent invention is coincidence, not corroboration.)
 4. **Tier compliance** — did the run honor doc-strategy-advisor's doc-set decision?
-5. **Grade A–F** with a 3-line justification.
+5. **Context fidelity** — did downstream recalls match upstream saves (nothing invented that a saved entry already answered; nothing saved that contradicts the artifact it cites)?
+6. **Grade A–F** with a 3-line justification.
 
 **Pass bar:** no BROKEN handoffs, no severed RTM links, grade ≥ B. Anything below: file the
 findings as contract fixes (inputs/edges), validator checks, or convention changes — the

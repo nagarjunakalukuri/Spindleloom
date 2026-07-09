@@ -78,6 +78,28 @@ Violating the budget defeats the purpose -- keep facts terse and precise.
 
 ---
 
+## Do you even need this? (when to skip)
+
+The harness already maintains context *within one conversation window* — saving and
+recalling inside a single-agent, single-session task is pure overhead; skip it. The store
+exists for the boundaries that window cannot cross: **subagent isolation** (every fleet
+agent starts with an empty window — it has seen nothing of the conversation), **session
+end** (resume tomorrow), **compaction** (long sessions summarize lossily and you don't
+choose what survives; a saved entry is deliberate compression), **tool switches**
+(Cursor shares nothing with Claude Code; the MCP store is common), and **teammates**
+(their context starts at zero). Rule of thumb: one agent + one sitting = conversation is
+enough; anything chained, resumed, or shared = save before handoff.
+
+**How teammate sharing actually works:** every `save_context` also appends to
+`.spindleloom/context-log.jsonl` — the committed, git-mergeable, cross-machine source of
+truth (the SQLite `context.db` is a local index, gitignored — git can't merge binary).
+After `git pull`, run `sloom context <root> --import` to replay teammates' entries into
+your local DB so `recall_context` sees them. The log is append-only: deletions
+(`delete_context`/`delete_context_entry`) are local-machine cleanups and do not propagate.
+
+## Which context goes where (the boundary rule)
+Facts of record (requirements, decisions, designs) live in the **docs tree** — never re-state them here; cite the path. This store holds only **compressed working notes**: decisions-in-flight + reason, output paths, blockers, inherited constraints, open questions. Orchestration state (stop contract, ledger) lives in `.spindleloom/runs/<run-id>.json` — one file per run. The same fact in two stores is a defect. When your facts summarize one artifact, pass `source="<its path>"` — recall then flags the entry **stale** if the registry shows the artifact changed after you saved, so outdated summaries are visible instead of authoritative.
+
 ## task_id convention
 
 Use a stable slug for the feature or sprint:
@@ -178,6 +200,8 @@ Context accumulates across sprints. Call `delete_context` at:
 - **Superseded decision** — when an agent re-runs and produces different facts, the new
   `save_context` creates a fresh snapshot (both coexist, newest first). Delete the stale one:
   `delete_context(task_id="payment-checkout", agent_id="architect")`
+- **one bad or superseded note** among good ones — find its id via `list_contexts`, then:
+  `delete_context_entry(entry_id=42)`
 
 Use `list_contexts(task_id=...)` to audit what's still live before deleting.
 

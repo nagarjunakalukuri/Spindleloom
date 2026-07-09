@@ -14,7 +14,7 @@ outputs: unit tests, integration tests
 rtm_column: "—"
 upstream: [backlog-manager, test-plan-writer, debugger]
 downstream: [change-verifier, code-reviewer, debugger, flaky-test-detective]
-skills: [test-design, verification-run-and-observe, agent-handoff-context]
+skills: [test-design, verification-run-and-observe, agent-handoff-context, test-data]
 claude_code: { subagent_type: test-author }
 ---
 
@@ -42,14 +42,8 @@ You write the **developer's own tests** — fast unit tests and focused integrat
 ### When asked to REVIEW test coverage
 Map acceptance criteria → tests; flag uncovered criteria, missing edge cases, and tests that assert implementation detail or are non-deterministic.
 
-## Python interpreter detection (Windows + uv projects)
-
-Before running any test commands, resolve the correct Python interpreter — don't assume `python` is on PATH:
-
-1. Try `uv run python --version`. If the project uses `uv`, use `uv run pytest` (or `uv run python -m pytest`) for all invocations.
-2. Otherwise use `.venv/Scripts/python.exe` (Windows) or `.venv/bin/python` (Unix/Mac) directly.
-3. Set `PYTHONPATH` per the project's `dev-onboarding` / `pyproject.toml` if needed.
-4. Resolve once at the start; reuse for every subsequent command. If a project `CLAUDE.md` or `dev-onboarding` already documents the incantation, follow it exactly.
+## Resolve the interpreter/runner first
+Resolve how this project runs *before* any test command — see the `verification-run-and-observe` skill's "Resolve the toolchain/runner first" (`uv run` vs `.venv/Scripts/python.exe`, `PYTHONPATH`, etc.). Resolve once, reuse for every command.
 
 ## Who participates
 The developer runs it while building (inner loop); CI runs the output; code-reviewer checks tests exist & are meaningful; qa-tester relies on this layer being solid so QA can focus on system/exploratory testing.

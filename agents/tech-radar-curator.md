@@ -14,7 +14,7 @@ outputs: tech-radar
 rtm_column: "—"
 upstream: [adr-writer]
 downstream: []
-skills: []
+skills: [agent-handoff-context]
 claude_code: { command: /tech-radar, subagent_type: tech-radar-curator }
 ---
 

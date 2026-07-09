@@ -11,7 +11,7 @@ Manage the **technology radar** (`templates/tech-radar-template.md`) — the cro
 3. Date it, set the architect owner, save as `docs/tech-radar/YYYY-QN.md`.
 
 ## update
-Move a blip one ring (or add one), citing the ADR/RFC that drove the move and noting the previous ring. If a significant move has no ADR, prompt to record one (`/adr-new`) first — the radar reflects decisions, it doesn't make them.
+Move a blip one ring (or add one), citing the ADR/RFC that drove the move and noting the previous ring. If a significant move has no ADR, prompt to record one (`/spec-adr`) first — the radar reflects decisions, it doesn't make them.
 
 ## review
 Check every blip has a ring + rationale; flag blips with no driving ADR, tech in the TSD/code that isn't on the radar (ungoverned), and a stale snapshot date. Read-only.

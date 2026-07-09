@@ -12,6 +12,7 @@
 - [ ] unit + integration tests pass
 - [ ] security scan (no high/critical)
 - [ ] ≥ <N> review approval(s)
+- [ ] **sloom gate** on `docs/**` PRs — the spec/traceability battery (`templates/ci/sloom-gate.yml`, written to `.github/workflows/` by scaffold): Req-ID collisions (DUP-REQID), RTM coverage, registry drift, execution gates, and the per-PBI verification requirement when the branch names one. Merging to `main` should *prove* the gates ran, not assume it.
 
 ## Stages
 

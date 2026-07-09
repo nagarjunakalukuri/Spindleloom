@@ -16,6 +16,8 @@ Exit 0 always (it's a generator); prints a one-line summary.
 """
 import re
 import sys
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 from pathlib import Path
 
 PHASE_ORDER = [

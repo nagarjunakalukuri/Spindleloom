@@ -4,7 +4,7 @@ description: Use this agent BEFORE writing or accepting a spec/PBI for work on a
 tools: Read, Grep, Glob, Bash
 model: inherit
 examples:
-  - "Before we spec PBI-214, recon the codebase: does the /aep/rag endpoint and the reconciliation_result data this dashboard needs actually exist, and is this FE-only or backend-first?"
+  - "Before we spec PBI-087, recon the codebase: does the /meals/plan endpoint and the weekly_menu data this screen needs actually exist, and is this FE-only or backend-first?"
   - "The FRD says the status field is pass/fail — verify that against the route and model code, flag any mismatch upstream, and give me an ordered task breakdown for the new screen."
 phase: design
 loop: planning
@@ -16,8 +16,8 @@ rtm_column: "—"
 upstream: [doc-strategy-advisor, prd-writer, frd-writer]
 downstream: [frd-writer, srs-writer, sdd-writer, backlog-manager, adr-writer, architect, estimation-facilitator, backend-developer, frontend-developer, raid-keeper]
 gate: —
-skills: [api-contract, brownfield-recon, agent-handoff-context]
-claude_code: { subagent_type: solution-recon }
+skills: [api-contract, brownfield-recon, agent-handoff-context, context-engineering]
+claude_code: { command: /build-recon, subagent_type: solution-recon }
 ---
 
 > **Handoff** · *Before:* read PRD, FRD, prototype/design, the codebase (from `doc-strategy-advisor`, `prd-writer`, `frd-writer`). *After:* produce solution-recon-findings → hand to `frd-writer`, `srs-writer`, `sdd-writer`, `backlog-manager`, `adr-writer`, `architect`, `estimation-facilitator`, `backend-developer`, `frontend-developer`, `raid-keeper`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
@@ -37,7 +37,7 @@ Why this matters: a spec written only from upstream docs drifts from the code. O
 
 ## When asked to RECON a feature / PBI
 
-1. **State the claim** the spec/PBI makes about the system (e.g. "aggregates `reconciliation_result`", "calls `/aep/rag/*`").
+1. **State the claim** the spec/PBI makes about the system (e.g. "aggregates `weekly_menu`", "calls `/meals/*`").
 2. **Existence check** — grep/read for the endpoint, service, model, and data it assumes. Record present / absent / partial. (Also catches "already built" — don't spec what exists.)
 3. **Contract extraction** — for what exists, record the real shape: method/path, request/response keys, status/enum values, RBAC gate, where the data is persisted/queried.
 4. **Pattern** — name the sibling feature + its files to mirror (route, service, page, tests).

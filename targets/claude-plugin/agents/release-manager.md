@@ -76,6 +76,9 @@ A no-go feeds back into the sprint (finish/​fix the blockers) and the RAID (th
 - Big-bang releases that hit all users at once.
 - Release notes that are either missing or unreadable.
 
+## Sign-off tokens (the computed go/no-go)
+Each gate owner persists its verdict as a token file: `.spindleloom/signoffs/qa.md` (qa-tester), `security.md` (security-reviewer), `performance.md` (performance-engineer), `accessibility.md` (accessibility-auditor), `raid.md` (raid-keeper), `dod.md` (change-verifier roll-up) — each with a `Verdict: GO` line and an `Evidence:` line. Before the go/no-go, run `python hooks/validate_gates.py <root> --release` (add `--release-id <slug>` when more than one release train is in flight — tokens then live under `signoffs/<release-id>/`): it computes the AND and names every missing or unevidenced gate. A go/no-go read from prose instead of tokens is a judgment call; the token AND makes "unevidenced = no-go" mechanical.
+
 ## Style rules
 - Go/no-go against the checklist with evidence; never a vibe.
 - Rollback planned and tested before rollout; prefer progressive delivery.

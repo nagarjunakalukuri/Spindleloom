@@ -20,10 +20,26 @@ repos:
 
       - id: validate-example-traceability
         name: Example spec traceability (validate_reqs)
-        entry: python hooks/validate_reqs.py examples/healthy-meal-app
+        entry: bash -c 'python hooks/validate_reqs.py examples/healthy-meal-app && python hooks/validate_reqs.py examples/medremind-fleet-eval'
         language: python
         pass_filenames: false
         files: ^examples/
+        stages: [pre-commit]
+
+      - id: handoff-lines-fresh
+        name: Handoff lines not stale (agents/*.md)
+        entry: python hooks/build_handoffs.py --check
+        language: python
+        pass_filenames: false
+        files: ^agents/.*\.md$
+        stages: [pre-commit]
+
+      - id: help-fresh
+        name: agents/HELP.md not stale
+        entry: python hooks/build_help.py --check
+        language: python
+        pass_filenames: false
+        files: ^agents/.*\.md$
         stages: [pre-commit]
 
       - id: harness-bundles-fresh

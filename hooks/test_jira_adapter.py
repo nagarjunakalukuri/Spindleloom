@@ -125,6 +125,56 @@ class TestBuildPayload(unittest.TestCase):
         self.assertIsNone(ja._to_adf(""))
         self.assertIsNone(ja._to_adf(None))
 
+    def test_comment_payload_is_adf(self):
+        """add_comment's payload (offline): API v3 comments must be ADF, not a plain string."""
+        payload = ja.build_comment("Phase 'design' ACCEPTED by N.K.")
+        self.assertEqual(payload["body"]["type"], "doc")
+        self.assertEqual(payload["body"]["version"], 1)
+        self.assertEqual(payload["body"]["content"][0]["content"][0]["text"],
+                         "Phase 'design' ACCEPTED by N.K.")
+
+    def test_add_comment_no_creds_no_network(self):
+        import os
+        saved = {k: os.environ.pop(k, None)
+                 for k in ("JIRA_BASE_URL", "JIRA_USER_EMAIL", "JIRA_API_TOKEN")}
+        try:
+            self.assertFalse(ja.add_comment("PROJ-1", "x"))  # returns False, never dials out
+        finally:
+            for k, v in saved.items():
+                if v is not None:
+                    os.environ[k] = v
+
+
+def test_push_records_partial_id_map_when_a_create_fails():
+    """#4 regression: if _post fails mid-loop, items already created must still land in
+    the caller's id_map -- otherwise a retry duplicates the tracker work items."""
+    import emit_backlog
+    backlog = """## Backlog (ordered)
+| Rank | PBI ID | Type | Story / item | Acceptance criteria | Priority | Est. | Deps | Source | Ready? |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | PBI-A-001 | Story | first | ac | Must | 1 | - | S | yes |
+| 2 | PBI-A-002 | Story | second | ac | Must | 1 | - | S | yes |
+"""
+    plan = emit_backlog.plan(backlog)
+    calls = {"n": 0}
+    def fake_post(*a, **k):
+        calls["n"] += 1
+        if calls["n"] == 1:
+            return {"key": "PROJ-1"}
+        raise RuntimeError("429 rate limited")
+    saved_post, saved_cfg = ja._post, ja._cfg
+    ja._post = fake_post
+    ja._cfg = lambda: ("https://x.atlassian.net", "PROJ", "e@x", "tok")
+    id_map = {}
+    try:
+        try:
+            ja.push(plan, dry_run=False, id_map=id_map)
+        except RuntimeError:
+            pass
+    finally:
+        ja._post, ja._cfg = saved_post, saved_cfg
+    assert id_map == {"PBI-A-001": "PROJ-1"}, id_map
+
 
 if __name__ == "__main__":
     unittest.main()

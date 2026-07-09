@@ -53,7 +53,7 @@ The capabilities the agentic SDLC demands, and where each lives in the toolkit t
 | **Backend craft** — service design, reliability, idempotency, security, observability, scaling | `backend-developer` |
 | **API as a first-class contract** (OpenAPI/GraphQL) | `api-designer` |
 | **Data model depth** — conceptual→physical schema, ERD, indexing, migrations | `data-modeler` |
-| **Architect's technical direction** — standing guardrails, pre-build proposals, sanctioned tech, owned debt | `/constitution`, `rfc-facilitator`, `tech-radar-curator`, `tech-debt-keeper` |
+| **Architect's technical direction** — standing guardrails, pre-build proposals, sanctioned tech, owned debt | `/spec-constitution`, `rfc-facilitator`, `tech-radar-curator`, `tech-debt-keeper` |
 | **Delivery-loop health metrics** (DORA + cycle time) | `status-reporter` + `engineering-metrics-template` |
 
 On **stack-agnostic vs stack-specific**: the spec/design spine (`sdd-writer` arc42/C4, `tsd-writer`) stays deliberately stack-agnostic so the toolkit works for any language; the `frontend-developer`/`backend-developer`/`api-designer`/`data-modeler` agents add depth *on top* when the work is web/app development.

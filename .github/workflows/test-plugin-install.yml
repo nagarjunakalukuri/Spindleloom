@@ -26,6 +26,12 @@ jobs:
 
       - name: Harness bundles not stale
         run: python hooks/build_harness_artifacts.py --check
+      - name: Handoff lines not stale
+        run: python hooks/build_handoffs.py --check
+      - name: HELP not stale
+        run: python hooks/build_help.py --check
+      - name: Harness conformance (per-tool format rules)
+        run: python hooks/validate_targets.py
 
   # ── Spec traceability ────────────────────────────────────────────────────────
   validate-traceability:
@@ -33,6 +39,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # need history + origin/<base> for the diff below
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -86,10 +94,36 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Install pytest
+        run: python -m pip install --upgrade pip pytest
+
       - name: Run hook tests
-        run: |
-          python -m pytest hooks/test_*.py -v 2>/dev/null || \
-          python -m unittest discover -s hooks -p 'test_*.py' -v
+        # The tests are pytest-style bare `def test_*` functions. `unittest
+        # discover` only collects the ~13 TestCase-based ones (of ~73) and exits
+        # OK — so pytest is required and must NOT fall back or swallow errors.
+        run: python -m pytest hooks/ -q
+
+  # ── MCP server smoke test ─────────────────────────────────────────────────────
+  # mcp_server.py is the one component with a required dependency (mcp[cli]), so it
+  # lives in its own job rather than the stdlib-only test-hooks job above. The smoke
+  # test spawns the server over stdio and asserts the tool/resource surface plus the
+  # read-only-by-default write gate. Launches with sys.executable (no uv needed).
+  test-mcp:
+    name: MCP server smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install MCP SDK
+        run: python -m pip install --upgrade pip "mcp[cli]>=1.2"
+
+      - name: Smoke-test the MCP server (stdio, read-only)
+        run: python hooks/test_mcp_server.py
 
   # ── Plugin install smoke test ─────────────────────────────────────────────────
   plugin-install:

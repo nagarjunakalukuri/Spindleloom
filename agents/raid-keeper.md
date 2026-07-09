@@ -15,8 +15,8 @@ id_prefix: RAID
 rtm_column: "—"
 upstream: [solution-recon, architect, sprint-planner, incident-responder]
 downstream: [status-reporter]
-skills: []
-claude_code: { subagent_type: raid-keeper }
+skills: [agent-handoff-context]
+claude_code: { command: /ops-raid, subagent_type: raid-keeper }
 ---
 
 > **Handoff** · *Before:* read BRD, SRS, ADR, postmortem, sprint backlog (from `solution-recon`, `architect`, `sprint-planner`, `incident-responder`). *After:* produce raid-log → hand to `status-reporter`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
@@ -92,6 +92,8 @@ Material risks and issues feed the status-reporter (top-risks section) and may f
 - Decisions with no recorded rationale, re-litigated months later.
 - A risk list where everything is "high" and nothing is prioritized.
 - Items with no owner that quietly rot.
+
+At release time, persist `.spindleloom/signoffs/raid.md` (`Verdict: GO` only when no open risk blocks the release, with the accepted risks named as `Evidence:`). With more than one release train in flight, namespace the token per release — `.spindleloom/signoffs/<release-id>/raid.md` — and gate with `validate_gates.py --release --release-id <slug>` so concurrent releases never overwrite each other's evidence.
 
 ## Style rules
 - Every item: owner + next action + date. No orphans.

@@ -24,6 +24,8 @@ import argparse
 import asyncio
 import os
 import sys
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 from pathlib import Path
 
 try:
@@ -44,10 +46,13 @@ EXPECTED_TOOLS = {
     "find_decision", "list_artifacts", "find_artifact",
     "funnel_status", "stale_artifacts", "next_req_id", "search_specs", "scaffold_project",
     "check_conformance",
+    # agent context memory
+    "save_context", "recall_context", "list_contexts", "get_context",
+    "delete_context", "delete_context_entry", "sync_contexts",
 }
 EXPECTED_RESOURCES = {
-    "rtm://current", "spindleloom://requirements", "spindleloom://artifacts",
-    "spindleloom://decisions",
+    "rtm://current", "sloom://requirements", "sloom://artifacts",
+    "sloom://decisions",
 }
 
 
@@ -126,9 +131,9 @@ async def run(args):
             check(bool(scaf.content) and "SPINDLELOOM_WRITABLE" in scaf.content[0].text,
                   "scaffold_project() is read-only by default (gated on SPINDLELOOM_WRITABLE)")
 
-            res = await session.read_resource("spindleloom://decisions")
+            res = await session.read_resource("sloom://decisions")
             check(bool(res.contents) and res.contents[0].text.strip().startswith(("[", "{")),
-                  "spindleloom://decisions resource returns the decisions table")
+                  "sloom://decisions resource returns the decisions table")
 
             conf = await session.call_tool("check_conformance", {})
             check(bool(conf.content) and '"conformance"' in conf.content[0].text,

@@ -515,7 +515,7 @@
  <div class="phase p-plan"><div class="head"><span class="badge b-plan">Plan &amp; Deliver</span> <span class="pcount">. 4 agents</span></div>
  <p class="phasenote"><b>Benefit:</b> predictable flow -- Ready, estimated work and a steady cadence instead of chaos and spillover.</p>
  <div class="agents">
- <div class="agent"><code>backlog-manager</code><p>PRD/FRD/SRS -> epics -> user stories (PBIs) -> tasks, INVEST; surfaces the next pull-able item (/pbi-next). The canonical backlog agent.</p><div class="ameta"><b>Owner:</b> Product Owner / PM . <b>Output:</b> product backlog (PBIs)</div><div class="aq">What's the executable work / next ticket?"</div></div>
+ <div class="agent"><code>backlog-manager</code><p>PRD/FRD/SRS -> epics -> user stories (PBIs) -> tasks, INVEST; surfaces the next pull-able item (/plan-next). The canonical backlog agent.</p><div class="ameta"><b>Owner:</b> Product Owner / PM . <b>Output:</b> product backlog (PBIs)</div><div class="aq">What's the executable work / next ticket?"</div></div>
  <div class="agent"><code>estimation-facilitator</code><p>Story points, Planning Poker, velocity &amp; capacity.</p><div class="ameta"><b>Owner:</b> Dev team (facilitated) . <b>Output:</b> story points + velocity</div><div class="aq">How big, and how much fits?"</div></div>
  <div class="agent"><code>sprint-planner</code><p>Sprint goal + capacity-fit backlog from Ready items.</p><div class="ameta"><b>Owner:</b> PM / Scrum Master . <b>Output:</b> sprint plan</div><div class="aq">What can we commit this sprint?"</div></div>
  <div class="agent"><code>retrospective-facilitator</code><p>Blameless retro -> 1-3 owned, tracked actions.</p><div class="ameta"><b>Owner:</b> Scrum Master . <b>Output:</b> retro + tracked actions</div><div class="aq">How do we improve next sprint?"</div></div>
@@ -745,7 +745,7 @@
  <p class="muted" style="margin-top:14px;font-size:.86rem"><code>doc-strategy-advisor</code> recommends this storage model (it's <b>project-level</b>, not per-PBI); <code>backlog-manager</code> treats any PBI markdown as staging for the tracker. Full detail in <code>BEST-PRACTICES.md -> "Where artifacts live"</code>.</p>
 
  <h3 style="margin-top:30px">Where it <em>runs</em> -- one source, every harness</h3>
- <p class="lead2" style="font-size:.95rem">The toolkit isn't tied to one AI coding tool. <b>Spindleloom</b> keeps a single source; <b>Shipwright</b> (<code>hooks/build_harness_artifacts.py</code>) emits <b>native artifacts per tool</b> -- so the same 52 agents, 22 skills and 13 commands work in whatever your developers already use. No per-tool rewrite, no lock-in.</p>
+ <p class="lead2" style="font-size:.95rem">The toolkit isn't tied to one AI coding tool. <b>Spindleloom</b> keeps a single source; the harness generator (<code>hooks/build_harness_artifacts.py</code>) emits <b>native artifacts per tool</b> -- so the same 52 agents, 22 skills and 13 commands work in whatever your developers already use. No per-tool rewrite, no lock-in.</p>
  <div class="gwrap"><table>
  <tr><th>Surface</th><th>Claude Code</th><th>Cursor</th><th>GitHub Copilot</th><th>Windsurf</th></tr>
  <tr><td>Agents (52)</td><td>... native</td><td>... rules / agents</td><td>... chatmodes / agents</td><td> rules</td></tr>

@@ -31,9 +31,9 @@ pip install "mcp[cli]"
 | Path | What lives here |
 |---|---|
 | `agents/` | 52 agent definitions (one `.md` per agent; frontmatter is the contract) |
-| `skills/` | 19+ reusable methodology skills (one `<name>/SKILL.md` each) |
-| `templates/` | 50 document templates (filled by agents, checked into project repos) |
-| `commands/` | 13 slash commands wired into Claude Code |
+| `skills/` | 28 reusable methodology skills (one `<name>/SKILL.md` each) |
+| `templates/` | 51 document templates (filled by agents, checked into project repos) |
+| `commands/` | 23 slash commands wired into Claude Code |
 | `hooks/` | Python automation (validators, generators, MCP server, Azure adapter) |
 | `hooks/*.sh` | Shell hooks (SSRF-safe URL caching for remote spec fetches) |
 | `targets/` | Generated harness bundles — **do not edit by hand** |

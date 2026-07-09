@@ -50,9 +50,31 @@ def test_dry_run_makes_no_network_calls():
     assert a.push(plan, dry_run=True) == {}
 
 
+def test_comment_payload_and_url():
+    """add_comment's building blocks (offline): plain-json body + the comments endpoint."""
+    assert a.build_comment("Phase 'design' ACCEPTED by N.K.") == \
+        {"text": "Phase 'design' ACCEPTED by N.K."}
+    url = a.comment_url("https://dev.azure.com/org", "My Project", "1234")
+    assert "/workItems/1234/comments" in url and "My%20Project" in url
+
+
+def test_add_comment_no_creds_no_network():
+    import os
+    saved = {k: os.environ.pop(k, None)
+             for k in ("AZURE_DEVOPS_ORG_URL", "AZURE_DEVOPS_ORG", "AZURE_DEVOPS_PROJECT", "AZURE_DEVOPS_PAT")}
+    try:
+        assert a.add_comment("1234", "x") is False  # returns False, never dials out
+    finally:
+        for k, v in saved.items():
+            if v is not None:
+                os.environ[k] = v
+
+
 if __name__ == "__main__":
     test_build_patch_basic()
     test_task_has_no_story_points()
     test_parent_relation_when_linked()
     test_dry_run_makes_no_network_calls()
-    print("ok — 4 tests passed")
+    test_comment_payload_and_url()
+    test_add_comment_no_creds_no_network()
+    print("ok — 6 tests passed")

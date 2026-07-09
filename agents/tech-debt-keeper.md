@@ -15,7 +15,7 @@ id_prefix: DEBT
 rtm_column: "—"
 upstream: [retrospective-facilitator, incident-responder, code-reviewer]
 downstream: [backlog-manager]
-skills: []
+skills: [agent-handoff-context]
 claude_code: { command: /tech-debt, subagent_type: tech-debt-keeper }
 ---
 

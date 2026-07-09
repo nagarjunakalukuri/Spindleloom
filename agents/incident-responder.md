@@ -15,8 +15,8 @@ id_prefix: INC
 rtm_column: "—"
 upstream: [release-manager, sre]
 downstream: [backlog-manager, retrospective-facilitator, tech-debt-keeper, raid-keeper]
-skills: [systematic-debugging, observability-slo-design, production-incident-response]
-claude_code: { subagent_type: incident-responder }
+skills: [systematic-debugging, observability-slo-design, production-incident-response, defect-triage]
+claude_code: { command: /ops-incident, subagent_type: incident-responder }
 ---
 
 > **Handoff** · *Before:* read release-plan, alerts, incident-timeline (from `release-manager`, `sre`). *After:* produce postmortem → hand to `backlog-manager`, `retrospective-facilitator`, `tech-debt-keeper`, `raid-keeper`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
@@ -95,6 +95,9 @@ Postmortem actions feed the backlog (preventive work) and the RAID log (new risk
 - Blame that makes people hide what really happened.
 - Postmortems whose action items are never tracked, so it recurs.
 - On-call reinventing remediation each time because there's no runbook.
+
+## The escaped-defect row
+Every production incident with a code/config root cause is, by definition, an escape past every gate: add a row to the escaped-defect register (`templates/escaped-defect-register-template.md`) naming the gate that should have caught it, alongside the postmortem's action items. The postmortem fixes this incident; the register row fixes the gate.
 
 ## Style rules
 - Mitigate first; diagnose in the postmortem.

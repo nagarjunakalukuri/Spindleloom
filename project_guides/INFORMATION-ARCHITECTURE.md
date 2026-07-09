@@ -14,7 +14,7 @@ The **detailed reference** for the layout mandated by [`STANDARD.md`](STANDARD.m
 | Solution-recon findings | **repo** (`docs/specs/<feature>/recon.md`) | ground-truth that de-risks a feature; lives with it |
 | Sprint plans / retros | **repo** (`docs/sprints/<sprint>/`) | per-sprint (cyclic); frozen to a baseline at close |
 | Code, tests, pipelines | **repo** | obvious |
-| Generated catalog, config, baselines | **`.shipwright/`** | tool machinery, derived — never hand-edited |
+| Generated catalog, config, baselines | **`.spindleloom/`** | tool machinery, derived — never hand-edited |
 
 ### Directionality & drift (tracker-backed kinds)
 
@@ -29,7 +29,7 @@ The `backlog-manager`'s **Tracker sync contract** gives the full field map (whic
 
 ## Brand the machinery, name the deliverables for what they are
 
-The durable docs are your product's knowledge — they outlive any tool, so they live in a **visible, content-named** tree (`docs/`), never a tool-branded or hidden folder. The tool's own state is disposable, so it lives in a **hidden, branded** folder (`.shipwright/`) — the analog of `.git/` or Spec Kit's `.specify/`.
+The durable docs are your product's knowledge — they outlive any tool, so they live in a **visible, content-named** tree (`docs/`), never a tool-branded or hidden folder. The tool's own state is disposable, so it lives in a **hidden, branded** folder (`.spindleloom/`) — the analog of `.git/` or Spec Kit's `.specify/`.
 
 ```
 repo/
@@ -43,7 +43,7 @@ repo/
 │   │   └── plan.md  retro.md
 │   ├── adr/  rfc/               #   LIVING — append-only decision logs (NNNN-*.md)
 │   └── RTM.md                   #   the traceability backbone (one per initiative root)
-└── .shipwright/                # HIDDEN — tool machinery (the .git / .specify analog)
+└── .spindleloom/                # HIDDEN — tool machinery (the .git / .specify analog)
     ├── config.json             #   profile, standard_version + sanctioned path knobs (STANDARD.md §8)
     ├── artifacts.json          #   generated catalog (the registry)
     ├── ARTIFACTS.md            #   human-readable catalog
@@ -51,7 +51,7 @@ repo/
     └── baselines/<tag>.json    #   SNAPSHOT — frozen version/status snapshots
 ```
 
-Scaffold it: `python scaffold.py <repo> --profile mid --feature <name>` (or `/spec-new`); convert an existing repo with `python scaffold.py <repo> migrate`. The layout is config-driven — every path knob defaults to the Standard tree and is overridable in `.shipwright/config.json`; everything (scaffold, validator, registry, MCP) resolves through it. See [`STANDARD.md`](STANDARD.md) §8.
+Scaffold it: `python scaffold.py <repo> --profile mid --feature <name>` (or `/spec-new`); convert an existing repo with `python scaffold.py <repo> migrate`. The layout is config-driven — every path knob defaults to the Standard tree and is overridable in `.spindleloom/config.json`; everything (scaffold, validator, registry, MCP) resolves through it. See [`STANDARD.md`](STANDARD.md) §8.
 
 ## How it's organized — the profiles
 
@@ -69,14 +69,14 @@ Project knowledge is organized by **how often it changes**, so recurring work ne
 
 | Plane | What | Cadence | Home |
 |---|---|---|---|
-| **Durable** | constitution, MRD, BRD, PRD, roadmap, velocity baseline | set once, rarely changes | `docs/product/` (+ `.shipwright/velocity.json`) |
+| **Durable** | constitution, MRD, BRD, PRD, roadmap, velocity baseline | set once, rarely changes | `docs/product/` (+ `.spindleloom/velocity.json`) |
 | **Living** | FRD, SRS, SDD, TSD, RTM, ADR/RFC logs, recon, backlog | edited continuously in place | `docs/specs/<feature>/`, `docs/RTM.md`, `docs/adr/` |
 | **Cyclic** | sprint plan, retro — a fresh set each sprint | new instance per sprint | `docs/sprints/<sprint>/` |
-| **Snapshot** | frozen baselines | immutable, per sprint / release | `.shipwright/baselines/<tag>` |
+| **Snapshot** | frozen baselines | immutable, per sprint / release | `.spindleloom/baselines/<tag>` |
 
 - **Solution-recon findings** live with the feature they de-risk — `docs/specs/<feature>/recon.md` — cited by the PBIs/specs they inform (not a floating doc, not a PBI).
 - **Recurring sprint docs** get their own cyclic home; at sprint close they freeze to a baseline (below), so the global tree stays clean.
-- The **durable** slice of planning (roadmap, the velocity/capacity baseline the sprint-planner reads from `.shipwright/velocity.json`) stays in the durable plane so each sprint starts from a stable source.
+- The **durable** slice of planning (roadmap, the velocity/capacity baseline the sprint-planner reads from `.spindleloom/velocity.json`) stays in the durable plane so each sprint starts from a stable source.
 
 ## Naming & traceability
 
@@ -105,7 +105,7 @@ The registry also reads the **bold-list** form ADRs use (`- **Status:** Accepted
 Documents are living, but changes are deliberate:
 
 - **Status** moves Draft → Reviewed → Approved → Baselined → Superseded (in the metadata header).
-- **Baseline** at decision points (sprint close / phase gate): `python build_artifact_registry.py <repo> --baseline <tag>` freezes every artifact's id/status/version/updated to `.shipwright/baselines/<tag>.json`. Tag with the sprint name to baseline **per sprint** — diff baselines to see what moved between sprints or releases.
+- **Baseline** at decision points (sprint close / phase gate): `python build_artifact_registry.py <repo> --baseline <tag>` freezes every artifact's id/status/version/updated to `.spindleloom/baselines/<tag>.json`. Tag with the sprint name to baseline **per sprint** — diff baselines to see what moved between sprints or releases.
 - **Version explicitly** (v1.0, v1.1) and keep a change log of what changed and why. IDs never change.
 - Regulated contexts (FDA 21 CFR 820.30) add a formal change board; the URS and downstream fall under it.
 
@@ -113,16 +113,16 @@ Documents are living, but changes are deliberate:
 
 Four complementary paths — you should never have to *know where a doc lives*:
 
-1. **By traceability** — follow an `<DOC>-<AREA>-<NUM>` ID through `RTM.md` (up to its source, down to its tests). `/rtm-check`.
-2. **By catalog** — `.shipwright/ARTIFACTS.md` (or `artifacts.json`): every artifact with its id, kind, path, owner, status, version, last-updated. Generated by `build_artifact_registry.py`.
-3. **Live, from any tool** — the `spindleloom` MCP server: `find_artifact("PRD")`, `list_artifacts(status="draft")`, `trace_requirement("FRD-TRK-001")`, `rtm_coverage()`.
+1. **By traceability** — follow an `<DOC>-<AREA>-<NUM>` ID through `RTM.md` (up to its source, down to its tests). `/spec-check`.
+2. **By catalog** — `.spindleloom/ARTIFACTS.md` (or `artifacts.json`): every artifact with its id, kind, path, owner, status, version, last-updated. Generated by `build_artifact_registry.py`.
+3. **Live, from any tool** — the `sloom` MCP server (short for Spindleloom): `find_artifact("PRD")`, `list_artifacts(status="draft")`, `trace_requirement("FRD-TRK-001")`, `rtm_coverage()`.
 4. **By navigation** — the project wiki (`wiki-curator`) and `how-to-use.html` for role-by-role entry points.
 
 ## The tools (all stdlib-only except the MCP server)
 
 | Tool | Role |
 |---|---|
-| `hooks/scaffold.py` | lay down the `docs/` + `.shipwright/` layout (tier-aware, idempotent) |
+| `hooks/scaffold.py` | lay down the `docs/` + `.spindleloom/` layout (tier-aware, idempotent) |
 | `hooks/validate_reqs.py` | RTM coverage / Req-ID / ADR-ref gate (CI + hook) |
 | `hooks/build_artifact_registry.py` | generate the catalog; `--baseline <tag>` freezes a snapshot |
 | `hooks/emit_backlog.py` | backlog.md → work-tracker work items (the sync contract, automated): parse · field-map (AC → its own field) · dry-run plan · ID write-back; pluggable tracker adapter |

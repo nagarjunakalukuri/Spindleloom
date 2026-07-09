@@ -16,7 +16,7 @@ upstream: [estimation-facilitator, backlog-manager]
 downstream: [frontend-developer, backend-developer, retrospective-facilitator, raid-keeper]
 gate: definition-of-ready-done-template.md
 skills: [relative-estimation, sprint-facilitation, agent-handoff-context]
-claude_code: { subagent_type: sprint-planner }
+claude_code: { command: /plan-sprint, subagent_type: sprint-planner }
 ---
 
 > **Handoff** · *Before:* read backlog, estimates (from `estimation-facilitator`, `backlog-manager`). *After:* produce sprint backlog → hand to `frontend-developer`, `backend-developer`, `retrospective-facilitator`, `raid-keeper`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*

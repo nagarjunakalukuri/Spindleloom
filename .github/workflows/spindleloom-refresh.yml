@@ -1,0 +1,78 @@
+name: Spindleloom Refresh
+
+# Self-healing counterpart to the drift *gate* in test-plugin-install.yml
+# (`build_harness_artifacts.py --check`, which only fails loud). This workflow
+# regenerates the derived fleet artifacts and opens a PR when they've drifted —
+# modeled on langchain-ai/openwiki's scheduled docs-refresh-and-auto-PR pattern
+# (https://github.com/langchain-ai/openwiki/blob/main/.github/workflows/openwiki-update.yml).
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Weekly backstop for drift from any source: manual edits, a bypassed
+    # pre-commit hook (--no-verify), or a merge via the GitHub UI.
+    - cron: "0 8 * * 1" # 08:00 UTC Monday
+  push:
+    branches: [main]
+    paths:
+      - "agents/**"
+      - "skills/**"
+      - "commands/**"
+      - "templates/**"
+      - "project_guides/**"
+      - "hooks/**"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: spindleloom-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    name: Regenerate derived fleet artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Regenerate agents/INDEX.md, handoff lines, agents/HELP.md, targets/
+        run: |
+          python hooks/build_agent_index.py
+          python hooks/build_handoffs.py
+          python hooks/build_help.py
+          python hooks/build_harness_artifacts.py
+
+      - name: Validate fleet integrity
+        run: python hooks/validate_graph.py
+
+      - name: Open refresh pull request if artifacts drifted
+        uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7
+        with:
+          add-paths: |
+            agents/
+            targets/
+          branch: spindleloom/refresh-derived-artifacts
+          commit-message: "chore: regenerate derived fleet artifacts"
+          title: "chore: regenerate derived fleet artifacts"
+          body: |
+            Automated refresh of generated fleet artifacts (`agents/INDEX.md`,
+            per-agent handoff lines, `agents/HELP.md`, `targets/`) from the current `agents/`, `skills/`,
+            `commands/`, `templates/`, and `project_guides/` source.
+
+            Opened automatically because regenerating these derived files produced
+            a diff — someone edited source without re-running
+            `hooks/build_agent_index.py` / `build_handoffs.py` / `build_help.py` /
+            `build_harness_artifacts.py` (or bypassed the pre-commit hook that does it
+            for you). `hooks/validate_graph.py`
+            passed before this PR was opened, so the fleet graph stays consistent.
+
+            No PR is opened when there's nothing to regenerate — this workflow is a
+            no-op most weeks.

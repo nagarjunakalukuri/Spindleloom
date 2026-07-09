@@ -1,6 +1,6 @@
 # Harness convergence matrix — 7 surfaces × 4 tools
 
-Where each AI-coding harness exposes each customization surface, and which Spindleloom source maps onto it. This is what **Shipwright** (`hooks/build_harness_artifacts.py`) targets — one source, native artifacts per tool.
+Where each AI-coding harness exposes each customization surface, and which Spindleloom source maps onto it. This is what the harness generator (`hooks/build_harness_artifacts.py`) targets — one source, native artifacts per tool.
 
 > Verified against official docs (2026-06). Several cells are **Preview** and may shift — re-verify before relying on a Preview format. `yes` = first-class native · `partial` = supported but Preview / lossy / different model · `no` = no native concept.
 
@@ -16,7 +16,7 @@ Where each AI-coding harness exposes each customization surface, and which Spind
 | **Plugins** | **yes** — `.claude-plugin/plugin.json` + `marketplace.json` | **yes** — `.cursor-plugin/plugin.json` (**has** `commands` key); v2.5+ | **partial** — Agent Plugins `plugin.json` (**Preview**; **no** `commands` key) | **no** — no multi-surface bundle format |
 | **Slash Commands** | **yes** — merged into Skills; legacy `.claude/commands/*.md` | **yes** — `.cursor/commands/*.md` | **yes** — `.github/prompts/*.prompt.md` | **yes** — `.windsurf/workflows/*.md` (manual-only) |
 
-## Spindleloom source → surface (what Shipwright emits)
+## Spindleloom source → surface (what the generator emits)
 
 | Source | Claude Code | Cursor | Copilot | Windsurf |
 |---|---|---|---|---|
@@ -36,5 +36,5 @@ Where each AI-coding harness exposes each customization surface, and which Spind
 
 - **Copilot Plugins have no `commands` manifest key** (commands ride as bundled prompt/skill files); **Cursor Plugins do**.
 - **Copilot & Windsurf hooks are Preview / use a different model** — don't depend on matcher semantics.
-- **Windsurf MCP config is user-global** (`~/.codeium/windsurf/mcp_config.json`), not repo-relative — Shipwright ships the server + a config snippet, not a committed repo file.
+- **Windsurf MCP config is user-global** (`~/.codeium/windsurf/mcp_config.json`), not repo-relative — the generator ships the server + a config snippet, not a committed repo file.
 - **Copilot now reads Claude-format files** (`.claude/agents`, `.claude/skills`, `CLAUDE.md`) — a future simplification is consuming the `claude-plugin` bundle directly.

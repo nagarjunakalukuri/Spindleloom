@@ -3,7 +3,7 @@
 scaffold.py — lay down the canonical Spindleloom project layout.
 
 Creates the visible, content-named docs tree (the deliverables) + the hidden
-`.shipwright/` machinery, per the information-architecture decision: brand the
+`.spindleloom/` machinery, per the information-architecture decision: brand the
 machinery, name the deliverables for what they are.
 
     docs/
@@ -13,12 +13,12 @@ machinery, name the deliverables for what they are.
       sprints/<sprint>/  plan.md retro.md        (CYCLIC — one set per sprint)
       adr/  rfc/                        (LIVING — append-only logs)
       RTM.md                            (the traceability backbone)
-    .shipwright/
+    .spindleloom/
       config.json                       (standard_version, profile, sanctioned path deviations)
       baselines/<tag>.json              (SNAPSHOT — frozen per sprint/release)
 
 Profile-aware (lean | mid | enterprise) — scaffolds the document set the profile calls for.
-Layout is config-driven (see rtm_core.layout): an absent .shipwright/config.json yields the
+Layout is config-driven (see rtm_core.layout): an absent .spindleloom/config.json yields the
 canonical Standard tree. Stubs come from the bundled templates/. Idempotent: existing files
 are never overwritten. Dependency-free (stdlib only). See project_guides/STANDARD.md for the rules.
 
@@ -38,6 +38,8 @@ import os
 import posixpath
 import re
 import sys
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -77,7 +79,7 @@ def write_if_absent(path, content, created):
 
 def scaffold(root, profile=None, feature="feature-1", templates=None, tier=None):
     """Lay down the canonical Standard layout under `root` (idempotent — never overwrites
-    an existing file). Honors any sanctioned path deviations in .shipwright/config.json;
+    an existing file). Honors any sanctioned path deviations in .spindleloom/config.json;
     an absent config yields the canonical tree. `profile` (lean | mid | enterprise; `tier`
     is a back-compat alias) selects which documents are populated, defaulting to the
     project's configured profile or 'mid'. Returns the created file paths as strings.
@@ -95,11 +97,23 @@ def scaffold(root, profile=None, feature="feature-1", templates=None, tier=None)
     for d in (lay["product_dir"], f"{lay['specs_dir']}/{feature}", lay["adr_dir"], lay["rfc_dir"], lay["sprints_dir"]):
         (docs / d).mkdir(parents=True, exist_ok=True)
 
-    # .shipwright machinery + config (records the conformance-relevant fields)
-    write_if_absent(root / ".shipwright" / "config.json",
+    # .spindleloom machinery + config (records the conformance-relevant fields)
+    write_if_absent(root / ".spindleloom" / "config.json",
                     json.dumps({"standard_version": rtm_core.STANDARD_VERSION,
                                 "profile": profile, "docs_root": lay["docs_root"]}, indent=2) + "\n",
                     created)
+    # committed-vs-local split: the JSONL log is the shared, git-mergeable context store;
+    # the SQLite index + chroma vectors are per-machine (binary — git can't merge them)
+    write_if_absent(root / ".spindleloom" / ".gitignore",
+                    "# Local, rebuildable indexes — never committed. The shared context store\n"
+                    "# is context-log.jsonl (committed); rebuild these from it: sloom context . --import\n"
+                    "context.db\nchroma/\n",
+                    created)
+    # the PR gate — merging to main must PROVE the gates ran, not assume it
+    ci_src = templates / "ci" / "sloom-gate.yml"
+    if ci_src.is_file():
+        write_if_absent(root / ".github" / "workflows" / "sloom-gate.yml",
+                        ci_src.read_text(encoding="utf-8", errors="ignore"), created)
 
     # RTM backbone
     write_if_absent(docs / lay["rtm_file"], RTM_HEADER, created)
@@ -122,8 +136,8 @@ def scaffold(root, profile=None, feature="feature-1", templates=None, tier=None)
     funnel = " → ".join(spec["product"]) or "(none)"
     feat = ", ".join(spec["feature"]) or "(in tickets)"
     write_if_absent(docs / "README.md",
-                    f"# Docs\n\n> Scaffolded by Shipwright (`scaffold.py`, profile: {profile}). "
-                    f"Visible deliverables; machinery lives in `.shipwright/`. See `project_guides/STANDARD.md`.\n\n"
+                    f"# Docs\n\n> Scaffolded by `scaffold.py` (profile: {profile}). "
+                    f"Visible deliverables; machinery lives in `.spindleloom/`. See `project_guides/STANDARD.md`.\n\n"
                     f"- **{lay['product_dir']}/** — durable funnel: {funnel}\n"
                     f"- **{lay['specs_dir']}/{feature}/** — per-feature (living): {feat}\n"
                     f"- **{lay['sprints_dir']}/<sprint>/** — per-sprint plan + retro (cyclic)\n"
@@ -354,9 +368,25 @@ def migrate(root, feature="feature-1", apply=False, force=False):
     cfg.setdefault("standard_version", rtm_core.STANDARD_VERSION)
     cfg.setdefault("profile", lay["profile"])
     cfg.setdefault("docs_root", lay["docs_root"])
-    cfgp = root / ".shipwright" / "config.json"
+    # rename the legacy tool dir first (pre-0.3 repos used .shipwright/)
+    legacy = root / rtm_core.LEGACY_TOOL_DIR
+    canonical = root / rtm_core.TOOL_DIR
+    if legacy.is_dir() and not canonical.exists():
+        legacy.rename(canonical)
+    cfgp = canonical / "config.json"
     cfgp.parent.mkdir(parents=True, exist_ok=True)
     cfgp.write_text(json.dumps(cfg, indent=2) + "\n", encoding="utf-8")
+    gi = canonical / ".gitignore"
+    if not gi.exists():  # same committed-vs-local split scaffold() writes
+        gi.write_text(
+            "# Local, rebuildable indexes — never committed. The shared context store\n"
+            "# is context-log.jsonl (committed); rebuild these from it: sloom context . --import\n"
+            "context.db\nchroma/\n", encoding="utf-8")
+    ci_src = Path(__file__).resolve().parent.parent / "templates" / "ci" / "sloom-gate.yml"
+    ci_dst = root / ".github" / "workflows" / "sloom-gate.yml"
+    if ci_src.is_file() and not ci_dst.exists():  # same PR gate scaffold() writes
+        ci_dst.parent.mkdir(parents=True, exist_ok=True)
+        ci_dst.write_text(ci_src.read_text(encoding="utf-8", errors="ignore"), encoding="utf-8")
 
     plan["applied"] = True
     return plan

@@ -14,22 +14,22 @@
 | Agent | Loop · Role | Produces | ID | RTM column | Hands off to | Command |
 |---|---|---|---|---|---|---|
 | `brd-writer` | planning · maker | BRD | BR | Business goal (BRD) | prd-writer, urs-writer | /spec-new |
-| `frd-writer` | planning · maker | FRD | FRD | Functional req (FRD) | srs-writer, backlog-manager, test-plan-writer, api-designer, feature-docs-writer, solution-recon, ux-ui-designer, product-analytics, architect | /spec-new |
+| `frd-writer` | planning · maker | FRD | FRD | Functional req (FRD) | srs-writer, backlog-manager, test-plan-writer, api-designer, feature-docs-writer, solution-recon, ux-ui-designer, product-analytics, architect, sdd-writer | /spec-new |
 | `prd-writer` | planning · maker | PRD | PRD | Product story (PRD) | frd-writer, backlog-manager, solution-recon, ux-ui-designer, ai-eval, product-analytics | /spec-new |
 | `srs-writer` | planning · maker | SRS | SR | Software req (SRS) | sdd-writer, test-plan-writer, backlog-manager, data-modeler, security-reviewer, sre, performance-engineer, rfc-facilitator | /spec-new |
-| `urs-writer` | planning · maker | URS | URS | User req (URS) | srs-writer, frd-writer | /spec-new |
+| `urs-writer` | planning · maker | URS | URS | User req (URS) | srs-writer, frd-writer, prd-writer | /spec-new |
 
 ## Design
 
 | Agent | Loop · Role | Produces | ID | RTM column | Hands off to | Command |
 |---|---|---|---|---|---|---|
-| `adr-writer` | governance · maker | ADR | ADR | Decision (ADR) | tech-radar-curator | /adr-new |
+| `adr-writer` | governance · maker | ADR | ADR | Decision (ADR) | tech-radar-curator | /spec-adr |
 | `api-designer` | planning · maker | API contract | API | Design (API contract) | backend-developer, frontend-developer, test-automation-engineer | — |
 | `architect` | planning · advisor | architecture-decision-analysis | — | — | adr-writer, rfc-facilitator, backend-developer, frontend-developer, raid-keeper | — |
 | `data-modeler` | planning · maker | data model | DM | Design (data model) | backend-developer | — |
-| `rfc-facilitator` | planning · facilitator | RFC | RFC | — | adr-writer, sdd-writer | /rfc |
+| `rfc-facilitator` | planning · facilitator | RFC | RFC | — | adr-writer, sdd-writer | /spec-rfc |
 | `sdd-writer` | planning · maker | SDD | SDD | Design (SDD) | backlog-manager, adr-writer, api-designer, data-modeler, rfc-facilitator, tsd-writer, security-reviewer, sre, architect | /spec-new |
-| `solution-recon` | planning · advisor | solution-recon-findings | — | — | frd-writer, srs-writer, sdd-writer, backlog-manager, adr-writer, architect, estimation-facilitator, backend-developer, frontend-developer, raid-keeper | — |
+| `solution-recon` | planning · advisor | solution-recon-findings | — | — | frd-writer, srs-writer, sdd-writer, backlog-manager, adr-writer, architect, estimation-facilitator, backend-developer, frontend-developer, raid-keeper | /build-recon |
 | `tsd-writer` | planning · maker | TSD | TSD | Design (TSD) | backlog-manager, backend-developer, pipeline-engineer | /spec-new |
 | `ux-ui-designer` | planning · maker | UX design spec | UX | Design (UX) | frontend-developer, accessibility-auditor | — |
 
@@ -37,19 +37,19 @@
 
 | Agent | Loop · Role | Produces | ID | RTM column | Hands off to | Command |
 |---|---|---|---|---|---|---|
-| `backlog-manager` | planning · facilitator | backlog | PBI | Product story → Backlog item (PBI) | estimation-facilitator, sprint-planner, status-reporter, test-author | /pbi-next |
-| `estimation-facilitator` | planning · facilitator | estimates | — | — | sprint-planner | — |
-| `sprint-planner` | planning · facilitator | sprint backlog | — | — | frontend-developer, backend-developer, retrospective-facilitator, raid-keeper | — |
+| `backlog-manager` | planning · facilitator | backlog | PBI | Product story → Backlog item (PBI) | estimation-facilitator, sprint-planner, status-reporter, test-author | /plan-next |
+| `estimation-facilitator` | planning · facilitator | estimates | — | — | sprint-planner | /plan-estimate |
+| `sprint-planner` | planning · facilitator | sprint backlog | — | — | frontend-developer, backend-developer, retrospective-facilitator, raid-keeper | /plan-sprint |
 
 ## Build
 
 | Agent | Loop · Role | Produces | ID | RTM column | Hands off to | Command |
 |---|---|---|---|---|---|---|
 | `ai-orchestrator` | governance · orchestrator | agentic SDLC governance policy | — | — | ai-eval | — |
-| `backend-developer` | inner · maker | backend code | BE | Build (BE) | change-verifier, code-reviewer, qa-tester, pr-author, performance-engineer, debugger | — |
+| `backend-developer` | inner · maker | backend code | BE | Build (BE) | change-verifier, code-reviewer, qa-tester, performance-engineer, debugger | — |
 | `coding-standards-writer` | inner · maker | coding-standards | — | — | code-reviewer, frontend-developer, backend-developer, pipeline-engineer | — |
 | `dev-onboarding` | inner · maker | onboarding/CONTRIBUTING guide + inner-loop readiness gate | — | — | backend-developer, frontend-developer, flaky-test-detective | — |
-| `frontend-developer` | inner · maker | frontend code | FE | Build (FE) | change-verifier, code-reviewer, qa-tester, pr-author, accessibility-auditor, performance-engineer, debugger | — |
+| `frontend-developer` | inner · maker | frontend code | FE | Build (FE) | change-verifier, code-reviewer, qa-tester, accessibility-auditor, performance-engineer, debugger | — |
 | `pr-author` | outer-integrate · maker | PR description, commit messages | — | — | code-reviewer | — |
 
 ## Test
@@ -59,7 +59,7 @@
 | `accessibility-auditor` | outer-integrate · checker | accessibility audit + sign-off | A11Y | Audit (A11Y) | release-manager | — |
 | `ai-eval` | outer-integrate · maker | eval suite + golden datasets | EVAL | — | pipeline-engineer | — |
 | `bug-triager` | outer-integrate · facilitator | triaged bug queue | — | — | debugger, backlog-manager | — |
-| `change-verifier` | inner · checker | verification-report | — | — | pr-author, code-reviewer, debugger | — |
+| `change-verifier` | inner · checker | verification-report | — | — | pr-author, code-reviewer, debugger | /build-verify |
 | `debugger` | inner · maker | root-cause note, fix | — | — | test-author | — |
 | `flaky-test-detective` | inner · checker | flaky-test findings, quarantine list | — | — | test-automation-engineer | — |
 | `qa-tester` | outer-integrate · checker | bug reports, QA sign-off | BUG | — | bug-triager, release-manager, debugger | — |
@@ -73,22 +73,22 @@
 |---|---|---|---|---|---|---|
 | `code-reviewer` | outer-integrate · checker | review-feedback | — | — | pipeline-engineer, release-manager, tech-debt-keeper, backend-developer, frontend-developer | — |
 | `performance-engineer` | outer-integrate · maker | performance audit + optimizations | PERF | — | sre, release-manager | — |
-| `raid-keeper` | governance · keeper | raid-log | RAID | — | status-reporter | — |
+| `raid-keeper` | governance · keeper | raid-log | RAID | — | status-reporter | /ops-raid |
 | `security-reviewer` | outer-integrate · checker | threat-model + security-review | SEC | Security req (SEC) | code-reviewer, pipeline-engineer, backend-developer, frontend-developer | — |
-| `status-reporter` | governance · maker | status-report | — | — | — | — |
+| `status-reporter` | governance · maker | status-report | — | — | — | /ops-status |
 
 ## Release
 
 | Agent | Loop · Role | Produces | ID | RTM column | Hands off to | Command |
 |---|---|---|---|---|---|---|
-| `pipeline-engineer` | outer-integrate · maker | ci-cd-pipeline | — | — | release-manager, flaky-test-detective, sre | — |
-| `release-manager` | outer-ship · facilitator | release-plan | REL | — | incident-responder, feature-docs-writer, wiki-curator | — |
+| `pipeline-engineer` | outer-integrate · maker | ci-cd-pipeline, engineering-metrics | — | — | release-manager, flaky-test-detective, sre, status-reporter | /ops-metrics |
+| `release-manager` | outer-ship · facilitator | release-plan | REL | — | incident-responder, feature-docs-writer, wiki-curator | /ship-release |
 
 ## Operate
 
 | Agent | Loop · Role | Produces | ID | RTM column | Hands off to | Command |
 |---|---|---|---|---|---|---|
-| `incident-responder` | outer-ship · facilitator | postmortem | INC | — | backlog-manager, retrospective-facilitator, tech-debt-keeper, raid-keeper | — |
+| `incident-responder` | outer-ship · facilitator | postmortem | INC | — | backlog-manager, retrospective-facilitator, tech-debt-keeper, raid-keeper | /ops-incident |
 | `sre` | outer-ship · maker | reliability-plan | OPS | — | incident-responder, release-manager | — |
 
 ## Process
@@ -96,8 +96,8 @@
 | Agent | Loop · Role | Produces | ID | RTM column | Hands off to | Command |
 |---|---|---|---|---|---|---|
 | `feature-docs-writer` | outer-ship · maker | feature-docs | DOC | — | wiki-curator | — |
-| `product-analytics` | governance · maker | analytics & instrumentation spec | PA | — | status-reporter | — |
-| `retrospective-facilitator` | planning · facilitator | retro-record | — | — | backlog-manager, tech-debt-keeper | — |
+| `product-analytics` | governance · maker | analytics & instrumentation spec | PA | — | status-reporter, backlog-manager | — |
+| `retrospective-facilitator` | planning · facilitator | retro-record | — | — | backlog-manager, tech-debt-keeper | /plan-retro |
 | `run-orchestrator` | governance · orchestrator | run-state + next-agent dispatch plan | — | — | — | /run |
 | `spec-steward` | governance · keeper | living-spec | — | — | doc-strategy-advisor | — |
 | `tech-debt-keeper` | governance · keeper | tech-debt-register | DEBT | — | backlog-manager | /tech-debt |

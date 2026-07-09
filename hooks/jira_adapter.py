@@ -41,6 +41,8 @@ import base64
 import json
 import os
 import sys
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 import urllib.request
 import urllib.error
 from pathlib import Path
@@ -186,6 +188,25 @@ def _post(base_url, path, body, email, token):
         raise RuntimeError(f"Jira API {exc.code} on {url}: {body_text}") from exc
 
 
+def build_comment(text):
+    """Issue-comment payload — API v3 requires ADF, not a plain string. Pure & offline-testable."""
+    return {"body": {"type": "doc", "version": 1,
+                     "content": [{"type": "paragraph",
+                                  "content": [{"type": "text", "text": text}]}]}}
+
+
+def add_comment(issue_key, text):
+    """POST one comment to an issue (e.g. a phase-acceptance mirror from `sloom approve
+    --notify-tracker`). Comment-only by design: issue STATE stays owned by the board's
+    own workflow — we never fight the tracker for status. Returns False (no network)
+    when creds are missing."""
+    base_url, _, email, token = _cfg()
+    if not all((base_url, email, token)):
+        return False
+    _post(base_url, f"issue/{issue_key}/comment", build_comment(text), email, token)
+    return True
+
+
 def list_fields(base_url, email, token):
     """Print all field id/name pairs for this Jira instance — helps find SP and AC field ids."""
     url = f"{base_url}/{API}/field"
@@ -199,7 +220,7 @@ def list_fields(base_url, email, token):
         print(f"  {f['id']:40}  {f['name']}")
 
 
-def push(plan, dry_run=True, link_epics=False):
+def push(plan, dry_run=True, link_epics=False, id_map=None):
     """Create one Jira issue per plan['work_items']; return {PBI-ID: issue-key}.
     dry_run (default) makes NO network calls — it prints the per-item plan and returns {}."""
     base_url, project, email, token = _cfg()
@@ -212,7 +233,7 @@ def push(plan, dry_run=True, link_epics=False):
         )
         return {}
 
-    id_map, epics = {}, {}
+    id_map, epics = ({} if id_map is None else id_map), {}
     for wi in plan["work_items"]:
         parent_key = None
         if link_epics and wi.get("parent_epic"):
@@ -255,7 +276,7 @@ def main(argv):
     flags = {a for a in argv[1:] if a.startswith("--")}
     if not args:
         print(__doc__.strip().split("\n\n")[0])
-        print("\nusage: jira_adapter.py <backlog.md> [--apply] [--link-epics] [--rtm <file>]")
+        print("\nusage: jira_adapter.py <backlog.md> [--apply] [--link-epics] [--rtm <file>] [--force-repush]")
         print("       jira_adapter.py --list-fields")
         return 2
 
@@ -264,19 +285,31 @@ def main(argv):
     for w in p["warnings"]:
         print("  warn:", w)
 
+    # Idempotency guard: the RTM's committed mapping column is the source of truth for
+    # "already pushed" — skip mapped PBIs so a re-run (or a second teammate) creates nothing.
+    if "--rtm" in argv and "--force-repush" not in flags:
+        rtm_md = Path(argv[argv.index("--rtm") + 1]).read_text(encoding="utf-8")
+        p, skipped = emit_backlog.filter_pushed(p, rtm_md)
+        for pid, wid in skipped:
+            print(f"  skip {pid} -> {wid} (already mapped in the RTM; --force-repush overrides)")
+
     dry = "--apply" not in flags
-    id_map = push(p, dry_run=dry, link_epics="--link-epics" in flags)
+    id_map = {}
+    try:
+        push(p, dry_run=dry, link_epics="--link-epics" in flags, id_map=id_map)
+    finally:
+        # Record whatever was created — even if push() raised partway through — so a
+        # retry sees the already-made issues in the RTM and never duplicates them.
+        if not dry and id_map and "--rtm" in argv:
+            rtm = Path(argv[argv.index("--rtm") + 1])
+            emit_backlog.atomic_write(
+                rtm, emit_backlog.writeback(rtm.read_text(encoding="utf-8"), id_map))
+            print(f"writeback: recorded {len(id_map)} key(s) in {rtm}")
 
     if dry:
         print("Dry-run — no network calls. Re-run with --apply (and creds) to create + write back.")
         return 0
-
-    if id_map and "--rtm" in argv:
-        rtm = Path(argv[argv.index("--rtm") + 1])
-        rtm.write_text(emit_backlog.writeback(rtm.read_text(encoding="utf-8"), id_map),
-                       encoding="utf-8")
-        print(f"writeback: recorded {len(id_map)} key(s) in {rtm}")
-    elif id_map:
+    if id_map and "--rtm" not in argv:
         print(json.dumps(id_map, indent=2))
     return 0
 

@@ -50,7 +50,7 @@ Loops nest, each wrapping the one below:
 1. **Agent loop** — reason → act → observe → repeat. An agent that can run code, see the result, and fix it — not one that only suggests.
 2. **Verification loop** — a separate checker/grader scores the output against a rubric and sends it back when it falls short (the maker/checker split below).
 3. **Event-driven loop** — the agent runs continuously inside a system, triggered by schedule (cron), webhook, or message, rather than invoked by hand.
-4. **Hill-climbing loop** — the outermost and highest-leverage: production traces and eval results feed an *analysis pass* that improves the harness itself (prompts, skills, stop conditions), so each cycle makes the inner loops better. Wire it to `ai-eval` (the signal it climbs on), and feed durable lessons to `retrospective-facilitator`, the team `skills`, and the `/constitution`. Most teams stop at layer 3; layer 4 is what compounds — but it only works if a human still reviews the harness changes it proposes.
+4. **Hill-climbing loop** — the outermost and highest-leverage: production traces and eval results feed an *analysis pass* that improves the harness itself (prompts, skills, stop conditions), so each cycle makes the inner loops better. Wire it to `ai-eval` (the signal it climbs on), and feed durable lessons to `retrospective-facilitator`, the team `skills`, and the `/spec-constitution`. Most teams stop at layer 3; layer 4 is what compounds — but it only works if a human still reviews the harness changes it proposes.
 
 ### Verifiable stop conditions (the contract)
 An autonomous run needs a contract it can prove it met, not a wish. Every loop goal states four things:

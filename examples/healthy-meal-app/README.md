@@ -4,7 +4,7 @@ A full run of the documentation chain for one app, at **overview depth**, to sho
 
 Read them in order:
 
-0. `00-constitution.md` — Project Constitution (`/constitution`) — *the standing guardrails every feature inherits*
+0. `00-constitution.md` — Project Constitution (`/spec-constitution`) — *the standing guardrails every feature inherits*
 1. `01-mrd.md` — Market Requirements (`mrd-writer`) — *is there a market?*
 2. `02-brd.md` — Business Requirements (`brd-writer`) — *why build it?*
 3. `03-prd.md` — Product Requirements (`prd-writer`) — *what, for the user?*

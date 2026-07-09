@@ -1,9 +1,9 @@
 [project]
 name = "spindleloom"
-version = "0.2.0"
-description = "Spindleloom — SDLC agent fleet, traceability MCP server, and the Shipwright generator."
+version = "0.3.0"
+description = "Spindleloom — SDLC agent fleet, traceability MCP server, and the harness generator."
 requires-python = ">=3.10"
-# No required runtime dependencies: rtm_core, the validator, and the Shipwright
+# No required runtime dependencies: rtm_core, the validator, and the harness
 # generator are stdlib-only, and the shipped MCP server self-provisions its one
 # dependency at launch via `uv run --with "mcp[cli]"` (see hooks/build_harness_artifacts.py).
 # ChromaDB powers the OPTIONAL semantic context search (SPINDLELOOM_SEMANTIC=1) —

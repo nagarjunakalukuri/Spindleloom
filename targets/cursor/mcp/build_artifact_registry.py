@@ -5,16 +5,16 @@ build_artifact_registry.py — generate an artifact catalog for a project.
 Answers "what artifacts exist, where, owned by whom, in what state?" — the
 retrieval/discovery layer the RTM (which threads *requirements*) doesn't cover.
 
-It reads the **docs root** (resolved from `.shipwright/config.json` → `docs_root`,
+It reads the **docs root** (resolved from `.spindleloom/config.json` → `docs_root`,
 default `docs/`, falling back to the project root for a flat layout), discovers
 each artifact's kind from its filename, reads owner/status/version/last-updated
 from the doc header (Field/Value table, bold lines, or frontmatter), and lists
 the Req-IDs each defines.
 
-It writes the **catalog into `.shipwright/`** (derived machinery, kept out of the
+It writes the **catalog into `.spindleloom/`** (derived machinery, kept out of the
 human-facing docs tree):
-  .shipwright/artifacts.json   machine-readable manifest (consumed by the MCP server)
-  .shipwright/ARTIFACTS.md     human-readable catalog table
+  .spindleloom/artifacts.json   machine-readable manifest (consumed by the MCP server)
+  .spindleloom/ARTIFACTS.md     human-readable catalog table
 
 Dependency-free (Python 3 stdlib only); read-only except for those outputs.
 
@@ -25,6 +25,8 @@ Usage:
 """
 import json
 import sys
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -69,7 +71,7 @@ def main(argv):
 
     docs_root = rtm_core.resolve_docs_root(project_root)
     arts = rtm_core.artifacts(docs_root)
-    sw = project_root / rtm_core.SHIPWRIGHT_DIR
+    sw = rtm_core.tool_dir(project_root)
     targets = {
         sw / "artifacts.json": json.dumps(arts, indent=2, ensure_ascii=False) + "\n",
         sw / "ARTIFACTS.md": render_md(docs_root, arts),

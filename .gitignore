@@ -11,3 +11,6 @@ venv/
 .mypy_cache/
 .ruff_cache/
 .wheelwright/
+
+# Toolkit repo's own state dir is test residue at the root — real state lives per-adopter-repo
+/.spindleloom/

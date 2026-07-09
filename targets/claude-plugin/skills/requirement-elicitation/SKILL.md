@@ -22,7 +22,7 @@ It is the elicitation front-end to `requirement-quality`: elicit first to extrac
 1. Read what already exists — the upstream artifact (MRD/BRD/PRD/…), any notes, the relevant code, and the RTM. Enter the interview already knowing the answerable facts.
 2. Map the open decisions into a tree: the few load-bearing choices first, their dependents below.
 3. Ask one question, with your recommended answer. Wait. Incorporate the response, then re-derive which question matters next — the tree shifts as answers land.
-4. When a choice is hard to reverse, surprising, and the result of a real trade-off, record it as an ADR (`/adr-new`, `adr-writer`) — see `ubiquitous-language`. Capture new or sharpened terms in the project glossary as they settle.
+4. When a choice is hard to reverse, surprising, and the result of a real trade-off, record it as an ADR (`/spec-adr`, `adr-writer`) — see `ubiquitous-language`. Capture new or sharpened terms in the project glossary as they settle.
 5. Stop when the remaining questions no longer change the shape of the thing. Hand the resolved set to the writer agent for drafting.
 
 ## Output

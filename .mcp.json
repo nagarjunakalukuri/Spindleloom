@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "spindleloom": {
+    "sloom": {
       "command": "uv",
       "args": [
         "run",

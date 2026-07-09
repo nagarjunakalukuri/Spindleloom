@@ -14,7 +14,7 @@ outputs: wiki-home
 rtm_column: "—"
 upstream: [doc-strategy-advisor, feature-docs-writer, release-manager]
 downstream: []
-skills: []
+skills: [agent-handoff-context]
 claude_code: { subagent_type: wiki-curator }
 ---
 

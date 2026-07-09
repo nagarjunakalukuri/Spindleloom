@@ -35,29 +35,55 @@ def adr_file_num(relpath):
             return int(m2.group(1))
     return None
 # requirement-defining docs whose IDs must be covered by the RTM
-COVERED_DOCS = {"FRD", "SR", "SRS"}
+# Coverage is enforced at every requirement altitude, not just FRD/SRS —
+# a dropped BRD goal or PRD story must be as visible as a dropped FRD req.
+COVERED_DOCS = {"FRD", "SR", "SRS", "BR", "PRD", "URS"}
 RTM_NAME = "RTM.md"
 
-# Tool machinery + content-location config (the .shipwright / docs split).
-SHIPWRIGHT_DIR = ".shipwright"
+# Req-ID DOC prefix -> the artifact kind whose files *define* (mint) that ID. Used by the
+# DUP-REQID collision check: two same-kind files defining one ID is a mint collision;
+# any other kind citing it is normal downstream referencing.
+_DEFINING_KIND = {"BR": "brd", "PRD": "prd", "FRD": "frd", "URS": "urs",
+                  "SR": "srs", "SRS": "srs", "PBI": "backlog"}
+
+# Tool machinery + content-location config (the .spindleloom / docs split).
+# `.spindleloom/` is the ONE tool-state home (config, catalog, baselines, verifications,
+# signoffs, context DB). `.shipwright/` is the pre-0.3 name — still readable so existing
+# repos keep working; `scaffold.py migrate` renames it. New writes go where the project
+# already keeps its state (legacy until migrated, canonical otherwise).
+TOOL_DIR = ".spindleloom"
+LEGACY_TOOL_DIR = ".shipwright"
+SHIPWRIGHT_DIR = TOOL_DIR  # deprecated alias — importers should move to TOOL_DIR
 CONFIG_NAME = "config.json"
 DEFAULT_DOCS_ROOT = "docs"
 
 
+def tool_dir(project_root):
+    """The project's tool-state dir: `.spindleloom/` canonically; the legacy
+    `.shipwright/` if that's what the repo has (until `scaffold.py migrate` renames it)."""
+    project_root = Path(project_root)
+    canonical = project_root / TOOL_DIR
+    legacy = project_root / LEGACY_TOOL_DIR
+    if not canonical.exists() and legacy.exists():
+        return legacy
+    return canonical
+
+
 def load_config(project_root):
-    """Read .shipwright/config.json if present (else {})."""
-    p = Path(project_root) / SHIPWRIGHT_DIR / CONFIG_NAME
-    if p.exists():
-        try:
-            return json.loads(p.read_text(encoding="utf-8", errors="ignore"))
-        except (ValueError, OSError):
-            return {}
+    """Read <tool-dir>/config.json if present (else {}) — canonical first, then legacy."""
+    for d in (TOOL_DIR, LEGACY_TOOL_DIR):
+        p = Path(project_root) / d / CONFIG_NAME
+        if p.exists():
+            try:
+                return json.loads(p.read_text(encoding="utf-8", errors="ignore"))
+            except (ValueError, OSError):
+                return {}
     return {}
 
 
 def resolve_docs_root(project_root):
     """The folder that holds the spec artifacts, resolved from a project root.
-    Order: .shipwright/config.json `docs_root` -> ./docs -> the project root itself
+    Order: .spindleloom/config.json `docs_root` -> ./docs -> the project root itself
     (flat layout, backward-compatible). Location is config, never hardcoded."""
     project_root = Path(project_root)
     dr = load_config(project_root).get("docs_root")
@@ -72,7 +98,7 @@ def resolve_docs_root(project_root):
 STANDARD_VERSION = "1.0"
 
 # Layout knobs — defaults reproduce the canonical Standard tree; each is overridable
-# in .shipwright/config.json (the sanctioned exception). See project_guides/STANDARD.md §8.
+# in .spindleloom/config.json (the sanctioned exception). See project_guides/STANDARD.md §8.
 LAYOUT_DEFAULTS = {
     "product_dir": "product",
     "specs_dir": "specs",
@@ -86,7 +112,7 @@ LAYOUT_DEFAULTS = {
 
 def layout(project_root):
     """Resolve a project's layout: the Standard's defaults overlaid with any sanctioned
-    deviations in .shipwright/config.json, plus `profile` and `standard_version`. An
+    deviations in .spindleloom/config.json, plus `profile` and `standard_version`. An
     absent config yields the canonical Standard layout (every knob defaulted)."""
     cfg = load_config(project_root)
     out = dict(LAYOUT_DEFAULTS)
@@ -106,13 +132,19 @@ def _read(f):
         return ""
 
 
+COMMENTARY = {"verdict.md", "readme.md"}  # judge/commentary — never spec artifacts
+
+
 def markdown_files(root):
-    """All .md under root, recursively — excluding any dotdir (.shipwright, .git, …)
-    so machinery is never mistaken for content. Flat folders behave as before."""
+    """All .md under root, recursively — excluding any dotdir (.spindleloom, .git, …) so
+    machinery is never mistaken for content, and excluding commentary (README.md, verdict.md)
+    so a judge verdict quoting a prior run's ID can't register as a defined/orphaned Req-ID.
+    Flat folders behave as before."""
     root = Path(root)
     return sorted(
         p for p in root.rglob("*.md")
         if not any(part.startswith(".") for part in p.relative_to(root).parts)
+        and p.name.lower() not in COMMENTARY
     )
 
 
@@ -181,6 +213,21 @@ def audit(root):
                     add("PBI-ORPHAN", rid, f"PBI-ORPHAN {rid} (in {', '.join(fs)}) is not traced in {RTM_NAME}")
     else:
         add("NO-RTM", None, f"NO-RTM     {RTM_NAME} not found in {root} — traceability cannot be proven")
+
+    # DUP-REQID: the same Req-ID minted independently in two same-kind files (the
+    # two-branches race: both mint FRD-AUTH-004, git merges clean, IDs silently collide).
+    # Only same-kind files count as *defining* — an SDD/TSD/test-plan citing an FRD id is
+    # normal downstream referencing, never a collision.
+    for rid, fs in defined_in.items():
+        doc = rid.split("-", 1)[0]
+        kind = _DEFINING_KIND.get(doc)
+        if kind is None or not fs:
+            continue
+        definers = sorted(f for f in fs if detect_kind(f) == kind)
+        if len(definers) > 1:
+            add("DUP-REQID", rid,
+                f"DUP-REQID  {rid} is defined in {len(definers)} {kind} files: "
+                f"{', '.join(definers)} — Req-IDs are immutable and unique; renumber one side")
 
     # ADR reference integrity + collision detection (Standard: one global ADR sequence, one home)
     adr_def_files = {}
@@ -564,7 +611,7 @@ def conformance(project_root):
     profile/version vs the toolkit's, plus duplicate artifact IDs across the catalog
     (e.g. two RTMs, or two ADR files claiming one id). Complements audit(), which checks
     the RTM/Req-ID graph; together they answer 'does this repo match the Standard?'
-    (project_guides/STANDARD.md §10)."""
+    (project_guides/STANDARD.md §11)."""
     project_root = Path(project_root)
     lay = layout(project_root)
     docs = resolve_docs_root(project_root)
@@ -572,7 +619,7 @@ def conformance(project_root):
 
     declared = load_config(project_root).get("standard_version")
     if not declared:
-        advisories.append("no standard_version in .shipwright/config.json — "
+        advisories.append("no standard_version in .spindleloom/config.json — "
                           "run scaffold/migrate to pin the Standard edition")
     elif str(declared) != STANDARD_VERSION:
         advisories.append(f"project declares Standard v{declared}; toolkit ships "

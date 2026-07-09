@@ -3,7 +3,6 @@ name: production-incident-response
 description: Full production incident lifecycle — declare/triage, mitigate, resolve, blameless postmortem, action items. SEV-1–4 matrix, 5-Whys root-cause method, runbook template, and hardening patterns by contributing factor. The shared method for sre, release-manager, and performance-engineer so every incident is handled consistently.
 ---
 
-> Auto-fires when an agent is responding to a production failure, outage, degradation, or on-call alert.
 
 Production incidents are time-boxed crises. The goal is: **fast mitigation first, root cause second, hardening third.** Skipping any step wastes the incident.
 
@@ -96,39 +95,9 @@ Action item format: `[ ] <what> — owner: @<name>, due: <date>, SEV blocked unt
 
 ---
 
-## Runbook template
+## Runbook (structure lives with the reliability plan)
 
-> One runbook per recurring failure mode. Store in `docs/runbooks/<service>/<symptom>.md`.
-
-```markdown
-# Runbook — <Service>: <Symptom>
-
-**Alert:** <alert name or condition>
-**SEV default:** <1/2/3>
-**Last updated:** <date>
-
-## Symptoms
-- <observable signals>
-
-## Quick checks
-1. <command or URL to verify>
-2. <…>
-
-## Mitigation steps
-1. <exact command or action>
-2. <…>
-
-## If mitigation doesn't work
-- Escalate to: <person/team>
-- Fallback: <manual workaround>
-
-## Root-cause clues
-- <log pattern or metric that distinguishes known causes>
-
-## Prevention (post-incident)
-- <link to action items / ADR>
-```
-
+One runbook per recurring failure mode, stored in `docs/runbooks/<service>/<symptom>.md`. The canonical structure (symptoms · quick checks · mitigation steps · escalation · root-cause clues · prevention) is defined once in `templates/reliability-template.md` — use it; don't restate it. Post-incident, update the runbook that failed you, or create the one that didn't exist.
 ---
 
 ## Style rules

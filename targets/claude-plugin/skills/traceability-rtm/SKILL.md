@@ -40,4 +40,4 @@ One business goal per row, traced across every altitude to the item that deliver
 Follow the row of the thing changing — it names every downstream artifact (story, FRD, SRS, design, PBI/test) that the change touches. That row *is* the impact analysis.
 
 ## Tie-in
-A `hooks/validate_reqs.py`-style check can automate the audit on every doc edit (see `hooks/HOOKS.md`). The `/rtm-check` command runs this on demand.
+A `hooks/validate_reqs.py`-style check can automate the audit on every doc edit (see `hooks/HOOKS.md`). The `/spec-check` command runs this on demand.

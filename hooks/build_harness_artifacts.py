@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-build_harness_artifacts.py — Shipwright: one source -> harness-native artifacts.
+build_harness_artifacts.py — the harness generator: one source -> harness-native artifacts.
 
 The fleet is authored once (agents/*.md + skills/ + commands/ + hooks/ + the
-convention docs). Shipwright reads that single source and emits it in the native
+convention docs). The generator reads that single source and emits it in the native
 shape and location of each target harness — across every customization *surface*
 the harness exposes (Agents, Skills, Instructions, Hooks, Commands, Plugin), not
 just agents. So a team adopts the fleet in their tool of choice without the manual
@@ -36,13 +36,16 @@ Add a harness in one place: write an emit_* function and register it in HARNESSE
 import json
 import re
 import sys
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 from pathlib import Path
 
 PHASE_ORDER = [
     "discovery", "requirements", "design", "planning",
     "build", "test", "review", "release", "operate", "process",
 ]
-PLUGIN_NAME = "spindleloom"
+PLUGIN_NAME = "sloom"          # short plugin id -> command prefix /sloom:<cmd>
+MARKETPLACE_NAME = "spindleloom"  # the brand stays on the marketplace
 
 # ---------------------------------------------------------------- source parsing
 
@@ -156,7 +159,7 @@ def mcp_server_files(src):
 
 
 def mcp_config(style, server_arg, spec_root):
-    """A harness-native MCP config pointing at the bundled spindleloom server.
+    """A harness-native MCP config pointing at the bundled `sloom` server (short for Spindleloom).
     style 'vscode' uses the `servers` key + explicit stdio type; others use `mcpServers`.
 
     Launches via `uv run --with "mcp[cli]"`: uv provisions the one dependency in a
@@ -171,9 +174,9 @@ def mcp_config(style, server_arg, spec_root):
     }
     if style == "vscode":
         entry = {"type": "stdio", **entry}
-        cfg = {"servers": {"spindleloom": entry}}
+        cfg = {"servers": {"sloom": entry}}
     else:
-        cfg = {"mcpServers": {"spindleloom": entry}}
+        cfg = {"mcpServers": {"sloom": entry}}
     return json.dumps(cfg, indent=2, ensure_ascii=False) + "\n"
 
 
@@ -186,6 +189,40 @@ def agent_md(a):
         fm.append(f"tools: {a['tools']}")
     fm.append(f"model: {a['model']}")
     return "---\n" + "\n".join(fm) + "\n---\n\n" + a["body"]
+
+
+WINDSURF_RULE_CAP = 12_000  # chars — Windsurf silently truncates rules beyond this
+
+
+def condense_body(a, limit):
+    """A deterministic short form of an agent body for size-capped surfaces:
+    role paragraph(s) + Core principles + Style rules + a pointer to the full text.
+    Used when the rendered rule would exceed the harness cap — never truncate silently."""
+    import re as _re
+    body = a["body"]
+    head = body.split('\n## ', 1)[0].rstrip()
+
+    def section(name):
+        m = _re.search(r"(?ms)^## " + name + r"\s*?$(.*?)(?=^## |\Z)", body)
+        return ("## " + name + m.group(1).rstrip()) if m else ""
+
+    parts = [head, section("Core principles"), section("Style rules"),
+             "> Condensed to fit this harness's rule-size cap — the full definition "
+             "(workflow, templates, pitfalls) is `agents/" + a["name"] + ".md` in the "
+             "Spindleloom source / plugin."]
+    out = '\n\n'.join(p for p in parts if p) + '\n'
+    return out if len(out) <= limit else out[: limit - 80].rsplit('\n', 1)[0] + '\n> (condensed)\n'
+
+
+def load_commands(src):
+    """[(name, file_content)] for every source command — shipped to each tool's
+    native slash-command surface (Cursor commands / Copilot prompts / Windsurf workflows)."""
+    out = []
+    cdir = src / "commands"
+    if cdir.is_dir():
+        for p in sorted(cdir.glob("*.md")):
+            out.append((p.stem, p.read_text(encoding="utf-8", errors="ignore")))
+    return out
 
 
 def instructions_md(agents, src):
@@ -217,7 +254,8 @@ def instructions_md(agents, src):
         "requirement carries an ID and is traced in the RTM.",
         "- **Traceability:** one RTM per initiative, kept living — business goal → story → "
         "requirement → design → test/PBI. Nothing dropped, blast radius visible.",
-        "- **Layout standard:** the canonical `docs/` + `.shipwright/` tree, the profiles, and the "
+        "- **Context first:** `recall_context(task_id=...)` before reading; prefer `search_specs`/`trace_requirement` and context packs (`hooks/build_context_pack.py`) over folder-wide reads; save ≤5 bullets before handing off.",
+        "- **Layout standard:** the canonical `docs/` + `.spindleloom/` tree, the profiles, and the "
         "four cadence planes (durable/living/cyclic/snapshot) are fixed by `project_guides/STANDARD.md`; existing "
         "repos convert via `scaffold.py migrate`, never by hand.",
         "- **Right-sized output:** the leanest doc that does the job for the team's tier; "
@@ -258,7 +296,7 @@ def emit_claude_plugin(agents, src):
     # skills/ hooks/ etc. live. Claude Code resolves source paths relative to the
     # marketplace root, not relative to this marketplace.json file — so "." is correct.
     files[".claude-plugin/marketplace.json"] = json.dumps({
-        "name": PLUGIN_NAME,
+        "name": MARKETPLACE_NAME,
         "owner": {"name": "Spindleloom"},
         "plugins": [{
             "name": PLUGIN_NAME,
@@ -279,18 +317,22 @@ def emit_claude_plugin(agents, src):
     files.update(read_tree(src / "commands", "commands", patterns=("*.md",), recurse=False))
     files.update(read_tree(src / "templates", "templates", patterns=("*.md",), recurse=False))
 
-    # --- Hooks: the consumer-facing spec-traceability gate + its wiring ---
-    vr = src / "hooks" / "validate_reqs.py"
-    if vr.is_file():
-        files["hooks/validate_reqs.py"] = vr.read_text(encoding="utf-8", errors="ignore")
+    # --- Hooks: the consumer-facing spec gate + its wiring. on_md_edit.py filters to
+    # spec .md edits, runs validate_reqs (traceability + quality lint) and
+    # build_rtm --check, and surfaces failures on stderr (exit 2 -> fed to the model).
+    # Ships every module the gate imports; the pre-0.3 wiring silently swallowed a
+    # missing-rtm_core crash behind `2>/dev/null || true` -- never again. ---
+    hook_files = ("on_md_edit.py", "validate_reqs.py", "build_rtm.py", "rtm_core.py")
+    if all((src / "hooks" / n).is_file() for n in hook_files):
+        for n in hook_files:
+            files[f"hooks/{n}"] = (src / "hooks" / n).read_text(encoding="utf-8", errors="ignore")
         files["hooks/hooks.json"] = json.dumps({
             "hooks": {
                 "PostToolUse": [{
                     "matcher": "Write|Edit",
                     "hooks": [{
                         "type": "command",
-                        "command": 'python "${CLAUDE_PLUGIN_ROOT}/hooks/validate_reqs.py" '
-                                   '"${CLAUDE_PROJECT_DIR}" 2>/dev/null || true',
+                        "command": 'python "${CLAUDE_PLUGIN_ROOT}/hooks/on_md_edit.py"',
                     }],
                 }],
             }
@@ -320,7 +362,7 @@ def emit_claude_plugin(agents, src):
 
     files["README.md"] = (
         "# Spindleloom — Claude Code plugin\n\n"
-        "Generated by Shipwright (`hooks/build_harness_artifacts.py`) from the single source. "
+        "Generated by `hooks/build_harness_artifacts.py` from the single source. "
         "Do not edit — re-run the generator.\n\n"
         "## Install\n\n"
         "```\n"
@@ -332,7 +374,7 @@ def emit_claude_plugin(agents, src):
         "(`/spec-new`, `/pbi-next`, `/rtm-check`, …) are available, skills load on relevance, "
         "and the spec-traceability hook runs on edits. One install — the whole fleet.\n\n"
         "## Live traceability (MCP, optional)\n\n"
-        "The bundled `spindleloom` MCP server exposes **18 tools** in two groups. "
+        "The bundled `sloom` MCP server (short for Spindleloom) exposes **19 tools** in two groups. "
         "**RTM / catalog / conformance (12):** trace/coverage (`trace_requirement`, `rtm_coverage`, `funnel_status`), "
         "catalog (`list_requirements`, `list_artifacts`, `find_artifact`, `find_decision`, `search_specs`), "
         "conformance (`check_conformance`), and authoring (`next_req_id`, `stale_artifacts`, `scaffold_project`). "
@@ -352,17 +394,24 @@ def emit_claude_plugin(agents, src):
 def emit_claude_code(agents, src):
     """Loose Claude Code subagents for teams that hand-wire `.claude/` (no plugin)."""
     files = {f"agents/{a['name']}.md": agent_md(a) for a in agents}
+    for name, content in load_commands(src):
+        files[f"commands/{name}.md"] = content
+    files.update(read_tree(src / "skills", "skills"))
+    for n in ("on_md_edit.py", "validate_reqs.py", "build_rtm.py", "rtm_core.py"):
+        p = src / "hooks" / n
+        if p.is_file():
+            files[f"hooks/{n}"] = p.read_text(encoding="utf-8", errors="ignore")
     files["CLAUDE.md"] = instructions_md(agents, src)
     files.update(mcp_server_files(src))
     files[".mcp.json"] = mcp_config("claude", "${CLAUDE_PROJECT_DIR}/mcp/mcp_server.py", "${CLAUDE_PROJECT_DIR}")
     files["README.md"] = (
         "# Claude Code bundle (loose files)\n\n"
-        "Generated by Shipwright from the single source. Prefer the `claude-plugin` target "
+        "Generated by `build_harness_artifacts.py` from the single source. Prefer the `claude-plugin` target "
         "(one `/plugin install`); use this only to hand-wire `.claude/`.\n\n"
-        "Copy `agents/` → `.claude/agents/`, `CLAUDE.md` → repo root, and `mcp/` + `.mcp.json` "
-        "→ repo root for live traceability (launched via `uv run` — install "
-        "[uv](https://docs.astral.sh/uv/), which provisions the MCP SDK on first run). "
-        "Commands/skills/hooks live in the source — copy them too, or use the plugin.\n"
+        "Copy `agents/` → `.claude/agents/`, `commands/` → `.claude/commands/`, `skills/` → `.claude/skills/`, "
+        "`CLAUDE.md` → repo root, and `mcp/` + `.mcp.json` → repo root (MCP launches via `uv run` — install "
+        "[uv](https://docs.astral.sh/uv/)). Wire `hooks/on_md_edit.py` as a PostToolUse Write|Edit hook in "
+        "`.claude/settings.json` for the live spec gate.\n"
     )
     return files
 
@@ -370,9 +419,14 @@ def emit_claude_code(agents, src):
 def emit_cursor(agents, src):
     """Cursor project rules: .cursor/rules/<name>.mdc + an always-on conventions rule."""
     files = {}
+    # Agents ride Cursor's native subagent surface (.cursor/agents/, first-class per
+    # HARNESS-MATRIX) instead of 52 pseudo-agent rules — rules carry only the always-on
+    # conventions. Commands and skills use their documented native locations.
     for a in agents:
-        fm = ["---", f"description: {yaml_sq(a['description'])}", "globs:", "alwaysApply: false", "---", ""]
-        files[f".cursor/rules/{a['name']}.mdc"] = "\n".join(fm) + a["body"]
+        files[f".cursor/agents/{a['name']}.md"] = agent_md(a)
+    for name, content in load_commands(src):
+        files[f".cursor/commands/{name}.md"] = content
+    files.update(read_tree(src / "skills", ".claude/skills"))
     # Instructions surface as an always-on rule (Cursor has no separate "instructions" slot)
     conv = ["---", "description: Spindleloom project conventions (SDLC funnel, Req-ID, RTM).",
             "globs:", "alwaysApply: true", "---", ""]
@@ -382,8 +436,9 @@ def emit_cursor(agents, src):
     files[".cursor/mcp.json"] = mcp_config("cursor", "${workspaceFolder}/mcp/mcp_server.py", "${workspaceFolder}")
     files["README.md"] = (
         "# Cursor bundle\n\n"
-        "Generated by Shipwright. Copy `.cursor/` and `mcp/` into your repo root. Each role is a "
-        "description-triggered project rule; `000-spindleloom-conventions.mdc` is always-on. "
+        "Generated by `build_harness_artifacts.py`. Copy `.cursor/`, `.claude/`, and `mcp/` into your repo root. "
+        "Each role is a native Cursor agent (`.cursor/agents/`); slash commands live in `.cursor/commands/`; "
+        "skills in `.claude/skills/` (Cursor auto-reads them); `000-spindleloom-conventions.mdc` is the always-on rule. "
         "`.cursor/mcp.json` registers the live traceability server, launched via `uv run` "
         "(install [uv](https://docs.astral.sh/uv/); it provisions the MCP SDK on first run); "
         "it uses `${workspaceFolder}`, so it's portable across machines.\n"
@@ -397,6 +452,9 @@ def emit_copilot(agents, src):
     for a in agents:
         fm = ["---", f"description: {yaml_sq(a['description'])}", "---", ""]
         files[f".github/chatmodes/{a['name']}.chatmode.md"] = "\n".join(fm) + a["body"]
+    for name, content in load_commands(src):
+        files[f".github/prompts/{name}.prompt.md"] = content
+    files.update(read_tree(src / "skills", ".claude/skills"))
     lines = [instructions_md(agents, src).rstrip(), "", "## Agent chat modes", "",
              "Select a chat mode (`.github/chatmodes/<name>.chatmode.md`) matching the task:", ""]
     for a in sorted(agents, key=lambda x: x["name"]):
@@ -406,8 +464,9 @@ def emit_copilot(agents, src):
     files[".vscode/mcp.json"] = mcp_config("vscode", "${workspaceFolder}/mcp/mcp_server.py", "${workspaceFolder}")
     files["README.md"] = (
         "# GitHub Copilot bundle\n\n"
-        "Generated by Shipwright. Copy `.github/`, `.vscode/`, and `mcp/` into your repo root. "
-        "Chat modes + `copilot-instructions.md` carry the fleet; `.vscode/mcp.json` registers the "
+        "Generated by `build_harness_artifacts.py`. Copy `.github/`, `.vscode/`, and `mcp/` into your repo root. "
+        "Chat modes + `copilot-instructions.md` carry the fleet; `.github/prompts/` carries the slash "
+        "commands; `.claude/skills/` is auto-read by Copilot; `.vscode/mcp.json` registers the "
         "live traceability server, launched via `uv run` (install "
         "[uv](https://docs.astral.sh/uv/); it provisions the MCP SDK on first run).\n"
     )
@@ -417,7 +476,7 @@ def emit_copilot(agents, src):
 def emit_agents_md(agents, src):
     """The cross-tool open standard: a single root AGENTS.md (router/index by phase)."""
     out = ["# AGENTS.md", "",
-           "> Generated by Shipwright (`hooks/build_harness_artifacts.py`) from `agents/*.md` — "
+           "> Generated by `hooks/build_harness_artifacts.py` from `agents/*.md` — "
            "the single source. Any AGENTS.md-aware tool reads this. Do not edit by hand.", "",
            "This project carries a fleet of role-specialist AI agents spanning the SDLC "
            "(market → spec → design → build → test → ship → operate). When a task matches a "
@@ -449,7 +508,13 @@ def emit_windsurf(agents, src):
     files = {}
     for a in agents:
         fm = ["---", "trigger: model_decision", f"description: {yaml_sq(a['description'])}", "---", ""]
-        files[f".windsurf/rules/{a['name']}.md"] = "\n".join(fm) + a["body"]
+        rule = "\n".join(fm) + a["body"]
+        if len(rule) > WINDSURF_RULE_CAP:  # never let Windsurf truncate silently
+            rule = "\n".join(fm) + condense_body(a, WINDSURF_RULE_CAP - len("\n".join(fm)))
+        files[f".windsurf/rules/{a['name']}.md"] = rule
+    for name, content in load_commands(src):
+        files[f".windsurf/workflows/{name}.md"] = content
+    files.update(read_tree(src / "skills", ".claude/skills"))
     conv = ["---", "trigger: always_on",
             "description: Spindleloom project conventions (SDLC funnel, Req-ID, RTM).", "---", ""]
     files[".windsurf/rules/000-spindleloom-conventions.md"] = "\n".join(conv) + instructions_md(agents, src)
@@ -457,9 +522,11 @@ def emit_windsurf(agents, src):
     snippet = mcp_config("claude", "/abs/path/to/your/repo/mcp/mcp_server.py", "/abs/path/to/your/repo")
     files["README.md"] = (
         "# Windsurf bundle\n\n"
-        "Generated by Shipwright. Copy `.windsurf/` and `mcp/` into your repo root. Windsurf has no "
+        "Generated by `build_harness_artifacts.py`. Copy `.windsurf/` and `mcp/` into your repo root. Windsurf has no "
         "subagents, so each role is a `model_decision` rule (activates when relevant); "
-        "`000-spindleloom-conventions.md` is always-on. Rules cap at ~12k chars — split a long one if Windsurf truncates it.\n\n"
+        "`000-spindleloom-conventions.md` is always-on. Oversize roles are auto-condensed to Windsurf's ~12k rule cap "
+        "(full text stays in the source/plugin). `.windsurf/workflows/` carries the slash commands; "
+        "`.claude/skills/` is auto-read by Windsurf.\n\n"
         "## Live traceability (MCP)\n\n"
         "Windsurf's MCP config is **user-global**, so add this to `~/.codeium/windsurf/mcp_config.json` "
         "(install [uv](https://docs.astral.sh/uv/) — it provisions the MCP SDK on first run), with "

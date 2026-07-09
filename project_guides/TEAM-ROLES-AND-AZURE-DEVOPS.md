@@ -14,7 +14,7 @@ One important note up front: there is **no dedicated Product Owner / Product Man
 |---|---|---|
 | **Principal Director** (sponsor/exec) | mrd-writer, brd-writer (approves) | Sets business goals & funding; approves BRD/charter; consumes status reports; go/no-go at releases. Accountable, not hands-on. |
 | **Project Manager** (+ acting PO) | doc-strategy-advisor (start here), prd-writer, backlog-manager, sprint-planner, retrospective-facilitator, raid-keeper, status-reporter | Owns the doc strategy, backlog priority & PRD; runs Sprint Planning, facilitates the retro and daily standup; tracks risks and reports status; manages the Azure board. |
-| **Architect** | sdd-writer (arc42/C4, HLD), adr-writer, srs-writer (NFRs), spec-steward; the technical-direction layer (rfc-facilitator, tech-radar-curator, tech-debt-keeper, /constitution) | Owns architecture & significant decisions (ADRs); sets technical constraints & sanctioned tech; reviews leads' designs; guards the Definition of Done's technical bar. |
+| **Architect** | sdd-writer (arc42/C4, HLD), adr-writer, srs-writer (NFRs), spec-steward; the technical-direction layer (rfc-facilitator, tech-radar-curator, tech-debt-keeper, /spec-constitution) | Owns architecture & significant decisions (ADRs); sets technical constraints & sanctioned tech; reviews leads' designs; guards the Definition of Done's technical bar. |
 | **Lead 1 & Lead 2** | frd-writer, tsd-writer (LLD/API contracts), estimation-facilitator, backlog-manager (refinement), code-reviewer | Translate PRD→functional specs; write the build spec with the architect; facilitate Planning Poker; run backlog refinement with the team; review developers' code; mentor. Split by feature area (one lead per 2–3 devs). |
 | **5 Developers** | Consume frd/tsd; contribute to estimation (Planning Poker), ADRs, and backlog refinement; pr-author, test-author, debugger | Implement stories/tasks; estimate as the team that does the work; raise ADRs for local decisions; keep the board updated; participate in standup/review/retro. |
 
@@ -31,7 +31,7 @@ This maps to a clean **RACI**: Director = Accountable (business), PM = Responsib
 
 ## 2. Epic decomposition sequence (architect's path from epic to PBIs)
 
-One epic, from "it's a PRD feature" to "build-ready, traceable tickets." No single agent does the whole thing — it's a chain with the architect signing off at defined gates. The RTM thread (`PRD → FRD → SRS → SDD → PBI → task → test`) is what makes it a *sequence*, not a pile; `/rtm-check` proves nothing was dropped.
+One epic, from "it's a PRD feature" to "build-ready, traceable tickets." No single agent does the whole thing — it's a chain with the architect signing off at defined gates. The RTM thread (`PRD → FRD → SRS → SDD → PBI → task → test`) is what makes it a *sequence*, not a pile; `/spec-check` proves nothing was dropped.
 
 | # | Step | Owner · agent | Architect's responsibility |
 |---|---|---|---|
