@@ -4,6 +4,10 @@ All notable changes to Spindleloom. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.4.0] — 2026-07-10
+
+Platform hardening and context-engineering fidelity on top of the multi-user concurrency layer. Validated end-to-end: the MedRemind fleet-eval moved **B+ → A** across two behavioral runs (RUN 3 = A−, RUN 4 = A), every fix below confirmed by an independent judge rather than asserted.
+
 ### Added — multi-user concurrency + the phase-acceptance layer
 
 - **Phase-boundary acceptance, mechanized** (the centerpiece): the four upstream phases (discovery, requirements, design, planning) had no gate but prose — now the accountable role records acceptance via **`sloom approve <phase> --feature <slug> --role <role> --by "<name>"`** → `.spindleloom/approvals/<feature>/<phase>.md`, enforced identically by `validate_gates --accepted <phase>`, `sloom run advance` (refuses to cross an unaccepted boundary), and run-orchestrator's runnable computation. Default phase→approver matrix overridable via config `"approvals"`; `--notify-tracker` mirrors the acceptance as a **comment** on the mapped Azure/Jira items (`add_comment()` in both adapters — comment-only; item state stays the tracker's). "Can I start?" becomes a file check, not a meeting — and because gates are files, an autonomous loop and a human teammate hit the same gates.
@@ -14,6 +18,29 @@ All notable changes to Spindleloom. Format follows [Keep a Changelog](https://ke
 - **Idempotent tracker push + drift check**: both adapters now consult the RTM's committed mapping before creating (`skip PBI-X → #1234`; `--force-repush` overrides) — re-running `--apply` or a second teammate pushing no longer duplicates work items. New **`emit_backlog.py check`** reports NEW (unpushed) / GONE (orphaned) drift; wired into `sloom check`. Role rule: backlog-manager is the sole pusher, from merged `main` only.
 - **The adopter CI gate** (`templates/ci/sloom-gate.yml`, written by scaffold/migrate to `.github/workflows/`): merging to `main` now *proves* the spec battery ran — incl. DUP-REQID and the per-PBI verification requirement when the branch names one. Previously no adopter repo got any gate workflow; "merged = gates passed" was a convention.
 - **STANDARD.md §9 "Concurrency & ownership"**: the resource-ownership table (owner role, namespace key, merge strategy, enforcing gate per shared resource), the 10-phase acceptance graph + approver matrix, and the branch=local / main=global / PR-merge=promotion model; §3's tree now annotates every `.spindleloom/` path committed-vs-local.
+
+### Added — context engineering & fleet integrity
+
+- **Transitive upstream routing** in `build_context_pack.py`: each agent's pack now includes its *phase-bounded transitive ancestor chain* (digest-first, deduped), so an agent sees the whole spec funnel above it — SDD sees the FRD, estimation sees the FRD/SRS — without adding N² contract edges. Fixed the run-2/3 class where a downstream agent silently drifted from an unrouted ancestor.
+- **`sloom flags`** — an open-flags re-work register: a writer that hits a gap it can't fix leaves `FLAG(<owner-agent>): <what>`; `sloom flags` surfaces them grouped by owner (`--strict` gates), and `sloom run status` re-surfaces a flag whose owner is an already-`done` step as re-dispatchable re-work.
+- **Backlog-completeness / phantom-PBI check** (`validate_reqs`): flags `PBI-UNDEFINED` for a PBI referenced (deps/RTM/sprint) but never *defined* by an acceptance-criteria-bearing backlog row — a class no ID/RTM check previously caught.
+- **Machine-checkable quality gate**: a deliberate compound-shall must now carry a `<!-- quality-ok: <Req-ID> <reason> -->` marker to pass `--strict`; free-text justification no longer suppresses the lint. Range-shorthand lint extended to `…`/`...` ellipsis forms.
+- **`code-minimalism` skill** (28th skill): the reuse→stdlib→native→one-line ladder + a `delete/stdlib/native/yagni/shrink` over-engineering review taxonomy, armed to code-reviewer and both developers.
+- **`examples/medremind-fleet-eval/run3` + `run4`** — two more worked end-to-end runs (isolated 10-agent pipeline + independent judge verdict each), recording the B+ → A− → A progression and the fixes that drove it.
+
+### Fixed
+
+- **CI ran ~13 of 73 tests silently**: `pytest` was never installed in CI, so it fell through (`2>/dev/null ||`) to `unittest discover`, which collects only `TestCase`-based tests — a broken test passed green. CI now installs pytest and runs the full suite with no fallback; a dedicated MCP-server smoke-test job; HELP + handoff freshness gates; a full checkout for spec-traceability. Pre-commit mirrors the same gates.
+- **Cross-platform UTF-8 mojibake**: printing hooks that lacked the `stdout.reconfigure(utf-8)` block rendered em-dashes as `?` on Windows (visible in the `sloom check` front door); added everywhere and repaired doubled-CR line endings.
+- **Req-ID grammar unified**: `build_rtm` and `validate_reqs` shared `rtm_core.REQ_ID`, so they can no longer disagree about what counts as an ID.
+- **Tracker push duplicated work items on retry / silent handoff drops**: partial-safe writeback (`try/finally` + atomic `os.replace`), tracker-agnostic mapping column, and stem-aware input resolution (`estimates` → `estimation.md`) that closes the last silent context-pack edge drop.
+- **`PBI-ORPHAN` / `NO-RTM` false positives on commentary**: `rtm_core.markdown_files` excludes `verdict.md` / `README.md`, so a judge verdict quoting a prior run's id is never mistaken for a spec artifact.
+- **`.shipwright` legacy-dir filter** restored in `validate_gates`; **stale counts** (skills/commands/templates) corrected across README/CONTRIBUTING/CLAUDE/PROJECT-OVERVIEW.
+
+### Changed
+
+- Scrubbed private pilot-log and internal package references out of shipped agents and `solution-recon` examples (they surfaced in generated user-facing prompts).
+- Hoisted the duplicated Python-interpreter-detection block out of `change-verifier`/`test-author` into the `verification-run-and-observe` skill, generalized to "resolve the toolchain first"; armed `defect-triage` on `qa-tester` + `incident-responder`.
 
 ## [0.3.0] — 2026-07-09
 

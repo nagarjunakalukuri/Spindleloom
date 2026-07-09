@@ -1,6 +1,6 @@
 # Spindleloom — Project Overview
 
-> **Purpose of this file:** a complete, single-file orientation so a new session (human or agent) can be productive without reading the whole repo. It summarizes *what* Spindleloom is, *how* it's built, the *commands*, the *architecture*, and *where to go* for detail. Current version: **0.3.0** (2026-07-09). Pre-1.0 — minor bumps may break.
+> **Purpose of this file:** a complete, single-file orientation so a new session (human or agent) can be productive without reading the whole repo. It summarizes *what* Spindleloom is, *how* it's built, the *commands*, the *architecture*, and *where to go* for detail. Current version: **0.4.0** (2026-07-10). Pre-1.0 — minor bumps may break.
 
 ---
 
