@@ -1,3 +1,9 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Interactive delegation-graph map of the Spindleloom SDLC agent fleet across its lifecycle phases.">
 <title>Spindleloom Agent Fleet</title>
 <style>
 :root{
@@ -37,6 +43,18 @@ svg#graph{display:block}
 .lc{width:9px;height:9px;border-radius:2px;flex-shrink:0}
 .lsep{width:1px;height:14px;background:var(--border);margin:0 4px}
 
+#skills-bar{padding:11px 36px 15px;border-top:1px solid var(--border)}
+#skills-bar .sb-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+#skills-bar .sb-hint{font-size:9px;letter-spacing:.06em;color:var(--text-dim);margin-left:8px}
+#skill-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{cursor:pointer;font-size:9px;letter-spacing:.04em;color:var(--text-dim);background:#0B1A2C;
+  border:1px solid var(--border);border-radius:2px;padding:3px 8px;user-select:none;transition:border-color .1s,color .1s}
+.chip:hover{border-color:#3D8FB5;color:var(--text)}
+.chip:focus-visible{outline:1px solid var(--accent);outline-offset:1px}
+.chip .n{color:#3D8FB5;margin-left:5px;opacity:.8}
+.chip.active{border-color:var(--accent);color:var(--accent);background:#14243a}
+.chip.active .n{color:var(--accent)}
+
 #tooltip{
   position:fixed;pointer-events:none;opacity:0;transition:opacity .1s;z-index:200;
   background:#0B1A2C;border:1px solid var(--accent);padding:10px 14px;
@@ -45,26 +63,20 @@ svg#graph{display:block}
 #tooltip.show{opacity:1}
 #tip-id{font-size:11px;color:var(--accent);letter-spacing:.06em;margin-bottom:2px}
 #tip-phase{font-size:8px;color:var(--text-dim);letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px}
+#tip-skills{margin-top:7px;padding-top:6px;border-top:1px solid var(--border);font-size:8.5px;color:#5FA8CE;letter-spacing:.03em;line-height:1.55}
+#tip-skills:empty{display:none}
+svg#graph [data-id]{outline:none}
+svg#graph [data-id]:focus > rect:first-child{stroke:var(--accent);stroke-opacity:1;stroke-width:1.6}
 </style>
+</head>
+<body>
 
 <div id="page-header">
-  <svg width="40" height="40" viewBox="0 0 40 40" style="flex-shrink:0">
-    <circle cx="20" cy="20" r="18" fill="none" stroke="#C8982A" stroke-width="1.1" opacity=".7"/>
-    <circle cx="20" cy="20" r="7" fill="none" stroke="#C8982A" stroke-width="1.1" opacity=".7"/>
-    <circle cx="20" cy="20" r="2.2" fill="#C8982A" opacity=".9"/>
-    <line x1="20" y1="2" x2="20" y2="13" stroke="#C8982A" stroke-width=".9" opacity=".65"/>
-    <line x1="20" y1="27" x2="20" y2="38" stroke="#C8982A" stroke-width=".9" opacity=".65"/>
-    <line x1="2" y1="20" x2="13" y2="20" stroke="#C8982A" stroke-width=".9" opacity=".65"/>
-    <line x1="27" y1="20" x2="38" y2="20" stroke="#C8982A" stroke-width=".9" opacity=".65"/>
-    <line x1="7" y1="7" x2="13.5" y2="13.5" stroke="#C8982A" stroke-width=".9" opacity=".65"/>
-    <line x1="26.5" y1="26.5" x2="33" y2="33" stroke="#C8982A" stroke-width=".9" opacity=".65"/>
-    <line x1="33" y1="7" x2="26.5" y2="13.5" stroke="#C8982A" stroke-width=".9" opacity=".65"/>
-    <line x1="7" y1="33" x2="13.5" y2="26.5" stroke="#C8982A" stroke-width=".9" opacity=".65"/>
-  </svg>
+  <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" style="flex-shrink:0"><path d="M20.00,20.00 L19.55,19.40 L19.09,18.79 L18.63,18.20 L18.15,17.61 L17.66,17.03 L17.15,16.47 L16.62,15.93 L16.06,15.42 L15.47,14.95 L14.84,14.52 L14.19,14.14 L13.49,13.84 L12.77,13.61 L12.01,13.48 L11.23,13.47 L10.44,13.59 L9.65,13.86 L8.88,14.30 L8.16,14.90 L7.51,15.67 L6.96,16.59 L6.55,17.65 L6.29,18.80 L6.20,20.00 L6.29,21.20 L6.55,22.35 L6.96,23.41 L7.51,24.33 L8.16,25.10 L8.88,25.70 L9.65,26.14 L10.44,26.41 L11.23,26.53 L12.01,26.52 L12.77,26.39 L13.49,26.16 L14.19,25.86 L14.84,25.48 L15.47,25.05 L16.06,24.58 L16.62,24.07 L17.15,23.53 L17.66,22.97 L18.15,22.39 L18.63,21.80 L19.09,21.21 L19.55,20.60 L20.00,20.00" fill="none" stroke="#3D8FB5" stroke-width="3.40" stroke-linecap="round" stroke-linejoin="round"/><path d="M33.80,20.00 L33.71,21.20 L33.45,22.35 L33.04,23.41 L32.49,24.33 L31.84,25.10 L31.12,25.70 L30.35,26.14 L29.56,26.41 L28.77,26.53 L27.99,26.52 L27.23,26.39 L26.51,26.16 L25.81,25.86 L25.16,25.48 L24.53,25.05 L23.94,24.58 L23.38,24.07 L22.85,23.53 L22.34,22.97 L21.85,22.39 L21.37,21.80 L20.91,21.21 L20.45,20.60 L20.00,20.00 M20.00,20.00 L20.45,19.40 L20.91,18.79 L21.37,18.20 L21.85,17.61 L22.34,17.03 L22.85,16.47 L23.38,15.93 L23.94,15.42 L24.53,14.95 L25.16,14.52 L25.81,14.14 L26.51,13.84 L27.23,13.61 L27.99,13.48 L28.77,13.47 L29.56,13.59 L30.35,13.86 L31.12,14.30 L31.84,14.90 L32.49,15.67 L33.04,16.59 L33.45,17.65 L33.71,18.80 L33.80,20.00" fill="none" stroke="#C8982A" stroke-width="3.40" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20.0" cy="20.0" r="5.78" fill="#060F1C"/><circle cx="20.0" cy="20.0" r="3.40" fill="#C8982A"/><circle cx="20.0" cy="20.0" r="1.43" fill="#060F1C"/></svg>
   <div>
     <div class="brand-label">Spindleloom Toolkit</div>
     <div class="page-title">AGENT FLEET MAP</div>
-    <div class="page-subtitle">52 Role-Specialist Agents &nbsp;·&nbsp; 10 Lifecycle Phases &nbsp;·&nbsp; Full SDLC Traceability</div>
+    <div class="page-subtitle"><span id="agent-count">52</span> Role-Specialist Agents &nbsp;·&nbsp; <span id="hdr-skills">28</span> Methodology Skills &nbsp;·&nbsp; <span id="phase-count">10</span> Lifecycle Phases &nbsp;·&nbsp; Full SDLC Traceability</div>
   </div>
 </div>
 
@@ -80,10 +92,16 @@ svg#graph{display:block}
   <div id="phase-legend" style="display:flex;flex-wrap:wrap;gap:12px"></div>
 </div>
 
+<div id="skills-bar">
+  <span class="sb-label">Skills (<span id="skill-count">28</span>)</span><span class="sb-hint">click a skill to highlight the agents that arm it &nbsp;·&nbsp; click an agent to see its skills</span>
+  <div id="skill-chips"></div>
+</div>
+
 <div id="tooltip">
   <div id="tip-id"></div>
   <div id="tip-phase"></div>
   <div id="tip-desc"></div>
+  <div id="tip-skills"></div>
 </div>
 
 <script>
@@ -218,7 +236,7 @@ const AGENTS = [
    desc:'Blameless sprint retrospective — reflection, action items, velocity trending. Feeds backlog-manager and tech-debt-keeper.'},
   {id:'spec-steward', label:'spec-steward', phase:'process',
    desc:'Assesses & improves Spec-Driven Development maturity. Prevents AI-generated code from drifting from specifications. Entry point — feeds doc-strategy-advisor.'},
-  {id:'tech-debt-keeper', label:'tech-debt\nregister', phase:'process',
+  {id:'tech-debt-keeper', label:'tech-debt\nkeeper', phase:'process',
    desc:'Living tech-debt register — impact × interest vs effort. High-priority items promoted directly to backlog-manager.'},
   {id:'tech-radar-curator', label:'tech-radar-curator', phase:'process',
    desc:'Technology radar — Adopt/Trial/Assess/Hold rings. Aligns technology choices across teams based on accumulated ADRs. Terminal agent.'},
@@ -431,6 +449,66 @@ const EDGES = [
   {from:'tech-debt-keeper',     to:'backlog-manager',   t:'f'},
 ];
 
+// ─── SKILLS (authoritative — each agent's `skills:` array) ───────────────────
+const AGENT_SKILLS = {
+  'accessibility-auditor':['verification-run-and-observe'],
+  'adr-writer':['ubiquitous-language','architecture-decision-framing'],
+  'ai-eval':['eval-harness-design','agentic-loop-design','verification-run-and-observe','llm-cost-optimization'],
+  'ai-orchestrator':['agentic-loop-design','eval-harness-design','llm-cost-optimization'],
+  'api-designer':['api-contract','threat-modeling-stride'],
+  'architect':['architecture-decision-framing','threat-modeling-stride','agent-handoff-context'],
+  'backend-developer':['verification-run-and-observe','code-minimalism','systematic-debugging','conventional-commits-pr','observability-slo-design','brownfield-recon','agent-handoff-context','context-engineering'],
+  'backlog-manager':['backlog-decomposition','relative-estimation','traceability-rtm','agent-handoff-context'],
+  'brd-writer':['requirement-quality','requirement-elicitation'],
+  'bug-triager':['defect-triage','agent-handoff-context'],
+  'change-verifier':['verification-run-and-observe','test-design','agentic-loop-design','traceability-rtm','agent-handoff-context','eval-harness-design'],
+  'code-reviewer':['code-minimalism','cross-artifact-analysis','traceability-rtm','agent-handoff-context'],
+  'coding-standards-writer':[],
+  'data-modeler':['threat-modeling-stride','verification-run-and-observe'],
+  'debugger':['verification-run-and-observe','systematic-debugging','agent-handoff-context'],
+  'dev-onboarding':['conventional-commits-pr'],
+  'doc-strategy-advisor':[],
+  'estimation-facilitator':['relative-estimation','brownfield-recon'],
+  'feature-docs-writer':['agent-handoff-context'],
+  'flaky-test-detective':['systematic-debugging','verification-run-and-observe'],
+  'frd-writer':['requirement-quality','requirement-elicitation','ubiquitous-language','traceability-rtm','agent-handoff-context'],
+  'frontend-developer':['verification-run-and-observe','code-minimalism','systematic-debugging','conventional-commits-pr','brownfield-recon','agent-handoff-context','context-engineering'],
+  'incident-responder':['systematic-debugging','observability-slo-design','production-incident-response','defect-triage'],
+  'mrd-writer':['requirement-quality'],
+  'performance-engineer':['observability-slo-design','production-incident-response'],
+  'pipeline-engineer':['agentic-loop-design','eval-harness-design','observability-slo-design'],
+  'pr-author':['conventional-commits-pr','agent-handoff-context'],
+  'prd-writer':['requirement-quality','requirement-elicitation','ubiquitous-language'],
+  'product-analytics':['analytics-instrumentation'],
+  'qa-tester':['verification-run-and-observe','defect-triage','agent-handoff-context'],
+  'raid-keeper':['agent-handoff-context'],
+  'release-manager':['production-incident-response','agent-handoff-context'],
+  'retrospective-facilitator':['sprint-facilitation','agent-handoff-context'],
+  'rfc-facilitator':['architecture-decision-framing','requirement-elicitation'],
+  'run-orchestrator':['agentic-loop-design','traceability-rtm','agent-handoff-context','context-engineering'],
+  'sdd-writer':['architecture-decision-framing','threat-modeling-stride','agent-handoff-context'],
+  'security-reviewer':['threat-modeling-stride','agent-handoff-context'],
+  'solution-recon':['api-contract','brownfield-recon','agent-handoff-context','context-engineering'],
+  'spec-steward':['cross-artifact-analysis','traceability-rtm','ubiquitous-language'],
+  'sprint-planner':['relative-estimation','sprint-facilitation','agent-handoff-context'],
+  'sre':['observability-slo-design','production-incident-response','agent-handoff-context'],
+  'srs-writer':['requirement-quality','traceability-rtm','agent-handoff-context'],
+  'status-reporter':['sprint-facilitation'],
+  'tech-debt-keeper':['agent-handoff-context'],
+  'tech-radar-curator':['agent-handoff-context'],
+  'test-author':['test-design','verification-run-and-observe','agent-handoff-context','test-data'],
+  'test-automation-engineer':['test-design','verification-run-and-observe','test-data'],
+  'test-plan-writer':['test-design'],
+  'tsd-writer':['architecture-decision-framing','agent-handoff-context'],
+  'urs-writer':['requirement-quality'],
+  'ux-ui-designer':['ux-design-method'],
+  'wiki-curator':['agent-handoff-context'],
+};
+// reverse index: skill → agents that arm it (derived, never drifts)
+const SKILL_AGENTS = {};
+Object.entries(AGENT_SKILLS).forEach(([a, ss]) => ss.forEach(s => { (SKILL_AGENTS[s] = SKILL_AGENTS[s] || []).push(a); }));
+const SKILLS = Object.keys(SKILL_AGENTS).sort();
+
 // ─── LAYOUT ──────────────────────────────────────────────────────────────────
 const SVG_W   = 2060;
 const L_MAR   = 148;
@@ -565,9 +643,16 @@ AGENTS.forEach(agent=>{
       'letter-spacing':'0.04em'},ln));
   });
 
+  g.setAttribute('tabindex','0');
+  g.setAttribute('role','button');
+  g.setAttribute('aria-label',`${agent.id} — ${ph.label} phase — ${agent.desc}`);
   g.addEventListener('mouseenter',e=>showTip(e,agent,ph));
   g.addEventListener('mouseleave',()=>tip.classList.remove('show'));
   g.addEventListener('click',()=>selectAgent(agent.id));
+  g.addEventListener('keydown',ev=>{
+    if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();selectAgent(agent.id)}
+    else if(ev.key==='Escape'){clearSel();g.blur()}
+  });
   nodeLayer.appendChild(g);
   nodeEls[agent.id]=g;
 });
@@ -581,6 +666,8 @@ function showTip(e,agent,ph){
   document.getElementById('tip-id').textContent=agent.id;
   document.getElementById('tip-phase').textContent=ph.label;
   document.getElementById('tip-desc').textContent=agent.desc;
+  const sk=AGENT_SKILLS[agent.id]||[];
+  document.getElementById('tip-skills').textContent = sk.length ? ('▸ skills: '+sk.join(', ')) : '';
   tip.classList.add('show');
   moveTip(e);
 }
@@ -592,7 +679,9 @@ function moveTip(e){
 
 function selectAgent(id){
   if(selected===id){clearSel();return}
+  clearSel();
   selected=id;
+  Object.values(chipEls).forEach(c=>c.classList.remove('active'));
   const linked=new Set([id]);
   const linkedEdges=new Set();
   Object.keys(edgeEls).forEach(k=>{
@@ -620,13 +709,21 @@ function selectAgent(id){
   });
   const agent=AGENTS.find(a=>a.id===id);
   const ph=PHASES.find(p=>p.id===agent.phase);
-  const out=EDGES.filter(e=>e.from===id).length;
-  const inc=EDGES.filter(e=>e.to===id).length;
-  infoBar.innerHTML=`<span>${id}</span> &nbsp;·&nbsp; ${ph.label} &nbsp;·&nbsp; ${inc} incoming &nbsp;·&nbsp; ${out} outgoing &nbsp;·&nbsp; click again to clear`;
+  // real delegation only — index (t:'i') edges are a wiki-curator overlay, not handoffs,
+  // so counting them would wrongly give e.g. status-reporter "1 outgoing" (it's terminal).
+  const out=EDGES.filter(e=>e.from===id && e.t!=='i').length;
+  const inc=EDGES.filter(e=>e.to===id && e.t!=='i').length;
+  const idxIn=EDGES.filter(e=>e.to===id && e.t==='i').length;
+  const idxTxt=idxIn?` &nbsp;·&nbsp; indexes ${idxIn} artifacts`:'';
+  const sk=AGENT_SKILLS[id]||[];
+  const skTxt=sk.length?` &nbsp;·&nbsp; skills: ${sk.join(', ')}`:'';
+  infoBar.innerHTML=`<span>${id}</span> &nbsp;·&nbsp; ${ph.label} &nbsp;·&nbsp; ${inc} incoming &nbsp;·&nbsp; ${out} outgoing${idxTxt}${skTxt} &nbsp;·&nbsp; click again to clear`;
 }
 
 function clearSel(){
   selected=null;
+  selectedSkill=null;
+  Object.values(chipEls).forEach(c=>c.classList.remove('active'));
   Object.keys(nodeEls).forEach(nid=>{
     nodeEls[nid].style.opacity='1';
     nodeEls[nid].querySelector('rect').setAttribute('fill-opacity','0.13');
@@ -651,4 +748,47 @@ PHASES.forEach(ph=>{
   r.appendChild(document.createTextNode(ph.label));
   pl.appendChild(r);
 });
+
+// ─── SKILL CHIPS + reverse highlight ─────────────────────────────────────────
+let selectedSkill = null;
+const chipEls = {};
+const chipWrap = document.getElementById('skill-chips');
+SKILLS.forEach(s=>{
+  const n = SKILL_AGENTS[s].length;
+  const c = document.createElement('span');
+  c.className='chip'; c.tabIndex=0; c.setAttribute('role','button');
+  c.setAttribute('aria-label',`skill ${s} — armed to ${n} agent${n===1?'':'s'}`);
+  c.innerHTML = `${s}<span class="n">${n}</span>`;
+  c.addEventListener('click',()=>selectSkill(s));
+  c.addEventListener('keydown',ev=>{
+    if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();selectSkill(s)}
+    else if(ev.key==='Escape'){clearSel()}
+  });
+  chipWrap.appendChild(c);
+  chipEls[s]=c;
+});
+
+function selectSkill(s){
+  if(selectedSkill===s){clearSel();return}
+  clearSel();
+  selectedSkill=s;
+  const armed=new Set(SKILL_AGENTS[s]);
+  Object.keys(nodeEls).forEach(nid=>{
+    const g=nodeEls[nid];
+    if(armed.has(nid)){g.style.opacity='1';g.querySelector('rect').setAttribute('fill-opacity','0.30');}
+    else g.style.opacity='0.1';
+  });
+  Object.values(edgeEls).forEach(e=>e.el.setAttribute('opacity','0.03'));
+  chipEls[s].classList.add('active');
+  const list=[...armed].sort().join(', ');
+  infoBar.innerHTML=`<span>${s}</span> &nbsp;·&nbsp; skill &nbsp;·&nbsp; armed to ${armed.size} agent${armed.size===1?'':'s'}: ${list} &nbsp;·&nbsp; click again to clear`;
+}
+
+// ─── HEADER COUNTS (derived from the data — never drift) ─────────────────────
+document.getElementById('agent-count').textContent = AGENTS.length;
+document.getElementById('phase-count').textContent = PHASES.length;
+document.getElementById('skill-count').textContent = SKILLS.length;
+document.getElementById('hdr-skills').textContent = SKILLS.length;
 </script>
+</body>
+</html>
