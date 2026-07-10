@@ -7,7 +7,7 @@ The single stdlib-only core shared by:
   - mcp_server.py     (live MCP server: trace, coverage, list, decisions)
 
 Dependency-free (Python 3 stdlib only). Read-only. It parses the conventions in
-project_guides/BEST-PRACTICES.md: Req-IDs of the form <DOC>-<AREA>-<NUM>, the RTM.md table, and
+knowledge_hub/BEST-PRACTICES.md: Req-IDs of the form <DOC>-<AREA>-<NUM>, the RTM.md table, and
 ADR references — and exposes them as queryable structures.
 """
 import json
@@ -94,11 +94,11 @@ def resolve_docs_root(project_root):
     return project_root
 
 
-# The edition of project_guides/STANDARD.md this code implements (recorded in a project's config).
+# The edition of the layout standard (knowledge_hub/GOVERNANCE.md Part I) this code implements.
 STANDARD_VERSION = "1.0"
 
 # Layout knobs — defaults reproduce the canonical Standard tree; each is overridable
-# in .spindleloom/config.json (the sanctioned exception). See project_guides/STANDARD.md §8.
+# in .spindleloom/config.json (the sanctioned exception). See knowledge_hub/GOVERNANCE.md Part I §8.
 LAYOUT_DEFAULTS = {
     "product_dir": "product",
     "specs_dir": "specs",
@@ -620,7 +620,7 @@ def conformance(project_root):
     profile/version vs the toolkit's, plus duplicate artifact IDs across the catalog
     (e.g. two RTMs, or two ADR files claiming one id). Complements audit(), which checks
     the RTM/Req-ID graph; together they answer 'does this repo match the Standard?'
-    (project_guides/STANDARD.md §11)."""
+    (knowledge_hub/GOVERNANCE.md Part I §11)."""
     project_root = Path(project_root)
     lay = layout(project_root)
     docs = resolve_docs_root(project_root)

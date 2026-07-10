@@ -20,7 +20,7 @@ machinery, name the deliverables for what they are.
 Profile-aware (lean | mid | enterprise) — scaffolds the document set the profile calls for.
 Layout is config-driven (see rtm_core.layout): an absent .spindleloom/config.json yields the
 canonical Standard tree. Stubs come from the bundled templates/. Idempotent: existing files
-are never overwritten. Dependency-free (stdlib only). See project_guides/STANDARD.md for the rules.
+are never overwritten. Dependency-free (stdlib only). See knowledge_hub/GOVERNANCE.md Part I for the rules.
 
 Usage:
     python scaffold.py <project-root> [--profile mid] [--feature <name>] [--templates <dir>]
@@ -55,7 +55,7 @@ TIERS = PROFILES  # back-compat alias
 
 RTM_HEADER = """# RTM — Requirements Traceability Matrix
 
-> The single chain tying business intent down to tests (see `project_guides/BEST-PRACTICES.md`).
+> The single chain tying business intent down to tests (see `knowledge_hub/BEST-PRACTICES.md`).
 > Proves nothing was dropped and shows the blast radius of any change. One per initiative, living.
 
 | Business goal (BRD) | Product story (PRD) | Functional req (FRD) | Software req (SRS) | Design (SDD) | Build / test (TSD) |
@@ -137,13 +137,13 @@ def scaffold(root, profile=None, feature="feature-1", templates=None, tier=None)
     feat = ", ".join(spec["feature"]) or "(in tickets)"
     write_if_absent(docs / "README.md",
                     f"# Docs\n\n> Scaffolded by `scaffold.py` (profile: {profile}). "
-                    f"Visible deliverables; machinery lives in `.spindleloom/`. See `project_guides/STANDARD.md`.\n\n"
+                    f"Visible deliverables; machinery lives in `.spindleloom/`. See `knowledge_hub/GOVERNANCE.md` Part I.\n\n"
                     f"- **{lay['product_dir']}/** — durable funnel: {funnel}\n"
                     f"- **{lay['specs_dir']}/{feature}/** — per-feature (living): {feat}\n"
                     f"- **{lay['sprints_dir']}/<sprint>/** — per-sprint plan + retro (cyclic)\n"
                     f"- **{lay['adr_dir']}/**, **{lay['rfc_dir']}/** — append-only decision logs\n"
                     f"- **{lay['rtm_file']}** — traceability backbone (`<DOC>-<AREA>-<NUM>` ids)\n\n"
-                    f"Fill each via its agent; keep the RTM in sync. See `project_guides/INFORMATION-ARCHITECTURE.md`.\n",
+                    f"Fill each via its agent; keep the RTM in sync. See `knowledge_hub/GOVERNANCE.md` Part I.\n",
                     created)
     return [str(p) for p in created]
 
@@ -222,7 +222,9 @@ def _rewrite_links(text, src_old, src_new, moved):
 _NOISE_DIRS = {"node_modules", "__pycache__", "venv", "dist", "build", "site-packages", "vendor"}
 # A directory carrying any of these is a Spindleloom distribution (toolkit knowledge) or a
 # generated harness bundle — never a consuming project's content, so it is pruned wholesale.
-_DIST_MARKERS = ("project_guides/STANDARD.md", "build_harness_artifacts.py", "marketplace.json", ".claude-plugin")
+_DIST_MARKERS = ("knowledge_hub/GOVERNANCE.md", "project_guides/GOVERNANCE.md",  # legacy: pre-rename distributions
+                 "project_guides/STANDARD.md",
+                 "build_harness_artifacts.py", "marketplace.json", ".claude-plugin")
 # Toolkit content folders: their files are toolkit knowledge, not a project's artifacts.
 _TOOLKIT_DIRS = {"agents", "skills", "commands", "templates", "hooks"}
 
@@ -274,7 +276,7 @@ def migrate(root, feature="feature-1", apply=False, force=False):
     if _is_distribution_dir(root):
         return {"root": str(root), "apply": apply, "exempt": True, "moves": [], "moved_count": 0,
                 "note": "this directory is a Spindleloom distribution (toolkit knowledge), exempt per "
-                        "project_guides/STANDARD.md — nothing to convert. Point migrate at a CONSUMING project."}
+                        "knowledge_hub/GOVERNANCE.md — nothing to convert. Point migrate at a CONSUMING project."}
     lay = rtm_core.layout(root)
     docs_root = rtm_core.resolve_docs_root(root)
     is_git = (root / ".git").exists()

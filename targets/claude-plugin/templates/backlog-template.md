@@ -15,6 +15,8 @@
 
 ## Backlog (ordered)
 
+> Story form, AC style, splitting and sizing rules: `knowledge_hub/GOVERNANCE.md` Part II (Connextra card sec 1, AC sec 3, vertical splits sec 4, 6-10 rule sec 5).
+
 | Rank | PBI ID | Type | Story / item | Acceptance criteria | Priority | Est. | Deps | Source | Ready? |
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | PBI-<EPIC>-001 | Story | As a <persona>, I want <goal> so that <benefit> | Given <context>, when <action>, then <result> | Must | <pts> | — | <FRD ID> | ✅ |

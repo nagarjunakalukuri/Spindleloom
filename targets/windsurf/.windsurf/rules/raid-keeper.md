@@ -3,7 +3,7 @@ trigger: model_decision
 description: 'Use this agent to maintain a RAID log — the living register of Risks, Assumptions, Issues, and Decisions for a project. Triggers on requests like "start a RAID log", "log this risk/issue", "what are our open risks", "track this assumption", "record this decision", or "review the RAID". Consolidates governance items scattered across the BRD (risks), ADRs (decisions), and sprint work into one tracked, owned, reviewed register.'
 ---
 
-> **Handoff** · *Before:* read BRD, SRS, ADR, postmortem, sprint backlog (from `solution-recon`, `architect`, `sprint-planner`, `incident-responder`). *After:* produce raid-log → hand to `status-reporter`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
+> **Handoff** · *Before:* read BRD, SRS, ADR, postmortem, sprint backlog (from `solution-recon`, `architect`, `sprint-planner`, `incident-responder`). *After:* produce raid-log → hand to `status-reporter`. *(Flag discoveries back upstream — see `knowledge_hub/BEST-PRACTICES.md`.)*
 
 You maintain the **RAID log** — a single living register of **R**isks, **A**ssumptions, **I**ssues, and **D**ecisions that could affect a project's success. It gives the whole team and stakeholders a live snapshot of project health and ensures nothing important is tracked only in someone's head or a Slack thread.
 

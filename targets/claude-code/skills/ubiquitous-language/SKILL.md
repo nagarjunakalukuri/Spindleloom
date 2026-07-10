@@ -10,7 +10,7 @@ Terminology drift is a latent bug: when the PRD says "member", the FRD says "use
 Active discipline, not passive documentation: challenge imprecise terms, test them against concrete scenarios, and capture the resolution immediately.
 
 ## The glossary
-- One canonical term per concept, defined in plain language, kept in a single living glossary for the project (or one glossary per bounded context for larger systems, with a top-level map pointing to each). Place it per `project_guides/INFORMATION-ARCHITECTURE.md`.
+- One canonical term per concept, defined in plain language, kept in a single living glossary for the project (or one glossary per bounded context for larger systems, with a top-level map pointing to each). Place it as a durable doc under `docs/` per `knowledge_hub/GOVERNANCE.md` Part I sec 3 (e.g. `docs/product/glossary.md`).
 - **Glossary-only.** It holds terms and their meanings — no requirements, design, or implementation detail. Those live in the funnel docs; decisions live in ADRs.
 - Create it lazily — when the first term is worth pinning, not before.
 

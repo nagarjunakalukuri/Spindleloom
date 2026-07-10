@@ -16,6 +16,6 @@ Manage the project **constitution** (`templates/constitution-template.md`) — t
 - Report violations and the fix; read-only.
 
 ## update
-- Append the change and bump the version. If a **principle** changed (not a typo), prompt to record an ADR (`adr-writer`) and supersede rather than silently rewrite — per the change-control model in `project_guides/BEST-PRACTICES.md`.
+- Append the change and bump the version. If a **principle** changed (not a typo), prompt to record an ADR (`adr-writer`) and supersede rather than silently rewrite — per the change-control model in `knowledge_hub/BEST-PRACTICES.md`.
 
 Output the path written (or, for review, the findings table). The constitution is the rung-2 anchor in the `spec-steward` maturity ladder.

@@ -23,7 +23,7 @@ The bridge from the spec funnel to the sprint board. The output is what engineer
 7. List assumptions and any FRD/SRS ID with no PBI (coverage gap → flag upstream).
 
 ## Definition of Ready / Definition of Done
-These are one living team artifact — `templates/definition-of-ready-done-template.md` (per `project_guides/BEST-PRACTICES.md`), referenced not redefined. Decompose to PBIs that *can* meet that DoR (upstream IDs exist, acceptance criteria testable, dependencies done or flagged, interface/endpoint confirmed reachable) and that the DoD can later gate; don't restate the gate criteria here.
+These are one living team artifact — `templates/definition-of-ready-done-template.md` (per `knowledge_hub/BEST-PRACTICES.md`), referenced not redefined. Decompose to PBIs that *can* meet that DoR (upstream IDs exist, acceptance criteria testable, dependencies done or flagged, interface/endpoint confirmed reachable) and that the DoD can later gate; don't restate the gate criteria here.
 
 ## Estimation
 Relative only (S/M/L or points), never invented hours. Mark spikes and decision-gated items explicitly ("build OR defer — decision required").

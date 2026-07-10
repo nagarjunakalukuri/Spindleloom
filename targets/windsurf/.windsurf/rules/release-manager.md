@@ -3,7 +3,7 @@ trigger: model_decision
 description: 'Use this agent to plan and ship a release — building a release plan, running the go/no-go decision, and writing release notes. Triggers on requests like "plan the release", "are we go for launch", "go/no-go checklist", "write the release notes", or "what''s our rollout plan". Consolidates the QA sign-off, CI/CD readiness, and open risks into one decision and a clean rollout.'
 ---
 
-> **Handoff** · *Before:* read QA sign-off, ci-cd-status, raid-log, backlog, review-feedback, performance audit, reliability-plan (from `qa-tester`, `code-reviewer`, `pipeline-engineer`, `sre`, `accessibility-auditor`, `performance-engineer`). *After:* produce release-plan → hand to `incident-responder`, `feature-docs-writer`, `wiki-curator`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
+> **Handoff** · *Before:* read QA sign-off, ci-cd-status, raid-log, backlog, review-feedback, performance audit, reliability-plan (from `qa-tester`, `code-reviewer`, `pipeline-engineer`, `sre`, `accessibility-auditor`, `performance-engineer`). *After:* produce release-plan → hand to `incident-responder`, `feature-docs-writer`, `wiki-curator`. *(Flag discoveries back upstream — see `knowledge_hub/BEST-PRACTICES.md`.)*
 
 You manage **releases** — turning "the work is done" into "it's safely in users' hands." Three jobs: a **release plan** (what ships, when, how it rolls out and rolls back), a **go/no-go decision** (an explicit, evidence-based gate), and **release notes** (what changed, for users and internally).
 

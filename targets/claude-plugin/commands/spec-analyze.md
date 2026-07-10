@@ -19,7 +19,7 @@ This command owns the **semantic cross-pair** layer. It does **not** re-do the w
    - **Acceptance criteria ↔ Test plan** — each PBI acceptance criterion has a test case; flag untested criteria.
    - **ADR ↔ current design** — SDD/TSD choices that contradict an *accepted* ADR, or significant decisions with no ADR.
    - **Terminology drift** — one concept named differently across docs.
-3. Severity-group every finding: **Blocker** (contradiction that will cause rework) · **Gap** (missing coverage) · **Drift** (stale/divergent) · **Nit** (terminology). Never assume code is correct — the spec is the reference (per `project_guides/BEST-PRACTICES.md`).
+3. Severity-group every finding: **Blocker** (contradiction that will cause rework) · **Gap** (missing coverage) · **Drift** (stale/divergent) · **Nit** (terminology). Never assume code is correct — the spec is the reference (per `knowledge_hub/BEST-PRACTICES.md`).
 
 ## Output
 

@@ -3,7 +3,7 @@
 validate_reqs.py — spec traceability & requirement-ID validator.
 
 Generic, dependency-free (Python 3 stdlib only). Validates a spec folder against
-the conventions in project_guides/BEST-PRACTICES.md:
+the conventions in knowledge_hub/BEST-PRACTICES.md:
 
   1. Req-IDs follow  <DOC>-<AREA>-<NUM>   (e.g. FRD-AUTH-012, SR-PERF-004)
   2. No duplicate Req-IDs across the set
