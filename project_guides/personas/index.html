@@ -1,0 +1,2347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spindleloom Persona Hub</title>
+<style>
+/* ── tokens: indigo dusk (dark, primary) / bleached linen (light) ── */
+:root{
+  --ground:#0E1524; --panel:#141E2E; --panel-2:#18263A;
+  --ink:#DBE5F1; --ink-mid:#93A6BC; --ink-dim:#5F7791; --hair:#1E2E45; --hair-2:#2A3E5C;
+  --gold:#CFA23A; --gold-hi:#E7BE58; --weft:#5C90BE; --weft-dim:#3A5E80;
+  --good:#4FAE7C; --crit:#CF6B65;
+  --shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34);
+  --serif:"Hoefler Text","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:light){:root{
+  --ground:#E9EAE5; --panel:#FFFFFF; --panel-2:#F3F3EF;
+  --ink:#16202E; --ink-mid:#47586B; --ink-dim:#7C8B9B; --hair:#DEDFD8; --hair-2:#C9CBC1;
+  --gold:#96701A; --gold-hi:#7C5D12; --weft:#3C6C93; --weft-dim:#A9B9C7;
+  --good:#2E7D57; --crit:#A5423E;
+  --shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07);
+}}
+:root[data-theme="light"]{--ground:#E9EAE5;--panel:#FFFFFF;--panel-2:#F3F3EF;--ink:#16202E;--ink-mid:#47586B;--ink-dim:#7C8B9B;--hair:#DEDFD8;--hair-2:#C9CBC1;--gold:#96701A;--gold-hi:#7C5D12;--weft:#3C6C93;--weft-dim:#A9B9C7;--good:#2E7D57;--crit:#A5423E;--shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07)}
+:root[data-theme="dark"]{--ground:#0E1524;--panel:#141E2E;--panel-2:#18263A;--ink:#DBE5F1;--ink-mid:#93A6BC;--ink-dim:#5F7791;--hair:#1E2E45;--hair-2:#2A3E5C;--gold:#CFA23A;--gold-hi:#E7BE58;--weft:#5C90BE;--weft-dim:#3A5E80;--good:#4FAE7C;--crit:#CF6B65;--shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34)}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.62;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+code,kbd,pre{font-family:var(--mono)}
+::selection{background:color-mix(in srgb,var(--gold) 30%,transparent)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:2px}
+b,strong{color:var(--ink)}
+
+/* ── persistent bar ── */
+.bar{position:sticky;top:0;z-index:80;display:flex;align-items:center;gap:14px;padding:11px 26px;
+  background:color-mix(in srgb,var(--ground) 88%,transparent);backdrop-filter:blur(9px);border-bottom:1px solid var(--hair)}
+.bar .brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--ink-dim);white-space:nowrap;cursor:pointer}
+.bar .brand b{color:var(--gold)}
+.bar .brand:hover{color:var(--ink);text-decoration:none}
+.bar select{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--ink);background:var(--panel);
+  border:1px solid var(--hair-2);border-radius:7px;padding:7px 10px;max-width:270px;cursor:pointer}
+.toggle{font-family:var(--mono);font-size:11px;color:var(--ink-mid);background:transparent;border:1px solid var(--hair-2);
+  border-radius:20px;padding:6px 13px;cursor:pointer;white-space:nowrap}
+.toggle:hover{border-color:var(--gold);color:var(--gold)}
+
+#app{outline:none}
+
+/* ── hub ── */
+.hub-hero{position:relative;overflow:hidden;border-bottom:1px solid var(--hair)}
+.hub-hero svg{position:absolute;inset:0;width:100%;height:100%}
+.hub-hero .veil{position:absolute;inset:0;background:linear-gradient(180deg,transparent 20%,var(--ground) 96%)}
+.hub-hero .in{position:relative;max-width:1120px;margin:0 auto;padding:58px 30px 44px;text-align:left}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-dim)}
+.hub-hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(36px,5.4vw,58px);line-height:1;letter-spacing:-.02em;margin:12px 0 0;text-wrap:balance}
+.hub-hero h1 em{font-style:italic;color:var(--gold)}
+.hub-sub{font-family:var(--serif);font-size:18px;color:var(--ink-mid);margin-top:14px;max-width:52ch;text-wrap:pretty}
+.searchbox{position:relative;margin-top:26px;max-width:560px}
+.searchbox input{width:100%;font-family:var(--mono);font-size:14px;color:var(--ink);background:var(--panel);
+  border:1px solid var(--hair-2);border-radius:9px;padding:12px 15px 12px 40px}
+.searchbox input::placeholder{color:var(--ink-dim)}
+.searchbox .ico{position:absolute;left:14px;top:12px;color:var(--ink-dim);font-size:14px}
+.results{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:70;background:var(--panel);border:1px solid var(--hair-2);
+  border-radius:9px;box-shadow:var(--shadow);max-height:300px;overflow:auto;display:none}
+.results.show{display:block}
+.results a{display:flex;justify-content:space-between;gap:12px;padding:10px 14px;border-bottom:1px solid var(--hair);color:var(--ink);font-size:13.5px}
+.results a:last-child{border-bottom:0}
+.results a:hover{background:var(--panel-2);text-decoration:none}
+.results .kind{font-family:var(--mono);font-size:10.5px;color:var(--ink-dim);white-space:nowrap}
+.results .kind b{color:var(--gold);font-weight:400}
+
+.hubwrap{max-width:1120px;margin:0 auto;padding:34px 30px 70px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:940px){.cards{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:600px){.cards{grid-template-columns:1fr}}
+.pcard{display:block;background:var(--panel);border:1px solid var(--hair);border-radius:12px;padding:18px 19px;
+  box-shadow:var(--shadow);transition:transform .15s,border-color .15s;color:var(--ink)}
+.pcard:hover{transform:translateY(-2px);border-color:var(--gold);text-decoration:none}
+.pcard .no{font-family:var(--mono);font-size:11px;color:var(--gold);letter-spacing:.1em}
+.pcard h3{font-family:var(--serif);font-size:20px;font-weight:600;letter-spacing:-.01em;margin:7px 0 2px}
+.pcard .alt{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-dim)}
+.pcard .mi{font-size:13.5px;color:var(--ink-mid);margin:10px 0 12px;line-height:1.55;min-height:3.1em}
+.pcard .meta{display:flex;flex-wrap:wrap;gap:6px}
+.pcard .m{font-family:var(--mono);font-size:10.5px;color:var(--ink-dim);border:1px solid var(--hair);border-radius:20px;padding:3px 9px}
+.pcard .m.g{color:var(--gold);border-color:color-mix(in srgb,var(--gold) 40%,var(--hair))}
+
+/* ── persona detail ── */
+.crumb{max-width:1080px;margin:0 auto;padding:20px 30px 0;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--ink-dim)}
+.crumb a{color:var(--ink-dim)}.crumb a:hover{color:var(--gold)}
+.phero{position:relative;overflow:hidden;border-bottom:1px solid var(--hair)}
+.phero svg{position:absolute;inset:0;width:100%;height:100%;opacity:.85}
+.phero .veil{position:absolute;inset:0;background:linear-gradient(105deg,var(--ground) 36%,transparent 84%)}
+.phero .in{position:relative;max-width:1080px;margin:0 auto;padding:44px 30px 40px}
+.phero h1{font-family:var(--serif);font-weight:600;font-size:clamp(34px,5.6vw,58px);line-height:.99;letter-spacing:-.02em;margin:12px 0 0;text-wrap:balance}
+.phero h1 em{font-style:italic;color:var(--gold)}
+.phero .role{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--ink-mid);margin-top:12px;text-transform:uppercase}
+.thesis{font-family:var(--serif);font-size:clamp(17px,2.2vw,21px);line-height:1.5;color:var(--ink);margin-top:16px;max-width:38ch;text-wrap:pretty}
+.thesis b{color:var(--gold)}
+.facts{display:flex;flex-wrap:wrap;gap:24px;margin-top:24px}
+.fact .n{font-family:var(--serif);font-size:27px;color:var(--gold-hi);line-height:1;font-variant-numeric:tabular-nums}
+.fact .l{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-dim);margin-top:5px}
+
+.layout{max-width:1080px;margin:0 auto;padding:0 30px;display:grid;grid-template-columns:196px 1fr;gap:46px;align-items:start}
+@media (max-width:900px){.layout{grid-template-columns:1fr;gap:0}.spine{display:none}}
+.spine{position:sticky;top:72px;padding-top:44px}
+.spine ol{list-style:none;position:relative;padding-left:20px}
+.spine ol::before{content:"";position:absolute;left:4px;top:6px;bottom:6px;width:1px;background:linear-gradient(180deg,var(--weft-dim),var(--gold),var(--weft-dim))}
+.spine li{position:relative;margin:2px 0}
+.spine a{display:block;font-size:12.5px;color:var(--ink-dim);padding:5px 0}
+.spine li::before{content:"";position:absolute;left:-19px;top:12px;width:7px;height:7px;border-radius:50%;background:var(--panel);border:1px solid var(--hair-2);transition:.15s}
+.spine a:hover{color:var(--ink);text-decoration:none}
+.spine li.on a{color:var(--gold)}
+.spine li.on::before{background:var(--gold);border-color:var(--gold);box-shadow:0 0 0 3px color-mix(in srgb,var(--gold) 22%,transparent)}
+
+.content{min-width:0;padding:44px 0 30px}
+section{margin:0 0 44px;scroll-margin-top:76px}
+.sh{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;padding-bottom:9px;border-bottom:1px solid var(--hair)}
+.sh .n{font-family:var(--mono);font-size:12px;color:var(--gold)}
+.sh h2{font-family:var(--serif);font-size:20px;font-weight:600;letter-spacing:-.01em}
+.sh .note{margin-left:auto;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim)}
+p{margin:0 0 13px;max-width:66ch;color:var(--ink-mid)}
+.cmd{font-family:var(--mono);font-size:12.5px;color:var(--gold);white-space:nowrap}
+
+.qhead{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin:26px 0 12px}
+.qs{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--hair);border-radius:10px;overflow:hidden;background:var(--panel)}
+@media (max-width:640px){.qs{grid-template-columns:1fr}}
+.qs .step{padding:15px 17px;border-right:1px solid var(--hair)}
+.qs .step:last-child{border-right:0}
+@media (max-width:640px){.qs .step{border-right:0;border-bottom:1px solid var(--hair)}.qs .step:last-child{border-bottom:0}}
+.qs .k{font-family:var(--mono);font-size:11px;color:var(--gold)}
+.qs .c{font-family:var(--mono);font-size:13px;color:var(--ink);font-weight:600;margin:6px 0 4px}
+.qs .d{font-size:12.5px;color:var(--ink-mid);line-height:1.5}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+@media (max-width:560px){.io{grid-template-columns:1fr}}
+.io .b{background:var(--panel);border:1px solid var(--hair);border-radius:10px;padding:15px 17px;box-shadow:var(--shadow)}
+.io .b.o{border-top:2px solid var(--gold)}
+.io h3{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:9px}
+.io ul{list-style:none;display:grid;gap:7px}
+.io li{font-size:13.5px;color:var(--ink-mid);padding-left:15px;position:relative}
+.io li::before{content:"›";position:absolute;left:0;color:var(--gold)}
+
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-dim);padding:0 12px 9px 0;border-bottom:1px solid var(--hair-2)}
+.tbl td{padding:10px 12px 10px 0;border-bottom:1px solid var(--hair);vertical-align:top;color:var(--ink-mid)}
+.tbl tr:hover td{color:var(--ink)}
+.tbl td.a{font-family:var(--mono);font-size:13px;color:var(--ink);white-space:nowrap}
+
+ol.flow{list-style:none;counter-reset:s}
+ol.flow li{counter-increment:s;position:relative;padding:13px 0 13px 46px;border-bottom:1px dashed var(--hair);color:var(--ink-mid);max-width:70ch}
+ol.flow li:last-child{border-bottom:0}
+ol.flow li::before{content:counter(s,decimal-leading-zero);position:absolute;left:0;top:13px;font-family:var(--mono);font-size:12px;color:var(--gold);border:1px solid var(--hair-2);border-radius:6px;padding:3px 7px}
+
+.calls{display:grid;gap:10px}
+.call{display:grid;grid-template-columns:96px 1fr;gap:15px;align-items:start;background:var(--panel);border:1px solid var(--hair);border-radius:10px;padding:13px 15px}
+.call .tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold);background:color-mix(in srgb,var(--gold) 12%,transparent);border-radius:5px;padding:5px 7px;text-align:center}
+.call.warn .tag{color:var(--crit);background:color-mix(in srgb,var(--crit) 13%,transparent)}
+.call .q{font-family:var(--serif);font-size:15px;color:var(--ink);margin-bottom:3px}
+.call .aa{font-size:13.5px;color:var(--ink-mid)}
+
+.prompt{background:var(--panel);border:1px solid var(--hair);border-radius:11px;margin-bottom:13px;overflow:hidden;box-shadow:var(--shadow);transition:transform .14s,border-color .14s}
+.prompt:hover{border-color:var(--hair-2);transform:translateY(-1px)}
+.prompt .ph{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:12px 15px 10px}
+.prompt .nm{font-family:var(--serif);font-size:16px;color:var(--ink)}
+.prompt .wn{font-size:12.5px;color:var(--ink-dim);margin-top:2px}
+.prompt .tg{font-family:var(--mono);font-size:10.5px;color:var(--gold);background:color-mix(in srgb,var(--gold) 12%,transparent);border-radius:5px;padding:3px 9px;white-space:nowrap}
+.prompt .bd{position:relative;border-top:1px solid var(--hair);background:var(--panel-2)}
+.prompt pre{font-size:13px;line-height:1.72;color:var(--ink);padding:14px 15px;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.prompt pre .v{color:var(--gold-hi)}
+.copy{position:absolute;top:10px;right:10px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-dim);background:var(--ground);border:1px solid var(--hair-2);border-radius:6px;padding:5px 10px;cursor:pointer}
+.copy:hover{color:var(--gold);border-color:var(--gold)}
+.copy.done{color:var(--good);border-color:var(--good)}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+@media (max-width:560px){.grid2{grid-template-columns:1fr}}
+.blk h3{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.blk ul{list-style:none;display:grid;gap:8px}
+.blk li{font-size:14px;color:var(--ink-mid);padding-left:16px;position:relative}
+.blk li::before{content:"—";position:absolute;left:0;color:var(--weft)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:var(--mono);font-size:11.5px;color:var(--ink-mid);background:var(--panel);border:1px solid var(--hair);border-radius:20px;padding:5px 12px}
+
+.loom{background:var(--panel);border:1px solid var(--hair);border-radius:12px;padding:8px 20px;box-shadow:var(--shadow)}
+.loom .row{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:center;padding:12px 0;border-bottom:1px dashed var(--hair)}
+.loom .row:last-child{border-bottom:0}
+.loom .to{font-family:var(--mono);font-size:12px;display:flex;align-items:center;gap:8px}
+.loom .to a{color:var(--gold)}
+.loom .to::before{content:"";width:20px;height:2px;flex-shrink:0;background:linear-gradient(90deg,var(--weft),var(--gold));border-radius:2px}
+.loom .need{font-size:13.5px;color:var(--ink-mid)}
+
+.kpi{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media (max-width:560px){.kpi{grid-template-columns:1fr}}
+.kpi .k{background:var(--panel);border:1px solid var(--hair);border-left:2px solid var(--weft);border-radius:8px;padding:12px 15px}
+.kpi .k b{display:block;font-family:var(--serif);font-size:15.5px;color:var(--ink);margin-bottom:2px}
+.kpi .k span{font-size:13px;color:var(--ink-mid)}
+
+.glo{columns:2;column-gap:30px}
+@media (max-width:560px){.glo{columns:1}}
+.glo div{break-inside:avoid;font-size:13.5px;color:var(--ink-mid);padding:6px 0;border-bottom:1px solid var(--hair)}
+.glo b{font-family:var(--mono);font-size:12.5px;color:var(--ink)}
+
+.pager{display:flex;justify-content:space-between;gap:14px;margin:8px 0 0;flex-wrap:wrap}
+.pager a{display:block;background:var(--panel);border:1px solid var(--hair);border-radius:10px;padding:13px 17px;min-width:220px;color:var(--ink);flex:1}
+.pager a:hover{border-color:var(--gold);text-decoration:none}
+.pager .dir{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim)}
+.pager .nm{font-family:var(--serif);font-size:17px;margin-top:3px}
+.pager a.next{text-align:right}
+
+footer{border-top:1px solid var(--hair);margin-top:44px}
+.foot{max-width:1080px;margin:0 auto;padding:22px 30px 54px;font-size:13px;color:var(--ink-dim)}
+.foot a{color:var(--ink-dim);text-decoration:underline}
+
+.reveal{opacity:0;transform:translateY(10px)}
+.reveal.in{opacity:1;transform:none;transition:opacity .5s ease,transform .5s ease}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .reveal{opacity:1!important;transform:none!important;transition:none!important}
+  *{transition:none!important}
+}
+@media print{.bar,.spine,.copy,.pager,.searchbox{display:none}body{background:#fff}}
+
+/* ── Woven Loop hero (hub) ── */
+.hub-grid{display:block}
+.loopwrap{display:flex;flex-direction:column;align-items:center;gap:12px;margin:30px auto 4px;width:min(480px,92vw)}
+.loopcanvas{display:block;width:100%;height:auto;max-width:480px}
+.loopread{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--ink-mid);display:flex;align-items:center;gap:8px;text-transform:uppercase}
+.loopread b{color:var(--gold);font-weight:600;letter-spacing:.04em}
+.loopread .pip{width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold)}
+@media (min-width:1024px){
+  .hub-grid{display:flex;align-items:center;gap:clamp(24px,4vw,56px)}
+  .htext{flex:1;min-width:0}
+  .loopwrap{flex:0 0 auto;margin:0}
+}
+@media (prefers-reduced-motion:reduce){.loopread .pip{box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="bar">
+  <a class="brand" href="#/"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style="flex-shrink:0;vertical-align:-4px"><path d="M10.00,10.00 L9.77,9.70 L9.55,9.40 L9.31,9.10 L9.08,8.80 L8.83,8.52 L8.58,8.24 L8.31,7.97 L8.03,7.71 L7.73,7.47 L7.42,7.26 L7.09,7.07 L6.75,6.92 L6.38,6.81 L6.01,6.74 L5.62,6.74 L5.22,6.80 L4.82,6.93 L4.44,7.15 L4.08,7.45 L3.75,7.83 L3.48,8.30 L3.27,8.82 L3.14,9.40 L3.10,10.00 L3.14,10.60 L3.27,11.18 L3.48,11.70 L3.75,12.17 L4.08,12.55 L4.44,12.85 L4.82,13.07 L5.22,13.20 L5.62,13.26 L6.01,13.26 L6.38,13.19 L6.75,13.08 L7.09,12.93 L7.42,12.74 L7.73,12.53 L8.03,12.29 L8.31,12.03 L8.58,11.76 L8.83,11.48 L9.08,11.20 L9.31,10.90 L9.55,10.60 L9.77,10.30 L10.00,10.00" fill="none" stroke="var(--weft)" stroke-width="1.70" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.90,10.00 L16.86,10.60 L16.73,11.18 L16.52,11.70 L16.25,12.17 L15.92,12.55 L15.56,12.85 L15.18,13.07 L14.78,13.20 L14.38,13.26 L13.99,13.26 L13.62,13.19 L13.25,13.08 L12.91,12.93 L12.58,12.74 L12.27,12.53 L11.97,12.29 L11.69,12.03 L11.42,11.76 L11.17,11.48 L10.92,11.20 L10.69,10.90 L10.45,10.60 L10.23,10.30 L10.00,10.00 M10.00,10.00 L10.23,9.70 L10.45,9.40 L10.69,9.10 L10.92,8.80 L11.17,8.52 L11.42,8.24 L11.69,7.97 L11.97,7.71 L12.27,7.47 L12.58,7.26 L12.91,7.07 L13.25,6.92 L13.62,6.81 L13.99,6.74 L14.38,6.74 L14.78,6.80 L15.18,6.93 L15.56,7.15 L15.92,7.45 L16.25,7.83 L16.52,8.30 L16.73,8.82 L16.86,9.40 L16.90,10.00" fill="none" stroke="var(--gold)" stroke-width="1.70" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10.0" cy="10.0" r="2.89" fill="var(--ground)"/><circle cx="10.0" cy="10.0" r="1.70" fill="var(--gold)"/><circle cx="10.0" cy="10.0" r="0.71" fill="var(--ground)"/></svg> Spindleloom · Persona Hub</a>
+  <select id="jump" aria-label="Jump to a persona"></select>
+  <button class="toggle" id="themeToggle" aria-label="Toggle light or dark theme">◐ theme</button>
+</div>
+<main id="app" tabindex="-1"></main>
+<footer><div class="foot">
+  Sources of truth: <a href="../BEST-PRACTICES.md">BEST-PRACTICES.md</a> · <a href="../STORY-CRAFT.md">STORY-CRAFT.md</a> · <a href="../STANDARD.md">STANDARD.md §9</a> · the per-agent contracts in <a href="../../agents/">agents/</a> · the interactive <a href="../spindleloom-agent-fleet.html">fleet map</a>. A synthesized human playbook; the agent frontmatter is the machine-authoritative source.
+</div></footer>
+
+<script>
+/* ════ DATA — 11 personas. PO carries exemplar full depth; the rest carry the core operating set. ════ */
+const P=[
+{id:"product-owner",no:"01",name:"Product Owner",alt:"/ Business Analyst",
+ mission:"You hold the first threads and tie the <b>golden thread of traceability</b> — from a market problem down to a Ready, traceable backlog — and you <b>accept</b> each phase before it flows on.",
+ card:"Owner of value, scope and the acceptance gates — market problem to Ready backlog.",
+ span:["Discovery","Requirements","Planning"],accepts:3,
+ agents:[["doc-strategy-advisor","/spec-new","Picks the doc set you need (Lean/Mid/Enterprise) and assigns owners — <b>your entry point</b>."],
+  ["mrd-writer","/spec-new","Market problem, personas, competitive landscape."],
+  ["brd-writer","/spec-new","Business goals, ROI, scope — seeds the RTM with BR-* IDs."],
+  ["prd-writer","/spec-new","Product behaviour: stories, features, acceptance criteria. Your authority doc."],
+  ["frd-writer","/spec-new","Exact behaviour, flows, edge and error cases."],
+  ["srs-writer","/spec-new","Technical constraints, NFR budgets, compliance obligations."],
+  ["urs-writer","/spec-new","Regulated user requirements (FDA/GAMP) — when validation is mandatory."],
+  ["backlog-manager","/plan-next","PRD/FRD → INVEST backlog, ordered, DoR-gated, RTM-traced."],
+  ["product-analytics","—","Instruments PRD success metrics; a missed metric spawns backlog work."]],
+ shared:"Shared with the Delivery Lead: <code>status-reporter</code>, <code>raid-keeper</code>.",
+ skills:["requirement-quality","requirement-elicitation","ubiquitous-language","backlog-decomposition","traceability-rtm","relative-estimation","analytics-instrumentation"],
+ gates:["Phase acceptance — your ACCEPTED token is the gate; advance and CI refuse without it","Definition of Ready — statement, testable AC, estimate, no blockers, INVEST"],
+ pitfalls:["Specs that never become work","No “so that” (no value) or no AC (untestable)","Scope creep — every PBI traces to a Req-ID","Accepting a phase you didn't review"],
+ handoff:[["architect","PRD + FRD + SRS <b>accepted</b>; RTM seeded; open assumptions tagged"],
+  ["delivery-lead","backlog <b>ordered</b>, DoR-met, estimable"],
+  ["qa","acceptance criteria are observable <b>Given / When / Then</b>"],
+  ["sre-release","success metrics <b>defined & instrumented</b>"]],
+ prompts:[["Set up the spec set","Starting a new product or feature area","/spec-new",["For «product», a «Lean|Mid|Enterprise» team, select the document set we need and assign","owners. We are «regulated: yes/no». Recommend the leanest set that still covers our risk."]],
+  ["Draft the PRD","Business case is accepted","prd-writer",["Write the PRD for «feature» from docs/brd.md: user stories with Given/When/Then acceptance","criteria, MoSCoW priority, and success metrics. Trace every story to a BR- id in the RTM."]],
+  ["Specify exact behaviour (FRD)","PRD stories need precise logic","frd-writer",["Write the FRD for «feature» from the PRD: exact flows, state changes, and edge/error cases.","Trace each FRD- id to its PRD- id; flag ambiguity rather than guessing."]],
+  ["Decompose to a backlog","Requirements are accepted","/plan-next",["Break docs/prd.md and the «feature» FRD into epics and INVEST user stories with G/W/T","acceptance criteria, ordered by MoSCoW, each tracing to a Req-id. Save it as the backlog."]],
+  ["Split an oversized story","A story is too big to estimate","backlog-manager",["PBI-«EPIC»-007 is too big to estimate. Split into 2–4 independently valuable stories,","vertically (never UI/DB layers), each still tracing back to FRD-«…»."]],
+  ["Pull the next Ready item","The team needs work to start","/plan-next",["What is the next pullable PBI — dependencies done and Definition of Ready met?","Return its acceptance criteria and the upstream Req-ids it traces to."]],
+  ["Accept a phase boundary","After you have reviewed the phase output","gate",["sloom approve requirements --feature «slug» --role product-owner --by \"«your name»\"","# only after you have actually read and agree with the requirements set"]],
+  ["Weekly stakeholder status","End of sprint / reporting cadence","/ops-status",["Produce a RAG status for «exec | delivery | customer» from the RAID log and the last","sprint's delivery metrics: health, what shipped, what's at risk, and the ask."]]],
+ qs:[["01","/spec-new","Pick the doc set for your team size; it names owners. Once per product: /spec-constitution."],
+  ["02","draft PRD → FRD","Run prd-writer then frd-writer; then sloom approve requirements … to open the gate."],
+  ["03","/plan-next","backlog-manager decomposes to a Ready, ordered, RTM-traced backlog the team can pull."]],
+ io:{inp:["The client brief / market signal","Stakeholder goals and constraints","Discovered work flowing back up — bugs, postmortems, tech-debt, missed metrics"],
+  out:["Accepted MRD · BRD · PRD · FRD · SRS (· URS if regulated)","A Ready, ordered <b>backlog</b> (PBI-*), every item traced to a Req-ID","A seeded <b>RTM</b> + an <b>ACCEPTED</b> token at each phase boundary"]},
+ flow:["<b>Frame it.</b> <span class=cmd>/spec-new</span> → doc-strategy-advisor picks your doc set and names owners.",
+  "<b>Justify it.</b> mrd-writer → brd-writer establish market + business case; BR-* IDs seed the RTM.",
+  "<b>Specify it.</b> prd-writer → frd-writer → srs-writer (urs-writer in parallel if regulated). Then <b>accept</b>: <span class=cmd>sloom approve requirements --feature «slug» --role product-owner --by \"«you»\"</span>.",
+  "<b>Hand to design.</b> The Architect consumes your PRD/FRD/SRS; you accept design before planning.",
+  "<b>Make it buildable.</b> <span class=cmd>/plan-next</span> → backlog-manager decomposes into a Ready, ordered backlog.",
+  "<b>Track and learn.</b> Status and RAID for stakeholders; product-analytics closes the build→learn loop into new backlog work."],
+ decide:[["regulated?","The product is medical / financial / safety-critical.","Add <code>urs-writer</code> in parallel with the PRD; validation drives acceptance depth."],
+  ["brownfield?","You're extending an existing codebase.","Run <span class=cmd>/build-recon</span> <b>before</b> finalising stories — confirm the endpoints/data exist."],
+  ["too big?","A story can't be estimated / won't fit a sprint.","Split it <b>vertically</b> (never UI/DB layers); a missing endpoint becomes a blocking backend <em>enabler</em> PBI."],
+  ["a choice?","The work is a forced architecture decision, not code.","Type it a <b>Decision</b> PBI → architect → adr-writer (produces an ADR, not a PR)."]],
+ kpis:[["Requirement stability","low churn on accepted specs — re-opens signal weak upfront framing"],
+  ["Traceability = 100%","every PBI traces to a Req-ID; empty RTM cells are a gap, not done"],
+  ["Backlog readiness","enough DoR-met items to keep the team pulling without stalls"],
+  ["Value realised","shipped features move the PRD success metric"]],
+ trouble:[["DUP-REQID","Two branches minted the same Req-ID and merged clean.","Mint on a branch, merge to main first (the PR gate runs DUP-REQID), then push."],
+  ["empty RTM","The RTM's tracker column is blank after a board push.","Write the work-item IDs back — an empty column is a traceability gap (emit_backlog.py automates it)."],
+  ["phantom PBI","PBI-UNDEFINED: referenced in deps/sprint, no backlog row.","Give it a ranked, AC-bearing row, or remove the reference."],
+  ["range","PBI-X-001..006 orphaned the middle IDs.","Write every ID out in full — range shorthand is invisible to the validators."]],
+ glossary:[["BR/PRD/FRD/SRS/URS","the requirement docs, top→bottom of the funnel"],["PBI","Product Backlog Item (usually a user story)"],
+  ["RTM","Requirements Traceability Matrix; threads Req-ID → PBI → test"],["Req-ID","a stable DOC-AREA-NUM identifier"],
+  ["INVEST","Independent · Negotiable · Valuable · Estimable · Small · Testable"],["MoSCoW","Must / Should / Could / Won't priority"],
+  ["DoR / DoD","Definition of Ready (in) / Done (out)"],["Acceptance token","your signed ACCEPTED file at a phase boundary"]]},
+
+{id:"architect",no:"02",name:"Architect",alt:"/ Tech Lead",
+ mission:"You turn accepted requirements into a <b>buildable design</b> — and leave every significant decision on the record.",
+ card:"Owner of technical design and decisions — SDD, ADRs, API and data contracts.",
+ span:["Design"],accepts:0,
+ agents:[["architect","—","Architecture orchestration: reads SDD scope, directs C4 modelling and decision layers."],
+  ["sdd-writer","/spec-new","Software Design Document — components, C4/arc42, data flows, reliability plan."],
+  ["tsd-writer","/spec-new","Technical spec — pinned stack, endpoint specs, deploy/rollback procedures."],
+  ["adr-writer","/spec-adr","Immutable, append-only Architecture Decision Records with rationale."],
+  ["rfc-facilitator","/spec-rfc","Design proposals opened for comment before building; an accepted RFC produces an ADR."],
+  ["api-designer","—","Contract-first APIs: OpenAPI/GraphQL schemas, auth, versioning policy."],
+  ["data-modeler","—","Conceptual→logical→physical schema, ERD, indexing, migration plan."],
+  ["coding-standards-writer","—","Enforceable engineering guidelines — what good code looks like here."],
+  ["tech-radar-curator","/tech-radar","Adopt / Trial / Assess / Hold rings aligned to accumulated ADRs."]],
+ skills:["architecture-decision-framing","threat-modeling-stride","api-contract","ubiquitous-language","verification-run-and-observe"],
+ gates:["Design acceptance — you co-sign the design→planning boundary","ADR discipline — one immutable record per significant decision; supersede, never edit"],
+ pitfalls:["A coverage table that decorates instead of drives — every SR-* constraint must shape a component","Re-deriving upstream behaviour instead of reading the routed FRD","Decisions made in chat and lost — no ADR, no decision"],
+ handoff:[["developer","SDD/TSD + API & data contracts; ADRs recorded"],
+  ["security","SDD + trust boundaries, ready for the threat model"],
+  ["product-owner","reality-check feedback: infeasible or costly requirements pushed back upstream"],
+  ["delivery-lead","Decision PBIs typed and routed (ADR, not PR)"]],
+ prompts:[["Draft the SDD","Requirements are accepted","sdd-writer",["Write the SDD for «feature» from the accepted PRD/FRD/SRS: arc42/C4 components, data flows,","trade-off table, reliability plan. Map every SR- constraint to a component decision."]],
+  ["Record a decision","A significant choice was made","/spec-adr",["Record the decision to «choose X over Y» for «feature»: context, options weighed, decision,","consequences. Append-only — supersede rather than edit."]],
+  ["Open an RFC","A change needs debate before building","/spec-rfc",["Open an RFC for «significant change»: problem, proposal, alternatives, blast radius.","Circulate for comment; on acceptance, resolve it into an ADR."]],
+  ["Design the API contract","Before FE/BE build in parallel","api-designer",["Design the OpenAPI contract for «feature»: endpoints, auth, versioning policy, error model —","contract-first, so frontend, backend and tests build against the same spec."]]]},
+
+{id:"developer",no:"03",name:"Developer",alt:"backend / frontend",
+ mission:"You build in the inner loop: <b>recon, implement, verify by running it</b> — the shortest diff that fully does the job.",
+ card:"Builder in the inner loop — recon, implement, verify, PR; the maker half of maker/checker.",
+ span:["Build","Test"],accepts:0,
+ agents:[["solution-recon","/build-recon","Brownfield ground-truth before you build: what exists, what to reuse."],
+  ["backend-developer","—","Service implementation: APIs, data access, reliability, security."],
+  ["frontend-developer","—","Component architecture, state, accessibility, design system, performance."],
+  ["test-author","—","Unit/integration tests from acceptance criteria — your own tests."],
+  ["change-verifier","/build-verify","Maker/checker gate: RUNS your change against its AC; PASS/FAIL with evidence."],
+  ["debugger","—","Systematic root-cause from a trace or failing test → fix + regression test."],
+  ["pr-author","—","PR descriptions and Conventional Commits from a diff."],
+  ["code-reviewer","—","Reviews PRs against the standard and DoD; severity-grouped feedback."],
+  ["dev-onboarding","—","CONTRIBUTING + inner-loop setup; day-one productivity."]],
+ skills:["verification-run-and-observe","code-minimalism","systematic-debugging","conventional-commits-pr","brownfield-recon","context-engineering","test-design"],
+ gates:["change-verifier PASS — the only path from builder to PR runs through the checker","DoD — coded, reviewed, tested, docs updated, merged"],
+ pitfalls:["Handing off code that was never run — trust the run, not the read","Re-implementing a helper that lives three files over — grep first","Horizontal half-features that deliver no user value"],
+ handoff:[["qa","a verified build (change-verifier PASS) + what changed and how to exercise it"],
+  ["sre-release","observability hooks, deploy notes, rollback expectations"],
+  ["docs-curator","behaviour changes that need user-facing docs"],
+  ["delivery-lead","honest status on the run ledger — done means verified"]],
+ prompts:[["Recon before building","Starting any brownfield PBI","/build-recon",["Before I start PBI-«ID», recon the codebase: does «endpoint/data» exist, which patterns and","helpers should I reuse, and is this FE-only or backend-first?"]],
+  ["Implement the PBI","The item is Ready and recon is done","developer",["Implement PBI-«ID» per its acceptance criteria. Reuse existing helpers (grep first), keep the","diff minimal, run the changed tests + lint, and exercise the changed path before handing off."]],
+  ["Verify the change","Before opening the PR","/build-verify",["Verify my change for PBI-«ID» against its acceptance criteria: build, changed tests, lint,","smoke the path. Return PASS/FAIL with the AC coverage matrix."]],
+  ["Root-cause a failure","A test or the app is red","debugger",["Root-cause this failure: «stack trace / failing test». One hypothesis at a time; fix the shared","cause (grep every caller), add a regression test, and re-run to green."]]]},
+
+{id:"qa",no:"04",name:"QA Engineer",alt:"/ Test Engineer",
+ mission:"You own the <b>quality verdict</b>: tests traced to requirements, defects triaged honestly, and a sign-off that means something.",
+ card:"Owner of product quality — traced test plans, execution, triage, and the QA go/no-go.",
+ span:["Test"],accepts:0,
+ agents:[["test-plan-writer","/test-plan","Test plan and cases traced to FRD/SRS via the RTM; IQ/OQ/PQ when regulated."],
+  ["qa-tester","—","System and exploratory execution, defect lifecycle, the QA sign-off gate."],
+  ["test-automation-engineer","—","E2E/integration suites; owns the pyramid and CI integration."],
+  ["bug-triager","—","Severity vs priority set independently; dedup; fix-now vs defer."],
+  ["flaky-test-detective","—","Finds, quarantines and fixes flaky tests; tracks the flake rate."]],
+ shared:"Shared with the Developer: <code>change-verifier</code>, <code>test-author</code>.",
+ skills:["test-design","verification-run-and-observe","defect-triage","test-data","systematic-debugging"],
+ gates:["QA go/no-go — all P0/P1 pass, no open S1/S2 (or documented workaround), coverage vs targets; persisted as a sign-off token"],
+ pitfalls:["Signing off without evidence — an unevidenced sign-off is a forged gate","Conflating severity with priority — set both, independently","Retrying a flaky test until green instead of quarantining it"],
+ handoff:[["sre-release","the QA verdict token + residual risk, feeding the release AND"],
+  ["product-owner","defects that trace to vague requirements — the spec gets fixed too"],
+  ["developer","reproducible bug reports with severity/priority set"],
+  ["delivery-lead","defect trends and escaped-defect learnings for the retro"]],
+ prompts:[["Write the test plan","Requirements are stable","/test-plan",["Write the test plan for «feature» traced to FRD/SRS ids: strategy, cases (happy + unhappy),","coverage targets, and the QA exit bar."]],
+  ["Execute and report","A build passed the maker/checker gate","qa-tester",["Execute the «feature» test cases; report defects with repro steps, severity (S1–S4) and","priority (P1–P4) set independently; log escaped defects against the gate that missed them."]],
+  ["Automate the flow","A manual flow is stable and repeated","test-automation-engineer",["Automate the «flow» end-to-end per the test pyramid: stable selectors, no sleeps, runs in CI;","quarantine any flaky case with an issue rather than retrying it green."]],
+  ["Compute the QA verdict","Before a release decision","qa-tester",["Compute the QA go/no-go for «release»: P0/P1 pass rate, open S1/S2 with workarounds,","coverage vs targets. Persist the verdict as the sign-off token with evidence."]]]},
+
+{id:"ux",no:"05",name:"UX Designer",alt:"& Accessibility",
+ mission:"You own the <b>experience</b> — flows and components users understand, and an accessibility bar that ships met, not promised.",
+ card:"Owner of the experience — flows, design system, and the WCAG sign-off gate.",
+ span:["Design","Test"],accepts:0,
+ agents:[["ux-ui-designer","—","Flows, wireframes, hi-fi states, the design system."],
+  ["accessibility-auditor","—","WCAG 2.1 AA audit: keyboard, screen reader, contrast — a sign-off gate."]],
+ skills:["ux-design-method","verification-run-and-observe"],
+ gates:["Accessibility sign-off — WCAG 2.1 AA verified before release, persisted as a token"],
+ pitfalls:["Designing the happy path only — every state (loading/empty/error) is a design","Accessibility as a post-hoc audit instead of design intent","A design system the frontend can't actually build from"],
+ handoff:[["developer","the design spec: states, components, tokens, interaction rules"],
+  ["qa","accessibility acceptance criteria per screen"],
+  ["sre-release","the a11y sign-off token for the release AND"]],
+ prompts:[["Design the feature","PRD stories are accepted","ux-ui-designer",["Design the «feature» flows from the PRD: wireframes → hi-fi states (loading / empty / error /","success), design-system components, and annotate accessibility intent per screen."]],
+  ["Audit accessibility","Screens are built and testable","accessibility-auditor",["Audit «screens» against WCAG 2.1 AA: keyboard, screen reader, contrast, focus order.","Return violations with severity and fix, and the sign-off verdict."]]]},
+
+{id:"delivery-lead",no:"06",name:"Delivery Lead",alt:"/ Scrum Master",
+ mission:"You own <b>flow and cadence</b>: estimates, sprints, retros — and a status that tells the truth at a glance.",
+ card:"Owner of flow and cadence — estimation, sprints, retros, RAID, status, tech-debt.",
+ span:["Planning","Review","Process"],accepts:0,
+ agents:[["estimation-facilitator","/plan-estimate","Relative sizing, velocity, capacity planning."],
+  ["sprint-planner","/plan-sprint","Sprint goal + capacity-fit selection from Ready items; DoR enforced."],
+  ["retrospective-facilitator","/plan-retro","Blameless retro grounded in data; 1–3 owned action items."],
+  ["status-reporter","/ops-status","Audience-tailored RAG status from metrics + RAID."],
+  ["raid-keeper","/ops-raid","Living Risks / Assumptions / Issues / Decisions register."],
+  ["tech-debt-keeper","/tech-debt","Debt register: impact × interest vs effort; promotes items to the backlog."]],
+ skills:["relative-estimation","sprint-facilitation","agent-handoff-context","brownfield-recon"],
+ gates:["DoR/DoD enforcement — nothing unready enters a sprint; nothing undone leaves it","Sprint commitment — capacity-fit, no fake-Ready items"],
+ pitfalls:["Committing DoR-blocked stories to hit a number","A retro that produces observations but no owned actions","Status theatre — green until it's suddenly red"],
+ handoff:[["developer","the sprint backlog — DoR-met, capacity-fit, ordered"],
+  ["product-owner","velocity and forecast vs the roadmap; scope-vs-capacity calls"],
+  ["sre-release","release scope freeze and dates"]],
+ prompts:[["Size the backlog","New Ready items exist","/plan-estimate",["Size the Ready backlog with the team: relative points anchored on PBI-«ID» = «N» pts;","flag low-confidence estimates tied to open assumptions."]],
+  ["Plan the sprint","Start of the cadence","/plan-sprint",["Plan sprint «N»: goal, capacity «pts», select DoR-met items only, name the risks and the","drop-first stretch item."]],
+  ["Run the retro","End of sprint","/plan-retro",["Run the retro on sprint «N» data: what worked, what didn't, 1–3 owned action items;","feed recurring causes to the improvement register."]],
+  ["Report status","Reporting cadence","/ops-status",["Produce a RAG status for «audience» from the RAID log and delivery metrics: health,","what shipped, what's at risk, and the ask."]]]},
+
+{id:"sre-release",no:"07",name:"SRE",alt:"Reliability & Release",
+ mission:"You <b>ship it and keep it up</b>: pipelines, SLOs, incidents — and an evidence-based go/no-go.",
+ card:"Owner of shipping and running — pipeline, SLOs, incidents, and the release gate.",
+ span:["Release","Operate","Review"],accepts:0,
+ agents:[["pipeline-engineer","/ops-metrics","Build→deploy stages and gates; the DORA/cycle-time snapshot."],
+  ["sre","—","SLOs/SLIs, error budgets, observability, alerting, runbooks, capacity."],
+  ["performance-engineer","—","Profiles against SRS budgets: bottlenecks, N+1, Core Web Vitals."],
+  ["incident-responder","/ops-incident","Incident response + blameless postmortem + runbooks."],
+  ["release-manager","/ship-release","Release plan, evidence-based go/no-go, release notes."]],
+ skills:["observability-slo-design","production-incident-response","systematic-debugging","defect-triage","agentic-loop-design"],
+ gates:["Release go/no-go — a computed AND over the sign-off tokens (QA, security, perf, a11y); unevidenced = no-go","Deploy gate — pipeline stages enforce DoD, not aspire to it"],
+ pitfalls:["Going go on vibes — the AND over tokens is the verdict","Alerting on causes instead of symptoms — page fatigue","Postmortem actions that never reach the backlog"],
+ handoff:[["product-owner","postmortem actions routed to the backlog as typed PBIs"],
+  ["docs-curator","release notes source material and updated runbook links"],
+  ["security","incident findings with security impact"],
+  ["delivery-lead","error-budget burn feeding sprint planning"]],
+ prompts:[["Define the SLOs","A service approaches production","sre",["Define SLOs/SLIs and the error budget for «service» from the SRS targets; design alerting","(page on symptoms, not causes) and a runbook per alert."]],
+  ["Drive an incident","An alert fired","/ops-incident",["Drive the incident for «alert»: stabilise first, set the comms cadence, then a blameless","postmortem with action items routed to the backlog."]],
+  ["Snapshot delivery metrics","Reporting cadence","/ops-metrics",["Produce the DORA / cycle-time snapshot; flag any pipeline gate that is advisory-only","and should block."]],
+  ["Compute the release verdict","A release candidate exists","/ship-release",["Compute the go/no-go for «release» from the sign-off tokens (QA, security, perf, a11y);","draft the release notes from merged changes."]]]},
+
+{id:"docs-curator",no:"08",name:"Docs Curator",alt:"/ Knowledge",
+ mission:"You give every artifact a <b>home</b> and every user an answer — the knowledge base that outlives the sprint.",
+ card:"Owner of the knowledge base — user docs (Diátaxis) and the project wiki.",
+ span:["Process"],accepts:0,
+ agents:[["feature-docs-writer","—","End-user docs in Diátaxis form: tutorial, how-to, reference, explanation."],
+  ["wiki-curator","—","Wiki home and navigation; every artifact gets a home, nothing orphaned."]],
+ skills:["agent-handoff-context"],
+ gates:["Docs-current — user-facing behaviour changes ship with their docs"],
+ pitfalls:["Documenting the code instead of the behaviour (the FRD is the source)","A wiki that indexes everything and helps no one — curate, don't dump"],
+ handoff:[["product-owner","doc gaps and user-confusion signals as candidate backlog items"],
+  ["sre-release","published notes and updated runbook links for the release"]],
+ prompts:[["Write the user docs","A feature is shipping","feature-docs-writer",["Write the user docs for «feature» in Diátaxis form — tutorial, how-to, reference,","explanation — from the FRD behaviour, not the code."]],
+  ["Curate the wiki","Cadence or after a release","wiki-curator",["Curate the wiki home: every system of record linked, ownership and last-reviewed stamped,","orphaned artifacts adopted or archived."]]]},
+
+{id:"ai-ml",no:"09",name:"AI Engineer",alt:"/ ML",
+ mission:"You hold shipped AI to an <b>eval bar</b>: golden datasets, judged regressions, and a cost envelope that holds.",
+ card:"Owner of shipped AI quality — eval harnesses, regression gates, cost envelopes.",
+ span:["Test","Build"],accepts:0,
+ agents:[["ai-eval","—","Eval harness: golden datasets, LLM-as-judge scoring, regression gates in CI."]],
+ shared:"Shared with the Orchestration Lead: <code>ai-orchestrator</code> (the governance policy).",
+ skills:["eval-harness-design","agentic-loop-design","llm-cost-optimization","verification-run-and-observe"],
+ gates:["AI eval gate — a regression against the golden set blocks the release"],
+ pitfalls:["Shipping on demos — an AI feature without an eval is unverified","Judging with the same model/prompt that generates","Cost creep — no per-request token budget"],
+ handoff:[["sre-release","the eval-gate verdict for the release AND"],
+  ["architect","model and configuration choices worth an ADR"],
+  ["qa","eval coverage of the AI acceptance criteria"]],
+ prompts:[["Build the eval harness","An AI feature approaches release","ai-eval",["Build the eval harness for «AI feature»: a golden dataset from the FRD acceptance criteria,","an LLM-as-judge rubric, and a regression gate wired into CI."]],
+  ["Profile cost and latency","The feature works but is expensive","ai-eval",["Profile «AI feature» cost/latency: token spend per request, cache hit-rate, model-tier fit;","propose the cheapest configuration that still holds the eval bar."]]]},
+
+{id:"security",no:"10",name:"Security Engineer",alt:"/ AppSec",
+ mission:"You <b>threat-model before code</b> and sign off after review — security is a gate, not a hope.",
+ card:"Owner of security posture — STRIDE threat models, authz review, the security sign-off.",
+ span:["Review (continuous)"],accepts:0,
+ agents:[["security-reviewer","—","STRIDE threat model, security requirements, authz design review, AppSec checklist."]],
+ skills:["threat-modeling-stride","agent-handoff-context"],
+ gates:["Security sign-off — a token the release AND requires; no review, no go"],
+ pitfalls:["Reviewing at the end instead of threat-modelling at design","A checklist pass that never looked at the authz design","Findings without severity or an owner"],
+ handoff:[["developer","required fixes with severity and a re-review path"],
+  ["architect","threat-model findings that drive design decisions"],
+  ["sre-release","the security sign-off token"]],
+ prompts:[["Threat-model the design","The SDD exists","security-reviewer",["STRIDE threat-model «feature» from the SDD: assets, trust boundaries, top risks with","mitigations mapped to SR-SEC ids; review the authz design explicitly."]],
+  ["Review a change","A security-relevant PR is open","security-reviewer",["Security-review this change: injection, authz bypass, secrets handling, PHI/PII exposure.","Verdict with required fixes by severity; sign-off token on pass."]]]},
+
+{id:"orchestration-lead",no:"11",name:"Orchestration Lead",alt:"/ Fleet Conductor",
+ mission:"You conduct the <b>fleet itself</b>: runs that resume, gates that hold, and specs that don't drift.",
+ card:"Owner of running the agent fleet — runs, autonomy policy, and spec-drift control.",
+ span:["Process (cross-cutting)"],accepts:0,
+ agents:[["run-orchestrator","/run","Drives a run: proposes the next agent, enforces gates and the stop contract; resumable state."],
+  ["ai-orchestrator","—","The governance policy: autonomy per risk tier, guardrails, human-in-the-loop points."],
+  ["spec-steward","—","SDD maturity and drift control; keeps code and spec agreeing."]],
+ skills:["agentic-loop-design","traceability-rtm","context-engineering","cross-artifact-analysis"],
+ gates:["Stop contract + handoff gates — a run advances only when upstreams are done, gates passed, boundaries accepted","Re-work loop — open FLAG(owner) markers against done steps are re-dispatched, not shipped"],
+ pitfalls:["Auto-dispatching to protected paths — propose-and-confirm is the default","A run with no stop contract — no end state, no budget, no constraints","Letting flags accumulate with no loop back"],
+ handoff:[["product-owner","acceptance requests at each phase boundary, with the evidence to review"],
+  ["delivery-lead","run status: runnable / blocked / re-work queues"],
+  ["developer","dispatch packs — exactly the context each step needs, not folders"]],
+ prompts:[["Orchestrate a run","A feature enters the fleet","/run",["Orchestrate «feature» through the fleet from the run-state: propose the next runnable agent","(upstreams done + gate passed), wait for my go before dispatching, record progress."]],
+  ["Set the autonomy policy","Adopting agents on a new team","ai-orchestrator",["Define the agentic-SDLC policy: what agents may do autonomously per risk tier, guardrail","thresholds, and the human-in-the-loop points."]],
+  ["Audit spec drift","Cadence, or after heavy changes","spec-steward",["Audit the spec set for drift: do the PRD/FRD/SDD still agree with each other and the code?","Route each mismatch as a FLAG(owner) to its owning agent."]]]},
+
+{id:"sponsor",no:"12",name:"Sponsor",alt:"/ Executive",
+ mission:"You own the <b>why and the budget</b> — and your acceptance is the first gate the funnel has.",
+ card:"Owner of the why, budget and the first acceptance — the executive the fleet reports to.",
+ span:["Discovery","Requirements"],accepts:1,
+ agents:[["brd-writer","/spec-new","Business goals, ROI case, scope — the document you co-own with the PO."],
+  ["status-reporter","/ops-status","The exec-tailored RAG status: health, shipped, at-risk, the ask."],
+  ["raid-keeper","/ops-raid","The risk register you scan before big calls."],
+  ["release-manager","/ship-release","Release plan and notes; go/no-go evidence you can audit."]],
+ shared:"You are a requester/approver more than an operator — the PO and Delivery Lead drive these agents day-to-day.",
+ skills:["requirement-quality","requirement-elicitation","sprint-facilitation"],
+ gates:["Discovery→requirements acceptance — the sponsor co-signs before spec work scales","Budget/timeline loop — cost surprises re-open the BRD, never get quietly absorbed"],
+ pitfalls:["Rubber-stamping an acceptance you didn't read — the token carries your name","Asking for status theatre — green dashboards nobody trusts","Scope by decree — new asks enter as traced requirements, not side channels"],
+ handoff:[["product-owner","an accepted business case: goals, ROI, scope boundaries, named stakeholders"],
+  ["delivery-lead","budget and timeline constraints the cadence must respect"]],
+ prompts:[["Review the business case","Before you accept discovery","brd-writer",["Summarise docs/brd.md for an exec review: goals, ROI case, scope in/out, top 5 risks,","and what I am committing to if I accept. Flag anything unquantified."]],
+  ["Accept the boundary","After the review above","gate",["sloom approve requirements --feature «slug» --role sponsor --by \"«your name»\"","# your signature is the gate — it carries your name into the audit trail"]],
+  ["Exec status","Your reporting cadence","/ops-status",["Produce the exec RAG status: one screen — health, what shipped, what's at risk,","the decision you need from me, and budget burn vs plan."]],
+  ["Audit a go/no-go","Before a launch you're accountable for","/ship-release",["Show me the evidence behind the «release» go/no-go: which sign-off tokens exist","(QA, security, perf, a11y), which are missing, and the residual risk."]]]},
+
+{id:"gtm",no:"13",name:"Product Marketer",alt:"/ GTM",
+ mission:"You turn what the fleet builds into <b>what the market hears</b> — grounded in the same specs and metrics.",
+ card:"Market intelligence in, launch story out — MRD, funnels and experiments, launch docs.",
+ span:["Discovery","Process"],accepts:0,
+ agents:[["mrd-writer","/spec-new","Market need, target personas, competitive landscape — your intelligence base."],
+  ["product-analytics","—","Funnels, A/B experiments, adoption metrics for the launch story."],
+  ["feature-docs-writer","—","User-facing docs you shape into launch material."]],
+ shared:"The release notes (<code>/ship-release</code>) are your launch source of truth — consumed, not driven.",
+ skills:["requirement-quality","analytics-instrumentation"],
+ gates:["Message-to-truth — every claim traces to shipped behaviour (FRD) and a measured metric, not aspiration"],
+ pitfalls:["Announcing what the PRD promised instead of what the release shipped","Launch metrics defined after launch — instrument before","Personas invented in a slide instead of grounded in the MRD"],
+ handoff:[["product-owner","market signals and competitive gaps as candidate requirements"],
+  ["docs-curator","launch messaging aligned with the user docs"]],
+ prompts:[["Refresh the market scan","Quarterly, or before a big bet","/spec-new",["Update the MRD for «product»: market need, target personas, competitive landscape vs","«competitors». Cite what changed since the last revision."]],
+  ["Design the launch experiment","Before the feature ships","product-analytics",["Design the launch funnel and A/B experiment for «feature»: activation metric, guardrail","metrics, sample size, and the decision rule."]],
+  ["Draft launch messaging","A release is cut","gtm",["From the «release» notes and the FRD, draft launch messaging: what is genuinely new,","who it serves, and the measurable claim we can stand behind."]]]},
+
+{id:"customer-success",no:"14",name:"Customer Success",alt:"/ Support",
+ mission:"You are the <b>voice of the user in production</b> — turning confusion and breakage into traced work.",
+ card:"Voice of the customer — docs feedback, bug intake, and the loop back to the backlog.",
+ span:["Operate","Process"],accepts:0,
+ agents:[["bug-triager","—","Where your escalations enter: severity/priority set honestly, routed fix-now vs backlog."],
+  ["feature-docs-writer","—","The docs you field questions against — improved with real user confusion."],
+  ["wiki-curator","—","The knowledge base your macros and answers link to."]],
+ shared:"<code>/ops-status</code> keeps you honest on what is actually at risk this week — consumed, not driven.",
+ skills:["defect-triage","agent-handoff-context"],
+ gates:["Escalation honesty — a customer-reported defect enters triage with evidence, not adjectives"],
+ pitfalls:["Everything is a P1 — severity and priority are separate questions","Answering from memory when the docs are wrong — fix the doc","Feedback that dies in a channel instead of becoming a traced PBI"],
+ handoff:[["qa","reproducible customer bug reports with impact evidence"],
+  ["product-owner","voice-of-customer themes as candidate backlog items"],
+  ["docs-curator","the exact questions users ask — doc gaps with receipts"]],
+ prompts:[["Escalate a customer bug","A customer reports breakage","bug-triager",["Triage this customer report: «summary + evidence». Set severity (S1–S4) and priority","(P1–P4) independently, check for duplicates, and route fix-now vs backlog."]],
+  ["Turn questions into fixes","Monthly support review","docs",["These are the top «N» questions support answered this month: «list». Which are doc gaps","vs product gaps? Draft the doc fixes; route the rest as candidate PBIs."]]]},
+
+{id:"compliance",no:"15",name:"Compliance Owner",alt:"/ Validation",
+ mission:"You make the system <b>provably compliant</b> — requirements, evidence and acceptance that survive an audit.",
+ card:"Regulated-build owner — URS, validation depth, and the audit-ready acceptance trail.",
+ span:["Requirements","Release"],accepts:1,
+ agents:[["urs-writer","/spec-new","User Requirements Spec for validated systems (ISPE/GAMP, FDA 21 CFR 820.30)."],
+  ["test-plan-writer","/test-plan","IQ/OQ/PQ protocols when validation is mandatory."],
+  ["raid-keeper","/ops-raid","Assumptions and risks with owners — your audit narrative."]],
+ shared:"The acceptance tokens (<code>.spindleloom/approvals/…</code>) and sign-offs ARE your audit trail — every gate is a signed, dated file.",
+ skills:["requirement-quality","traceability-rtm","threat-modeling-stride"],
+ gates:["Validation acceptance — regulated features do not advance without URS-driven evidence","Audit trail — every acceptance is a named, dated, immutable token"],
+ pitfalls:["Compliance as a final-week checklist instead of URS-first","Untagged assumptions about regulatory scope (Part 11? DEA schedules?)","Evidence that exists in chat but not in the repo"],
+ handoff:[["product-owner","the URS and the validation depth the PRD/FRD must satisfy"],
+  ["qa","IQ/OQ/PQ protocols and the evidence bar"],
+  ["sre-release","the compliance sign-off feeding the release AND"]],
+ prompts:[["Scope the validation","A regulated product starts","urs-writer",["For «product», determine validation scope: GAMP category, Part 11 applicability, and the","leanest URS + IQ/OQ/PQ set that satisfies it. Tag unknowns as owned assumptions."]],
+  ["Write the URS","Business case accepted","/spec-new",["Write the URS for «feature» from the BRD: intended use, operator tasks, safety","requirements — each traced to a BR- id and testable."]],
+  ["Audit the acceptance trail","Before an audit or release","compliance",["Audit the acceptance trail for «feature»: which phase tokens exist, who signed and when;","list any gate crossed without evidence."]]]}
+];
+
+const DEEP={
+"architect": {
+"qs": [
+[
+"01",
+"/spec-new (SDD)",
+"Turn the accepted PRD/FRD/SRS into an SDD — arc42/C4, components, trade-off table."
+],
+[
+"02",
+"/spec-adr",
+"Record every forced choice as an immutable ADR the moment it's made."
+],
+[
+"03",
+"/spec-rfc",
+"For a change that needs debate, open an RFC first; an accepted RFC becomes an ADR."
+]
+],
+"io": {
+"inp": [
+"Accepted PRD, FRD, SRS (+ the RTM)",
+"solution-recon ground-truth for brownfield",
+"Non-functional budgets & compliance constraints"
+],
+"out": [
+"SDD + TSD (component design, data flows, deploy plan)",
+"API & data contracts (OpenAPI, ERD, migrations)",
+"An append-only ADR log + coding standards"
+]
+},
+"flow": [
+"<b>Read the constraints.</b> Every SR-* in the SRS is a design obligation, not decoration — map each to a component.",
+"<b>Model it.</b> <span class=cmd>/spec-new</span> → sdd-writer: arc42/C4, HLD→LLD, a trade-off table that <em>rejects</em> options for reasons.",
+"<b>Contract the seams.</b> api-designer + data-modeler fix the interfaces so frontend, backend and tests build against one spec.",
+"<b>Decide on the record.</b> Significant choice → <span class=cmd>/spec-adr</span>; needs debate first → <span class=cmd>/spec-rfc</span>.",
+"<b>Set the bar.</b> coding-standards-writer captures “what good looks like here”; tech-radar-curator aligns tech choices to the ADRs.",
+"<b>Push back.</b> An impossible or too-costly requirement goes <em>up</em> to the PO as a reality-check, never quietly absorbed."
+],
+"decide": [
+[
+"build vs buy?",
+"A capability could be a dependency or bespoke.",
+"Weigh it in the SDD trade-off table; record the call as an ADR with the rejected option and why."
+],
+[
+"debate first?",
+"The change is contentious or hard to reverse.",
+"Open an <span class=cmd>/spec-rfc</span> for comment before building; resolve the accepted RFC into an ADR."
+],
+[
+"new pattern?",
+"A choice sets precedent across teams.",
+"Route it to tech-radar (Adopt/Trial/Assess/Hold) so it's a deliberate, shared standard."
+]
+],
+"kpis": [
+[
+"Constraint coverage",
+"every SR-* maps to a component/decision — no orphaned NFR"
+],
+[
+"Decision latency",
+"significant choices reach an ADR quickly, not months later in tribal memory"
+],
+[
+"Rework from design gaps",
+"low downstream churn traced to a missing/ambiguous design decision"
+],
+[
+"Contract stability",
+"API/data contracts don't thrash after FE/BE start against them"
+]
+],
+"trouble": [
+[
+"decoration",
+"SDD coverage table lists constraints but nothing implements them.",
+"Tie each SR-* to a named component + a trade-off row; a table that drives nothing is a smell."
+],
+[
+"FRD drift",
+"SDD state model contradicts the FRD's.",
+"FRD is a routed input — trace the state machine to it; flag divergence up, don't re-derive."
+],
+[
+"lost decision",
+"A choice made in chat with no ADR.",
+"No ADR, no decision — record it append-only; supersede rather than edit."
+]
+],
+"glossary": [
+[
+"SDD / TSD",
+"Software Design Doc (arc42/C4) / Technical Spec (pinned stack, deploy)"
+],
+[
+"ADR",
+"Architecture Decision Record — immutable, one per decision, superseded not edited"
+],
+[
+"RFC",
+"a proposal opened for comment before building"
+],
+[
+"C4",
+"Context/Container/Component/Code architecture views"
+],
+[
+"SR-*",
+"a Software Requirements Spec constraint id the design must satisfy"
+],
+[
+"trade-off table",
+"options weighed with the rejected ones and the reason"
+]
+]
+},
+"developer": {
+"qs": [
+[
+"01",
+"/build-recon",
+"Before writing code, confirm what exists and what to reuse for the PBI."
+],
+[
+"02",
+"implement",
+"Reuse first, stdlib next, minimal diff — build the smallest thing that fully works."
+],
+[
+"03",
+"/build-verify",
+"RUN it against the acceptance criteria; only a PASS goes to PR."
+]
+],
+"io": {
+"inp": [
+"A Ready PBI with acceptance criteria",
+"SDD/TSD + API & data contracts",
+"solution-recon findings (reuse map)"
+],
+"out": [
+"A verified change (change-verifier PASS)",
+"Its own unit/integration tests",
+"A PR with Conventional-Commit messages"
+]
+},
+"flow": [
+"<b>Recon.</b> <span class=cmd>/build-recon</span> → solution-recon: does the endpoint/data exist, what patterns to reuse, FE-only or backend-first?",
+"<b>Climb the ladder.</b> reuse → stdlib → native → dependency → one line → only then bespoke (the code-minimalism skill).",
+"<b>Test as you go.</b> test-author writes unit/integration tests from the AC; non-trivial logic leaves one runnable check.",
+"<b>Verify by running.</b> <span class=cmd>/build-verify</span> → change-verifier builds, runs the tests + lint, exercises the path, returns PASS/FAIL.",
+"<b>Red? Debug the root cause.</b> debugger: one hypothesis, fix the shared cause (grep every caller), add a regression test.",
+"<b>Open the PR.</b> pr-author drafts it; code-reviewer checks against the standard + DoD."
+],
+"decide": [
+[
+"exists already?",
+"You're about to write a helper/util.",
+"Grep first — re-implementing what lives three files over is the most common slop; reuse it."
+],
+[
+"FE or BE first?",
+"A UI feature needs data that may not exist.",
+"Recon the route/service; if missing, the backend enabler PBI ships first (it blocks the UI PBI)."
+],
+[
+"can't get it green?",
+"Bounded ~3 fix attempts and still red.",
+"Revert to last green, hand to debugger with the repro — never loosen the assertion to pass."
+]
+],
+"kpis": [
+[
+"Verified-not-asserted",
+"every handoff is a change-verifier PASS, not “looks right”"
+],
+[
+"Change-fail rate",
+"low share of merges that need a follow-up fix"
+],
+[
+"Diff size vs value",
+"smallest working diff — no speculative abstraction"
+],
+[
+"Test-with-code",
+"non-trivial logic ships its runnable check in the same change"
+]
+],
+"trouble": [
+[
+"never ran",
+"Handed off code that was never executed.",
+"Trust the run, not the read — build, test, and exercise the path before handoff."
+],
+[
+"missed caller",
+"A symptom fixed in one place; siblings still broken.",
+"Grep every caller of the touched symbol; fix the shared function once."
+],
+[
+"red main",
+"A tiny change broke the build.",
+"Run locally first — tiny changes break builds constantly; a red main costs the team hours."
+]
+],
+"glossary": [
+[
+"PBI",
+"the Ready backlog item you implement"
+],
+[
+"DoR / DoD",
+"Definition of Ready (to start) / Done (to merge)"
+],
+[
+"change-verifier",
+"the maker/checker gate that RUNS your change vs its AC"
+],
+[
+"AC",
+"acceptance criteria — the pass/fail for the story"
+],
+[
+"inner loop",
+"edit → build → run → observe → fix, before PR"
+],
+[
+"Conventional Commits",
+"feat:/fix:/docs: — the commit grammar pr-author uses"
+]
+]
+},
+"qa": {
+"qs": [
+[
+"01",
+"/test-plan",
+"Write the plan + cases, each traced to an FRD/SRS id via the RTM."
+],
+[
+"02",
+"/build-verify",
+"Confirm the build's maker/checker PASS before system testing."
+],
+[
+"03",
+"QA verdict",
+"Compute go/no-go from P0/P1 pass, open S1/S2, coverage — persist the token."
+]
+],
+"io": {
+"inp": [
+"FRD/SRS acceptance criteria (via the RTM)",
+"A verified build to test",
+"Incoming defects & customer escalations"
+],
+"out": [
+"A traced test plan + cases",
+"Defects with severity/priority set independently",
+"The QA sign-off token feeding the release AND"
+]
+},
+"flow": [
+"<b>Plan from requirements.</b> <span class=cmd>/test-plan</span> → cases traced to FRD/SRS ids; IQ/OQ/PQ when regulated.",
+"<b>Automate the pyramid.</b> test-automation-engineer owns e2e/integration in CI; unit lives with the devs.",
+"<b>Execute + explore.</b> qa-tester runs system + exploratory passes the dev happy-path never covers.",
+"<b>Triage honestly.</b> bug-triager sets severity (technical) and priority (business) as <em>independent</em> axes; dedup; route.",
+"<b>Keep the suite trustworthy.</b> flaky-test-detective quarantines flakes with an issue — never retries green.",
+"<b>Sign off with evidence.</b> compute the QA verdict; persist it as the token release-manager's AND consumes."
+],
+"decide": [
+[
+"severity or priority?",
+"A bug needs ranking.",
+"Set both, separately — a cosmetic typo on pricing is S4/P1; a rare admin crash S1/P3."
+],
+[
+"flaky?",
+"A test passes on retry.",
+"Quarantine it with an issue and root-cause it — a retried-green test hides a real defect."
+],
+[
+"go or no-go?",
+"Release decision looms.",
+"Go only if P0/P1 pass, no open S1/S2 (or documented workaround), coverage ≥ target — else call no-go."
+]
+],
+"kpis": [
+[
+"Escaped-defect rate",
+"few defects reach production; each names the gate that missed it"
+],
+[
+"Requirement coverage",
+"every FRD/SRS id has a traced case"
+],
+[
+"Flake rate",
+"trending down; suite trusted"
+],
+[
+"Sign-off integrity",
+"no unevidenced GO — the token cites its evidence"
+]
+],
+"trouble": [
+[
+"forged gate",
+"Signing off without evidence.",
+"An unevidenced sign-off is a forged gate — call no-go instead, with the residual risk."
+],
+[
+"conflated axes",
+"Everything is a P1.",
+"Severity ≠ priority — set them independently or triage misfires."
+],
+[
+"retry-green",
+"A flake made the suite pass on the second run.",
+"Quarantine + issue; a green-on-retry test is a latent failure, not a pass."
+]
+],
+"glossary": [
+[
+"S1–S4 / P1–P4",
+"severity (technical impact) / priority (business urgency), independent"
+],
+[
+"IQ/OQ/PQ",
+"installation/operational/performance qualification for regulated systems"
+],
+[
+"escaped defect",
+"a bug that got past a gate — logged against that gate"
+],
+[
+"test pyramid",
+"many unit, fewer integration, fewest e2e"
+],
+[
+"QA sign-off",
+"the evidence-backed go/no-go token"
+]
+]
+},
+"ux": {
+"qs": [
+[
+"01",
+"design flows",
+"From the PRD stories, wireframe every state — loading / empty / error / success."
+],
+[
+"02",
+"system + tokens",
+"Ship a design system the frontend can actually build from."
+],
+[
+"03",
+"a11y audit",
+"WCAG 2.1 AA: keyboard, screen reader, contrast — sign off before release."
+]
+],
+"io": {
+"inp": [
+"Accepted PRD stories",
+"The design system / brand",
+"Built screens to audit"
+],
+"out": [
+"UX spec: flows, wireframes, hi-fi states",
+"Design-system components & tokens",
+"The accessibility sign-off token"
+]
+},
+"flow": [
+"<b>Map the flows.</b> ux-ui-designer turns PRD stories into wireframes → hi-fi, every state annotated.",
+"<b>Design the system, not screens.</b> reusable components + tokens the frontend consumes directly.",
+"<b>Annotate a11y intent.</b> focus order, labels, contrast — designed in, not bolted on.",
+"<b>Audit what shipped.</b> accessibility-auditor checks keyboard / screen-reader / contrast against WCAG 2.1 AA.",
+"<b>Sign off.</b> the a11y verdict is a gate the release AND requires."
+],
+"decide": [
+[
+"which state?",
+"You're designing a screen.",
+"Design all of them — loading, empty, error, success; the happy path alone is half a design."
+],
+[
+"a11y now or later?",
+"Accessibility feels like polish.",
+"Design it in — a post-hoc audit finds expensive rework; intent up front is cheap."
+]
+],
+"kpis": [
+[
+"WCAG pass",
+"AA verified before release, not after"
+],
+[
+"State completeness",
+"every screen's states specified"
+],
+[
+"Build fidelity",
+"frontend can build from the system without guessing"
+],
+[
+"Rework from a11y",
+"low late-stage accessibility churn"
+]
+],
+"trouble": [
+[
+"happy-path only",
+"Only the success state was designed.",
+"Every state is a design — loading/empty/error included, or the frontend invents them."
+],
+[
+"post-hoc a11y",
+"Accessibility audited at the end.",
+"Move intent to design time; the auditor verifies, it doesn't originate the a11y."
+]
+],
+"glossary": [
+[
+"WCAG 2.1 AA",
+"the accessibility conformance bar (keyboard, contrast, SR)"
+],
+[
+"design tokens",
+"named color/space/type values the code consumes"
+],
+[
+"states",
+"loading / empty / error / success per screen"
+],
+[
+"design system",
+"the reusable component + token library"
+]
+]
+},
+"delivery-lead": {
+"qs": [
+[
+"01",
+"/plan-estimate",
+"Size the Ready backlog relatively; flag low-confidence items tied to assumptions."
+],
+[
+"02",
+"/plan-sprint",
+"Set a goal, pull a capacity-fit sprint from DoR-met items only."
+],
+[
+"03",
+"/plan-retro",
+"Blameless retro on the data → 1–3 owned, tracked action items."
+]
+],
+"io": {
+"inp": [
+"A Ready, ordered backlog",
+"Team velocity & capacity",
+"RAID items, sprint data, tech-debt"
+],
+"out": [
+"A capacity-fit sprint backlog",
+"RAG status + RAID log",
+"Owned retro actions & a groomed debt register"
+]
+},
+"flow": [
+"<b>Size it.</b> <span class=cmd>/plan-estimate</span> → relative points anchored on a reference story; confidence flagged.",
+"<b>Commit realistically.</b> <span class=cmd>/plan-sprint</span> → goal + capacity-fit selection from DoR-met items; name the drop-first stretch.",
+"<b>Surface risk.</b> <span class=cmd>/ops-raid</span> keeps Risks/Assumptions/Issues/Decisions live; <span class=cmd>/ops-status</span> reports RAG.",
+"<b>Improve the system.</b> <span class=cmd>/plan-retro</span> → owned actions; recurring causes feed the improvement register.",
+"<b>Feed the funnel.</b> tech-debt-keeper promotes high-impact debt into the backlog for the PO to rank."
+],
+"decide": [
+[
+"over capacity?",
+"The candidate sprint exceeds velocity.",
+"Cut to fit and name what's dropped — a padded commitment is a missed one."
+],
+[
+"not Ready?",
+"A wanted item is DoR-blocked.",
+"Leave it out; committing DoR-blocked work to hit a number is how sprints stall."
+],
+[
+"debt vs feature?",
+"The debt register is growing.",
+"Promote high impact×interest / low effort items to the PO to rank against features."
+]
+],
+"kpis": [
+[
+"Say/do ratio",
+"committed vs completed — predictability, not heroics"
+],
+[
+"Flow / cycle time",
+"work moves, WIP is bounded"
+],
+[
+"Retro action closure",
+"actions get done, not just logged"
+],
+[
+"Readiness buffer",
+"enough DoR-met items to avoid stalls"
+]
+],
+"trouble": [
+[
+"fake-Ready",
+"A DoR-blocked story was committed anyway.",
+"Enforce DoR — unready work stalls mid-sprint and burns the goal."
+],
+[
+"status theatre",
+"Green dashboards nobody trusts.",
+"Ground RAG in metrics + the RAID log; report at-risk early, not at the cliff."
+],
+[
+"actionless retro",
+"The retro produced observations only.",
+"Force 1–3 owned, tracked actions; feed recurring causes to the register."
+]
+],
+"glossary": [
+[
+"velocity / capacity",
+"completed points per sprint / available capacity"
+],
+[
+"DoR / DoD",
+"Ready to start / Done to close"
+],
+[
+"RAID",
+"Risks, Assumptions, Issues, Decisions"
+],
+[
+"RAG",
+"Red/Amber/Green health"
+],
+[
+"WIP",
+"work in progress (bound it)"
+],
+[
+"Planning Poker",
+"relative estimation technique"
+]
+]
+},
+"sre-release": {
+"qs": [
+[
+"01",
+"define SLOs",
+"From the SRS targets, set SLIs/SLOs + error budget and alert on symptoms."
+],
+[
+"02",
+"/ops-metrics",
+"Snapshot DORA / cycle-time; flag advisory-only pipeline gates that should block."
+],
+[
+"03",
+"/ship-release",
+"Compute go/no-go as the AND over sign-off tokens; draft release notes."
+]
+],
+"io": {
+"inp": [
+"A verified release candidate",
+"SRS reliability/perf targets",
+"Sign-off tokens (QA, security, perf, a11y)"
+],
+"out": [
+"CD pipeline + SLOs, alerts, runbooks",
+"Go/no-go verdict + release notes",
+"Incident postmortems → backlog actions"
+]
+},
+"flow": [
+"<b>Make it deployable.</b> pipeline-engineer builds the build→deploy stages and gates that enforce DoD.",
+"<b>Make it observable.</b> sre sets SLIs/SLOs, error budgets, alerting (symptoms not causes), runbooks.",
+"<b>Guard performance.</b> performance-engineer profiles against SRS budgets — N+1, memory, Core Web Vitals.",
+"<b>Decide the release.</b> <span class=cmd>/ship-release</span> → the computed AND over sign-off tokens; unevidenced = no-go.",
+"<b>Run it.</b> <span class=cmd>/ops-incident</span> → stabilise, blameless postmortem, actions routed to the backlog."
+],
+"decide": [
+[
+"go or no-go?",
+"A candidate is ready to ship.",
+"Go only if every required token exists (QA, security, perf, a11y); a missing token is a no-go."
+],
+[
+"page or ticket?",
+"An alert fired.",
+"Page on user-facing symptom breaches; ticket the rest — cause-alerts cause page fatigue."
+],
+[
+"burn the budget?",
+"Error budget is nearly spent.",
+"Freeze risky change and shift to reliability; the budget is the negotiation, not a vibe."
+]
+],
+"kpis": [
+[
+"DORA",
+"deploy frequency, lead time, change-fail rate, MTTR"
+],
+[
+"SLO attainment",
+"within error budget"
+],
+[
+"MTTR",
+"time to restore trends down"
+],
+[
+"Release integrity",
+"no GO without the full token AND"
+]
+],
+"trouble": [
+[
+"vibe go",
+"Approving a release on feel.",
+"The AND over sign-off tokens is the verdict — compute it, don't intuit it."
+],
+[
+"page fatigue",
+"Alerts fire on causes, not symptoms.",
+"Alert on SLO-burn / user impact; demote cause-alerts to dashboards."
+],
+[
+"lost postmortem",
+"Actions never reach the backlog.",
+"Route every postmortem action to backlog-manager as a typed PBI."
+]
+],
+"glossary": [
+[
+"SLI / SLO",
+"service level indicator / objective"
+],
+[
+"error budget",
+"allowed unreliability before change freezes"
+],
+[
+"DORA",
+"the four delivery-performance metrics"
+],
+[
+"MTTR",
+"mean time to restore"
+],
+[
+"go/no-go",
+"the release AND over sign-off tokens"
+],
+[
+"runbook",
+"the step-by-step for an alert"
+]
+]
+},
+"docs-curator": {
+"qs": [
+[
+"01",
+"write user docs",
+"Diátaxis form — tutorial / how-to / reference / explanation — from the FRD behaviour."
+],
+[
+"02",
+"curate the wiki",
+"Give every artifact a home; stamp owner + last-reviewed."
+],
+[
+"03",
+"close the loop",
+"Turn recurring user questions into doc fixes vs product PBIs."
+]
+],
+"io": {
+"inp": [
+"Shipped feature behaviour (the FRD)",
+"Release notes & runbooks",
+"User questions & doc-gap signals"
+],
+"out": [
+"End-user docs (Diátaxis)",
+"A curated, owned wiki / index",
+"Doc-gap themes back to the PO"
+]
+},
+"flow": [
+"<b>Document behaviour, not code.</b> feature-docs-writer works from the FRD, in Diátaxis form.",
+"<b>Give it a home.</b> wiki-curator links every system of record; nothing orphaned.",
+"<b>Keep it honest.</b> owner + last-reviewed stamps; stale pages get adopted or archived.",
+"<b>Feed back.</b> the exact questions users ask become doc fixes, or PBIs for the PO."
+],
+"decide": [
+[
+"tutorial or reference?",
+"You're writing a doc.",
+"Pick the Diátaxis mode by the user's need — learning (tutorial) vs looking-up (reference); don't blend."
+],
+[
+"doc gap or product gap?",
+"Users keep asking the same thing.",
+"If the answer exists but is unfindable, fix the doc; if it doesn't, route a PBI."
+]
+],
+"kpis": [
+[
+"Docs-current",
+"behaviour changes ship with their docs"
+],
+[
+"Self-serve rate",
+"fewer repeat questions the docs already answer"
+],
+[
+"Coverage",
+"every shipped feature is documented"
+],
+[
+"Freshness",
+"pages carry a recent last-reviewed"
+]
+],
+"trouble": [
+[
+"documents the code",
+"Docs describe implementation, not behaviour.",
+"Work from the FRD — users care what it does, not how it's built."
+],
+[
+"index dump",
+"The wiki links everything and helps no one.",
+"Curate: navigation by user task, owners named, stale pages archived."
+]
+],
+"glossary": [
+[
+"Diátaxis",
+"tutorial / how-to / reference / explanation doc modes"
+],
+[
+"system of record",
+"the authoritative home for a fact"
+],
+[
+"last-reviewed",
+"the freshness stamp every page carries"
+],
+[
+"runbook",
+"operational how-to the SRE owns"
+]
+]
+},
+"ai-ml": {
+"qs": [
+[
+"01",
+"build the eval",
+"Golden dataset from the FRD AC + an LLM-as-judge rubric."
+],
+[
+"02",
+"wire the gate",
+"A regression against the golden set blocks the release in CI."
+],
+[
+"03",
+"profile cost",
+"Token spend/latency per request; cheapest config that holds the bar."
+]
+],
+"io": {
+"inp": [
+"The AI feature's acceptance criteria",
+"Golden/reference datasets",
+"Model + prompt configuration"
+],
+"out": [
+"An eval harness + regression gate",
+"A cost/latency envelope",
+"Eval verdicts feeding the release AND"
+]
+},
+"flow": [
+"<b>Define “good”.</b> ai-eval builds a golden dataset from the FRD acceptance criteria.",
+"<b>Judge independently.</b> an LLM-as-judge rubric — not the same model/prompt that generates.",
+"<b>Gate regressions.</b> wire the eval into CI so a drop against the golden set blocks the release.",
+"<b>Hold the envelope.</b> profile token spend, cache hit-rate, model-tier fit; pick the cheapest config that passes.",
+"<b>Record model choices.</b> a significant model/config decision is worth an ADR (with the Architect)."
+],
+"decide": [
+[
+"ship the AI feature?",
+"It demos well.",
+"No eval, no ship — a demo isn't verification; gate on the golden set."
+],
+[
+"which judge?",
+"You need to score outputs.",
+"Use a different model/prompt than the generator; self-judging inflates scores."
+],
+[
+"too expensive?",
+"Cost/latency is high.",
+"Drop model tier or add caching only while the eval bar still holds."
+]
+],
+"kpis": [
+[
+"Eval pass rate",
+"against the golden set, gated in CI"
+],
+[
+"Regression catch",
+"drifts caught before release, not by users"
+],
+[
+"Cost per request",
+"within the token/latency envelope"
+],
+[
+"Judge agreement",
+"rubric correlates with human spot-checks"
+]
+],
+"trouble": [
+[
+"demo-driven",
+"Shipping on a good demo.",
+"An AI feature without an eval is unverified — build the harness first."
+],
+[
+"self-judging",
+"Generator and judge share model/prompt.",
+"Separate them; a model grading itself scores generously."
+],
+[
+"cost creep",
+"No per-request budget.",
+"Set a token/latency envelope and profile against it each release."
+]
+],
+"glossary": [
+[
+"golden dataset",
+"curated inputs+expected outputs the eval scores against"
+],
+[
+"LLM-as-judge",
+"a model scoring outputs to a rubric"
+],
+[
+"regression gate",
+"CI check that blocks on eval drops"
+],
+[
+"model tier",
+"the cost/capability class of the model"
+]
+]
+},
+"security": {
+"qs": [
+[
+"01",
+"threat-model",
+"STRIDE the SDD: assets, trust boundaries, top risks with mitigations."
+],
+[
+"02",
+"review authz",
+"Explicitly review the authorization design, not just the code."
+],
+[
+"03",
+"sign off",
+"On pass, write the security token the release AND requires."
+]
+],
+"io": {
+"inp": [
+"The SDD + trust boundaries",
+"Security-relevant PRs",
+"SR-SEC constraints & compliance rules"
+],
+"out": [
+"A STRIDE threat model + mitigations",
+"Required fixes by severity",
+"The security sign-off token"
+]
+},
+"flow": [
+"<b>Model before code.</b> security-reviewer STRIDEs the SDD — assets, trust boundaries, top risks.",
+"<b>Map to constraints.</b> mitigations trace to SR-SEC ids so they're testable.",
+"<b>Review the authz.</b> explicitly, not incidentally — most breaches are authorization, not injection.",
+"<b>Gate the release.</b> findings carry severity + owner; on pass, the sign-off token feeds the release AND."
+],
+"decide": [
+[
+"design or code review?",
+"When to engage.",
+"Threat-model at design (cheapest) and review security-relevant PRs — not only at the end."
+],
+[
+"block the release?",
+"An open finding remains.",
+"High/critical without mitigation is a no-go; the token withholds until fixed or risk-accepted."
+]
+],
+"kpis": [
+[
+"Threat-model coverage",
+"every feature with a trust boundary is modelled"
+],
+[
+"Findings pre-prod",
+"caught in review, not by an incident"
+],
+[
+"Authz review rate",
+"authorization design explicitly reviewed"
+],
+[
+"Sign-off integrity",
+"no release without the security token"
+]
+],
+"trouble": [
+[
+"end-only review",
+"Security looked at only at the end.",
+"Threat-model at design; late review finds expensive, structural problems."
+],
+[
+"skipped authz",
+"A checklist pass that never read the authz design.",
+"Review authorization explicitly — it's the most common real breach path."
+],
+[
+"ownerless finding",
+"A risk with no severity or owner.",
+"Every finding gets a severity and an owner, or it won't get fixed."
+]
+],
+"glossary": [
+[
+"STRIDE",
+"Spoofing/Tampering/Repudiation/Info-disclosure/DoS/Elevation"
+],
+[
+"trust boundary",
+"where privilege/trust changes"
+],
+[
+"authz",
+"authorization — who may do what"
+],
+[
+"SR-SEC",
+"a security constraint id from the SRS"
+],
+[
+"AppSec",
+"application security review"
+]
+]
+},
+"orchestration-lead": {
+"qs": [
+[
+"01",
+"/run",
+"Instantiate a run-state; propose the next runnable agent, gated and resumable."
+],
+[
+"02",
+"set policy",
+"Define AI-autonomy per risk tier and the human-in-the-loop points."
+],
+[
+"03",
+"drain flags",
+"Surface open FLAG(owner) markers and re-dispatch the owner."
+]
+],
+"io": {
+"inp": [
+"A goal + the contract graph",
+"The run-state ledger",
+"Open FLAGs and acceptance tokens"
+],
+"out": [
+"A driven, resumable run",
+"AI-autonomy governance policy",
+"Spec-drift findings routed to owners"
+]
+},
+"flow": [
+"<b>Instantiate.</b> <span class=cmd>/run</span> → a run-state ledger keyed by run-id, with a stop contract and the feature slug.",
+"<b>Propose, don't auto-fire.</b> compute the next runnable agent (upstreams done + gate passed + boundary accepted); confirm before dispatch.",
+"<b>Enforce the gates.</b> a step can't advance past an unaccepted phase boundary — the graph is the gate.",
+"<b>Close the loop.</b> an open FLAG(owner) against a done step re-opens it as re-work, not shipped.",
+"<b>Hold the line on drift.</b> spec-steward audits PRD/FRD/SDD agreement; ai-orchestrator sets what agents may do autonomously."
+],
+"decide": [
+[
+"auto or confirm?",
+"A step is runnable.",
+"Propose-and-confirm by default; only auto-dispatch low-risk steps per the autonomy policy — never protected paths."
+],
+[
+"re-work or ship?",
+"A done step has an open FLAG against it.",
+"Re-open and re-dispatch the owner; a flagged-done step is not done."
+],
+[
+"stop?",
+"The run hits its budget or end state.",
+"Honor the stop contract — end state, evidence, constraints, budget; don't run past it."
+]
+],
+"kpis": [
+[
+"Resumability",
+"a run survives a restart from the ledger, not memory"
+],
+[
+"Gate integrity",
+"no boundary crossed without acceptance"
+],
+[
+"Flag closure",
+"open FLAGs get re-dispatched, not accumulated"
+],
+[
+"Drift caught",
+"spec↔code disagreements surfaced early"
+]
+],
+"trouble": [
+[
+"auto to protected",
+"Auto-dispatched to a protected path.",
+"Propose-and-confirm is the default; protected paths always require a human go."
+],
+[
+"no stop contract",
+"A run with no end state or budget.",
+"Every run needs end state + evidence + constraints + budget, or it never terminates."
+],
+[
+"flag pile-up",
+"FLAGs accumulate unactioned.",
+"Surface them (sloom flags) and re-dispatch the owner; visibility without loop-closure ships the gap."
+]
+],
+"glossary": [
+[
+"run-state",
+"the ledger a run resumes from (.spindleloom/runs/<id>.json)"
+],
+[
+"stop contract",
+"end state · evidence · constraints · budget"
+],
+[
+"FLAG(owner)",
+"a machine marker routing re-work to an agent"
+],
+[
+"autonomy tier",
+"how much an agent may do without a human"
+],
+[
+"acceptance token",
+"the signed ACCEPTED file gating a phase"
+]
+]
+},
+"sponsor": {
+"qs": [
+[
+"01",
+"review the case",
+"Ask for the BRD summary: goals, ROI, scope, top risks — what you're committing to."
+],
+[
+"02",
+"sloom approve",
+"Sign the discovery→requirements boundary — only after you've read it."
+],
+[
+"03",
+"/ops-status",
+"Get the one-screen exec RAG; ask for the decision, not the detail."
+]
+],
+"io": {
+"inp": [
+"The business problem & budget",
+"The BRD + RAID risks",
+"RAG status & release evidence"
+],
+"out": [
+"An accepted business case",
+"Your signed acceptance token",
+"Budget/timeline constraints & priority calls"
+]
+},
+"flow": [
+"<b>Frame the bet.</b> the PO drafts the BRD; you own the why, the ROI, and the boundaries.",
+"<b>Review before you sign.</b> ask brd-writer for an exec summary — goals, ROI, scope in/out, top risks.",
+"<b>Accept the boundary.</b> <span class=cmd>sloom approve requirements --role sponsor</span> — your signature is the gate.",
+"<b>Watch the loop.</b> <span class=cmd>/ops-status</span> for RAG; the budget/timeline loop re-opens the BRD if costs surprise.",
+"<b>Audit the ship.</b> before a launch you're accountable for, check the go/no-go evidence."
+],
+"decide": [
+[
+"accept?",
+"A phase awaits your sign-off.",
+"Accept only what you've read — the token carries your name into the audit trail."
+],
+[
+"absorb or re-open?",
+"A cost/timeline surprise appears.",
+"Re-open the BRD via the budget loop; don't let scope drift absorb it silently."
+]
+],
+"kpis": [
+[
+"ROI realised",
+"the business case's outcome lands, measured"
+],
+[
+"Decision latency",
+"you unblock boundaries quickly with real review"
+],
+[
+"Scope discipline",
+"new asks enter as traced requirements, not decrees"
+],
+[
+"Budget adherence",
+"burn tracks the accepted plan"
+]
+],
+"trouble": [
+[
+"rubber-stamp",
+"Signing an acceptance you didn't read.",
+"The token is your name — review first; an unevidenced sign-off is a forged gate."
+],
+[
+"status theatre",
+"Dashboards look green until they're red.",
+"Demand metrics-grounded RAG and the ask; reward early risk-flagging."
+]
+],
+"glossary": [
+[
+"BRD",
+"Business Requirements Doc — goals, ROI, scope"
+],
+[
+"ROI",
+"return on investment case"
+],
+[
+"RAG",
+"Red/Amber/Green health"
+],
+[
+"acceptance token",
+"your signed ACCEPTED file at a phase boundary"
+],
+[
+"RAID",
+"the risk/decision register you scan"
+]
+]
+},
+"gtm": {
+"qs": [
+[
+"01",
+"/spec-new (MRD)",
+"Refresh the market scan: need, personas, competitive landscape."
+],
+[
+"02",
+"design the experiment",
+"Activation + guardrail metrics and a decision rule, before launch."
+],
+[
+"03",
+"draft messaging",
+"From the release notes + FRD — claims you can stand behind."
+]
+],
+"io": {
+"inp": [
+"Market signals & competitive intel",
+"The PRD success metrics",
+"Release notes + FRD behaviour"
+],
+"out": [
+"An MRD / market scan",
+"Launch funnel + A/B design",
+"Launch messaging grounded in shipped behaviour"
+]
+},
+"flow": [
+"<b>Scan the market.</b> mrd-writer: need, target personas, competitive landscape — your intelligence base.",
+"<b>Instrument the launch.</b> product-analytics designs the funnel + A/B with metrics defined <em>before</em> launch.",
+"<b>Write from truth.</b> draft messaging from the release notes and FRD — what actually shipped, not the PRD promise.",
+"<b>Close the learn loop.</b> a missed metric feeds product-analytics → the PO's backlog."
+],
+"decide": [
+[
+"claim it?",
+"You're drafting a benefit.",
+"Only if it traces to shipped FRD behaviour + a measured metric — aspiration isn't a claim."
+],
+[
+"instrument when?",
+"Launch metrics.",
+"Before launch — a metric defined after the fact can't judge the launch."
+]
+],
+"kpis": [
+[
+"Activation / adoption",
+"the launch funnel's headline metric moves"
+],
+[
+"Message-to-truth",
+"every claim traces to shipped behaviour"
+],
+[
+"Experiment velocity",
+"launches run as measured experiments, not one-shots"
+],
+[
+"Win/loss signal",
+"competitive gaps feed the roadmap"
+]
+],
+"trouble": [
+[
+"promise not ship",
+"Announcing the PRD, not the release.",
+"Write from the release notes + FRD — ship reality, not the plan."
+],
+[
+"late metrics",
+"Success metrics defined post-launch.",
+"Instrument first; otherwise you can't tell if the launch worked."
+]
+],
+"glossary": [
+[
+"MRD",
+"Market Requirements Doc"
+],
+[
+"activation metric",
+"the headline launch outcome"
+],
+[
+"guardrail metric",
+"a metric that must not regress"
+],
+[
+"A/B",
+"controlled launch experiment"
+],
+[
+"ICP",
+"ideal customer profile / persona"
+]
+]
+},
+"customer-success": {
+"qs": [
+[
+"01",
+"escalate a bug",
+"Send the report to triage with evidence — severity & priority set separately."
+],
+[
+"02",
+"answer from docs",
+"Field questions against the wiki; fix the doc when it's wrong."
+],
+[
+"03",
+"monthly review",
+"Turn top questions into doc fixes vs product PBIs."
+]
+],
+"io": {
+"inp": [
+"Customer reports & questions",
+"The user docs & wiki",
+"Release notes / known issues"
+],
+"out": [
+"Triaged, evidence-backed defects",
+"Doc fixes & answer macros",
+"Voice-of-customer themes to the PO"
+]
+},
+"flow": [
+"<b>Escalate cleanly.</b> a customer defect enters bug-triager with repro + impact; severity/priority set independently.",
+"<b>Answer from the source.</b> field questions against feature-docs + the wiki; wrong doc → fix the doc.",
+"<b>Surface themes.</b> recurring pain becomes voice-of-customer themes for the PO to rank.",
+"<b>Stay honest on risk.</b> <span class=cmd>/ops-status</span> tells you what's actually at risk this week."
+],
+"decide": [
+[
+"how urgent?",
+"A customer is blocked.",
+"Set severity (impact) and priority (urgency) separately — not everything is a P1."
+],
+[
+"doc or product?",
+"Users keep asking the same thing.",
+"Answer exists but unfindable → doc fix; doesn't exist → route a PBI."
+]
+],
+"kpis": [
+[
+"Deflection",
+"questions the docs answer without a human"
+],
+[
+"Escalation quality",
+"triageable reports, low rejected-for-no-repro"
+],
+[
+"Time-to-answer",
+"faster with better docs"
+],
+[
+"VoC → backlog",
+"customer themes become ranked work"
+]
+],
+"trouble": [
+[
+"all-P1",
+"Every escalation is top priority.",
+"Severity ≠ priority — set both; over-escalation drowns the real fires."
+],
+[
+"memory answers",
+"Answering from memory when the doc is stale.",
+"Fix the doc, then answer from it — one fix serves every future ticket."
+]
+],
+"glossary": [
+[
+"S/P",
+"severity / priority, set independently"
+],
+[
+"VoC",
+"voice of the customer"
+],
+[
+"deflection",
+"self-serve resolution rate"
+],
+[
+"macro",
+"a reusable canned answer linked to docs"
+],
+[
+"repro",
+"reproduction steps a defect needs"
+]
+]
+},
+"compliance": {
+"qs": [
+[
+"01",
+"scope validation",
+"GAMP category + Part 11 applicability → the leanest URS/IQ/OQ/PQ set."
+],
+[
+"02",
+"/spec-new (URS)",
+"Write the URS: intended use, operator tasks, safety — each traced to a BR."
+],
+[
+"03",
+"audit the trail",
+"Confirm every phase token exists, signed and dated."
+]
+],
+"io": {
+"inp": [
+"Regulatory scope (FDA/GAMP/Part 11)",
+"The BRD + intended use",
+"Acceptance tokens & sign-offs"
+],
+"out": [
+"A URS + validation depth",
+"IQ/OQ/PQ protocols (with QA)",
+"An audit-ready acceptance trail"
+]
+},
+"flow": [
+"<b>Scope it first.</b> determine GAMP category and Part 11 applicability — validation depth follows.",
+"<b>Specify user requirements.</b> <span class=cmd>/spec-new</span> → urs-writer: intended use, operator tasks, safety, each traced to a BR.",
+"<b>Qualify it.</b> test-plan-writer produces IQ/OQ/PQ protocols and the evidence bar.",
+"<b>Own the trail.</b> the acceptance tokens in .spindleloom/approvals ARE the audit trail — named, dated, immutable.",
+"<b>Tag the unknowns.</b> unresolved regulatory questions are owned assumptions in the RAID log, not silent gaps."
+],
+"decide": [
+[
+"what depth?",
+"A regulated feature starts.",
+"Let GAMP category + Part 11 set validation depth — don't over- or under-validate by default."
+],
+[
+"evidence sufficient?",
+"A gate is about to pass.",
+"Every acceptance must be a signed, dated token in the repo; chat approval isn't evidence."
+]
+],
+"kpis": [
+[
+"Audit-readiness",
+"every gate has a signed, dated token on demand"
+],
+[
+"Traceability",
+"URS→BR and URS→test complete"
+],
+[
+"Validation coverage",
+"IQ/OQ/PQ cover the intended use"
+],
+[
+"Assumption hygiene",
+"regulatory unknowns tagged, owned, closed"
+]
+],
+"trouble": [
+[
+"last-week compliance",
+"Compliance treated as a final checklist.",
+"URS-first — validation shapes the build, it doesn't rubber-stamp it at the end."
+],
+[
+"chat evidence",
+"An approval that lives in chat, not the repo.",
+"Only a signed token in .spindleloom/approvals counts; reconstruct it as a file."
+],
+[
+"untagged scope",
+"Assumed Part 11 / schedule scope.",
+"Tag every regulatory assumption with an owner; an untagged scope call is an audit finding."
+]
+],
+"glossary": [
+[
+"URS",
+"User Requirements Spec (validated systems)"
+],
+[
+"GAMP",
+"Good Automated Manufacturing Practice categories"
+],
+[
+"21 CFR Part 11",
+"FDA rule on electronic records/signatures"
+],
+[
+"IQ/OQ/PQ",
+"installation/operational/performance qualification"
+],
+[
+"audit trail",
+"the signed, dated, immutable acceptance tokens"
+]
+]
+}
+};
+
+/* ════ helpers ════ */
+const app=document.getElementById("app");
+const esc=s=>s;
+const mark=l=>l.replace(/«([^»]+)»/g,'<span class="v">«$1»</span>');
+const byId=Object.fromEntries(P.map(p=>[p.id,p]));
+const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function weaveSVG(h,anim){
+  const W=1200,cols=["#3B7DC4","#3A9E6A","#6B50B0","#B08030","#3A6BA0","#984040","#307A6A","#906040","#7A5030","#4040A0"];
+  let warp="";
+  for(let i=0;i<46;i++){const x=(i+.5)*(W/46);warp+='<line x1="'+x+'" y1="0" x2="'+x+'" y2="'+h+'" stroke="'+cols[i%10]+'" stroke-opacity="0.13"/>';}
+  const pts=[];for(let i=0;i<=46;i++){const x=i*(W/46);const y=h*0.5+Math.sin(i*0.5)*h*0.26+Math.cos(i*0.17)*14;pts.push([x,y]);}
+  let d="M"+pts[0][0]+","+pts[0][1];
+  for(let i=1;i<pts.length;i++){const a=pts[i-1],b=pts[i];d+=" Q"+a[0]+","+a[1]+" "+((a[0]+b[0])/2)+","+((a[1]+b[1])/2);}
+  const dash=(anim&&!reduced)?' pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"':"";
+  const an=(anim&&!reduced)?'<animate attributeName="stroke-dashoffset" from="1" to="0" dur="2.4s" begin="0.15s" fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1"/>':"";
+  return '<svg viewBox="0 0 '+W+' '+h+'" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><g>'+warp+'</g>'+
+    '<path d="'+d+'" fill="none" stroke-linecap="round" style="stroke:var(--gold);stroke-width:2.2;filter:drop-shadow(0 0 5px color-mix(in srgb,var(--gold) 55%,transparent))"'+dash+'>'+an+'</path></svg>';
+}
+
+/* ════ hub view ════ */
+function renderHub(){
+  document.title="Spindleloom Persona Hub";
+  let cards="";
+  P.forEach(p=>{
+    cards+='<a class="pcard" href="#/'+p.id+'"><div class="no">'+p.no+' / '+P.length+'</div><h3>'+p.name+'</h3>'+
+      '<div class="alt">'+p.alt+'</div><div class="mi">'+p.card+'</div><div class="meta">'+
+      '<span class="m g">'+p.agents.length+' agents</span><span class="m">'+p.prompts.length+' prompts</span>'+
+      p.span.map(s=>'<span class="m">'+s+'</span>').join("")+'</div></a>';
+  });
+  app.innerHTML=
+   '<div class="hub-hero">'+weaveSVG(330,true)+'<div class="veil"></div><div class="in hub-grid"><div class="htext">'+
+   '<div class="kicker">Spindleloom · Field Handbook</div>'+
+   '<h1>Who are <em>you</em> in the loop?</h1>'+
+   '<p class="hub-sub">'+P.length+' persona playbooks over one fleet of 52 agents — builder side and business side. Pick your role — each page is your end-to-end operating guide: the agents you drive, the prompts to use, the gates you own, and where you hand off.</p>'+
+   '<div class="searchbox"><span class="ico">⌕</span><input id="q" type="search" placeholder="Search personas, agents, commands, prompts…  ( / )" autocomplete="off" aria-label="Search"><div class="results" id="res" role="listbox"></div></div>'+
+   '</div><div class="loopwrap"><canvas class="loopcanvas" width="520" height="520" role="img" aria-label="Woven Loop — the agent walking the six SDLC stages"></canvas>'+
+   '<div class="loopread"><span class="pip"></span> working&nbsp;<b id="loopnow">PLAN</b></div></div></div></div>'+
+   '<div class="hubwrap"><div class="cards">'+cards+'</div></div>';
+  // search
+  const q=document.getElementById("q"),res=document.getElementById("res");
+  const IDX=[];
+  P.forEach(p=>{
+    IDX.push({k:"persona",label:p.name+" "+p.alt,sub:p.name,target:"#/"+p.id});
+    p.agents.forEach(a=>IDX.push({k:"agent",label:a[0],sub:p.name,target:"#/"+p.id+"@agents"}));
+    p.agents.forEach(a=>{if(a[1]&&a[1]!=="—")IDX.push({k:"command",label:a[1],sub:p.name,target:"#/"+p.id+"@agents"})});
+    p.prompts.forEach(pr=>IDX.push({k:"prompt",label:pr[0],sub:p.name,target:"#/"+p.id+"@prompts"}));
+  });
+  q.addEventListener("input",()=>{
+    const v=q.value.trim().toLowerCase();
+    if(v.length<2){res.classList.remove("show");res.innerHTML="";return;}
+    const hits=IDX.filter(i=>i.label.toLowerCase().includes(v)).slice(0,9);
+    res.innerHTML=hits.map(h=>'<a href="'+h.target+'"><span>'+h.label+'</span><span class="kind">'+h.k+' · <b>'+h.sub+'</b></span></a>').join("")||
+      '<a><span style="color:var(--ink-dim)">no matches</span></a>';
+    res.classList.add("show");
+  });
+  q.addEventListener("keydown",e=>{if(e.key==="Escape"){res.classList.remove("show");q.blur();}});
+  startLoop();
+}
+
+/* ════ Woven Loop (hub hero) — the agent walking all six stages ════ */
+let __loopRaf=null;
+function startLoop(){
+  if(__loopRaf){cancelAnimationFrame(__loopRaf);__loopRaf=null;}
+  const cv=document.querySelector(".loopcanvas");if(!cv||!cv.getContext)return;
+  const reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  const dpr=Math.min(window.devicePixelRatio||1,2.5),S=520;
+  cv.width=S*dpr;cv.height=S*dpr;
+  const c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);c.lineJoin="round";
+  const pal=()=>{const g=getComputedStyle(document.documentElement),v=n=>g.getPropertyValue(n).trim();
+    return {amber:v("--gold"),amberLt:v("--gold-hi"),blue:v("--weft-dim"),blueLt:v("--weft"),
+      ink:v("--ground"),on:v("--ink"),off:v("--ink-dim")};};
+  const STAGES=[{d:60,label:"LEARN",side:"run"},{d:120,label:"PLAN",side:"make"},{d:180,label:"BUILD",side:"make"},
+    {d:240,label:"TEST",side:"make"},{d:300,label:"SHIP",side:"run"},{d:360,label:"OPERATE",side:"run"}]
+    .map(s=>({t:s.d*Math.PI/180,label:s.label,side:s.side}));
+  const af=0.22,ys=1.34,cx=S/2,cy=S/2,w=S*0.048,n=600,q=n/4;
+  const PTS=[];for(let i=0;i<=n;i++){const tt=i/n*2*Math.PI,s=Math.sin(tt),cc=Math.cos(tt),d=1+s*s;
+    PTS.push([cx+S*af*cc/d,cy+(S*af*s*cc/d)*ys]);}
+  const pt=tt=>{const s=Math.sin(tt),cc=Math.cos(tt),d=1+s*s;return [cx+S*af*cc/d,cy+(S*af*s*cc/d)*ys];};
+  const seg=(i0,i1,col,ww)=>{c.lineCap="round";c.beginPath();
+    for(let i=i0;i<=i1;i++){const pp=PTS[i];i===i0?c.moveTo(pp[0],pp[1]):c.lineTo(pp[0],pp[1]);}
+    c.strokeStyle=col;c.lineWidth=ww;c.stroke();};
+  const active=headT=>{let best=0,bd=1e9;
+    for(let i=0;i<STAGES.length;i++){const d=((headT-STAGES[i].t)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);
+      if(d<bd){bd=d;best=i;}}return best;};
+  function draw(headT){
+    const P=pal(),ai=active(headT);
+    c.clearRect(0,0,S,S);
+    c.globalAlpha=.16;seg(0,n,P.off,w);c.globalAlpha=1;
+    c.globalAlpha=.5;seg(0,q,P.amber,w);seg(3*q,n,P.amber,w);seg(q,3*q,P.blue,w);c.globalAlpha=1;
+    const hi=Math.round(headT/(2*Math.PI)*n),L=72;
+    for(let k=L;k>=0;k--){const idx=((hi-k)%n+n)%n,p0=PTS[idx],p1=PTS[(idx+1)%n];
+      c.globalAlpha=(1-k/L)*(1-k/L);const col=(idx<=q||idx>=3*q)?P.amberLt:P.blueLt;
+      c.lineCap="round";c.beginPath();c.moveTo(p0[0],p0[1]);c.lineTo(p1[0],p1[1]);
+      c.strokeStyle=col;c.lineWidth=w*1.15;c.stroke();}
+    c.globalAlpha=1;
+    const hp=PTS[hi%n],rg=c.createRadialGradient(hp[0],hp[1],0,hp[0],hp[1],w*3);
+    rg.addColorStop(0,"rgba(255,247,228,.95)");rg.addColorStop(1,"rgba(255,247,228,0)");
+    c.fillStyle=rg;c.beginPath();c.arc(hp[0],hp[1],w*3,0,7);c.fill();
+    STAGES.forEach((st,i)=>{const pp=pt(st.t),isA=i===ai,col=st.side==="run"?P.amberLt:P.blueLt,rr=isA?w*1.5:w*0.9;
+      if(isA){const gg=c.createRadialGradient(pp[0],pp[1],0,pp[0],pp[1],w*3.4);
+        gg.addColorStop(0,st.side==="run"?"rgba(231,190,88,.55)":"rgba(127,176,230,.5)");
+        gg.addColorStop(1,"rgba(0,0,0,0)");
+        c.fillStyle=gg;c.beginPath();c.arc(pp[0],pp[1],w*3.4,0,7);c.fill();}
+      c.beginPath();c.arc(pp[0],pp[1],rr+w*0.5,0,7);c.fillStyle=P.ink;c.fill();
+      c.beginPath();c.arc(pp[0],pp[1],rr,0,7);c.fillStyle=col;c.fill();
+      const dx=pp[0]-cx,dy=pp[1]-cy,m=Math.sqrt(dx*dx+dy*dy)||1,off=w*2.4;
+      c.textBaseline="middle";c.textAlign=dx<-S*0.04?"right":dx>S*0.04?"left":"center";
+      c.fillStyle=isA?P.on:P.off;c.font=(isA?"700 ":"500 ")+(S*0.03)+"px ui-monospace,Menlo,Consolas,monospace";
+      c.fillText(st.label,pp[0]+dx/m*off,pp[1]+dy/m*off);});
+    c.beginPath();c.arc(cx,cy,w*1.7,0,7);c.fillStyle=P.ink;c.fill();
+    c.beginPath();c.arc(cx,cy,w,0,7);c.fillStyle=P.amber;c.fill();
+    c.beginPath();c.arc(cx,cy,w*0.42,0,7);c.fillStyle=P.ink;c.fill();
+    const nowEl=document.getElementById("loopnow");
+    if(nowEl&&nowEl.textContent!==STAGES[ai].label)nowEl.textContent=STAGES[ai].label;
+  }
+  let head=0;
+  const frame=()=>{if(!cv.isConnected){__loopRaf=null;return;}
+    draw(head/n*2*Math.PI);head=(head+1.0)%n;__loopRaf=requestAnimationFrame(frame);};
+  if(reduce)draw(1.6);else frame();
+}
+
+/* ════ persona view ════ */
+function section(n,title,note,inner){
+  return '<section id="'+title.toLowerCase().replace(/[^a-z]+/g,"-")+'" class="reveal"><div class="sh"><span class="n">'+n+'</span><h2>'+title+'</h2>'+(note?'<span class="note">'+note+'</span>':"")+'</div>'+inner+'</section>';
+}
+function renderPersona(p){
+  const i=P.indexOf(p),prev=P[(i+P.length-1)%P.length],next=P[(i+1)%P.length];
+  if(DEEP[p.id]) p=Object.assign({},p,DEEP[p.id]);
+  document.title=p.name+" — Spindleloom Persona";
+  let secs=[],n=0;const num=()=>String(n++).padStart(2,"0");
+
+  if(p.io) secs.push(section(num(),"Inputs → outputs","your job in two columns",
+    '<div class="io"><div class="b"><h3>You consume</h3><ul>'+p.io.inp.map(x=>"<li>"+x+"</li>").join("")+'</ul></div>'+
+    '<div class="b o"><h3>You must ship</h3><ul>'+p.io.out.map(x=>"<li>"+x+"</li>").join("")+'</ul></div></div>'));
+
+  secs.push(section(num(),"Your agents","the specialists you invoke",
+    '<table class="tbl"><thead><tr><th>Agent</th><th>Invoke</th><th>What it does for you</th></tr></thead><tbody>'+
+    p.agents.map(a=>'<tr><td class="a">'+a[0]+'</td><td class="cmd">'+a[1]+'</td><td>'+a[2]+'</td></tr>').join("")+
+    '</tbody></table>'+(p.shared?'<p style="font-size:13px;margin-top:10px">'+p.shared+'</p>':"")));
+
+  if(p.flow) secs.push(section(num(),"Driving a feature","the sequence, end to end",
+    '<ol class="flow">'+p.flow.map(x=>"<li>"+x+"</li>").join("")+'</ol>'));
+
+  if(p.decide) secs.push(section(num(),"Decision guide","which move, when",
+    '<div class="calls">'+p.decide.map(d=>'<div class="call"><div class="tag">'+d[0]+'</div><div><div class="q">'+d[1]+'</div><div class="aa">'+d[2]+'</div></div></div>').join("")+'</div>'));
+
+  secs.push(section(num(),"Best prompts","copy-ready · swap the «placeholders»",
+    p.prompts.map(pr=>'<div class="prompt"><div class="ph"><div><div class="nm">'+pr[0]+'</div><div class="wn">'+pr[1]+'</div></div><span class="tg">'+pr[2]+'</span></div>'+
+      '<div class="bd"><button class="copy" aria-label="Copy prompt">Copy</button><pre>'+pr[3].map(mark).join("\n")+'</pre></div></div>').join("")));
+
+  if(p.kpis) secs.push(section(num(),"How you're measured","outcomes, not activity",
+    '<div class="kpi">'+p.kpis.map(k=>'<div class="k"><b>'+k[0]+'</b><span>'+k[1]+'</span></div>').join("")+'</div>'));
+
+  secs.push(section(num(),"Hand-off","what the next persona needs before you pass",
+    '<div class="loom">'+p.handoff.map(h=>{const t=byId[h[0]];
+      return '<div class="row"><div class="to"><a href="#/'+t.id+'">'+t.name+'</a></div><div class="need">'+h[1]+'</div></div>';}).join("")+'</div>'+
+    '<div class="grid2" style="margin-top:22px"><div class="blk"><h3>Gates you own</h3><ul>'+p.gates.map(g=>"<li>"+g+"</li>").join("")+'</ul></div>'+
+    '<div class="blk"><h3>Pitfalls you avoid</h3><ul>'+p.pitfalls.map(g=>"<li>"+g+"</li>").join("")+'</ul></div></div>'+
+    '<h3 style="font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin:24px 0 10px">Skills behind your agents</h3>'+
+    '<div class="chips">'+p.skills.map(s=>'<span class="chip">'+s+'</span>').join("")+'</div>'));
+
+  if(p.trouble) secs.push(section(num(),"Troubleshooting","the gotchas the validators catch",
+    '<div class="calls">'+p.trouble.map(d=>'<div class="call warn"><div class="tag">'+d[0]+'</div><div><div class="q">'+d[1]+'</div><div class="aa">'+d[2]+'</div></div></div>').join("")+'</div>'));
+
+  if(p.glossary) secs.push(section(num(),"Glossary","your working vocabulary",
+    '<div class="glo">'+p.glossary.map(g=>'<div><b>'+g[0]+'</b> — '+g[1]+'</div>').join("")+'</div>'));
+
+  const spine='<nav class="spine" aria-label="Contents"><ol>'+
+    secs.map(s=>{const id=s.match(/id="([^"]+)"/)[1];const t=s.match(/<h2>([^<]+)<\/h2>/)[1];
+      return '<li><a href="#'+id+'" data-l>'+t+'</a></li>';}).join("")+'</ol></nav>';
+
+  const qs=p.qs?'<div class="layout" style="display:block;max-width:1080px"><div class="qhead">▸ Quick start — your first three moves</div><div class="qs">'+
+    p.qs.map(s=>'<div class="step"><div class="k">'+s[0]+'</div><div class="c">'+s[1]+'</div><div class="d">'+s[2]+'</div></div>').join("")+'</div></div>':"";
+
+  app.innerHTML=
+   '<div class="crumb"><a href="#/">Personas</a> / '+p.no+' '+p.name+'</div>'+
+   '<div class="phero">'+weaveSVG(360,true)+'<div class="veil"></div><div class="in">'+
+   '<div class="kicker">Field Handbook · Persona <span style="color:var(--gold)">'+p.no+'</span> of '+P.length+'</div>'+
+   '<h1>The <em>'+p.name+'</em></h1><div class="role">'+p.alt+'</div>'+
+   '<p class="thesis">'+p.mission+'</p>'+
+   '<div class="facts"><div class="fact"><div class="n">'+p.agents.length+'</div><div class="l">Agents you drive</div></div>'+
+   '<div class="fact"><div class="n">'+p.span.length+'</div><div class="l">Phases you span</div></div>'+
+   '<div class="fact"><div class="n">'+p.prompts.length+'</div><div class="l">Prompts in your kit</div></div>'+
+   (p.accepts?'<div class="fact"><div class="n">'+p.accepts+'</div><div class="l">Boundaries you accept</div></div>':"")+
+   '</div></div></div>'+qs+
+   '<div class="layout">'+spine+'<div class="content">'+secs.join("")+
+   '<div class="pager"><a href="#/'+prev.id+'"><div class="dir">← previous</div><div class="nm">'+prev.name+'</div></a>'+
+   '<a class="next" href="#/'+next.id+'"><div class="dir">next →</div><div class="nm">'+next.name+'</div></a></div>'+
+   '</div></div>';
+
+  // copy buttons
+  app.querySelectorAll(".prompt").forEach(card=>{
+    const b=card.querySelector(".copy"),pre=card.querySelector("pre");
+    b.addEventListener("click",async()=>{
+      const txt=pre.textContent;
+      try{await navigator.clipboard.writeText(txt);}catch(e){
+        const r=document.createRange();r.selectNodeContents(pre);
+        const s=getSelection();s.removeAllRanges();s.addRange(r);try{document.execCommand("copy");}catch(_){}}
+      b.textContent="Copied";b.classList.add("done");
+      setTimeout(()=>{b.textContent="Copy";b.classList.remove("done");},1400);
+    });
+  });
+  // reveal + scroll-spy
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add("in");}),{threshold:.07});
+  app.querySelectorAll(".reveal").forEach(s=>io.observe(s));
+  const items=[...app.querySelectorAll(".spine li")];
+  const map={};items.forEach(li=>{map[li.querySelector("a").getAttribute("href").slice(1)]=li;});
+  const spy=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){
+    items.forEach(l=>l.classList.remove("on"));const li=map[e.target.id];if(li)li.classList.add("on");}}),
+    {rootMargin:"-38% 0px -55% 0px"});
+  app.querySelectorAll("section[id]").forEach(s=>spy.observe(s));
+}
+
+/* ════ router ════ */
+function route(){
+  const h=location.hash.replace(/^#\/?/,"");
+  const anchor=h.includes("@")?h.split("@")[1]:null;
+  const id=h.split("@")[0];
+  const p=byId[id];
+  window.scrollTo(0,0);
+  if(p){renderPersona(p);document.getElementById("jump").value=p.id;}
+  else{renderHub();document.getElementById("jump").value="";}
+  app.focus({preventScroll:true});
+  if(anchor){const el=document.getElementById(anchor==="agents"?"your-agents":"best-prompts");if(el)el.scrollIntoView();}
+}
+window.addEventListener("hashchange",route);
+
+/* jump select */
+const jump=document.getElementById("jump");
+jump.innerHTML='<option value="">— overview —</option>'+P.map(p=>'<option value="'+p.id+'">'+p.no+' · '+p.name+'</option>').join("");
+jump.addEventListener("change",()=>{location.hash=jump.value?"#/"+jump.value:"#/";});
+
+/* theme */
+const root=document.documentElement;
+document.getElementById("themeToggle").addEventListener("click",()=>{
+  const dark=matchMedia("(prefers-color-scheme:dark)").matches;
+  const cur=root.getAttribute("data-theme")||(dark?"dark":"light");
+  root.setAttribute("data-theme",cur==="dark"?"light":"dark");
+});
+
+/* close search results on outside click (global — survives re-renders) */
+document.addEventListener("click",e=>{
+  if(!e.target.closest(".searchbox")){
+    const r=document.getElementById("res");
+    if(r)r.classList.remove("show");
+  }
+});
+
+/* keyboard: / focuses search on hub */
+document.addEventListener("keydown",e=>{
+  if(e.key==="/"&&!e.target.closest("input,select,textarea")){
+    const q=document.getElementById("q");
+    if(q){e.preventDefault();q.focus();}
+  }
+});
+
+route();
+</script>
+</body>
+</html>
