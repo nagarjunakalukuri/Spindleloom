@@ -236,6 +236,12 @@ footer{border-top:1px solid var(--hair);margin-top:44px}
   .loopwrap{flex:0 0 auto;margin:0}
 }
 @media (prefers-reduced-motion:reduce){.loopread .pip{box-shadow:none}}
+.phero-grid{display:block}
+.ptext{position:relative}
+@media (min-width:1024px){
+  .phero-grid{display:flex;align-items:center;gap:clamp(24px,4vw,56px);min-height:480px}
+  .ptext{flex:1;min-width:0}
+}
 
 
 /* ── Woven Loop hero ── */

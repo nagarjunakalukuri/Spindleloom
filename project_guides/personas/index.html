@@ -236,6 +236,12 @@ footer{border-top:1px solid var(--hair);margin-top:44px}
   .loopwrap{flex:0 0 auto;margin:0}
 }
 @media (prefers-reduced-motion:reduce){.loopread .pip{box-shadow:none}}
+.phero-grid{display:block}
+.ptext{position:relative}
+@media (min-width:1024px){
+  .phero-grid{display:flex;align-items:center;gap:clamp(24px,4vw,56px);min-height:480px}
+  .ptext{flex:1;min-width:0}
+}
 </style>
 </head>
 <body>
@@ -2146,7 +2152,16 @@ function renderHub(){
 
 /* ════ Woven Loop (hub hero) — the agent walking all six stages ════ */
 let __loopRaf=null;
-function startLoop(){
+const PHASE2STAGE={discovery:"PLAN",requirements:"PLAN",design:"PLAN",planning:"PLAN",
+  build:"BUILD",test:"TEST",review:"SHIP",release:"SHIP",operate:"OPERATE",process:"LEARN"};
+function ownedStages(p){
+  if(p.span.some(s=>/cross-cutting/i.test(s)))return "ALL";
+  const set=[];p.span.forEach(s=>{const k=s.toLowerCase().split(/[^a-z]/)[0];
+    const st=PHASE2STAGE[k];if(st&&!set.includes(st))set.push(st);});
+  const O=["PLAN","BUILD","TEST","SHIP","OPERATE","LEARN"];
+  return set.sort((a,b)=>O.indexOf(a)-O.indexOf(b));
+}
+function startLoop(own){
   if(__loopRaf){cancelAnimationFrame(__loopRaf);__loopRaf=null;}
   const cv=document.querySelector(".loopcanvas");if(!cv||!cv.getContext)return;
   const reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
@@ -2183,13 +2198,16 @@ function startLoop(){
     const hp=PTS[hi%n],rg=c.createRadialGradient(hp[0],hp[1],0,hp[0],hp[1],w*3);
     rg.addColorStop(0,"rgba(255,247,228,.95)");rg.addColorStop(1,"rgba(255,247,228,0)");
     c.fillStyle=rg;c.beginPath();c.arc(hp[0],hp[1],w*3,0,7);c.fill();
-    STAGES.forEach((st,i)=>{const pp=pt(st.t),isA=i===ai,col=st.side==="run"?P.amberLt:P.blueLt,rr=isA?w*1.5:w*0.9;
+    STAGES.forEach((st,i)=>{const pp=pt(st.t),
+      isA=own?(own==="ALL"||own.indexOf(st.label)>=0):(i===ai),
+      col=st.side==="run"?P.amberLt:P.blueLt,rr=isA?w*1.5:w*0.9;
       if(isA){const gg=c.createRadialGradient(pp[0],pp[1],0,pp[0],pp[1],w*3.4);
         gg.addColorStop(0,st.side==="run"?"rgba(231,190,88,.55)":"rgba(127,176,230,.5)");
         gg.addColorStop(1,"rgba(0,0,0,0)");
         c.fillStyle=gg;c.beginPath();c.arc(pp[0],pp[1],w*3.4,0,7);c.fill();}
+      if(own&&!isA)c.globalAlpha=.48;
       c.beginPath();c.arc(pp[0],pp[1],rr+w*0.5,0,7);c.fillStyle=P.ink;c.fill();
-      c.beginPath();c.arc(pp[0],pp[1],rr,0,7);c.fillStyle=col;c.fill();
+      c.beginPath();c.arc(pp[0],pp[1],rr,0,7);c.fillStyle=col;c.fill();c.globalAlpha=1;
       const dx=pp[0]-cx,dy=pp[1]-cy,m=Math.sqrt(dx*dx+dy*dy)||1,off=w*2.4;
       c.textBaseline="middle";c.textAlign=dx<-S*0.04?"right":dx>S*0.04?"left":"center";
       c.fillStyle=isA?P.on:P.off;c.font=(isA?"700 ":"500 ")+(S*0.03)+"px ui-monospace,Menlo,Consolas,monospace";
@@ -2197,8 +2215,8 @@ function startLoop(){
     c.beginPath();c.arc(cx,cy,w*1.7,0,7);c.fillStyle=P.ink;c.fill();
     c.beginPath();c.arc(cx,cy,w,0,7);c.fillStyle=P.amber;c.fill();
     c.beginPath();c.arc(cx,cy,w*0.42,0,7);c.fillStyle=P.ink;c.fill();
-    const nowEl=document.getElementById("loopnow");
-    if(nowEl&&nowEl.textContent!==STAGES[ai].label)nowEl.textContent=STAGES[ai].label;
+    if(!own){const nowEl=document.getElementById("loopnow");
+      if(nowEl&&nowEl.textContent!==STAGES[ai].label)nowEl.textContent=STAGES[ai].label;}
   }
   let head=0;
   const frame=()=>{if(!cv.isConnected){__loopRaf=null;return;}
@@ -2213,6 +2231,7 @@ function section(n,title,note,inner){
 function renderPersona(p){
   const i=P.indexOf(p),prev=P[(i+P.length-1)%P.length],next=P[(i+1)%P.length];
   if(DEEP[p.id]) p=Object.assign({},p,DEEP[p.id]);
+  const own=ownedStages(p),ownRead=own==="ALL"?"the whole loop":own.join(" · ");
   document.title=p.name+" — Spindleloom Persona";
   let secs=[],n=0;const num=()=>String(n++).padStart(2,"0");
 
@@ -2261,7 +2280,7 @@ function renderPersona(p){
 
   app.innerHTML=
    '<div class="crumb"><a href="#/">Personas</a> / '+p.no+' '+p.name+'</div>'+
-   '<div class="phero">'+weaveSVG(360,true)+'<div class="veil"></div><div class="in">'+
+   '<div class="phero">'+weaveSVG(360,true)+'<div class="veil"></div><div class="in phero-grid"><div class="ptext">'+
    '<div class="kicker">Field Handbook · Persona <span style="color:var(--gold)">'+p.no+'</span> of '+P.length+'</div>'+
    '<h1>The <em>'+p.name+'</em></h1><div class="role">'+p.alt+'</div>'+
    '<p class="thesis">'+p.mission+'</p>'+
@@ -2269,12 +2288,14 @@ function renderPersona(p){
    '<div class="fact"><div class="n">'+p.span.length+'</div><div class="l">Phases you span</div></div>'+
    '<div class="fact"><div class="n">'+p.prompts.length+'</div><div class="l">Prompts in your kit</div></div>'+
    (p.accepts?'<div class="fact"><div class="n">'+p.accepts+'</div><div class="l">Boundaries you accept</div></div>':"")+
-   '</div></div></div>'+qs+
+   '</div></div><div class="loopwrap"><canvas class="loopcanvas" width="520" height="520" role="img" aria-label="Woven Loop — the SDLC stages this role works: '+ownRead+'"></canvas>'+
+   '<div class="loopread"><span class="pip"></span> '+(own==="ALL"?"you walk":"you work")+'&nbsp;<b>'+ownRead+'</b></div></div></div></div>'+qs+
    '<div class="layout">'+spine+'<div class="content">'+secs.join("")+
    '<div class="pager"><a href="#/'+prev.id+'"><div class="dir">← previous</div><div class="nm">'+prev.name+'</div></a>'+
    '<a class="next" href="#/'+next.id+'"><div class="dir">next →</div><div class="nm">'+next.name+'</div></a></div>'+
    '</div></div>';
 
+  startLoop(own);
   // copy buttons
   app.querySelectorAll(".prompt").forEach(card=>{
     const b=card.querySelector(".copy"),pre=card.querySelector("pre");
