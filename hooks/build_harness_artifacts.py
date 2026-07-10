@@ -14,8 +14,10 @@ Targets:
                  skills + hooks + templates + instructions (the headline: `/plugin
                  install` replaces the whole copy-table).
   claude-code    loose Claude Code subagents (.claude/agents/) for hand-wiring.
-  cursor         project rules (.cursor/rules/*.mdc) + an always-on conventions rule.
-  copilot        custom chat modes (.github/chatmodes/) + copilot-instructions.md.
+  cursor         native subagents (.cursor/agents/) + commands + an always-on
+                 conventions rule + .cursor/mcp.json.
+  copilot        custom chat modes (.github/chatmodes/) + prompts + copilot-instructions.md.
+  windsurf       rules (.windsurf/rules/, trigger frontmatter, 12k cap) + workflows.
   agents-md      the cross-tool AGENTS.md router (one file, any tool reads it).
 
 Convergence: source of truth = agents/*.md + sibling folders. Targets are derived,
@@ -228,7 +230,7 @@ def load_commands(src):
 def instructions_md(agents, src):
     """The Instructions surface: project-wide conventions distilled from the convention docs.
 
-    Kept concise and AI-read-first; points to the bundled project_guides/BEST-PRACTICES.md for the
+    Kept concise and AI-read-first; points to the bundled knowledge_hub/BEST-PRACTICES.md for the
     full standard rather than duplicating 13KB."""
     n = len(agents)
     out = [
@@ -256,14 +258,14 @@ def instructions_md(agents, src):
         "requirement → design → test/PBI. Nothing dropped, blast radius visible.",
         "- **Context first:** `recall_context(task_id=...)` before reading; prefer `search_specs`/`trace_requirement` and context packs (`hooks/build_context_pack.py`) over folder-wide reads; save ≤5 bullets before handing off.",
         "- **Layout standard:** the canonical `docs/` + `.spindleloom/` tree, the profiles, and the "
-        "four cadence planes (durable/living/cyclic/snapshot) are fixed by `project_guides/STANDARD.md`; existing "
+        "four cadence planes (durable/living/cyclic/snapshot) are fixed by `knowledge_hub/GOVERNANCE.md` Part I; existing "
         "repos convert via `scaffold.py migrate`, never by hand.",
         "- **Right-sized output:** the leanest doc that does the job for the team's tier; "
         "fight documentation fatigue.",
         "- **Ground, don't fabricate:** read the upstream doc(s) first; flag assumed values.",
         "",
         "The full standard (feedback loops, change control, team-size tiers, frameworks) is in "
-        "`project_guides/BEST-PRACTICES.md` (bundled). Navigate the fleet by phase in `AGENTS.md` / `agents/INDEX.md`.",
+        "`knowledge_hub/BEST-PRACTICES.md` (bundled). Navigate the fleet by phase in `AGENTS.md` / `agents/INDEX.md`.",
         "",
     ]
     return "\n".join(out)
@@ -349,12 +351,12 @@ def emit_claude_plugin(agents, src):
         "---\nname: spindleloom-conventions\ndescription: " + yaml_sq(conv_desc) + "\n---\n\n"
         + instructions_md(agents, src)
     )
-    bp = src / "project_guides" / "BEST-PRACTICES.md"
+    bp = src / "knowledge_hub" / "BEST-PRACTICES.md"
     if bp.is_file():
-        files["project_guides/BEST-PRACTICES.md"] = bp.read_text(encoding="utf-8", errors="ignore")
-    sd = src / "project_guides" / "STANDARD.md"
+        files["knowledge_hub/BEST-PRACTICES.md"] = bp.read_text(encoding="utf-8", errors="ignore")
+    sd = src / "knowledge_hub" / "GOVERNANCE.md"
     if sd.is_file():
-        files["project_guides/STANDARD.md"] = sd.read_text(encoding="utf-8", errors="ignore")
+        files["knowledge_hub/GOVERNANCE.md"] = sd.read_text(encoding="utf-8", errors="ignore")
 
     # --- MCP surface: the live traceability server, auto-discovered at plugin root ---
     files.update(mcp_server_files(src))
@@ -483,7 +485,7 @@ def emit_agents_md(agents, src):
            "role below, **adopt that agent's instructions** — full text in `agents/<name>.md`. "
            "Run only the subset your team needs (start with `doc-strategy-advisor`). "
            "Conventions: Req-ID `<DOC>-<AREA>-<NUM>`, one living RTM, \"the system shall …\" "
-           "(ISO/IEC/IEEE 29148); see `project_guides/BEST-PRACTICES.md`.", ""]
+           "(ISO/IEC/IEEE 29148); see `knowledge_hub/BEST-PRACTICES.md`.", ""]
     by_phase = {}
     for a in agents:
         by_phase.setdefault(a["phase"], []).append(a)

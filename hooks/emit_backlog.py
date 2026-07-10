@@ -23,7 +23,7 @@ Three pure, tracker-AGNOSTIC steps + one pluggable push:
 
 Dependency-free (Python 3 stdlib only). Steps 1/2/4 are fully testable offline; only the
 adapter touches the network. See `backlog-manager` "Tracker sync contract" and
-`project_guides/INFORMATION-ARCHITECTURE.md` "Directionality & drift".
+`knowledge_hub/GOVERNANCE.md` Part I sec 12, "Directionality & drift".
 
 Usage:
     python hooks/emit_backlog.py <backlog.md>                       # dry-run: work-item plan (JSON)
@@ -274,7 +274,7 @@ def check_drift(backlog_md, rtm_md):
     """Offline md↔tracker drift report. NEW = a backlog PBI with no tracker mapping
     (unpushed); GONE = a mapped PBI that no longer exists in the backlog (the tracker
     item is orphaned, or the PBI was renamed — both need a human). 'Tracker wins' on
-    content disagreement is policy (INFORMATION-ARCHITECTURE.md); this makes the
+    content disagreement is policy (GOVERNANCE.md Part I sec 12); this makes the
     *coverage* half of that policy checkable."""
     backlog_ids = {p["id"] for p in parse_backlog(backlog_md)}
     id_map = read_id_map(rtm_md)

@@ -26,7 +26,7 @@ Checks (exit 1 if any fail):
      it), excluding the foundational entry agents (invoked directly).
  11. Loop classification — each agent declares `loop:` and `agentic_role:` with
      valid values (the two loop dimensions from LOOPWRIGHT.md / AGENT-AUTHORING.md).
- 12. Fleet-page sync — project_guides/spindleloom-agent-fleet.html's node/edge data
+ 12. Fleet-page sync — spindleloom_website/spindleloom-agent-fleet.html's node/edge data
      matches the contract graph: every agent appears as a node, every contract edge
      (types p/s/f; the t:'i' wiki overlay is exempt) exists in both directions, and
      no page edge names a nonexistent agent.
@@ -37,7 +37,7 @@ Checks (exit 1 if any fail):
      the few deliberate context-provision edges. This is the check that would have
      caught the SRS->SDD and URS funnel breaks.
 Also prints the live agent/template/skill/command counts (advisory — update README
-and project-overview.html / how-to-use.html to match; section sub-counts are not checked).
+and spindleloom_website/project-overview.html to match; section sub-counts are not checked).
 
 Usage:
     python hooks/validate_graph.py        # from the spindleloom root
@@ -156,7 +156,7 @@ def main():
     # 6: example prompts present (source for /help-role + AGENTS.md — keeps the fleet self-documenting)
     for a in sorted(names):
         if not examples[a]:
-            errors.append(f"{a}: no example prompts — add an examples: block (see project_guides/AGENT-AUTHORING.md)")
+            errors.append(f"{a}: no example prompts — add an examples: block (see knowledge_hub/AGENT-AUTHORING.md)")
 
     # 7: claude_code mapping integrity — subagent resolves, referenced command exists
     have_commands = {p.stem for p in COMMANDS.glob("*.md")} if COMMANDS.exists() else set()
@@ -164,7 +164,7 @@ def main():
         m = cc[a]
         st = m.get("subagent_type")
         if not st:
-            errors.append(f"{a}: claude_code block missing a subagent_type (see project_guides/AGENT-AUTHORING.md)")
+            errors.append(f"{a}: claude_code block missing a subagent_type (see knowledge_hub/AGENT-AUTHORING.md)")
         elif st not in names:
             errors.append(f"claude_code: {a} maps subagent_type:{st} but no agents/{st}.md exists")
         cmd = m.get("command")
@@ -205,18 +205,18 @@ def main():
         lm = re.search(r"(?m)^loop:\s*(\S+)\s*$", b)
         rm = re.search(r"(?m)^agentic_role:\s*(\S+)\s*$", b)
         if not lm:
-            errors.append(f"{p.stem}: missing loop: field (see project_guides/AGENT-AUTHORING.md)")
+            errors.append(f"{p.stem}: missing loop: field (see knowledge_hub/AGENT-AUTHORING.md)")
         elif lm.group(1) not in LOOPS:
             errors.append(f"{p.stem}: loop:{lm.group(1)} is not one of {sorted(LOOPS)}")
         if not rm:
-            errors.append(f"{p.stem}: missing agentic_role: field (see project_guides/AGENT-AUTHORING.md)")
+            errors.append(f"{p.stem}: missing agentic_role: field (see knowledge_hub/AGENT-AUTHORING.md)")
         elif rm.group(1) not in ROLES:
             errors.append(f"{p.stem}: agentic_role:{rm.group(1)} is not one of {sorted(ROLES)}")
 
     # 12: fleet-page sync — the hand-authored graph page must match the contract graph.
     # Contract edges are t:'p'/'s'/'f'; the t:'i' wiki-overlay edges are informational
     # and exempt. Decorative layout nodes (phase bands, grid) are ignored on the node side.
-    fleet = ROOT / "project_guides" / "spindleloom-agent-fleet.html"
+    fleet = ROOT / "spindleloom_website" / "spindleloom-agent-fleet.html"
     if fleet.exists():
         page = fleet.read_text(encoding="utf-8", errors="ignore")
         page_nodes = set(re.findall(r"\{id:'([a-z0-9-]+)'", page))
@@ -278,6 +278,34 @@ def main():
                     f"({a}.outputs [{', '.join(outputs_map[a])}] matches none of "
                     f"{b}.inputs [{', '.join(inputs_map.get(b, []))}]) — declare the input, "
                     f"or sanction the edge if it is deliberate context provision")
+
+    # 12b: fleet-page AGENT_SKILLS map + node phases match the contracts (the two
+    # hand-authored data blocks check 12 didn't cover -- desc drift stays human).
+    if fleet.exists():
+        ftext = fleet.read_text(encoding="utf-8", errors="ignore")
+        m = re.search(r"const AGENT_SKILLS = \{(.*?)\};", ftext, re.S)
+        if m:
+            page_skills = {}
+            for am in re.finditer(r"'([a-z0-9-]+)':\[([^\]]*)\]", m.group(1)):
+                page_skills[am.group(1)] = {s.strip().strip("'\"") for s in am.group(2).split(",") if s.strip()}
+            for a in sorted(names):
+                want = set(skills[a])
+                got = page_skills.get(a, set())
+                if a not in page_skills and want:
+                    errors.append(f"fleet-page: AGENT_SKILLS missing entry for {a}")
+                elif got != want:
+                    errors.append(f"fleet-page: AGENT_SKILLS[{a}] = {sorted(got)} but contract skills = {sorted(want)}")
+        page_phase = {pm.group(1): pm.group(2) for pm in
+                      re.finditer(r"id:'([a-z0-9-]+)'[^{}]*?phase:'([a-z0-9-]+)'", ftext)}
+        agent_phase = {}
+        for p in files:
+            fm = frontmatter(p.read_text(encoding="utf-8", errors="ignore"))
+            pmatch = re.search(r"(?m)^phase:\s*(\S+)", fm)
+            if pmatch:
+                agent_phase[p.stem] = pmatch.group(1).strip().strip('"')
+        for a in sorted(names):
+            if a in page_phase and a in agent_phase and page_phase[a] != agent_phase[a]:
+                errors.append(f"fleet-page: {a} lane is '{page_phase[a]}' but contract phase is '{agent_phase[a]}'")
 
     # advisory counts
     n_templates = len(list(TEMPLATES.glob("*.md")))

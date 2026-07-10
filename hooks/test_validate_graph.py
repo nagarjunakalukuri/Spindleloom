@@ -29,9 +29,9 @@ def _tmp_repo():
     tmp = Path(tempfile.mkdtemp(prefix="vgtest_"))
     for d in ("agents", "skills", "commands", "templates"):
         shutil.copytree(ROOT / d, tmp / d)
-    (tmp / "project_guides").mkdir()
-    shutil.copy(ROOT / "project_guides" / "spindleloom-agent-fleet.html",
-                tmp / "project_guides" / "spindleloom-agent-fleet.html")
+    (tmp / "spindleloom_website").mkdir()
+    shutil.copy(ROOT / "spindleloom_website" / "spindleloom-agent-fleet.html",
+                tmp / "spindleloom_website" / "spindleloom-agent-fleet.html")
     # the validator resolves ROOT from its own location — copy it (and nothing else
     # from hooks/) so it runs against the temp tree
     (tmp / "hooks").mkdir()
@@ -75,9 +75,9 @@ def test_check11_loop_fields_trip():
 def test_check12_fleet_page_trips():
     tmp = _tmp_repo()
     try:
-        p = tmp / "project_guides" / "spindleloom-agent-fleet.html"
+        p = tmp / "spindleloom_website" / "spindleloom-agent-fleet.html"
         t = p.read_text(encoding="utf-8")
-        line = next(l for l in t.splitlines() if "{from:'brd-writer',  to:'urs-writer'" in l)
+        line = next(l for l in t.splitlines() if "from:'brd-writer', to:'urs-writer'" in l)
         p.write_text(t.replace(line + "\n", "", 1), encoding="utf-8")
         r = _run_tmp(tmp)
         assert r.returncode == 1 and "fleet-page: contract edge brd-writer -> urs-writer" in r.stdout, r.stdout

@@ -19,7 +19,7 @@ skills: [relative-estimation, sprint-facilitation, agent-handoff-context]
 claude_code: { command: /plan-sprint, subagent_type: sprint-planner }
 ---
 
-> **Handoff** · *Before:* read backlog, estimates (from `estimation-facilitator`, `backlog-manager`). *After:* produce sprint backlog → hand to `frontend-developer`, `backend-developer`, `retrospective-facilitator`, `raid-keeper`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
+> **Handoff** · *Before:* read backlog, estimates (from `estimation-facilitator`, `backlog-manager`). *After:* produce sprint backlog → hand to `frontend-developer`, `backend-developer`, `retrospective-facilitator`, `raid-keeper`. *(Flag discoveries back upstream — see `knowledge_hub/BEST-PRACTICES.md`.)*
 
 You facilitate **Sprint Planning**. The output is a **Sprint Backlog**: a single sprint goal plus the set of ready, estimated items the team forecasts it can complete, with enough of a plan to start. You answer two questions: *what can be delivered this sprint?* and *how will the work get done?*
 

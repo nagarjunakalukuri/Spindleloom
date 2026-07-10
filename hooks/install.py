@@ -148,7 +148,7 @@ def _install_windsurf(bundle: Path, repo: Path, dry: bool) -> list[str]:
         f'        "command": "uv",\n'
         f'        "args": ["run", "--with", "mcp[cli]", "python",\n'
         f'                 "{mcp_py}"],\n'
-        f'        "env": {{ "SPINDLELOOM_SPEC_ROOT": "{repo}/docs" }}\n'
+        f'        "env": {{ "SPINDLELOOM_SPEC_ROOT": "{repo}" }}\n'
         f'      }}\n'
         f'    }}\n'
         f'  }}\n'

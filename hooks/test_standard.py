@@ -133,14 +133,14 @@ def test_migrate_self_exemption():
     with tempfile.TemporaryDirectory() as d:
         root = Path(d)
         _w(root / "prd.md", "# PRD\n\nPRD-A-001 the system shall ship.\n")          # real project doc
-        _w(root / "vendor_toolkit/project_guides/STANDARD.md", "# The Spindleloom Standard\n")      # copied-in distribution
+        _w(root / "vendor_toolkit/knowledge_hub/GOVERNANCE.md", "# Spindleloom Governance\n")      # copied-in distribution
         _w(root / "vendor_toolkit/agents/adr-writer.md", "---\nname: adr-writer\n---\nbody\n")
         _w(root / "vendor_toolkit/examples/x/01-mrd.md", "# MRD\n")
         _w(root / "templates/prd-template.md", "# PRD template\n")                   # toolkit-shaped file
         froms = {m["from"] for m in scaffold.migrate(root)["moves"]}
         check("prd.md" in froms, "self-exemption: a real project doc is still planned")
         check(not any(f.startswith("vendor_toolkit/") for f in froms),
-              "self-exemption: a nested distribution subtree (project_guides/STANDARD.md) is excluded wholesale")
+              "self-exemption: a nested distribution subtree (knowledge_hub/GOVERNANCE.md) is excluded wholesale")
         check("templates/prd-template.md" not in froms, "self-exemption: *-template.md skipped")
         check(not any("adr-writer" in f for f in froms), "self-exemption: *-writer.md skipped")
 
@@ -148,7 +148,7 @@ def test_migrate_self_exemption():
 def test_migrate_exempt_root():
     with tempfile.TemporaryDirectory() as d:
         root = Path(d)
-        _w(root / "project_guides/STANDARD.md", "# The Spindleloom Standard\n")
+        _w(root / "knowledge_hub/GOVERNANCE.md", "# Spindleloom Governance\n")
         _w(root / "prd.md", "# PRD\n")
         check(scaffold.migrate(root).get("exempt") is True,
               "migrate refuses (exempt) when the root is itself a distribution")
