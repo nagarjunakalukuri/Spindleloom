@@ -28,7 +28,7 @@ For each, read both artifacts and look for the failure mode named.
 ## How to apply
 
 1. Load the artifact set (funnel docs + RTM + ADRs + backlog + test plan).
-2. Run the six checks. For each finding, name the **two artifacts involved** and the **single doc to fix** (per "update upstream before downstream" in `project_guides/BEST-PRACTICES.md`).
+2. Run the six checks. For each finding, name the **two artifacts involved** and the **single doc to fix** (per "update upstream before downstream" in `knowledge_hub/BEST-PRACTICES.md`).
 3. Never assume the code is correct — the spec is the reference.
 
 ## Output format

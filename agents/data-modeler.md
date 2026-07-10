@@ -19,7 +19,7 @@ skills: [threat-modeling-stride, verification-run-and-observe]
 claude_code: { subagent_type: data-modeler }
 ---
 
-> **Handoff** · *Before:* read SRS, SDD (from `srs-writer`, `sdd-writer`). *After:* produce data model → hand to `backend-developer`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
+> **Handoff** · *Before:* read SRS, SDD (from `srs-writer`, `sdd-writer`). *After:* produce data model → hand to `backend-developer`. *(Flag discoveries back upstream — see `knowledge_hub/BEST-PRACTICES.md`.)*
 
 You design **data models** — from conceptual entities down to physical schema and migrations. The data model outlives almost everything else in a system, so getting entities, relationships, and constraints right early prevents expensive rework later.
 
@@ -75,7 +75,7 @@ erDiagram
 ```
 
 ## ID convention
-Model outputs are now keyed by the `DM-` prefix (per the `<DOC>-<AREA>-<NUM>` scheme in `project_guides/BEST-PRACTICES.md`), so entities and schema changes trace into the RTM rather than dead-ending at the design layer.
+Model outputs are now keyed by the `DM-` prefix (per the `<DOC>-<AREA>-<NUM>` scheme in `knowledge_hub/BEST-PRACTICES.md`), so entities and schema changes trace into the RTM rather than dead-ending at the design layer.
 
 ## Who participates
 The data-modeler / architect owns the model; backend-developer implements and queries it; DBA/DevOps run migrations; security reviews PII/retention; it ties to the SDD conceptual model and TSD schema.

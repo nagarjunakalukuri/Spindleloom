@@ -7,7 +7,7 @@ The single stdlib-only core shared by:
   - mcp_server.py     (live MCP server: trace, coverage, list, decisions)
 
 Dependency-free (Python 3 stdlib only). Read-only. It parses the conventions in
-project_guides/BEST-PRACTICES.md: Req-IDs of the form <DOC>-<AREA>-<NUM>, the RTM.md table, and
+knowledge_hub/BEST-PRACTICES.md: Req-IDs of the form <DOC>-<AREA>-<NUM>, the RTM.md table, and
 ADR references — and exposes them as queryable structures.
 """
 import json
@@ -94,11 +94,11 @@ def resolve_docs_root(project_root):
     return project_root
 
 
-# The edition of project_guides/STANDARD.md this code implements (recorded in a project's config).
+# The edition of the layout standard (knowledge_hub/GOVERNANCE.md Part I) this code implements.
 STANDARD_VERSION = "1.0"
 
 # Layout knobs — defaults reproduce the canonical Standard tree; each is overridable
-# in .spindleloom/config.json (the sanctioned exception). See project_guides/STANDARD.md §8.
+# in .spindleloom/config.json (the sanctioned exception). See knowledge_hub/GOVERNANCE.md Part I §8.
 LAYOUT_DEFAULTS = {
     "product_dir": "product",
     "specs_dir": "specs",
@@ -136,16 +136,25 @@ COMMENTARY = {"verdict.md", "readme.md"}  # judge/commentary — never spec arti
 
 
 def markdown_files(root):
-    """All .md under root, recursively — excluding any dotdir (.spindleloom, .git, …) so
-    machinery is never mistaken for content, and excluding commentary (README.md, verdict.md)
-    so a judge verdict quoting a prior run's ID can't register as a defined/orphaned Req-ID.
-    Flat folders behave as before."""
+    """All .md under root, recursively, EXCEPT:
+      - anything in a dotdir (.spindleloom, .git, …) — machinery, never content;
+      - commentary (README.md, verdict.md) — a judge verdict quoting a prior run's ID must
+        not register as a defined/orphaned Req-ID;
+      - anything under a nested subdir that owns its OWN RTM.md — an RTM defines a traceability
+        SCOPE, so a self-contained sub-run (e.g. examples/.../run3/ with its own RTM) is its
+        own scope and must not pollute the parent's coverage (the parent would otherwise see
+        every sub-run PBI as an orphan against its own RTM).
+    Flat single-RTM folders (the common case) behave exactly as before."""
     root = Path(root)
-    return sorted(
-        p for p in root.rglob("*.md")
-        if not any(part.startswith(".") for part in p.relative_to(root).parts)
-        and p.name.lower() not in COMMENTARY
-    )
+    out = []
+    for p in root.rglob("*.md"):
+        rel = p.relative_to(root)
+        if any(part.startswith(".") for part in rel.parts) or p.name.lower() in COMMENTARY:
+            continue
+        if any((root / d / RTM_NAME).is_file() for d in rel.parents if d != Path(".")):
+            continue  # lives inside a nested traceability scope
+        out.append(p)
+    return sorted(out)
 
 
 def _relname(f, root):
@@ -611,7 +620,7 @@ def conformance(project_root):
     profile/version vs the toolkit's, plus duplicate artifact IDs across the catalog
     (e.g. two RTMs, or two ADR files claiming one id). Complements audit(), which checks
     the RTM/Req-ID graph; together they answer 'does this repo match the Standard?'
-    (project_guides/STANDARD.md §11)."""
+    (knowledge_hub/GOVERNANCE.md Part I §11)."""
     project_root = Path(project_root)
     lay = layout(project_root)
     docs = resolve_docs_root(project_root)

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spindleloom — Live Loop Widget (run-state)</title>
+<style>
+  :root{
+    --ink:#12151F; --ink-2:#1A1F2E; --line:rgba(255,255,255,.09);
+    --blue:#2E6FB5; --blue-lt:#7FB0E6; --gold:#C8982A; --gold-lt:#E7BE58;
+    --red:#D06661; --text:#D9DEE7; --muted:#8B94A4; --muted-2:#5E6675;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:ui-monospace,"Cascadia Code","SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} body{margin:0}
+  .wrap{background:var(--ink);color:var(--text);font-family:var(--sans);min-height:100vh;
+    padding:clamp(24px,4vw,56px) clamp(18px,4vw,56px);line-height:1.55;
+    background-image:radial-gradient(120% 90% at 85% -10%, rgba(46,111,181,.12), transparent 55%),
+      radial-gradient(90% 80% at 5% 110%, rgba(200,152,42,.08), transparent 50%);}
+  .inner{max-width:1060px;margin:0 auto}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 14px;display:flex;gap:10px;align-items:center}
+  .eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--gold)}
+  h1{font-size:clamp(26px,4.4vw,40px);line-height:1.06;letter-spacing:-.02em;margin:0 0 10px;font-weight:680;text-wrap:balance}
+  h1 em{font-style:normal;color:var(--gold)}
+  .dek{font-size:15px;color:var(--muted);max-width:66ch;margin:0 0 26px}
+  .dek code{font-family:var(--mono);font-size:12.5px;color:var(--gold-lt)}
+
+  .panel{display:grid;grid-template-columns:auto 1fr;gap:clamp(18px,4vw,40px);align-items:start;
+    border:1px solid rgba(200,152,42,.28);border-radius:20px;padding:clamp(18px,3vw,32px);
+    background:linear-gradient(180deg,rgba(200,152,42,.05),rgba(46,111,181,.05))}
+  @media(max-width:860px){.panel{grid-template-columns:1fr}}
+  .cwrap{display:flex;flex-direction:column;align-items:center;gap:10px}
+  #stage{display:block;max-width:100%;height:auto}
+  .readout{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--muted);min-height:18px;text-align:center}
+  .readout b{color:var(--text)}
+  .legend{display:flex;flex-wrap:wrap;gap:12px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--muted-2);justify-content:center}
+  .legend span{display:flex;align-items:center;gap:5px}
+  .sw{width:10px;height:10px;border-radius:50%;display:inline-block}
+
+  .side h2{font-size:16px;margin:0 0 4px;font-weight:650;letter-spacing:-.01em}
+  .meta{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin:0 0 14px;line-height:1.8}
+  .meta b{color:var(--gold-lt);font-weight:600}
+  .stages{display:grid;gap:8px}
+  .st{border:1px solid var(--line);border-radius:10px;background:var(--ink-2);padding:9px 12px}
+  .st .h{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.1em}
+  .st .h .nm{color:var(--text);font-weight:600}
+  .st .h .state{margin-left:auto;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:4px}
+  .state.done{color:#8CD9AE;background:rgba(79,174,124,.15)}
+  .state.active{color:#FFF3DA;background:rgba(231,190,88,.22)}
+  .state.blocked{color:#F3B3AF;background:rgba(208,102,97,.2)}
+  .state.pending{color:var(--muted);background:rgba(255,255,255,.05)}
+  .state.partial{color:var(--gold-lt);background:rgba(200,152,42,.14)}
+  .state.idle{color:var(--muted-2);background:transparent}
+  .st .agents{margin-top:6px;display:flex;flex-wrap:wrap;gap:5px}
+  .ag{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:10px;border:1px solid var(--line);color:var(--muted)}
+  .ag.done{color:#8CD9AE;border-color:rgba(79,174,124,.4)}
+  .ag.running{color:#FFF;border-color:var(--gold);background:rgba(200,152,42,.16)}
+  .ag.blocked{color:#F3B3AF;border-color:rgba(208,102,97,.5)}
+
+  .controls{margin-top:22px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .mbtn{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--text);
+    border:1px solid var(--line);border-radius:8px;padding:7px 12px;background:rgba(255,255,255,.03);cursor:pointer}
+  .mbtn:hover{border-color:rgba(200,152,42,.5)} .mbtn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  input[type=file]{display:none}
+  #err{font-family:var(--mono);font-size:11px;color:var(--red);min-height:16px;margin-top:8px}
+  #paste{display:none;width:100%;margin-top:10px;background:var(--ink-2);color:var(--text);
+    border:1px solid var(--line);border-radius:10px;font-family:var(--mono);font-size:11.5px;padding:10px;min-height:120px}
+  .foot{font-family:var(--mono);font-size:11.5px;color:var(--muted-2);margin-top:28px;line-height:1.7;max-width:78ch}
+  .foot code{color:var(--gold-lt)}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="inner">
+  <p class="eyebrow"><span class="dot"></span> Woven Loop · live widget · driven by run-state</p>
+  <h1>The loop, <em>reporting a real run</em></h1>
+  <p class="dek">Feed it a distributed-run ledger (<code>.spindleloom/runs/&lt;run-id&gt;.json</code> — the file <code>sloom run status</code> reads) and the mark becomes a pipeline widget: <b>filled</b> stages are done, the <b>light</b> parks on the stage being worked, <b>red</b> means a step is blocked, hollow means pending.</p>
+
+  <div class="panel">
+    <div class="cwrap">
+      <canvas id="stage" width="380" height="380" aria-label="Live SDLC loop rendered from a run ledger"></canvas>
+      <div class="readout" id="readout">—</div>
+      <div class="legend">
+        <span><span class="sw" style="background:var(--blue-lt)"></span>done</span>
+        <span><span class="sw" style="background:#FFF3DA;box-shadow:0 0 6px var(--gold-lt)"></span>working</span>
+        <span><span class="sw" style="border:2px solid var(--red);background:transparent"></span>blocked</span>
+        <span><span class="sw" style="border:1.5px solid var(--muted);background:transparent"></span>pending</span>
+        <span><span class="sw" style="border:1.5px solid rgba(139,148,164,.3);background:transparent"></span>not in run</span>
+      </div>
+    </div>
+    <div class="side">
+      <h2 id="title">No run loaded</h2>
+      <p class="meta" id="meta">Load the demo, pick a ledger file, or paste JSON.</p>
+      <div class="stages" id="stages"></div>
+      <div class="controls">
+        <button class="mbtn" id="demo">▶ load demo run</button>
+        <label class="mbtn" for="file">⌁ open ledger .json</label>
+        <input type="file" id="file" accept=".json,application/json">
+        <button class="mbtn" id="pasteBtn">✎ paste JSON</button>
+      </div>
+      <textarea id="paste" spellcheck="false" placeholder='{"run_id":"…","ledger":[{"agent":"frd-writer","status":"running"},…]}'></textarea>
+      <div id="err" role="alert"></div>
+    </div>
+  </div>
+
+  <p class="foot">
+    Stage mapping: <code>PLAN</code>=discovery·requirements·design·planning · <code>BUILD</code>=build · <code>TEST</code>=test ·
+    <code>SHIP</code>=review·release · <code>OPERATE</code>=operate · <code>LEARN</code>=process. Agent→phase comes from the
+    fleet contracts (52 agents). A red outer ring on any stage = a blocked step inside it. Honors prefers-reduced-motion.
+  </p>
+</div></div>
+
+<script>
+(function(){
+  "use strict";
+  var BLUE="#2E6FB5", BLUE_LT="#7FB0E6", GOLD="#C8982A", GOLD_LT="#E7BE58", RED="#D06661", INK="#12151F";
+  var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+  var dpr=Math.min(window.devicePixelRatio||1,2.5);
+
+  /* ── agent → phase (authoritative: the 52 fleet contracts) ── */
+  var AGENT_PHASE={
+    "doc-strategy-advisor":"discovery","mrd-writer":"discovery",
+    "brd-writer":"requirements","frd-writer":"requirements","prd-writer":"requirements","srs-writer":"requirements","urs-writer":"requirements",
+    "adr-writer":"design","api-designer":"design","architect":"design","data-modeler":"design","rfc-facilitator":"design","sdd-writer":"design","solution-recon":"design","tsd-writer":"design","ux-ui-designer":"design",
+    "backlog-manager":"planning","estimation-facilitator":"planning","sprint-planner":"planning",
+    "ai-orchestrator":"build","backend-developer":"build","coding-standards-writer":"build","dev-onboarding":"build","frontend-developer":"build","pr-author":"build",
+    "accessibility-auditor":"test","ai-eval":"test","bug-triager":"test","change-verifier":"test","debugger":"test","flaky-test-detective":"test","qa-tester":"test","test-author":"test","test-automation-engineer":"test","test-plan-writer":"test",
+    "code-reviewer":"review","performance-engineer":"review","raid-keeper":"review","security-reviewer":"review","status-reporter":"review",
+    "pipeline-engineer":"release","release-manager":"release",
+    "incident-responder":"operate","sre":"operate",
+    "feature-docs-writer":"process","product-analytics":"process","retrospective-facilitator":"process","run-orchestrator":"process","spec-steward":"process","tech-debt-keeper":"process","tech-radar-curator":"process","wiki-curator":"process"
+  };
+  var PHASE_STAGE={discovery:"PLAN",requirements:"PLAN",design:"PLAN",planning:"PLAN",
+    build:"BUILD",test:"TEST",review:"SHIP",release:"SHIP",operate:"OPERATE",process:"LEARN"};
+  var STAGES=[
+    {key:"PLAN",   deg:120,c:BLUE_LT,side:"make"},
+    {key:"BUILD",  deg:180,c:BLUE_LT,side:"make"},
+    {key:"TEST",   deg:240,c:BLUE_LT,side:"make"},
+    {key:"SHIP",   deg:300,c:GOLD_LT,side:"run"},
+    {key:"OPERATE",deg:360,c:GOLD_LT,side:"run"},
+    {key:"LEARN",  deg:60, c:GOLD_LT,side:"run"}
+  ].map(function(s){s.t=s.deg*Math.PI/180;return s;});
+
+  /* ── pure: ledger → per-stage state ── */
+  function computeStages(run){
+    var rows=(run&&run.ledger)||[];
+    var by={};STAGES.forEach(function(s){by[s.key]={agents:[],running:[],blocked:0,done:0};});
+    rows.forEach(function(r){
+      var ph=AGENT_PHASE[r.agent];if(!ph)return;
+      var st=by[PHASE_STAGE[ph]];
+      st.agents.push({agent:r.agent,status:r.status||"pending"});
+      if(r.status==="running")st.running.push(r.agent);
+      if(r.status==="blocked")st.blocked++;
+      if(r.status==="done")st.done++;
+    });
+    return STAGES.map(function(s){
+      var st=by[s.key],n=st.agents.length,state;
+      if(n===0)state="idle";
+      else if(st.running.length)state="active";
+      else if(st.blocked)state="blocked";
+      else if(st.done===n)state="done";
+      else if(st.done>0)state="partial";
+      else state="pending";
+      return {key:s.key,t:s.t,c:s.c,side:s.side,state:state,
+        agents:st.agents,running:st.running,blocked:st.blocked,done:st.done,total:n};
+    });
+  }
+
+  /* ── geometry ── */
+  function lemPts(S,n,af,ys){var cx=S/2,cy=S/2,a=S*af,pts=[];
+    for(var i=0;i<=n;i++){var t=i/n*2*Math.PI,s=Math.sin(t),c=Math.cos(t),d=1+s*s;
+      pts.push([cx+a*c/d,cy+(a*s*c/d)*ys]);}return pts;}
+  function stagePoint(S,t,af,ys){var s=Math.sin(t),c=Math.cos(t),d=1+s*s;
+    return [S/2+S*af*c/d, S/2+(S*af*s*c/d)*ys];}
+  function strokeSeg(c,pts,i0,i1,color,w){c.lineCap="round";c.beginPath();
+    for(var i=i0;i<=i1;i++){var p=pts[i];i===i0?c.moveTo(p[0],p[1]):c.lineTo(p[0],p[1]);}
+    c.strokeStyle=color;c.lineWidth=w;c.stroke();}
+  function strokeAll(c,pts,color,w){strokeSeg(c,pts,0,pts.length-1,color,w);}
+
+  /* ── draw ── */
+  var cv=document.getElementById("stage"),S=380;
+  cv.width=S*dpr;cv.height=S*dpr;cv.style.width=S+"px";cv.style.height=S+"px";
+  var ctx=cv.getContext("2d");ctx.setTransform(dpr,0,0,dpr,0,0);ctx.lineJoin="round";
+  var af=0.27,ys=1.28,n=600,w=S*0.052,q=n/4;
+  var basePts=lemPts(S,n,af,ys);
+
+  function draw(stages,pulse){
+    ctx.clearRect(0,0,S,S);
+    ctx.globalAlpha=.18;strokeAll(ctx,basePts,"#aeb7c6",w);ctx.globalAlpha=1;
+    ctx.globalAlpha=.5;
+    strokeSeg(ctx,basePts,0,q,GOLD,w);strokeSeg(ctx,basePts,3*q,n,GOLD,w);
+    strokeSeg(ctx,basePts,q,3*q,BLUE,w);
+    ctx.globalAlpha=1;
+    ctx.font="600 "+(S*0.036)+"px ui-monospace,Menlo,Consolas,monospace";
+    stages.forEach(function(st){
+      var p=stagePoint(S,st.t,af,ys);
+      var r=w*0.98;
+      if(st.state==="active"){
+        var g=ctx.createRadialGradient(p[0],p[1],0,p[0],p[1],w*(3+pulse*0.9));
+        g.addColorStop(0,(st.side==="run"?"rgba(231,190,88,.55)":"rgba(127,176,230,.55)"));
+        g.addColorStop(1,"rgba(0,0,0,0)");
+        ctx.fillStyle=g;ctx.beginPath();ctx.arc(p[0],p[1],w*(3+pulse*0.9),0,7);ctx.fill();
+      }
+      if(st.state==="blocked"){
+        var rg=ctx.createRadialGradient(p[0],p[1],0,p[0],p[1],w*2.8);
+        rg.addColorStop(0,"rgba(208,102,97,.5)");rg.addColorStop(1,"rgba(0,0,0,0)");
+        ctx.fillStyle=rg;ctx.beginPath();ctx.arc(p[0],p[1],w*2.8,0,7);ctx.fill();
+      }
+      // casing
+      ctx.beginPath();ctx.arc(p[0],p[1],r+w*0.5,0,7);ctx.fillStyle=INK;ctx.fill();
+      // body per state
+      if(st.state==="done"){ctx.beginPath();ctx.arc(p[0],p[1],r,0,7);ctx.fillStyle=st.c;ctx.fill();}
+      else if(st.state==="partial"){ctx.beginPath();ctx.arc(p[0],p[1],r,0,7);
+        ctx.globalAlpha=.45;ctx.fillStyle=st.c;ctx.fill();ctx.globalAlpha=1;
+        ctx.beginPath();ctx.arc(p[0],p[1],r,0,7);ctx.strokeStyle=st.c;ctx.lineWidth=1.6;ctx.stroke();}
+      else if(st.state==="active"){ctx.beginPath();ctx.arc(p[0],p[1],r*1.28,0,7);ctx.fillStyle="#FFF3DA";ctx.fill();}
+      else if(st.state==="blocked"){ctx.beginPath();ctx.arc(p[0],p[1],r,0,7);ctx.fillStyle=INK;ctx.fill();
+        ctx.beginPath();ctx.arc(p[0],p[1],r*0.85,0,7);ctx.strokeStyle=RED;ctx.lineWidth=2.4;ctx.stroke();}
+      else if(st.state==="pending"){ctx.beginPath();ctx.arc(p[0],p[1],r*0.85,0,7);
+        ctx.strokeStyle=st.c;ctx.globalAlpha=.85;ctx.lineWidth=1.8;ctx.stroke();ctx.globalAlpha=1;}
+      else{ctx.beginPath();ctx.arc(p[0],p[1],r*0.8,0,7);
+        ctx.strokeStyle="rgba(139,148,164,.3)";ctx.lineWidth=1.4;ctx.stroke();}
+      // blocked-inside marker on any state
+      if(st.blocked>0&&st.state!=="blocked"){
+        ctx.beginPath();ctx.arc(p[0],p[1],r+w*0.85,0,7);ctx.strokeStyle=RED;ctx.lineWidth=1.4;ctx.stroke();
+      }
+      // label
+      var dx=p[0]-S/2,dy=p[1]-S/2,m=Math.sqrt(dx*dx+dy*dy)||1,off=w*2.6;
+      ctx.textBaseline="middle";
+      ctx.textAlign=dx<-S*0.04?"right":dx>S*0.04?"left":"center";
+      ctx.fillStyle=st.state==="active"?"#FFFFFF":st.state==="idle"?"#5E6675":"#9AA3B2";
+      ctx.fillText(st.key,p[0]+dx/m*off,p[1]+dy/m*off);
+    });
+    // hub
+    ctx.beginPath();ctx.arc(S/2,S/2,w*1.7,0,7);ctx.fillStyle=INK;ctx.fill();
+    ctx.beginPath();ctx.arc(S/2,S/2,w,0,7);ctx.fillStyle=GOLD;ctx.fill();
+    ctx.beginPath();ctx.arc(S/2,S/2,w*0.42,0,7);ctx.fillStyle=INK;ctx.fill();
+  }
+
+  /* ── panel render ── */
+  var current=null,tick=0,raf=null;
+  function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+  function renderPanel(run,stages){
+    document.getElementById("title").textContent=run.run_id||"run";
+    document.getElementById("meta").innerHTML=
+      (run.objective?esc(run.objective)+" &nbsp;·&nbsp; ":"")+
+      "status <b>"+esc(run.status||"?")+"</b>"+
+      (run.feature?" &nbsp;·&nbsp; feature <b>"+esc(run.feature)+"</b>":"");
+    var running=[];stages.forEach(function(s){s.running.forEach(function(a){running.push(a+" ("+s.key+")");});});
+    var blocked=stages.reduce(function(t,s){return t+s.blocked;},0);
+    document.getElementById("readout").innerHTML=
+      running.length?("working&nbsp; <b>"+esc(running.join(", "))+"</b>"+(blocked?" &nbsp;·&nbsp; <span style='color:var(--red)'>"+blocked+" blocked</span>":"")):
+      blocked?("<span style='color:var(--red)'>"+blocked+" step(s) blocked</span>"):"no step running";
+    document.getElementById("stages").innerHTML=stages.map(function(s){
+      var chips=s.agents.map(function(a){
+        var cls=a.status==="done"?"done":a.status==="running"?"running":a.status==="blocked"?"blocked":"";
+        return '<span class="ag '+cls+'">'+esc(a.agent)+'</span>';}).join("");
+      return '<div class="st"><div class="h"><span class="sw" style="background:'+(s.state==="done"||s.state==="partial"?s.c:"transparent")+
+        ';border:1.5px solid '+(s.state==="blocked"?RED:s.c)+'"></span><span class="nm">'+s.key+'</span>'+
+        (s.total?'<span style="color:var(--muted-2);font-size:10px">'+s.done+"/"+s.total+"</span>":"")+
+        '<span class="state '+s.state+'">'+s.state+"</span></div>"+
+        (chips?'<div class="agents">'+chips+"</div>":"")+"</div>";
+    }).join("");
+  }
+  function loop(){
+    tick+=0.05;
+    draw(computeStages(current),(Math.sin(tick)+1)/2);
+    raf=requestAnimationFrame(loop);
+  }
+  function load(run){
+    current=run;
+    var stages=computeStages(run);
+    renderPanel(run,stages);
+    if(raf)cancelAnimationFrame(raf);
+    if(reduce){draw(stages,0.5);}else loop();
+    document.getElementById("err").textContent="";
+  }
+
+  /* ── inputs ── */
+  var DEMO={run_id:"run-20260710-medremind",objective:"prescription refill reminders & approvals",
+    status:"active",feature:"medremind",ledger:[
+    {agent:"doc-strategy-advisor",status:"done"},{agent:"brd-writer",status:"done"},
+    {agent:"urs-writer",status:"done"},{agent:"prd-writer",status:"done"},
+    {agent:"frd-writer",status:"running"},{agent:"srs-writer",status:"pending"},
+    {agent:"sdd-writer",status:"pending"},{agent:"backlog-manager",status:"blocked"},
+    {agent:"estimation-facilitator",status:"pending"},{agent:"sprint-planner",status:"pending"},
+    {agent:"change-verifier",status:"pending"},{agent:"qa-tester",status:"pending"},
+    {agent:"release-manager",status:"pending"}]};
+  document.getElementById("demo").addEventListener("click",function(){load(DEMO);});
+  document.getElementById("file").addEventListener("change",function(e){
+    var f=e.target.files&&e.target.files[0];if(!f)return;
+    var rd=new FileReader();
+    rd.onload=function(){try{load(JSON.parse(rd.result));}
+      catch(err){document.getElementById("err").textContent="not valid JSON: "+err.message;}};
+    rd.readAsText(f);
+  });
+  var pasteEl=document.getElementById("paste");
+  document.getElementById("pasteBtn").addEventListener("click",function(){
+    var show=pasteEl.style.display!=="block";
+    pasteEl.style.display=show?"block":"none";
+    if(show){pasteEl.focus();}
+    else if(pasteEl.value.trim()){
+      try{load(JSON.parse(pasteEl.value));}
+      catch(err){document.getElementById("err").textContent="not valid JSON: "+err.message;}
+    }
+    this.textContent=show?"✔ render pasted JSON":"✎ paste JSON";
+  });
+
+  // initial: idle loop
+  draw(computeStages(null),0.5);
+
+  // expose pure fn for testing
+  window.__computeStages=computeStages;
+})();
+</script>
+</body>
+</html>

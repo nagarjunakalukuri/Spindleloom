@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Claude Prompt Library — with the fleet upgrade map -- Spindleloom Guides</title>
+<style>
+:root{
+  --ground:#0E1524; --panel:#141E2E; --panel-2:#18263A;
+  --ink:#DBE5F1; --ink-mid:#93A6BC; --ink-dim:#8497AE; --hair:#1E2E45; --hair-2:#2A3E5C;
+  --gold:#CFA23A; --gold-hi:#E7BE58; --weft:#5C90BE;
+  --shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34);
+  --serif:"Hoefler Text","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:light){:root{
+  --ground:#E9EAE5; --panel:#FFFFFF; --panel-2:#F3F3EF;
+  --ink:#16202E; --ink-mid:#47586B; --ink-dim:#556575; --hair:#DEDFD8; --hair-2:#C9CBC1;
+  --gold:#8A6816; --gold-hi:#7C5D12; --weft:#3C6C93;
+  --shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07);
+}}
+:root[data-theme="light"]{--ground:#E9EAE5;--panel:#FFFFFF;--panel-2:#F3F3EF;--ink:#16202E;--ink-mid:#47586B;--ink-dim:#556575;--hair:#DEDFD8;--hair-2:#C9CBC1;--gold:#8A6816;--gold-hi:#7C5D12;--weft:#3C6C93;--shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07)}
+:root[data-theme="dark"]{--ground:#0E1524;--panel:#141E2E;--panel-2:#18263A;--ink:#DBE5F1;--ink-mid:#93A6BC;--ink-dim:#8497AE;--hair:#1E2E45;--hair-2:#2A3E5C;--gold:#CFA23A;--gold-hi:#E7BE58;--weft:#5C90BE;--shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.66;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+b,strong{color:var(--ink)}
+::selection{background:color-mix(in srgb,var(--gold) 30%,transparent)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:2px}
+.bar{position:sticky;top:0;z-index:80;display:flex;align-items:center;gap:14px;padding:11px 26px;
+  background:color-mix(in srgb,var(--ground) 88%,transparent);backdrop-filter:blur(9px);border-bottom:1px solid var(--hair)}
+.bar .brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--ink-mid);white-space:nowrap}
+.bar .brand b{color:var(--gold)}
+.bar nav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.bar nav a{font-family:var(--mono);font-size:11px;color:var(--ink-mid);padding:6px 10px;border-radius:8px}
+.bar nav a:hover{color:var(--gold);text-decoration:none}
+.toggle{font-family:var(--mono);font-size:11px;color:var(--ink-mid);background:transparent;border:1px solid var(--hair-2);
+  border-radius:20px;padding:6px 13px;cursor:pointer;white-space:nowrap}
+.toggle:hover{border-color:var(--gold);color:var(--gold)}
+.hero{border-bottom:1px solid var(--hair)}
+.hero .in{max-width:1120px;margin:0 auto;padding:44px 30px 34px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-mid)}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,46px);line-height:1.05;letter-spacing:-.02em;margin:12px 0 0;text-wrap:balance}
+.hero .note{font-family:var(--mono);font-size:11.5px;color:var(--ink-mid);margin-top:14px}
+.layout{max-width:1120px;margin:0 auto;padding:34px 30px 80px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:44px}
+@media(max-width:960px){.layout{grid-template-columns:1fr}.spine{display:none}}
+.spine{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 90px);overflow:auto;font-size:12.5px}
+.spine .sp-part{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;margin:18px 0 6px;color:var(--gold)}
+.spine ol{list-style:none}
+.spine li a{display:block;color:var(--ink-mid);padding:3px 0 3px 12px;border-left:2px solid var(--hair)}
+.spine li a:hover{color:var(--ink);text-decoration:none}
+.spine li.on a{color:var(--gold);border-left-color:var(--gold)}
+article h3{font-family:var(--serif);font-weight:600;font-size:23px;letter-spacing:-.01em;margin:40px 0 12px;scroll-margin-top:72px}
+article h4{font-size:15.5px;margin:26px 0 8px;scroll-margin-top:72px}
+article p{margin:0 0 13px;max-width:76ch;color:var(--ink-mid)}
+article li{margin:0 0 7px;color:var(--ink-mid)}
+article ul,article ol{margin:0 0 14px;padding-left:22px}
+article blockquote{border-left:3px solid var(--gold);background:var(--panel);border-radius:0 10px 10px 0;
+  padding:12px 18px;margin:0 0 16px}
+article blockquote p{margin:0}
+article hr{border:0;height:1px;background:var(--hair);margin:34px 0}
+article code{font-family:var(--mono);font-size:.86em;background:var(--panel-2);border:1px solid var(--hair);border-radius:5px;padding:1px 6px;color:var(--gold-hi)}
+article pre{font-family:var(--mono);font-size:12.5px;line-height:1.55;background:var(--panel);border:1px solid var(--hair);
+  border-radius:12px;padding:16px 18px;overflow-x:auto;margin:0 0 16px;color:var(--ink-mid)}
+.tw{overflow-x:auto;margin:0 0 18px;border:1px solid var(--hair);border-radius:12px;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel)}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mid);
+  text-align:left;padding:10px 14px;border-bottom:1px solid var(--hair-2);background:var(--panel-2)}
+td{padding:10px 14px;border-bottom:1px solid var(--hair);vertical-align:top;color:var(--ink-mid)}
+tr:last-child td{border-bottom:0}
+footer{border-top:1px solid var(--hair)}
+footer .in{max-width:1120px;margin:0 auto;padding:22px 30px;font-size:12.5px;color:var(--ink-mid)}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="brand"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style="flex-shrink:0;vertical-align:-4px"><path d="M10 10 C7.6 6.9 3.1 6.6 3.1 10 C3.1 13.4 7.6 13.1 10 10" fill="none" stroke="var(--weft)" stroke-width="1.7" stroke-linecap="round"/><path d="M10 10 C12.4 6.9 16.9 6.6 16.9 10 C16.9 13.4 12.4 13.1 10 10" fill="none" stroke="var(--gold)" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="10" r="2.9" fill="var(--ground)"/><circle cx="10" cy="10" r="1.7" fill="var(--gold)"/><circle cx="10" cy="10" r="0.7" fill="var(--ground)"/></svg> Spindleloom &middot; <b>Guides</b></span>
+  <nav aria-label="Site">
+    <a href="index.html">Home</a>
+    <a href="personas/index.html">Hub</a>
+    <a href="project-overview.html">Overview</a>
+    <a href="governance-handbook.html">Governance</a>
+    <a href="readme.html">All guides</a>
+  </nav>
+  <button class="toggle" id="themeToggle" aria-label="Toggle light or dark theme">&#9681; theme</button>
+</div>
+<header class="hero"><div class="in">
+  <div class="kicker">Spindleloom &middot; knowledge hub</div>
+  <h1>Claude Prompt Library — with the fleet upgrade map</h1>
+  <p class="note">Generated reading view. Source of truth: <a href="../knowledge_hub/claude-prompt-library.md"><code>knowledge_hub/claude-prompt-library.md</code></a> --
+  edit the MD, then run <code>python hooks/build_guides_site.py</code>.</p>
+</div></header>
+<div class="layout">
+  <nav class="spine" aria-label="Contents"><div class="sp-part">On this page</div><ol><li><a href="#g-the-upgrade-map-the-prompt-you-saw-and-the-specialist-that-d">The upgrade map — the prompt you saw, and the specialist that does it better</a></li>
+<li><a href="#g-part-1-role-based-power-prompts-from-social-media">PART 1: Role-Based Power Prompts (from social media)</a></li>
+<li><a href="#g-part-2-official-claude-code-prompt-library-from-code-claude-">PART 2: Official Claude Code Prompt Library (from code.claude.com)</a></li>
+<li><a href="#g-part-3-model-specific-prompting-from-platform-claude-com-doc">PART 3: Model-Specific Prompting (from platform.claude.com docs)</a></li>
+<li><a href="#g-key-principles-what-makes-these-prompts-work">Key Principles (What Makes These Prompts Work)</a></li></ol></nav>
+  <main><article><div class="tw"><table>
+<tr><th>Field</th><th>Value</th></tr>
+<tr><td>Owner</td><td>Toolkit maintainer</td></tr>
+<tr><td>Status</td><td>Reference</td></tr>
+<tr><td>Sources</td><td>viral "power prompt" posts + the official Claude Code prompt library + platform model docs</td></tr>
+</table></div>
+<p>The prompts people share work because they smuggle a role, a method and an output contract into one message. <b>This fleet ships those as named specialists</b> -- with typed inputs, quality gates and a traceability thread the one-shot prompt can never have. Use the map below: if you were about to paste a power prompt, invoke its specialist instead. The rest of the file keeps the originals verbatim -- they are still useful outside a Spindleloom repo, and Parts 2-3 (the official library and model-specific tips) are good craft anywhere.</p>
+<h3 id="g-the-upgrade-map-the-prompt-you-saw-and-the-specialist-that-d">The upgrade map — the prompt you saw, and the specialist that does it better</h3>
+<div class="tw"><table>
+<tr><th>#</th><th>The viral prompt</th><th>The fleet upgrade</th><th>Why the specialist wins</th></tr>
+<tr><td>1</td><td>Full Startup Engineering Team</td><td><code>/spec-new</code> then <code>/run</code> -- <code>run-orchestrator</code> drives the whole chain</td><td>one prompt asks for everything at once; the chain produces each artifact with contracts, gates and one RTM</td></tr>
+<tr><td>2</td><td>Codebase Audit</td><td><code>solution-recon</code> (<code>/build-recon</code>)</td><td>findings land as a recon doc the PBIs cite, not a chat answer that scrolls away</td></tr>
+<tr><td>3</td><td>Production-Level Debugging</td><td><code>debugger</code></td><td>one-hypothesis-at-a-time discipline, fix the shared cause, regression test required</td></tr>
+<tr><td>4</td><td>Performance Optimization Engineer</td><td><code>performance-engineer</code></td><td>profiles against the SRS budgets (SR-PERF ids), not vibes</td></tr>
+<tr><td>5</td><td>Clean Architecture Refactor</td><td><code>architect</code> + <code>tech-debt-keeper</code> + <code>code-reviewer</code></td><td>debt is registered and ranked; refactors are reviewed against the coding standard</td></tr>
+<tr><td>6</td><td>Startup Backend Architect</td><td><code>sdd-writer</code> + <code>api-designer</code> + <code>data-modeler</code></td><td>the contracts land as OpenAPI/ERD that frontend, backend and tests build against</td></tr>
+<tr><td>7</td><td>Senior Frontend Engineer</td><td><code>frontend-developer</code> + <code>ux-ui-designer</code> + <code>accessibility-auditor</code></td><td>every state designed, a11y audited to WCAG AA -- verified, not promised</td></tr>
+<tr><td>8</td><td>AI Technical Lead Mode</td><td><code>architect</code> + <code>rfc-facilitator</code></td><td>the challenge happens as an RFC and lands as an ADR, not in chat memory</td></tr>
+<tr><td>9</td><td>Production Security Audit</td><td><code>security-reviewer</code></td><td>STRIDE at design time plus a release-blocking sign-off token</td></tr>
+<tr><td>10</td><td>Senior DevOps + Deployment Engineer</td><td><code>pipeline-engineer</code> + <code>sre</code> + <code>release-manager</code></td><td>pipeline + SLOs + an evidence-based go/no-go, not a checklist in prose</td></tr>
+</table></div>
+<p>Per-role copy-ready prompts for THIS fleet live in the <a href="personas/index.html">Persona Field Handbook</a> -- 54 prompts, filterable by role/phase, each grounded in an agent contract.</p>
+<hr>
+<h3 id="g-part-1-role-based-power-prompts-from-social-media">PART 1: Role-Based Power Prompts (from social media)</h3>
+<p>These prompts frame Claude as a specific senior engineering role to get expert-level output.</p>
+<hr>
+<h4 id="g-1-full-startup-engineering-team">1. Full Startup Engineering Team</h4>
+<blockquote><p>"Act like a senior full-stack engineer building a production-ready startup MVP from scratch. First design the complete system architecture, then build the most minimal but scalable version possible.  Include: - System architecture - File structure - Database schema - API endpoints - UI architecture - Production-ready code  Build it like a real startup that could scale to millions of users."</p></blockquote>
+<hr>
+<h4 id="g-2-codebase-audit">2. Codebase Audit</h4>
+<blockquote><p>"Act like a senior engineer who just joined a massive unfamiliar codebase. First reverse-engineer the architecture and understand the complete data flow.  Then identify: - Bad architecture decisions - Duplicate logic - Performance bottlenecks - Scalability risks - Maintainability issues  Finally provide: - A clean architecture breakdown - Critical problem areas - Refactoring strategies - Improved production-grade code  Do not change functionality. Only upgrade the code quality, scalability, and maintainability."</p></blockquote>
+<hr>
+<h4 id="g-3-production-level-debugging">3. Production-Level Debugging</h4>
+<blockquote><p>"Act like a senior debugging engineer investigating a live production issue. Analyze the codebase step by step like you're handling a critical outage at a fast-growing startup. Your job:  - Understand what the code actually does - Trace the real root cause - Explain why the failure happens - Identify hidden edge cases - Propose the most robust fix possible  Finally provide: - Code functionality breakdown - Root cause analysis - Failure explanation - Edge case analysis - Fixed production-ready code  Do not guess. Think deeply before making changes."</p></blockquote>
+<hr>
+<h4 id="g-4-performance-optimization-engineer">4. Performance Optimization Engineer</h4>
+<blockquote><p>"Act like a senior performance engineer optimizing a production application used by millions of users.  Your goals: - Maximum speed - Lower memory usage - Better scalability - Faster rendering - Cleaner execution  Carefully identify: - Performance bottlenecks - Inefficient logic - Unnecessary rendering - Expensive operations - Memory leaks  Then provide: - Performance issue breakdown - Optimization strategies - Improved production-ready code - Scalability recommendations  Optimize the code like you're preparing it for massive traffic."</p></blockquote>
+<hr>
+<h4 id="g-5-clean-architecture-refactor">5. Clean Architecture Refactor</h4>
+<blockquote><p>"Act like a senior software architect rebuilding a messy production codebase using clean architecture principles.  Your mission: - Separate concerns properly - Increase modularity - Reduce tight coupling - Improve scalability - Make the codebase easier to maintain long term  Do NOT change the product behavior. Only improve the architecture and code quality.  Finally provide: - New folder structure - Clean architecture breakdown - Refactored production-grade code - Explanation of architectural improvements  Refactor it like a real senior engineer preparing the codebase to scale."</p></blockquote>
+<hr>
+<h4 id="g-6-startup-backend-architect">6. Startup Backend Architect</h4>
+<blockquote><p>"Act like a senior systems architect designing infrastructure for a high-growth startup. First design a scalable production-grade system architecture. Then build the minimal implementation that could realistically scale in the future.  Include: - System architecture - Component structure - Data flow - API design - Database schema - Caching strategy - Production-ready implementation code  Optimize for scalability, maintainability, and real-world production usage."</p></blockquote>
+<hr>
+<h4 id="g-7-senior-frontend-engineer">7. Senior Frontend Engineer</h4>
+<blockquote><p>"Act like a senior frontend engineer building production-grade UI systems for a modern startup.  Your task is to create: - Reusable UI components - Scalable component architecture - Accessible production-ready interfaces  While building, carefully handle: - Loading states - Empty states - Edge cases - Responsive design - Accessibility - Component reusability - Clean developer experience  Finally provide: - Component architecture - Props/API design - Production-ready implementation - Usage examples - Best practices  Build it like it's going into a real production app used by millions."</p></blockquote>
+<hr>
+<h4 id="g-8-ai-technical-lead-mode">8. AI Technical Lead Mode</h4>
+<blockquote><p>"Act like a senior technical lead managing a real engineering team.  Before writing code: - Ask clarifying questions - Challenge bad decisions - Identify scaling risks - Suggest better approaches - Prioritize simplicity  Think long-term like someone responsible for maintaining this product for 5+ years.  Then provide: - Technical decisions - Tradeoff analysis - Recommended architecture - Implementation plan - Production-ready solution  This makes Claude stop behaving like a code generator... and start thinking like an actual tech lead."</p></blockquote>
+<hr>
+<h4 id="g-9-production-security-audit">9. Production Security Audit</h4>
+<blockquote><p>"Act like a senior security engineer auditing a production application.  Carefully inspect the system for: - Security vulnerabilities - Authentication flaws - API weaknesses - Injection risks - Sensitive data exposure - Infrastructure risks  Then provide: - Vulnerability report - Severity levels - Attack scenarios - Secure implementation fixes - Production-grade recommendations"</p></blockquote>
+<hr>
+<h4 id="g-10-senior-devops-deployment-engineer">10. Senior DevOps + Deployment Engineer</h4>
+<blockquote><p>"Act like a senior DevOps engineer preparing this application for real production deployment.  Your job: - Design deployment architecture - Configure CI/CD - Setup monitoring/logging - Improve reliability - Reduce downtime risks - Optimize scaling  Provide: - Infrastructure architecture - Deployment workflow - CI/CD pipeline - Docker/Kubernetes setup - Monitoring strategy - Production deployment checklist"</p></blockquote>
+<hr>
+<h3 id="g-part-2-official-claude-code-prompt-library-from-code-claude-">PART 2: Official Claude Code Prompt Library (from code.claude.com)</h3>
+<p>Organized by phase of software development. Fill in <code>{slots}</code> with your own context.</p>
+<hr>
+<h4 id="g-discover">DISCOVER</h4>
+<div class="tw"><table>
+<tr><th>Goal</th><th>Prompt</th></tr>
+<tr><td>Get oriented</td><td><code>give me an overview of this codebase: architecture, key directories, and how the pieces connect</code></td></tr>
+<tr><td>Explain code</td><td><code>explain what {path} does and how data flows through it. write it up as {format}</code></td></tr>
+<tr><td>Find behavior</td><td><code>where do we {behavior}?</code></td></tr>
+<tr><td>Check dependencies</td><td><code>what would break if I deleted {target}?</code></td></tr>
+<tr><td>Trace history</td><td><code>look through the commit history of {path} and summarize how it evolved and why</code></td></tr>
+<tr><td>Scope a change</td><td><code>which files would I need to touch to {change}?</code></td></tr>
+<tr><td>Product question</td><td><code>I am a {role}. walk me through what happens when a user {action}, from the UI down to the result</code></td></tr>
+</table></div>
+<hr>
+<h4 id="g-design">DESIGN</h4>
+<div class="tw"><table>
+<tr><th>Goal</th><th>Prompt</th></tr>
+<tr><td>Plan before coding</td><td><code>plan how to refactor the {target} to {goal}. list the files you would change, but don&#x27;t edit anything yet</code></td></tr>
+<tr><td>Draft a spec</td><td><code>I want to build {feature}. interview me about implementation, UX, edge cases, and tradeoffs until we have covered everything, then write the spec to SPEC.md</code></td></tr>
+<tr><td>Turn meeting into tickets</td><td><code>read {input} and write up the action items, then create a {tracker} ticket for each with acceptance criteria</code></td></tr>
+<tr><td>Map edge cases</td><td><code>list the error states, empty states, and edge cases for {feature} that the design needs to cover</code></td></tr>
+<tr><td>Build prototype from mockup</td><td><code>here is a mockup. build a working prototype I can click through, matching the layout and states shown</code></td></tr>
+<tr><td>Implement from screenshot</td><td><code>implement this design, then take a screenshot of the result, compare it to the original, and fix any differences</code></td></tr>
+</table></div>
+<hr>
+<h4 id="g-build">BUILD</h4>
+<div class="tw"><table>
+<tr><th>Goal</th><th>Prompt</th></tr>
+<tr><td>Follow existing pattern</td><td><code>look at how {example} is implemented to understand the pattern, then build {new} the same way</code></td></tr>
+<tr><td>Add a feature</td><td><code>add a {endpoint} endpoint that returns {payload}</code></td></tr>
+<tr><td>Generate docs</td><td><code>find {scope} without {format} comments and add them, matching the style already used in the file</code></td></tr>
+<tr><td>Work an issue end to end</td><td><code>read issue #{issue}, implement the fix, and run the tests</code></td></tr>
+<tr><td>Update copy</td><td><code>find every place we say &quot;{copy}&quot; or a close variant, show me each one in context, then update them all to &quot;{new}&quot;. leave tests and the changelog alone</code></td></tr>
+<tr><td>Draft from examples</td><td><code>read the {examples} in {folder} to learn the structure and voice, then draft a new one for {topic}</code></td></tr>
+</table></div>
+<hr>
+<h4 id="g-test">TEST</h4>
+<div class="tw"><table>
+<tr><th>Goal</th><th>Prompt</th></tr>
+<tr><td>Write + run + fix</td><td><code>write tests for {path}, run them, and fix any failures</code></td></tr>
+<tr><td>TDD</td><td><code>write tests for {feature} first, then implement it until they pass</code></td></tr>
+<tr><td>Fill coverage gaps</td><td><code>read {report} and add tests for the lowest-covered files until each is above {target}%</code></td></tr>
+</table></div>
+<hr>
+<h4 id="g-refactor">REFACTOR</h4>
+<div class="tw"><table>
+<tr><th>Goal</th><th>Prompt</th></tr>
+<tr><td>Migrate a pattern</td><td><code>migrate everything from {from} to {to}: identify every place that needs to change, then make the changes</code></td></tr>
+<tr><td>Port to another language</td><td><code>port {source} to {target}, keeping the same {keep}</code></td></tr>
+<tr><td>Optimize to a target</td><td><code>optimize {target} to bring {metric} from {current} down to under {goal}</code></td></tr>
+<tr><td>Fix a visual bug</td><td><code>the {element} extends {amount} beyond the {container} on {viewport}. fix it.</code></td></tr>
+</table></div>
+<hr>
+<h4 id="g-review">REVIEW</h4>
+<div class="tw"><table>
+<tr><th>Goal</th><th>Prompt</th></tr>
+<tr><td>Pre-commit review</td><td><code>review my uncommitted changes and flag anything that looks risky before I commit</code></td></tr>
+<tr><td>Review a PR</td><td><code>review PR #{pr} and summarize what changed, then list any concerns</code></td></tr>
+<tr><td>Review infra changes</td><td><code>here is my Terraform plan output. what is this going to do, and is anything here going to cause problems?</code></td></tr>
+<tr><td>Security review</td><td><code>use a subagent to review {path} for security issues and report what it finds</code></td></tr>
+<tr><td>Content review</td><td><code>review {file} for {concerns} and list anything I should fix before it goes to {reviewer}</code></td></tr>
+</table></div>
+<hr>
+<h4 id="g-steer-course-correct-claude">STEER (course correct Claude)</h4>
+<div class="tw"><table>
+<tr><th>Goal</th><th>Prompt</th></tr>
+<tr><td>Course correct</td><td><code>that is not right: {feedback}. try a different approach</code></td></tr>
+<tr><td>Narrow scope</td><td><code>that is too much. keep only the changes to {scope} and undo your other edits</code></td></tr>
+<tr><td>Turn correction into a rule</td><td><code>you keep {mistake}. add a rule to CLAUDE.md so this stops happening</code></td></tr>
+</table></div>
+<hr>
+<h4 id="g-git-ship">GIT &amp; SHIP</h4>
+<div class="tw"><table>
+<tr><th>Goal</th><th>Prompt</th></tr>
+<tr><td>Resolve merge conflicts</td><td><code>resolve the merge conflicts in this branch and explain what you kept from each side</code></td></tr>
+<tr><td>Commit message</td><td><code>commit these changes with a message that summarizes what I did</code></td></tr>
+<tr><td>Open a PR</td><td><code>find the {tracker} ticket about {topic} and open a PR that implements it</code></td></tr>
+<tr><td>Draft release notes</td><td><code>compare {from} to {to} and draft release notes grouped by feature, fix, and breaking change</code></td></tr>
+<tr><td>Write CI workflow</td><td><code>write a GitHub Actions workflow that {steps} on every push to {branch}</code></td></tr>
+</table></div>
+<hr>
+<h4 id="g-debug-operate">DEBUG &amp; OPERATE</h4>
+<div class="tw"><table>
+<tr><th>Goal</th><th>Prompt</th></tr>
+<tr><td>Fix a failing test</td><td><code>the {test} test is failing, find out why and fix it</code></td></tr>
+<tr><td>Investigate error</td><td><code>users are seeing {symptom} on {where}. investigate and tell me what is going on</code></td></tr>
+<tr><td>Fix a build error</td><td><code>here is a build error. fix the root cause and verify the build succeeds</code></td></tr>
+<tr><td>Production incident</td><td><code>{symptom}. check the logs, recent deploys, and config changes, then tell me the most likely cause</code></td></tr>
+<tr><td>Diagnose from screenshot</td><td><code>here is a screenshot of {console}. walk me through why {resource} is failing and give me the exact commands to fix it</code></td></tr>
+<tr><td>Query logs</td><td><code>show me all {events} for {scope} over {timeframe}. write the query, run it, and tell me what stands out</code></td></tr>
+</table></div>
+<hr>
+<h4 id="g-data-automate">DATA &amp; AUTOMATE</h4>
+<div class="tw"><table>
+<tr><th>Goal</th><th>Prompt</th></tr>
+<tr><td>Analyze a file</td><td><code>read {file}, summarize the key patterns, and write the results to {output}</code></td></tr>
+<tr><td>Generate ad variations</td><td><code>read {file}, find the underperforming {items}, and generate {n} new variations that stay under {limit} characters</code></td></tr>
+<tr><td>Create a reusable skill</td><td><code>create a /{name} skill for this project that {steps}</code></td></tr>
+<tr><td>Add a hook</td><td><code>write a hook that {action} after every {event}</code></td></tr>
+<tr><td>Connect via MCP</td><td><code>set up the {server} MCP server so you can read my {data} directly</code></td></tr>
+<tr><td>Capture session memory</td><td><code>summarize what we did this session and suggest what to add to CLAUDE.md</code></td></tr>
+</table></div>
+<hr>
+<h3 id="g-part-3-model-specific-prompting-from-platform-claude-com-doc">PART 3: Model-Specific Prompting (from platform.claude.com docs)</h3>
+<p>Prompting patterns that differ per model. Applies mainly to API/agent builders, but the copy-paste snippets work in any Claude interface.</p>
+<hr>
+<h4 id="g-claude-fable-5-frontier-model-multi-day-autonomous-runs">Claude Fable 5 (frontier model, multi-day autonomous runs)</h4>
+<p><b>Big idea:</b> Instruction-following is strong enough that one brief instruction replaces long enumerated lists. Prompts/skills written for older models are often <i>too prescriptive</i> and can degrade output — try removing old instructions.</p>
+<p><b>Copy-paste snippets:</b></p>
+<p>Prevent overplanning:</p>
+<blockquote><p>"When you have enough information to act, act. Do not re-derive facts already established, re-litigate decisions the user already made, or narrate options you will not pursue. If weighing a choice, give a recommendation, not an exhaustive survey."</p></blockquote>
+<p>Prevent scope creep / unrequested refactoring:</p>
+<blockquote><p>"Don't add features, refactor, or introduce abstractions beyond what the task requires. Don't design for hypothetical future requirements: do the simplest thing that works well. Only validate at system boundaries (user input, external APIs)."</p></blockquote>
+<p>Concise output:</p>
+<blockquote><p>"Lead with the outcome. Your first sentence should answer 'what happened' — the TLDR. Supporting detail comes after. Be selective about what you include; don't compress writing into fragments or arrow chains."</p></blockquote>
+<p>Honest progress reports (nearly eliminates fabricated status updates):</p>
+<blockquote><p>"Before reporting progress, audit each claim against a tool result from this session. Only report work you can point to evidence for; if something is not yet verified, say so explicitly. If tests fail, say so with the output."</p></blockquote>
+<p>Stay in scope:</p>
+<blockquote><p>"When the user is describing a problem or thinking out loud rather than requesting a change, the deliverable is your assessment. Report findings and stop. Don't apply a fix until they ask."</p></blockquote>
+<p>Autonomous pipelines (prevent early stopping):</p>
+<blockquote><p>"You are operating autonomously. For reversible actions that follow from the original request, proceed without asking. Before ending your turn, check your last paragraph — if it's a plan, question, or promise about undone work, do that work now with tool calls."</p></blockquote>
+<p>Memory across runs:</p>
+<blockquote><p>"Store one lesson per file with a one-line summary at the top. Record corrections and confirmed approaches alike, including why they mattered. Update existing notes rather than duplicating; delete notes that turn out wrong."</p></blockquote>
+<p>Give the reason, not only the request:</p>
+<blockquote><p>"I'm working on [the larger task] for [who it's for]. They need [what the output enables]. With that in mind: [request]."</p></blockquote>
+<p>Other tips:</p>
+<ul>
+<li>Start at the <i>top</i> of your difficulty range — testing only simple tasks undersells it</li>
+<li>Fresh-context verifier subagents outperform self-critique for checking work</li>
+<li>Use <code>high</code> effort as default, <code>xhigh</code> for capability-critical work</li>
+<li>Don't instruct it to echo its reasoning in responses (triggers refusals)</li>
+</ul>
+<hr>
+<h4 id="g-claude-opus-4-8">Claude Opus 4.8</h4>
+<ul>
+<li><b>Effort is the main lever.</b> <code>xhigh</code> for coding/agents; minimum <code>high</code> for intelligence-sensitive work; <code>max</code> can overthink. Set large output budgets (64k+) at high effort.</li>
+<li><b>Very literal instruction following.</b> It won't silently generalize. State scope explicitly: "Apply this to every section, not just the first one."</li>
+<li><b>Response length auto-calibrates</b> to task complexity. To force concision: "Provide concise, focused responses. Skip non-essential context." Positive examples work better than "don't" lists.</li>
+<li><b>Code review gotcha:</b> "Only report high-severity issues" makes it silently drop real bugs. Instead:</li>
+<p>&gt; "Report every issue you find, including ones you are uncertain about or consider low-severity. Do not filter for importance at this stage. Your goal is coverage. Include confidence level and estimated severity for each finding."</p>
+<li><b>Design default:</b> persistent cream backgrounds + serif type + terracotta accents. Generic "don't use cream" just swaps to another fixed palette. Either give a concrete visual spec, or:</li>
+<p>&gt; "Before building, propose 4 distinct visual directions tailored to this brief (each as: bg hex / accent hex / typeface — one-line rationale). Ask the user to pick one, then implement only that direction."</p>
+<li><b>Anti-AI-slop snippet:</b></li>
+<p>&gt; "NEVER use generic AI-generated aesthetics like overused font families (Inter, Roboto, Arial, system fonts), cliched color schemes (particularly purple gradients), predictable layouts, and cookie-cutter design. Use unique fonts, cohesive themes, and micro-interactions."</p>
+<li><b>Interactive coding:</b> specify the task, intent, and constraints fully in the <i>first</i> message — drip-feeding requirements across turns reduces efficiency and performance.</li>
+<li>Spawns fewer subagents by default; instruct explicitly when to fan out.</li>
+</ul>
+<hr>
+<h4 id="g-claude-sonnet-5">Claude Sonnet 5</h4>
+<p>Mostly shares Opus 4.8 patterns (literal instructions, calibrated verbosity, code-review coverage prompt, design-variety approaches). Key differences:</p>
+<ul>
+<li><b>Adaptive thinking on by default</b> — requests without a <code>thinking</code> field now think. Disable with <code>thinking: {type: &quot;disabled&quot;}</code>.</li>
+<li><b>No sampling params:</b> <code>temperature</code>/<code>top_p</code>/<code>top_k</code> return a 400 error. Use prompt instructions for variety instead.</li>
+<li><b>New tokenizer:</b> ~30% more tokens for the same text — raise <code>max_tokens</code> limits tuned for Sonnet 4.6.</li>
+<li><b>Effort mapping when migrating:</b> Sonnet 5 at <code>medium</code> ≈ Sonnet 4.6 at <code>high</code>; Sonnet 5 at <code>high</code> ≈ Sonnet 4.6 at <code>max</code>.</li>
+<li>More agentic by default — reaches for tools and self-verification loops readily. With thinking disabled, tool use drops; add an explicit nudge if needed.</li>
+</ul>
+<hr>
+<h3 id="g-key-principles-what-makes-these-prompts-work">Key Principles (What Makes These Prompts Work)</h3>
+<ol>
+<li><b>Assign a role</b> — "Act like a senior X" unlocks expert-level reasoning and output quality</li>
+<li><b>Describe the outcome, not the steps</b> — Let Claude figure out how to get there</li>
+<li><b>Give it a way to verify its own work</b> — Ask it to run, test, compare, or screenshot</li>
+<li><b>Point at a reference</b> — Name an existing file or pattern to match</li>
+<li><b>State a measurable target</b> — Give a metric and threshold so "done" is unambiguous</li>
+<li><b>Paste the actual artifact</b> — Logs, errors, screenshots are better than descriptions</li>
+<li><b>Say how you want the answer</b> — Name the format, length, or audience upfront</li>
+<li><b>Turn corrections into rules</b> — Add persistent instructions to CLAUDE.md</li>
+</ol>
+<hr>
+<p><i>Sources: power.ai / itsaiaiguide (Instagram), code.claude.com/docs/en/prompt-library, platform.claude.com model prompting guides (Fable 5, Opus 4.8, Sonnet 5)</i></p></article></main>
+</div>
+<footer><div class="in">
+  Part of the <a href="readme.html">Spindleloom website</a> &middot; front door: the
+  <a href="personas/index.html">Persona Field Handbook</a>.
+</div></footer>
+<script>
+const root=document.documentElement;
+try{const _st=localStorage.getItem("sl-theme");if(_st)root.setAttribute("data-theme",_st);}catch(e){}
+document.getElementById("themeToggle").addEventListener("click",()=>{
+  const dark=matchMedia("(prefers-color-scheme:dark)").matches;
+  const cur=root.getAttribute("data-theme")||(dark?"dark":"light");
+  const next=cur==="dark"?"light":"dark";
+  root.setAttribute("data-theme",next);
+  try{localStorage.setItem("sl-theme",next);}catch(e){}
+});
+const items=[...document.querySelectorAll(".spine li")];
+const map={};items.forEach(li=>{const a=li.querySelector("a");if(a)map[a.getAttribute("href").slice(1)]=li;});
+const spy=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){
+  items.forEach(l=>l.classList.remove("on"));const li=map[e.target.id];if(li)li.classList.add("on");}}),
+  {rootMargin:"-20% 0px -70% 0px"});
+document.querySelectorAll("article h3[id]").forEach(h=>spy.observe(h));
+</script>
+</body>
+</html>

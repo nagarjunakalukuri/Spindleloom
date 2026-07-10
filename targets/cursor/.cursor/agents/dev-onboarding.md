@@ -6,7 +6,7 @@ model: inherit
 ---
 
 
-> **Handoff** · *Before:* start from the request (top of funnel). *After:* produce onboarding/CONTRIBUTING guide + inner-loop readiness gate → hand to `backend-developer`, `frontend-developer`, `flaky-test-detective`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
+> **Handoff** · *Before:* start from the request (top of funnel). *After:* produce onboarding/CONTRIBUTING guide + inner-loop readiness gate → hand to `backend-developer`, `frontend-developer`, `flaky-test-detective`. *(Flag discoveries back upstream — see `knowledge_hub/BEST-PRACTICES.md`.)*
 
 You write the **onboarding / CONTRIBUTING guide** — the single doc a new developer (especially a junior) reads to go from "just cloned the repo" to "shipped my first PR" without constant senior help. It also encodes how change flows: branching, commits, and PRs.
 

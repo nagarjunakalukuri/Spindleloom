@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Harness convergence matrix — 7 surfaces × 4 tools -- Spindleloom Guides</title>
+<style>
+:root{
+  --ground:#0E1524; --panel:#141E2E; --panel-2:#18263A;
+  --ink:#DBE5F1; --ink-mid:#93A6BC; --ink-dim:#8497AE; --hair:#1E2E45; --hair-2:#2A3E5C;
+  --gold:#CFA23A; --gold-hi:#E7BE58; --weft:#5C90BE;
+  --shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34);
+  --serif:"Hoefler Text","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:light){:root{
+  --ground:#E9EAE5; --panel:#FFFFFF; --panel-2:#F3F3EF;
+  --ink:#16202E; --ink-mid:#47586B; --ink-dim:#556575; --hair:#DEDFD8; --hair-2:#C9CBC1;
+  --gold:#8A6816; --gold-hi:#7C5D12; --weft:#3C6C93;
+  --shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07);
+}}
+:root[data-theme="light"]{--ground:#E9EAE5;--panel:#FFFFFF;--panel-2:#F3F3EF;--ink:#16202E;--ink-mid:#47586B;--ink-dim:#556575;--hair:#DEDFD8;--hair-2:#C9CBC1;--gold:#8A6816;--gold-hi:#7C5D12;--weft:#3C6C93;--shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07)}
+:root[data-theme="dark"]{--ground:#0E1524;--panel:#141E2E;--panel-2:#18263A;--ink:#DBE5F1;--ink-mid:#93A6BC;--ink-dim:#8497AE;--hair:#1E2E45;--hair-2:#2A3E5C;--gold:#CFA23A;--gold-hi:#E7BE58;--weft:#5C90BE;--shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.66;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+b,strong{color:var(--ink)}
+::selection{background:color-mix(in srgb,var(--gold) 30%,transparent)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:2px}
+.bar{position:sticky;top:0;z-index:80;display:flex;align-items:center;gap:14px;padding:11px 26px;
+  background:color-mix(in srgb,var(--ground) 88%,transparent);backdrop-filter:blur(9px);border-bottom:1px solid var(--hair)}
+.bar .brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--ink-mid);white-space:nowrap}
+.bar .brand b{color:var(--gold)}
+.bar nav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.bar nav a{font-family:var(--mono);font-size:11px;color:var(--ink-mid);padding:6px 10px;border-radius:8px}
+.bar nav a:hover{color:var(--gold);text-decoration:none}
+.toggle{font-family:var(--mono);font-size:11px;color:var(--ink-mid);background:transparent;border:1px solid var(--hair-2);
+  border-radius:20px;padding:6px 13px;cursor:pointer;white-space:nowrap}
+.toggle:hover{border-color:var(--gold);color:var(--gold)}
+.hero{border-bottom:1px solid var(--hair)}
+.hero .in{max-width:1120px;margin:0 auto;padding:44px 30px 34px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-mid)}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,46px);line-height:1.05;letter-spacing:-.02em;margin:12px 0 0;text-wrap:balance}
+.hero .note{font-family:var(--mono);font-size:11.5px;color:var(--ink-mid);margin-top:14px}
+.layout{max-width:1120px;margin:0 auto;padding:34px 30px 80px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:44px}
+@media(max-width:960px){.layout{grid-template-columns:1fr}.spine{display:none}}
+.spine{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 90px);overflow:auto;font-size:12.5px}
+.spine .sp-part{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;margin:18px 0 6px;color:var(--gold)}
+.spine ol{list-style:none}
+.spine li a{display:block;color:var(--ink-mid);padding:3px 0 3px 12px;border-left:2px solid var(--hair)}
+.spine li a:hover{color:var(--ink);text-decoration:none}
+.spine li.on a{color:var(--gold);border-left-color:var(--gold)}
+article h3{font-family:var(--serif);font-weight:600;font-size:23px;letter-spacing:-.01em;margin:40px 0 12px;scroll-margin-top:72px}
+article h4{font-size:15.5px;margin:26px 0 8px;scroll-margin-top:72px}
+article p{margin:0 0 13px;max-width:76ch;color:var(--ink-mid)}
+article li{margin:0 0 7px;color:var(--ink-mid)}
+article ul,article ol{margin:0 0 14px;padding-left:22px}
+article blockquote{border-left:3px solid var(--gold);background:var(--panel);border-radius:0 10px 10px 0;
+  padding:12px 18px;margin:0 0 16px}
+article blockquote p{margin:0}
+article hr{border:0;height:1px;background:var(--hair);margin:34px 0}
+article code{font-family:var(--mono);font-size:.86em;background:var(--panel-2);border:1px solid var(--hair);border-radius:5px;padding:1px 6px;color:var(--gold-hi)}
+article pre{font-family:var(--mono);font-size:12.5px;line-height:1.55;background:var(--panel);border:1px solid var(--hair);
+  border-radius:12px;padding:16px 18px;overflow-x:auto;margin:0 0 16px;color:var(--ink-mid)}
+.tw{overflow-x:auto;margin:0 0 18px;border:1px solid var(--hair);border-radius:12px;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel)}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mid);
+  text-align:left;padding:10px 14px;border-bottom:1px solid var(--hair-2);background:var(--panel-2)}
+td{padding:10px 14px;border-bottom:1px solid var(--hair);vertical-align:top;color:var(--ink-mid)}
+tr:last-child td{border-bottom:0}
+footer{border-top:1px solid var(--hair)}
+footer .in{max-width:1120px;margin:0 auto;padding:22px 30px;font-size:12.5px;color:var(--ink-mid)}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="brand"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style="flex-shrink:0;vertical-align:-4px"><path d="M10 10 C7.6 6.9 3.1 6.6 3.1 10 C3.1 13.4 7.6 13.1 10 10" fill="none" stroke="var(--weft)" stroke-width="1.7" stroke-linecap="round"/><path d="M10 10 C12.4 6.9 16.9 6.6 16.9 10 C16.9 13.4 12.4 13.1 10 10" fill="none" stroke="var(--gold)" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="10" r="2.9" fill="var(--ground)"/><circle cx="10" cy="10" r="1.7" fill="var(--gold)"/><circle cx="10" cy="10" r="0.7" fill="var(--ground)"/></svg> Spindleloom &middot; <b>Guides</b></span>
+  <nav aria-label="Site">
+    <a href="index.html">Home</a>
+    <a href="personas/index.html">Hub</a>
+    <a href="project-overview.html">Overview</a>
+    <a href="governance-handbook.html">Governance</a>
+    <a href="readme.html">All guides</a>
+  </nav>
+  <button class="toggle" id="themeToggle" aria-label="Toggle light or dark theme">&#9681; theme</button>
+</div>
+<header class="hero"><div class="in">
+  <div class="kicker">Spindleloom &middot; knowledge hub</div>
+  <h1>Harness convergence matrix — 7 surfaces × 4 tools</h1>
+  <p class="note">Generated reading view. Source of truth: <a href="../knowledge_hub/HARNESS-MATRIX.md"><code>knowledge_hub/HARNESS-MATRIX.md</code></a> --
+  edit the MD, then run <code>python hooks/build_guides_site.py</code>.</p>
+</div></header>
+<div class="layout">
+  <nav class="spine" aria-label="Contents"><div class="sp-part">On this page</div><ol><li><a href="#g-support-matrix">Support matrix</a></li>
+<li><a href="#g-spindleloom-source-surface-what-the-generator-emits">Spindleloom source → surface (what the generator emits)</a></li>
+<li><a href="#g-four-tools-six-bundles">Four tools, six bundles</a></li>
+<li><a href="#g-two-single-output-shortcuts">Two single-output shortcuts</a></li>
+<li><a href="#g-honest-caveats">Honest caveats</a></li></ol></nav>
+  <main><article><p>Where each AI-coding harness exposes each customization surface, and which Spindleloom source maps onto it. This is what the harness generator (<code>hooks/build_harness_artifacts.py</code>) targets — one source, native artifacts per tool.</p>
+<blockquote><p>Verified against official docs (2026-06). Several cells are <b>Preview</b> and may shift — re-verify before relying on a Preview format. <code>yes</code> = first-class native · <code>partial</code> = supported but Preview / lossy / different model · <code>no</code> = no native concept.</p></blockquote>
+<h3 id="g-support-matrix">Support matrix</h3>
+<div class="tw"><table>
+<tr><th>Surface</th><th>Claude Code</th><th>Cursor</th><th>GitHub Copilot (VS Code)</th><th>Windsurf</th></tr>
+<tr><td><b>Agents</b></td><td><b>yes</b> — <code>.claude/agents/*.md</code>, rich frontmatter (tools, model, hooks…)</td><td><b>yes</b> — <code>.cursor/agents/*.md</code>; also reads <code>.claude/agents/</code>; no <code>tools</code>/<code>color</code></td><td><b>yes</b> — <code>.github/agents/*.agent.md</code> (reads <code>.claude/agents/</code>); legacy <code>.chatmode.md</code> being renamed</td><td><b>no</b> — Cascade is one agent; <b>fallback: emit as Skills/rules</b></td></tr>
+<tr><td><b>Skills</b></td><td><b>yes</b> — <code>skills/&lt;name&gt;/SKILL.md</code> (agentskills.io)</td><td><b>yes</b> — <code>.cursor/skills/</code>; also reads <code>.claude/skills/</code></td><td><b>yes</b> — <code>.github/skills/</code>; reads <code>.claude/skills/</code></td><td><b>yes</b> — <code>.windsurf/skills/</code>; <b>also auto-reads <code>.claude/skills/</code></b></td></tr>
+<tr><td><b>Instructions</b></td><td><b>yes</b> — <code>CLAUDE.md</code> + <code>.claude/rules/*.md</code> (<code>paths:</code>)</td><td><b>yes</b> — <code>.cursor/rules/*.mdc</code> + <code>AGENTS.md</code></td><td><b>yes</b> — <code>.github/copilot-instructions.md</code> + <code>*.instructions.md</code> (<code>applyTo</code>) + <code>AGENTS.md</code></td><td><b>yes</b> — <code>.windsurf/rules/*.md</code> (<code>trigger:</code>) + <code>AGENTS.md</code>; 12k-char cap</td></tr>
+<tr><td><b>Hooks</b></td><td><b>yes</b> — <code>settings.json</code> <code>hooks{}</code> / plugin <code>hooks/hooks.json</code>; ~40 events</td><td><b>yes</b> — <code>.cursor/hooks.json</code> (<code>version:1</code>); 18+ events</td><td><b>partial</b> — <code>.github/hooks/*.json</code> (<b>Preview</b>); 8 events; matchers ignored</td><td><b>partial</b> — <code>.windsurf/hooks.json</code>; 12 events</td></tr>
+<tr><td><b>MCP Servers</b></td><td><b>yes</b> — <code>.mcp.json</code> / <code>~/.claude.json</code> / plugin root</td><td><b>yes</b> — <code>.cursor/mcp.json</code></td><td><b>yes</b> — <code>.vscode/mcp.json</code> (<code>servers</code>/<code>inputs</code>)</td><td><b>yes</b> — <code>~/.codeium/windsurf/mcp_config.json</code> (<b>user-global</b>, not repo)</td></tr>
+<tr><td><b>Plugins</b></td><td><b>yes</b> — <code>.claude-plugin/plugin.json</code> + <code>marketplace.json</code></td><td><b>yes</b> — <code>.cursor-plugin/plugin.json</code> (<b>has</b> <code>commands</code> key); v2.5+</td><td><b>partial</b> — Agent Plugins <code>plugin.json</code> (<b>Preview</b>; <b>no</b> <code>commands</code> key)</td><td><b>no</b> — no multi-surface bundle format</td></tr>
+<tr><td><b>Slash Commands</b></td><td><b>yes</b> — merged into Skills; legacy <code>.claude/commands/*.md</code></td><td><b>yes</b> — <code>.cursor/commands/*.md</code></td><td><b>yes</b> — <code>.github/prompts/*.prompt.md</code></td><td><b>yes</b> — <code>.windsurf/workflows/*.md</code> (manual-only)</td></tr>
+</table></div>
+<h3 id="g-spindleloom-source-surface-what-the-generator-emits">Spindleloom source → surface (what the generator emits)</h3>
+<div class="tw"><table>
+<tr><th>Source</th><th>Claude Code</th><th>Cursor</th><th>Copilot</th><th>Windsurf</th></tr>
+<tr><td><code>agents/*.md</code></td><td><code>.claude/agents/</code> (in the plugin)</td><td><code>.cursor/agents/*.md</code> (native subagents)</td><td><code>.github/chatmodes/*.chatmode.md</code> (legacy — <code>.agent.md</code> migration tracked as IMP-132)</td><td><code>.windsurf/rules/*.md</code> (no subagents → rules)</td></tr>
+<tr><td><code>skills/</code></td><td>bundled in plugin</td><td>reuse <code>.claude/skills/</code></td><td>reuse <code>.claude/skills/</code></td><td>reuse <code>.claude/skills/</code></td></tr>
+<tr><td>convention docs</td><td><code>CLAUDE.md</code> / conventions skill</td><td>always-on <code>.mdc</code> rule</td><td><code>copilot-instructions.md</code></td><td>always-on <code>.windsurf</code> rule</td></tr>
+<tr><td><code>hooks/</code></td><td>plugin <code>hooks/hooks.json</code></td><td><code>.cursor/hooks.json</code> (documented; <b>not yet emitted</b> — IMP-131)</td><td>(Preview)</td><td>(Preview)</td></tr>
+<tr><td>MCP server</td><td><code>.mcp.json</code> (plugin root)</td><td><code>.cursor/mcp.json</code></td><td><code>.vscode/mcp.json</code></td><td>user-global <code>mcp_config.json</code> (snippet in bundle README)</td></tr>
+<tr><td><code>commands/*.md</code></td><td>plugin <code>commands/</code> (+ loose <code>.claude/commands/</code>)</td><td><code>.cursor/commands/*.md</code></td><td><code>.github/prompts/*.prompt.md</code></td><td><code>.windsurf/workflows/*.md</code></td></tr>
+<tr><td>—</td><td><code>AGENTS.md</code> is the lowest-common-denominator instruction target that <b>all four read</b></td></tr>
+</table></div>
+<h3 id="g-four-tools-six-bundles">Four tools, six bundles</h3>
+<p>The generator materializes the 4 tools as <b>6 bundles</b> under <code>targets/</code>: <code>claude-plugin</code> (the full installable plugin — agents + commands + skills + hooks + templates + conventions), <code>claude-code</code> (the same agents/commands as loose files for hand-wiring), <code>cursor</code>, <code>copilot</code>, <code>windsurf</code>, and <code>agents-md</code> (the one-file cross-tool router). Claude Code gets two shapes on purpose — plugin for <code>/plugin install</code>, loose for teams that cherry-pick.</p>
+<h3 id="g-two-single-output-shortcuts">Two single-output shortcuts</h3>
+<ul>
+<li><b><code>.claude/skills/</code></b> is auto-read by Claude Code, Cursor, Copilot, <i>and</i> Windsurf — one emit covers Skills everywhere.</li>
+<li><b><code>AGENTS.md</code></b> is read by Cursor, Copilot, and Windsurf (and is harmless for Claude Code) — the broadest single instruction surface.</li>
+</ul>
+<h3 id="g-honest-caveats">Honest caveats</h3>
+<ul>
+<li><b>Copilot Plugins have no <code>commands</code> manifest key</b> (commands ride as bundled prompt/skill files); <b>Cursor Plugins do</b>.</li>
+<li><b>Copilot &amp; Windsurf hooks are Preview / use a different model</b> — don't depend on matcher semantics.</li>
+<li><b>Windsurf MCP config is user-global</b> (<code>~/.codeium/windsurf/mcp_config.json</code>), not repo-relative — the generator ships the server + a config snippet, not a committed repo file.</li>
+<li><b>Copilot now reads Claude-format files</b> (<code>.claude/agents</code>, <code>.claude/skills</code>, <code>CLAUDE.md</code>) — a future simplification is consuming the <code>claude-plugin</code> bundle directly.</li>
+</ul></article></main>
+</div>
+<footer><div class="in">
+  Part of the <a href="readme.html">Spindleloom website</a> &middot; front door: the
+  <a href="personas/index.html">Persona Field Handbook</a>.
+</div></footer>
+<script>
+const root=document.documentElement;
+try{const _st=localStorage.getItem("sl-theme");if(_st)root.setAttribute("data-theme",_st);}catch(e){}
+document.getElementById("themeToggle").addEventListener("click",()=>{
+  const dark=matchMedia("(prefers-color-scheme:dark)").matches;
+  const cur=root.getAttribute("data-theme")||(dark?"dark":"light");
+  const next=cur==="dark"?"light":"dark";
+  root.setAttribute("data-theme",next);
+  try{localStorage.setItem("sl-theme",next);}catch(e){}
+});
+const items=[...document.querySelectorAll(".spine li")];
+const map={};items.forEach(li=>{const a=li.querySelector("a");if(a)map[a.getAttribute("href").slice(1)]=li;});
+const spy=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){
+  items.forEach(l=>l.classList.remove("on"));const li=map[e.target.id];if(li)li.classList.add("on");}}),
+  {rootMargin:"-20% 0px -70% 0px"});
+document.querySelectorAll("article h3[id]").forEach(h=>spy.observe(h));
+</script>
+</body>
+</html>

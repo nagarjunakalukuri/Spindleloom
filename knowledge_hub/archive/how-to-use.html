@@ -1,0 +1,474 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Use â€” Project Management Agents (by role)</title>
+<style>
+  :root{
+    --bg:#0f1117; --panel:#171a23; --panel2:#1d2130; --ink:#e7e9ee; --mut:#9aa3b2;
+    --line:#272c3a; --acc:#6ea8fe; --acc2:#8be9c0; --warn:#ffd479; --code:#0b0d13;
+    --r:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  a{color:var(--acc);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 22px}
+  header.top{padding:54px 0 26px;border-bottom:1px solid var(--line);background:radial-gradient(1200px 400px at 50% -120px,rgba(110,168,254,.14),transparent)}
+  h1{font-size:2.1rem;margin:.1em 0 .2em;letter-spacing:-.02em}
+  .sub{color:var(--mut);font-size:1.05rem;max-width:760px}
+  .tag{display:inline-block;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--acc2);border:1px solid var(--line);border-radius:999px;padding:3px 12px;margin-bottom:14px}
+  nav.roles{position:sticky;top:0;z-index:5;background:rgba(15,17,23,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 0}
+  nav.roles .wrap{display:flex;flex-wrap:wrap;gap:8px}
+  nav.roles a{font-size:.82rem;color:var(--mut);border:1px solid var(--line);border-radius:999px;padding:5px 11px}
+  nav.roles a:hover{color:var(--ink);border-color:var(--acc);text-decoration:none}
+  section{padding:34px 0;border-bottom:1px solid var(--line)}
+  h2{font-size:1.5rem;margin:0 0 6px;letter-spacing:-.01em}
+  h2 .n{color:var(--acc);font-variant-numeric:tabular-nums;margin-right:10px}
+  h3{font-size:1.12rem;margin:22px 0 8px}
+  p.lead{color:var(--mut);margin:.2em 0 1.1em;max-width:820px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px 18px 14px}
+  .card h3{margin-top:0;display:flex;align-items:center;gap:10px}
+  .who{color:var(--mut);font-size:.9rem;margin:-2px 0 10px}
+  .agents{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 12px}
+  .agents code{background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:2px 8px;font-size:.8rem;color:var(--acc2)}
+  .flow{font-size:.9rem;color:var(--mut);margin:8px 0 12px}
+  .flow b{color:var(--ink);font-weight:600}
+  .lbl{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin:14px 0 6px}
+  pre{background:var(--code);border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:10px;padding:12px 14px;overflow:auto;margin:0 0 10px;font:13.5px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#cdd3e0;white-space:pre-wrap}
+  pre .c{color:#6b7488}
+  .pill{display:inline-block;background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:1px 7px;font-size:.78rem;color:var(--mut);font-family:ui-monospace,monospace}
+  .steps{counter-reset:s;list-style:none;padding:0;margin:0}
+  .steps li{position:relative;padding:10px 0 10px 44px;border-bottom:1px solid var(--line)}
+  .steps li:last-child{border-bottom:0}
+  .steps li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:9px;width:28px;height:28px;border-radius:50%;background:var(--panel2);border:1px solid var(--acc);color:var(--acc);display:grid;place-items:center;font-size:.85rem;font-weight:700}
+  .note{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;color:var(--mut);font-size:.92rem}
+  .note b{color:var(--ink)}
+  table{width:100%;border-collapse:collapse;font-size:.9rem;margin:6px 0}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--mut);font-weight:600;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em}
+  td code{color:var(--acc2);font-size:.84rem}
+  footer{padding:30px 0 60px;color:var(--mut);font-size:.88rem}
+  .kbd{font-family:ui-monospace,monospace;background:var(--panel2);border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:1px 6px;font-size:.82rem;color:var(--ink)}
+
+/* Woven Loop */
+.wl-band{display:flex;flex-direction:column;align-items:center;gap:10px;margin:26px auto 4px;width:min(420px,92vw)}
+#wl-loop{display:block;width:100%;height:auto;max-width:420px}
+.wl-read{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;letter-spacing:.08em;color:#9aa3b2;display:flex;align-items:center;gap:8px;text-transform:uppercase}
+.wl-read b{color:#E7BE58;font-weight:600}
+.wl-pip{width:8px;height:8px;border-radius:50%;background:#E7BE58;box-shadow:0 0 8px #E7BE58}
+@media (prefers-reduced-motion:reduce){.wl-pip{box-shadow:none}}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="wrap">
+  <span class="tag">How to use Â· by role</span>
+  <h1>Project Management Agents â€” a guide for everyone</h1>
+  <p class="sub">52 role-specialist agents cover the whole SDLC, from the market problem to a running, monitored product. This page shows <b>each role what to run, in what order, and exactly what to type</b> â€” with examples from the FreshDesk worked app.</p>
+  <p class="sub"><b>Spindleloom</b> is this fleet (it builds the SDLC wheel) Â· its harness generator ships it to every tool (Claude Code, Cursor, Copilot, Windsurf), each bundle carrying that tool's own instruction file â€” <code>CLAUDE.md</code> for Claude Code, <code>AGENTS.md</code> generically â€” so the tool reads the conventions and loads the fleet the moment you open the project Â· <b>Loopwright</b> is the delivery feedback loop the agents tighten. Beyond the agents, model-invoked <b>skills</b> (e.g. <code>requirement-elicitation</code>, <code>ubiquitous-language</code>, <code>requirement-quality</code>) fire automatically to sharpen and check the work â€” you don't run them by hand.</p>
+</div></header>
+
+<nav class="roles"><div class="wrap">
+  <a href="#start">Quick start</a>
+  <a href="#invoke">How to invoke</a>
+  <a href="#director">Director</a>
+  <a href="#pm">Project Manager</a>
+  <a href="#architect">Architect</a>
+  <a href="#lead">Tech Lead</a>
+  <a href="#designer">UX/UI Designer</a>
+  <a href="#dev">Developer</a>
+  <a href="#qa">QA / Tester</a>
+  <a href="#sec">Security</a>
+  <a href="#sre">DevOps / SRE</a>
+  <a href="#ai">AI / Data</a>
+  <a href="#example">Worked example</a>
+</div></nav>
+
+<div class="wl-band"><canvas id="wl-loop" width="420" height="420" role="img" aria-label="Woven Loop - the agent walking the six SDLC stages"></canvas><div class="wl-read"><span class="wl-pip"></span> working&nbsp;<b id="wl-now">PLAN</b></div></div>
+
+<section id="invoke"><div class="wrap">
+  <h2><span class="n">00</span>How to invoke an agent</h2>
+  <p class="lead">Agents are plain Markdown â€” the <b>body</b> (below the YAML frontmatter) is a portable prompt that works in <b>any</b> AI coding tool, not just Claude. The frontmatter (the contract block) and the slash-commands are Claude Code conveniences; everything else carries over. You don't memorize the agents â€” you describe your task and the right one triggers, or you point the tool at the file.</p>
+  <div class="grid">
+    <div class="card">
+      <h3>Claude Code</h3>
+      <p class="who">CLI / IDE extension / desktop</p>
+      <ol class="steps">
+        <li>Copy <span class="pill">agents/</span> into your repo's <span class="pill">.claude/agents/</span> (or <span class="pill">~/.claude/agents/</span> for all projects), and <span class="pill">commands/</span> into <span class="pill">.claude/commands/</span>.</li>
+        <li>Just ask in natural language â€” the matching subagent triggers automatically. Or type <span class="kbd">/agents</span> to pick one, or a <span class="kbd">/command</span>.</li>
+        <li>See <span class="pill">INSTALL.md</span> for the full setup and the slash-command list.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>Cowork / claude.ai</h3>
+      <p class="who">no local repo needed</p>
+      <ol class="steps">
+        <li>Open the agent file (e.g. <span class="pill">agents/prd-writer.md</span>) and paste its body (below the frontmatter) as project instructions.</li>
+        <li>Or just say: "Follow <span class="pill">agents/prd-writer.md</span> and write a PRD for â€¦".</li>
+        <li>Attach the upstream doc (the BRD, FRD, â€¦) so the agent has its input.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>Any other AI tool</h3>
+      <p class="who">Cursor Â· Copilot Â· Windsurf Â· Gemini Â· Codex Â· any LLM chat</p>
+      <ol class="steps">
+        <li>Open the agent (e.g. <span class="pill">agents/prd-writer.md</span>) and take the <b>body</b> below the <span class="pill">---</span> frontmatter â€” that's the portable prompt. Skip the contract block.</li>
+        <li>Drop it into that tool's rules / custom-instructions / system-prompt slot (see the map below), or paste it straight into chat.</li>
+        <li>Attach the upstream doc and describe the task. Same agent, same output â€” slash commands become a plain request (e.g. "scaffold the doc set" instead of <span class="kbd">/spec-new</span>).</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="lbl" style="margin-top:18px">Where the agent body goes, by tool</div>
+  <table>
+    <tr><th>Tool</th><th>Put the agent body inâ€¦</th></tr>
+    <tr><td><b>Claude Code</b></td><td><code>.claude/agents/&lt;agent&gt;.md</code> (as-is, frontmatter included) â€” auto-triggers</td></tr>
+    <tr><td><b>Cursor</b></td><td><code>.cursor/rules/&lt;agent&gt;.mdc</code> (project rule), or paste in chat; reference files with <code>@</code></td></tr>
+    <tr><td><b>GitHub Copilot</b></td><td><code>.github/copilot-instructions.md</code> (repo-wide), a custom chat mode, or paste in Copilot Chat</td></tr>
+    <tr><td><b>Windsurf</b></td><td><code>.windsurf/rules/&lt;agent&gt;.md</code> (Cascade rules), or paste</td></tr>
+    <tr><td><b>Gemini CLI</b></td><td><code>GEMINI.md</code> context file, or paste</td></tr>
+    <tr><td><b>OpenAI Codex / ChatGPT</b></td><td><code>AGENTS.md</code>, a Project's custom instructions, or paste</td></tr>
+    <tr><td><b>Any LLM chat</b></td><td>paste the body as the system / custom instruction + attach the upstream doc</td></tr>
+  </table>
+
+  <p class="note" style="margin-top:16px"><b>The golden rule (every tool):</b> each agent reads the document <i>above</i> it before writing. Give it the upstream artifact (or point it at the spec folder) and it stays grounded instead of inventing. <b>In Claude Code</b> these slash commands are also available: <span class="pill">/spec-new</span> <span class="pill">/spec-status</span> <span class="pill">/spec-analyze</span> <span class="pill">/spec-check</span> <span class="pill">/spec-constitution</span> <span class="pill">/spec-adr</span> <span class="pill">/spec-rfc</span> <span class="pill">/plan-next</span> <span class="pill">/plan-estimate</span> <span class="pill">/plan-sprint</span> <span class="pill">/plan-retro</span> <span class="pill">/build-recon</span> <span class="pill">/build-verify</span> <span class="pill">/test-plan</span> <span class="pill">/ship-release</span> <span class="pill">/ops-status</span> <span class="pill">/ops-raid</span> <span class="pill">/ops-incident</span> <span class="pill">/ops-metrics</span> <span class="pill">/tech-radar</span> <span class="pill">/tech-debt</span>. In other tools, just ask for the same thing in words.</p>
+</div></section>
+
+<section id="start"><div class="wrap">
+  <h2><span class="n">01</span>Quick start (any project, 5 steps)</h2>
+  <p class="lead">The big picture: you go from <b>an idea â†’ written-down plan â†’ tickets â†’ built &amp; shipped software â†’ lessons learned</b>, and at each step you hand the heavy lifting to an agent. You do <b>not</b> run all 49 â€” step 1 tells you the small set your team actually needs. Example below: a meal-delivery app, "FreshDesk".</p>
+  <ol class="steps">
+    <li><b>Decide what to write down.</b> You don't need every document. Tell <code>doc-strategy-advisor</code> your team size and what you're building; it picks the handful of docs worth keeping and names an owner for each.
+      <div class="flow">You type: <i>"We're 9 people building a mobile meal-delivery app on Azure DevOps â€” which docs do we actually need?"</i> â†’ You get: a short list (e.g. PRD + FRD-in-tickets + design doc) with owners.</div></li>
+    <li><b>Write the ground rules once.</b> The architect runs <span class="kbd">/spec-constitution</span> to capture the non-negotiables â€” security rules, error formats, what AI agents may and may not do â€” in one file everyone (and every AI tool) reads first.
+      <div class="flow">You get: a <code>constitution.md</code> like "all errors return <code>{code, message}</code>; no PII in logs; payment changes need human review".</div></li>
+    <li><b>Describe the product, big-picture down to detail.</b> A chain of agents each writes one document and hands to the next, getting more specific as it goes â€” business goal â†’ what users do â†’ exact behaviour â†’ technical limits â†’ architecture â†’ build spec â€” plus the screen designs and a log of key decisions.
+      <div class="flow">The chain (run only the ones step 1 chose): <b>MRD</b> market â†’ <b>BRD</b> business â†’ <b>PRD</b> product â†’ <b>FRD</b> feature behaviour â†’ <b>SRS</b> constraints â†’ <b>SDD</b> architecture â†’ <b>TSD</b> build; plus <code>ux-ui-designer</code> (screens) and <code>adr-writer</code> (decisions). You type: <i>"Write a PRD for FreshDesk: filtering, ordering, live tracking."</i></div></li>
+    <li><b>Turn the plan into tickets.</b> <code>backlog-manager</code> breaks the documents into a prioritized list of build-ready stories with acceptance criteria; <code>estimation-facilitator</code> sizes them; <code>sprint-planner</code> picks what fits the next sprint.
+      <div class="flow">You get: a backlog of stories like "<i>As a user I can pay with a saved card</i>" â€” each testable, ordered, and estimated. Ask <span class="kbd">/plan-next</span> for the next one to build.</div></li>
+    <li><b>Build â†’ check â†’ ship â†’ learn, then repeat.</b> Developers build each ticket; it's reviewed (code, security, accessibility), run through automated CI, tested by QA, released with a go/no-go decision, and watched in production. The retro turns lessons into new backlog items â€” and the cycle repeats every sprint.
+      <div class="flow">The loop: build â†’ <code>code-reviewer</code> + <code>security-reviewer</code> + <code>accessibility-auditor</code> â†’ <code>pipeline-engineer</code> â†’ <code>qa-tester</code> â†’ <code>release-manager</code> (go/no-go) â†’ operate with <code>sre</code> â†’ <code>retrospective-facilitator</code> â†’ back to the backlog.</div></li>
+  </ol>
+  <p class="note" style="margin-top:14px"><b>The safety net:</b> one file â€” the <b>RTM</b> (a table linking every requirement to the design and the test that proves it) â€” makes sure nothing silently gets dropped. Run <span class="kbd">/spec-check</span> to confirm everything's covered, and <span class="kbd">/spec-analyze</span> before building to catch places where two documents contradict each other.</p>
+</div></section>
+
+<section id="director"><div class="wrap">
+  <h2><span class="n">02</span>Principal Director / Sponsor</h2>
+  <p class="lead">You set business direction and own the big gates â€” you consume more than you author.</p>
+  <div class="agents"><code>mrd-writer</code><code>brd-writer</code><code>/spec-constitution</code><code>status-reporter</code><code>release-manager</code></div>
+  <div class="flow"><b>Flow:</b> justify the business case (MRD/BRD) â†’ approve scope â†’ read status â†’ call go/no-go at release.</div>
+  <div class="lbl">Sample prompts</div>
+<pre><span class="c"># Justify the investment</span>
+Write an MRD for a healthy-meal delivery app: market size, target
+personas, and the competitive landscape. Cite sources with dates.
+
+<span class="c"># Frame the business case</span>
+Draft a BRD from this MRD â€” business goals, scope, ROI, and top risks.
+Keep it non-technical for the steering committee.
+
+<span class="c"># Stay informed</span>
+Write an executive status report for FreshDesk: RAG health, milestone
+progress, top 3 risks, and what you need from me.
+
+<span class="c"># Own the gate</span>
+Are we go for launch? Run the go/no-go for release 1.0 and show the
+evidence (QA sign-off, CI status, open risks, rollback plan).</pre>
+</div></section>
+
+<section id="pm"><div class="wrap">
+  <h2><span class="n">03</span>Project Manager (+ Product Owner)</h2>
+  <p class="lead">You own the doc strategy, the PRD, the backlog, and the cadence â€” the busiest seat in the toolkit.</p>
+  <div class="agents"><code>doc-strategy-advisor</code><code>prd-writer</code><code>backlog-manager</code><code>estimation-facilitator</code><code>sprint-planner</code><code>retrospective-facilitator</code><code>raid-keeper</code><code>status-reporter</code><code>product-analytics</code></div>
+  <div class="flow"><b>Flow:</b> pick docs â†’ write PRD â†’ backlog â†’ estimate â†’ plan sprint â†’ track (RAID/status) â†’ retro â†’ measure (analytics) â†’ repeat.</div>
+  <div class="lbl">Sample prompts</div>
+<pre><span class="c"># Decide what to maintain (start here)</span>
+Run doc-strategy-advisor: 9-person team (1 director, 1 PM, 1 architect,
+2 leads, 5 devs), web + mobile app on Azure DevOps. Which docs do we
+keep, which do we merge, and who owns each?
+
+<span class="c"># Or scaffold it in one shot</span>
+/spec-new freshdesk mid
+
+<span class="c"># Define the product</span>
+Write a PRD for FreshDesk: dietary filtering, order & pay, live
+tracking, favorites. Include personas, user stories, and 3-layer
+success metrics.
+
+<span class="c"># Make it buildable</span>
+Turn the PRD and FRD into a product backlog â€” epics â†’ user stories
+with Given/When/Then acceptance criteria, INVEST-checked and ordered.
+
+<span class="c"># Run the cadence</span>
+/plan-next
+Plan sprint 3: set a goal and a capacity-fit backlog from Ready items.
+Run a blameless retro for sprint 2 from this data â†’ 3 owned actions.
+
+<span class="c"># Track & report</span>
+Add to the RAID log: risk that the logistics partner API is slow.
+Write this week's status report with a RAG rating and the asks.</pre>
+</div></section>
+
+<section id="architect"><div class="wrap">
+  <h2><span class="n">04</span>Architect</h2>
+  <p class="lead">You own technical direction: constraints, the blueprint, decisions, and the standing guardrails across teams.</p>
+  <div class="agents"><code>srs-writer</code><code>sdd-writer</code><code>adr-writer</code><code>rfc-facilitator</code><code>tech-radar-curator</code><code>tech-debt-keeper</code><code>/spec-constitution</code><code>spec-steward</code><code>ai-orchestrator</code></div>
+  <div class="flow"><b>Flow:</b> set the constitution â†’ SRS targets â†’ SDD blueprint â†’ propose changes via RFC â†’ record decisions as ADRs â†’ broadcast sanctioned tech on the radar.</div>
+  <div class="lbl">Sample prompts</div>
+<pre><span class="c"># Standing guardrails (once)</span>
+/spec-constitution create
+
+<span class="c"># The target the design must hit</span>
+Write the SRS for FreshDesk: performance (menu P95 &lt; 1s), scale
+(20k concurrent), security (OAuth2 + PCI), accessibility (WCAG 2.1 AA),
+and compliance (GDPR). Measurable targets, "the system shallâ€¦".
+
+<span class="c"># The blueprint</span>
+Write the SDD â€” arc42 + C4: components, data flows, conceptual data
+model, API surface, and security considerations. No tool lock-in yet.
+
+<span class="c"># Propose before building, then record</span>
+/spec-rfc create event-driven-tracking
+/spec-adr   <span class="c"># record the accepted decision (Kafka for tracking)</span>
+
+<span class="c"># Broadcast direction across teams</span>
+/tech-radar create
+Govern our AI coding agents: what to delegate, human-in-the-loop by
+risk, and the guardrails â€” write the ai-orchestration policy.</pre>
+</div></section>
+
+<section id="lead"><div class="wrap">
+  <h2><span class="n">05</span>Tech Lead</h2>
+  <p class="lead">You translate product into build-ready specs and hold the code bar.</p>
+  <div class="agents"><code>frd-writer</code><code>tsd-writer</code><code>api-designer</code><code>data-modeler</code><code>coding-standards-writer</code><code>code-reviewer</code><code>backlog-manager</code><code>estimation-facilitator</code></div>
+  <div class="flow"><b>Flow:</b> FRD behavior â†’ TSD build spec (with the architect) â†’ API + data contracts â†’ set coding standards â†’ review PRs â†’ facilitate estimation.</div>
+  <div class="lbl">Sample prompts</div>
+<pre><span class="c"># Behavior, exactly</span>
+Write the FRD for live tracking: the system shallâ€¦, with flows,
+acceptance criteria, and edge cases (no drivers, location lost).
+
+<span class="c"># Build playbook</span>
+Write the TSD: final stack, API spec for POST /api/v1/orders,
+schemas, testing strategy, and the deployment plan.
+
+<span class="c"># Contracts</span>
+Design the orders API contract (OpenAPI): resources, error model
+({code,message}), versioning, pagination, and auth.
+Design the data model for orders + favorites: ERD, indexes for the
+access patterns, and reversible migrations.
+
+<span class="c"># Hold the bar</span>
+Write our coding standards for the TypeScript/NestJS backend.
+Review this PR against the standard and the Definition of Done.</pre>
+</div></section>
+
+<section id="designer"><div class="wrap">
+  <h2><span class="n">06</span>UX/UI Designer</h2>
+  <p class="lead">You design the experience <i>and</i> the visuals before code â€” flows, wireframes, hi-fi UI, and the design system the frontend implements.</p>
+  <div class="agents"><code>ux-ui-designer</code><code>accessibility-auditor</code></div>
+  <div class="flow"><b>Flow:</b> PRD goals â†’ user flows â†’ wireframes â†’ hi-fi visuals + design tokens â†’ hand off to <code>frontend-developer</code>; a11y intent feeds the audit.</div>
+  <div class="lbl">Sample prompts</div>
+<pre><span class="c"># Full product design (UX + UI)</span>
+Design the UX and UI for the live-tracking screen: user flow, all
+states (loading/empty/error), hi-fi layout, visual hierarchy, and
+the design-system tokens. Accessibility intent included.
+
+<span class="c"># Onboarding</span>
+Wireframe a one-screen onboarding that sets dietary preferences,
+then take the key screen to hi-fidelity.
+
+<span class="c"># Design system</span>
+Define the FreshDesk design system: color roles, type scale, spacing,
+and the core components for frontend-developer to build.</pre>
+</div></section>
+
+<section id="dev"><div class="wrap">
+  <h2><span class="n">07</span>Developer (frontend / backend)</h2>
+  <p class="lead">Your daily loop: pick up a ticket, ground it in the code, build, test, open a clean PR.</p>
+  <div class="agents"><code>solution-recon</code><code>frontend-developer</code><code>backend-developer</code><code>test-author</code><code>pr-author</code><code>debugger</code><code>code-reviewer</code></div>
+  <div class="flow"><b>Flow:</b> <code>/plan-next</code> â†’ <code>solution-recon</code> (brownfield) â†’ build â†’ <code>test-author</code> â†’ <code>pr-author</code> â†’ peer <code>code-reviewer</code>; <code>debugger</code> when it breaks.</div>
+  <div class="lbl">Sample prompts</div>
+<pre><span class="c"># Ground the ticket in reality (existing codebase)</span>
+Recon before I build PBI-TRK-001: does a tracking endpoint exist?
+What does it return? Is this FE-only or backend-first?
+
+<span class="c"># Build</span>
+Implement the order service: idempotent POST /api/v1/orders with
+payment orchestration and failure handling, per the TSD.
+Build the live-tracking screen from the UX spec â€” components, state,
+and WCAG keyboard/focus support.
+
+<span class="c"># Test &amp; ship</span>
+Write unit + integration tests for the dietary-filter function from
+its acceptance criteria; cover the unhappy paths.
+Draft a PR description and a Conventional-Commit message from this diff.
+
+<span class="c"># When it breaks</span>
+This test fails with &lt;stack trace&gt;. Find the root cause and a fix,
+plus a regression test.</pre>
+</div></section>
+
+<section id="qa"><div class="wrap">
+  <h2><span class="n">08</span>QA / Tester</h2>
+  <p class="lead">You plan verification, execute it, automate the repetitive, and own the QA sign-off.</p>
+  <div class="agents"><code>test-plan-writer</code><code>qa-tester</code><code>test-automation-engineer</code><code>bug-triager</code><code>flaky-test-detective</code><code>accessibility-auditor</code></div>
+  <div class="flow"><b>Flow:</b> test plan (traced to FRD/SRS) â†’ execute &amp; report bugs â†’ automate critical paths â†’ triage the queue â†’ a11y audit â†’ sign-off feeds release.</div>
+  <div class="lbl">Sample prompts</div>
+<pre><span class="c"># Plan</span>
+/test-plan
+Write a test plan for ordering &amp; payment traced to FRD-ORD-001/002
+and SR-FUNC-004; include the payment-decline and out-of-stock cases.
+
+<span class="c"># Execute &amp; sign off</span>
+Run QA on the tracking feature; report bugs (severity vs priority)
+and give a go/no-go QA sign-off.
+
+<span class="c"># Automate &amp; keep green</span>
+Automate the orderâ†’track happy path and payment-decline as e2e.
+Triage today's bug queue: dedupe, severity, route, fix-now vs defer.
+This test is flaky â€” quarantine it and find the real cause.
+
+<span class="c"># Accessibility gate</span>
+Audit the checkout flow against WCAG 2.1 AA (keyboard, screen reader,
+contrast) and give a conformance sign-off.</pre>
+</div></section>
+
+<section id="sec"><div class="wrap">
+  <h2><span class="n">09</span>Security Engineer</h2>
+  <p class="lead">You find design and code weaknesses before an attacker does â€” the judgement above CI's scanners.</p>
+  <div class="agents"><code>security-reviewer</code><code>ai-eval</code></div>
+  <div class="flow"><b>Flow:</b> threat-model at the SDD â†’ write testable <code>SEC-</code> requirements â†’ review designs/PRs â†’ gate at <code>code-reviewer</code> / <code>pipeline-engineer</code>.</div>
+  <div class="lbl">Sample prompts</div>
+<pre><span class="c"># Threat model the risky flow</span>
+Threat-model the order &amp; payment flow with STRIDE: assets, trust
+boundaries, and a SEC- requirement + control for each credible threat.
+
+<span class="c"># Review</span>
+Security-review this PR: authz server-side, input validation at
+boundaries, secrets, and PII handling. Severity-grouped, with fixes.</pre>
+</div></section>
+
+<section id="sre"><div class="wrap">
+  <h2><span class="n">10</span>DevOps / SRE</h2>
+  <p class="lead">You make the system operable before it breaks, then automate delivery and learn from incidents.</p>
+  <div class="agents"><code>sre</code><code>pipeline-engineer</code><code>incident-responder</code></div>
+  <div class="flow"><b>Flow:</b> SLOs + observability + runbooks (proactive) â†’ CI/CD pipeline &amp; gates â†’ blameless postmortem (reactive) feeds the runbooks.</div>
+  <div class="lbl">Sample prompts</div>
+<pre><span class="c"># Proactive reliability</span>
+Define SLOs/SLIs and an error budget for the Tracking Service from the
+SRS targets; design the observability (metrics/logs/traces) and alerts.
+Write a runbook for "no drivers available" and a tested rollback.
+
+<span class="c"># Delivery automation</span>
+Design the CI/CD pipeline: cheap checks first (lint/unit), required
+gates to merge, and a blue-green deploy with one-click rollback.
+
+<span class="c"># Learn from failure</span>
+Run the postmortem for yesterday's tracking outage â€” timeline, root
+cause, and prevention actions that become backlog items.</pre>
+</div></section>
+
+<section id="ai"><div class="wrap">
+  <h2><span class="n">11</span>AI / Data Engineer</h2>
+  <p class="lead">For teams that <i>ship</i> AI features or own the data layer.</p>
+  <div class="agents"><code>ai-eval</code><code>ai-orchestrator</code><code>data-modeler</code><code>product-analytics</code></div>
+  <div class="flow"><b>Flow:</b> govern AI use (orchestration) â†’ build evals for shipped AI features â†’ model the data â†’ instrument product metrics.</div>
+  <div class="lbl">Sample prompts</div>
+<pre><span class="c"># Evals for a shipped AI feature</span>
+Build an eval harness for the meal-recommendation feature: a golden
+dataset, scorers (LLM-as-judge with a rubric), thresholds, and a
+regression-eval gate to run in CI.
+
+<span class="c"># Measure the product</span>
+Instrument the PRD's success metric (â‰¥3 orders/user/week): the event
+tracking plan, the funnel, and an A/B test design with guardrails.</pre>
+</div></section>
+
+<section id="example"><div class="wrap">
+  <h2><span class="n">12</span>End-to-end worked example â€” FreshDesk</h2>
+  <p class="lead">The repo ships a full run in <span class="pill">examples/healthy-meal-app/</span> (MRD â†’ tech-debt register, tied by one RTM). Here's who runs what, in order.</p>
+  <table>
+    <tr><th>Step</th><th>Role</th><th>Run</th><th>Produces</th></tr>
+    <tr><td>1</td><td>Director / PM</td><td><code>mrd-writer</code> â†’ <code>brd-writer</code></td><td>market case, business goals</td></tr>
+    <tr><td>2</td><td>Architect</td><td><code>/spec-constitution</code></td><td>standing guardrails</td></tr>
+    <tr><td>3</td><td>PM</td><td><code>prd-writer</code></td><td>product behavior + metrics</td></tr>
+    <tr><td>4</td><td>Designer</td><td><code>ux-ui-designer</code></td><td>flows, wireframes, hi-fi UI</td></tr>
+    <tr><td>5</td><td>Lead / BA</td><td><code>frd-writer</code></td><td>feature behavior + edge cases</td></tr>
+    <tr><td>6</td><td>Architect</td><td><code>srs-writer</code> â†’ <code>sdd-writer</code> â†’ <code>rfc-facilitator</code> â†’ <code>adr-writer</code></td><td>constraints, blueprint, decisions</td></tr>
+    <tr><td>7</td><td>Lead</td><td><code>tsd-writer</code> Â· <code>api-designer</code> Â· <code>data-modeler</code></td><td>build spec + contracts</td></tr>
+    <tr><td>8</td><td>PM</td><td><code>backlog-manager</code> â†’ <code>estimation-facilitator</code> â†’ <code>sprint-planner</code></td><td>sprint-ready backlog</td></tr>
+    <tr><td>9</td><td>Dev</td><td>build â†’ <code>test-author</code> â†’ <code>pr-author</code></td><td>code + tests + PR</td></tr>
+    <tr><td>10</td><td>Reviewers</td><td><code>code-reviewer</code> + <code>security-reviewer</code> + <code>accessibility-auditor</code></td><td>verified change</td></tr>
+    <tr><td>11</td><td>SRE / Release</td><td><code>pipeline-engineer</code> â†’ <code>sre</code> â†’ <code>release-manager</code></td><td>shipped &amp; monitored</td></tr>
+    <tr><td>12</td><td>PM / Team</td><td><code>product-analytics</code> Â· <code>retrospective-facilitator</code> Â· <code>tech-debt-keeper</code></td><td>learnings â†’ next backlog</td></tr>
+  </table>
+  <p class="note" style="margin-top:14px"><b>The thread that ties it together:</b> one shared <span class="pill">RTM.md</span> carries a Req-ID (e.g. <code>FRD-TRK-001</code>) from business goal â†’ story â†’ requirement â†’ design â†’ test. Run <span class="kbd">/spec-status</span> to see coverage and drift, <span class="kbd">/spec-check</span> to prove nothing was dropped, and <span class="kbd">/spec-analyze</span> to catch contradictions between documents before you build.</p>
+</div></section>
+
+<footer><div class="wrap">
+  <p><b>Project Management Agents</b> â€” 52 agents Â· 50 templates Â· 22 skills Â· a full worked example. Pick the subset your team needs (<code>doc-strategy-advisor</code>); more process is not better. See <span class="pill">README.md</span>, <span class="pill">INSTALL.md</span>, <span class="pill">BEST-PRACTICES.md</span>, and <span class="pill">TEAM-ROLES-AND-AZURE-DEVOPS.md</span>.</p>
+</div></footer>
+
+
+<script>
+(function(){
+  var C={amber:"#C8982A",amberLt:"#E7BE58",blue:"#2E6FB5",blueLt:"#7FB0E6",glow:"rgba(255,247,228,.95)",haloRun:"rgba(231,190,88,.55)",haloMake:"rgba(127,176,230,.5)",ink:"#0f1117",on:"#e7e9ee",off:"#5b6472"};
+  var cv=document.getElementById("wl-loop"); if(!cv||!cv.getContext) return;
+  var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion:reduce)").matches;
+  var dpr=Math.min(window.devicePixelRatio||1,2.5), S=420;
+  cv.width=S*dpr;cv.height=S*dpr;
+  var c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);c.lineJoin="round";
+  var STAGES=[{d:60,label:"LEARN",side:"run"},{d:120,label:"PLAN",side:"make"},{d:180,label:"BUILD",side:"make"},
+    {d:240,label:"TEST",side:"make"},{d:300,label:"SHIP",side:"run"},{d:360,label:"OPERATE",side:"run"}]
+    .map(function(s){return {t:s.d*Math.PI/180,label:s.label,side:s.side};});
+  var af=0.22,ys=1.34,cx=S/2,cy=S/2,w=S*0.048,n=600,q=n/4;
+  var PTS=[];for(var i=0;i<=n;i++){var tt=i/n*2*Math.PI,s=Math.sin(tt),cc=Math.cos(tt),d=1+s*s;
+    PTS.push([cx+S*af*cc/d,cy+(S*af*s*cc/d)*ys]);}
+  function pt(tt){var s=Math.sin(tt),cc=Math.cos(tt),d=1+s*s;return [cx+S*af*cc/d,cy+(S*af*s*cc/d)*ys];}
+  function seg(i0,i1,col,ww){c.lineCap="round";c.beginPath();
+    for(var i=i0;i<=i1;i++){var p=PTS[i];i===i0?c.moveTo(p[0],p[1]):c.lineTo(p[0],p[1]);}
+    c.strokeStyle=col;c.lineWidth=ww;c.stroke();}
+  function active(headT){var best=0,bd=1e9;
+    for(var i=0;i<STAGES.length;i++){var d=((headT-STAGES[i].t)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);
+      if(d<bd){bd=d;best=i;}}return best;}
+  function draw(headT){
+    var ai=active(headT);
+    c.clearRect(0,0,S,S);
+    c.globalAlpha=.16;seg(0,n,C.off,w);c.globalAlpha=1;
+    c.globalAlpha=.5;seg(0,q,C.amber,w);seg(3*q,n,C.amber,w);seg(q,3*q,C.blue,w);c.globalAlpha=1;
+    var hi=Math.round(headT/(2*Math.PI)*n),L=72;
+    for(var k=L;k>=0;k--){var idx=((hi-k)%n+n)%n,p0=PTS[idx],p1=PTS[(idx+1)%n];
+      c.globalAlpha=(1-k/L)*(1-k/L);var col=(idx<=q||idx>=3*q)?C.amberLt:C.blueLt;
+      c.lineCap="round";c.beginPath();c.moveTo(p0[0],p0[1]);c.lineTo(p1[0],p1[1]);
+      c.strokeStyle=col;c.lineWidth=w*1.15;c.stroke();}
+    c.globalAlpha=1;
+    var hp=PTS[hi%n],rg=c.createRadialGradient(hp[0],hp[1],0,hp[0],hp[1],w*3);
+    rg.addColorStop(0,C.glow);rg.addColorStop(1,"rgba(0,0,0,0)");
+    c.fillStyle=rg;c.beginPath();c.arc(hp[0],hp[1],w*3,0,7);c.fill();
+    STAGES.forEach(function(st,i){var pp=pt(st.t),isA=i===ai,col=st.side==="run"?C.amberLt:C.blueLt,rr=isA?w*1.5:w*0.9;
+      if(isA){var gg=c.createRadialGradient(pp[0],pp[1],0,pp[0],pp[1],w*3.4);
+        gg.addColorStop(0,st.side==="run"?C.haloRun:C.haloMake);gg.addColorStop(1,"rgba(0,0,0,0)");
+        c.fillStyle=gg;c.beginPath();c.arc(pp[0],pp[1],w*3.4,0,7);c.fill();}
+      c.beginPath();c.arc(pp[0],pp[1],rr+w*0.5,0,7);c.fillStyle=C.ink;c.fill();
+      c.beginPath();c.arc(pp[0],pp[1],rr,0,7);c.fillStyle=col;c.fill();
+      var dx=pp[0]-cx,dy=pp[1]-cy,m=Math.sqrt(dx*dx+dy*dy)||1,off=w*2.4;
+      c.textBaseline="middle";c.textAlign=dx<-S*0.04?"right":dx>S*0.04?"left":"center";
+      c.fillStyle=isA?C.on:C.off;c.font=(isA?"700 ":"500 ")+(S*0.03)+"px ui-monospace,Menlo,Consolas,monospace";
+      c.fillText(st.label,pp[0]+dx/m*off,pp[1]+dy/m*off);});
+    c.beginPath();c.arc(cx,cy,w*1.7,0,7);c.fillStyle=C.ink;c.fill();
+    c.beginPath();c.arc(cx,cy,w,0,7);c.fillStyle=C.amber;c.fill();
+    c.beginPath();c.arc(cx,cy,w*0.42,0,7);c.fillStyle=C.ink;c.fill();
+    var nowEl=document.getElementById("wl-now");
+    if(nowEl&&nowEl.textContent!==STAGES[ai].label)nowEl.textContent=STAGES[ai].label;
+  }
+  var head=0;
+  function frame(){draw(head/n*2*Math.PI);head=(head+1.0)%n;requestAnimationFrame(frame);}
+  if(reduce)draw(1.6);else frame();
+})();
+</script>
+</body>
+</html>
+

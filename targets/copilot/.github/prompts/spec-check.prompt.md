@@ -3,7 +3,7 @@ description: Verify traceability — every requirement traces both ways; report 
 argument-hint: [path-to-spec-folder]
 ---
 
-Run a traceability audit on the spec set at **$1** (default: spec folder in context). This proves nothing was dropped and shows blast radius, per `project_guides/BEST-PRACTICES.md`.
+Run a traceability audit on the spec set at **$1** (default: spec folder in context). This proves nothing was dropped and shows blast radius, per `knowledge_hub/BEST-PRACTICES.md`.
 
 1. Collect every Req-ID across the docs (BRD/PRD/FRD/SRS) using the `<DOC>-<AREA>-<NUM>` pattern, plus every PBI ID and ADR ID.
 2. Read `RTM.md`. For each requirement, confirm it appears in the matrix with **both** an upstream source and a downstream artifact (design and/or PBI/test).

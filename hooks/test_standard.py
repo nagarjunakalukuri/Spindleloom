@@ -133,14 +133,14 @@ def test_migrate_self_exemption():
     with tempfile.TemporaryDirectory() as d:
         root = Path(d)
         _w(root / "prd.md", "# PRD\n\nPRD-A-001 the system shall ship.\n")          # real project doc
-        _w(root / "vendor_toolkit/project_guides/STANDARD.md", "# The Spindleloom Standard\n")      # copied-in distribution
+        _w(root / "vendor_toolkit/knowledge_hub/GOVERNANCE.md", "# Spindleloom Governance\n")      # copied-in distribution
         _w(root / "vendor_toolkit/agents/adr-writer.md", "---\nname: adr-writer\n---\nbody\n")
         _w(root / "vendor_toolkit/examples/x/01-mrd.md", "# MRD\n")
         _w(root / "templates/prd-template.md", "# PRD template\n")                   # toolkit-shaped file
         froms = {m["from"] for m in scaffold.migrate(root)["moves"]}
         check("prd.md" in froms, "self-exemption: a real project doc is still planned")
         check(not any(f.startswith("vendor_toolkit/") for f in froms),
-              "self-exemption: a nested distribution subtree (project_guides/STANDARD.md) is excluded wholesale")
+              "self-exemption: a nested distribution subtree (knowledge_hub/GOVERNANCE.md) is excluded wholesale")
         check("templates/prd-template.md" not in froms, "self-exemption: *-template.md skipped")
         check(not any("adr-writer" in f for f in froms), "self-exemption: *-writer.md skipped")
 
@@ -148,7 +148,7 @@ def test_migrate_self_exemption():
 def test_migrate_exempt_root():
     with tempfile.TemporaryDirectory() as d:
         root = Path(d)
-        _w(root / "project_guides/STANDARD.md", "# The Spindleloom Standard\n")
+        _w(root / "knowledge_hub/GOVERNANCE.md", "# Spindleloom Governance\n")
         _w(root / "prd.md", "# PRD\n")
         check(scaffold.migrate(root).get("exempt") is True,
               "migrate refuses (exempt) when the root is itself a distribution")
@@ -262,8 +262,28 @@ def test_quality_ok_marker_gates_compound_shall():
     print("  PASS  B4 quality-ok marker gates compound-shall")
 
 
+def test_nested_rtm_scope_excluded_from_parent():
+    """A subdir owning its own RTM.md is an independent traceability scope — its files must
+    not pollute the parent's coverage (the run3/run4-under-medremind-fleet-eval case that
+    otherwise flags every sub-run PBI as an orphan against the parent RTM)."""
+    import rtm_core
+    tmp = Path(tempfile.mkdtemp(prefix="scope_"))
+    _w(tmp / "RTM.md", "# RTM\n| FRD-A-001 |\n")
+    _w(tmp / "frd.md", "# FRD\nFRD-A-001 the system shall x.\n")
+    _w(tmp / "run3" / "RTM.md", "# RTM\n| PBI-B-001 |\n")
+    _w(tmp / "run3" / "08-backlog.md",
+       "# Backlog\n| PBI | AC |\n|---|---|\n| PBI-B-001 | Given x When y Then z |\n")
+    names = {p.name for p in rtm_core.markdown_files(tmp)}
+    assert "frd.md" in names, names                 # parent scope kept
+    assert "08-backlog.md" not in names, names       # nested self-scoped run excluded
+    names_nested = {p.name for p in rtm_core.markdown_files(tmp / "run3")}
+    assert "08-backlog.md" in names_nested, names_nested  # validates standalone
+    print("  PASS  nested-RTM subdir is its own scope (excluded from parent)")
+
+
 def main():
-    for t in (test_scaffold_default, test_scaffold_config_override, test_collisions,
+    for t in (test_nested_rtm_scope_excluded_from_parent,
+              test_scaffold_default, test_scaffold_config_override, test_collisions,
               test_conformance_clean, test_migrate, test_migrate_refuses_on_collision,
               test_migrate_self_exemption, test_migrate_exempt_root, test_migrate_dest_collision,
               test_migrate_refuses_on_existing_dest, test_migrate_routes_sprint_plan,

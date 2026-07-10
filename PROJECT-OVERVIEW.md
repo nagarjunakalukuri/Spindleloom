@@ -1,17 +1,17 @@
 # Spindleloom — Project Overview
 
-> **Purpose of this file:** a complete, single-file orientation so a new session (human or agent) can be productive without reading the whole repo. It summarizes *what* Spindleloom is, *how* it's built, the *commands*, the *architecture*, and *where to go* for detail. Current version: **0.3.0** (2026-07-09). Pre-1.0 — minor bumps may break.
+> **Purpose of this file:** a complete, single-file orientation so a new session (human or agent) can be productive without reading the whole repo. It summarizes *what* Spindleloom is, *how* it's built, the *commands*, the *architecture*, and *where to go* for detail. Current version: **0.4.0** (2026-07-10). Pre-1.0 — minor bumps may break.
 
 ---
 
 ## 1. What this is (in one paragraph)
 
-Spindleloom is **not an application** — it's a **tool-agnostic fleet of 52 role-specialist AI agents** (plus **28 skills**, **51 document templates**, **23 slash commands**, stdlib-Python **hooks**, and a **traceability MCP server**) that carry a product across the entire software development lifecycle — market → spec → design → build → test → ship → operate — as *one traceable chain*. Each agent owns one role, reads the artifact above it, hands off to the next, and pushes discoveries back upstream. Teams run only the subset they need. The whole fleet is authored once as Markdown-with-contracts and **generated into harness-native bundles** (Claude Code, Cursor, Copilot, Windsurf, AGENTS.md) under `targets/`.
+Spindleloom is **not an application** — it's a **tool-agnostic fleet of 52 role-specialist AI agents** (plus **28 skills**, **52 document templates**, **23 slash commands**, stdlib-Python **hooks**, and a **traceability MCP server**) that carry a product across the entire software development lifecycle — market → spec → design → build → test → ship → operate — as *one traceable chain*. Each agent owns one role, reads the artifact above it, hands off to the next, and pushes discoveries back upstream. Teams run only the subset they need. The whole fleet is authored once as Markdown-with-contracts and **generated into harness-native bundles** (Claude Code, Cursor, Copilot, Windsurf, AGENTS.md) under `targets/`.
 
 **Three layers to keep straight:**
 - **Spindleloom** — the agent fleet that builds the SDLC wheel (this repo's source).
 - **The harness generator** (`hooks/build_harness_artifacts.py`) — ships the fleet to every AI coding tool as `targets/<harness>/` bundles.
-- **Loopwright** (`project_guides/LOOPWRIGHT.md`) — the delivery-feedback-loop layer the agents run inside and tighten.
+- **Loopwright** (`knowledge_hub/LOOPWRIGHT.md`) — the delivery-feedback-loop layer the agents run inside and tighten.
 
 ---
 
@@ -87,10 +87,10 @@ Every agent's frontmatter carries a **machine-readable contract block**: `phase`
   = SINGLE SOURCE    └─── build_harness_artifacts.py ──→ targets/<harness>/ bundles
                                         │
                                         ▼
-                     validate_graph.py — 12 checks prove the above stayed consistent
+                     validate_graph.py — 13 checks prove the above stayed consistent
 ```
 
-**`validate_graph.py`'s 12 checks** (the fleet eating its own docs-as-code): (1) contract-graph **symmetry** — every agent in your `downstream` must list you in their `upstream`, and vice versa; (2) no dangling refs; (3) no missing skills; (4) INDEX freshness; (5) handoff line present; (6) examples present; (7) `claude_code:` mapping integrity; (8) command well-formedness; (9) armed skills are model-invocable; (10) no orphan agents outside the entry-point allowlist; (11) loop/role classification valid; (12) fleet-HTML node/edge data in sync.
+**`validate_graph.py`'s 13 checks** (the fleet eating its own docs-as-code): (1) contract-graph **symmetry** — every agent in your `downstream` must list you in their `upstream`, and vice versa; (2) no dangling refs; (3) no missing skills; (4) INDEX freshness; (5) handoff line present; (6) examples present; (7) `claude_code:` mapping integrity; (8) command well-formedness; (9) armed skills are model-invocable; (10) no orphan agents outside the entry-point allowlist; (11) loop/role classification valid; (12) fleet-HTML node/edge data in sync; (13) artifact chain -- every handoff edge A->B carries a declared artifact (some `outputs` of A match some `inputs` of B).
 
 **The #1 way to break the build:** editing an agent without re-running the generators + validator. CI and pre-commit both gate on it.
 
@@ -115,7 +115,7 @@ py -3 hooks/build_agent_index.py         # refresh agents/INDEX.md
 py -3 hooks/build_handoffs.py            # refresh each agent's Handoff blockquote
 py -3 hooks/build_help.py                # refresh agents/HELP.md
 py -3 hooks/build_harness_artifacts.py   # regenerate targets/ bundles
-py -3 hooks/validate_graph.py            # 12 integrity checks — must exit 0
+py -3 hooks/validate_graph.py            # 13 integrity checks — must exit 0
 ```
 
 ### Drift / conformance checks (what CI enforces — exit 1 = stale)
@@ -164,8 +164,8 @@ py -3 hooks/validate_reqs.py <spec-dir>   # RTM traceability + requirement-quali
 | `commands/` | **23** slash commands wired to agents via each agent's `claude_code:` block. Phase-grouped: `spec-*`, `plan-*`, `build-*`, `ops-*`, `ship-*`, `tech-*`, `/run`, `/test-plan`, `/help-role`. |
 | `hooks/` | stdlib-only Python: validators, generators, the MCP server, tracker adapters (Jira/Azure), the `sloom` CLI, scaffold. `*.sh` are SSRF-safe URL-cache hooks. `test_*.py` are unit tests. Reference: [`hooks/HOOKS.md`](hooks/HOOKS.md). |
 | `targets/` | **Generated** harness bundles: `claude-plugin`, `claude-code`, `cursor`, `copilot`, `windsurf`, `agents-md`. **Never edit by hand.** |
-| `project_guides/` | Authoritative conventions + human-facing HTML guides (see §8). |
-| `examples/` | End-to-end runs: `healthy-meal-app` (polished exemplar) and `medremind-fleet-eval` (honest behavioral E2E, graded C+ → B+). |
+| `knowledge_hub/` | Authoritative conventions + human-facing HTML guides (see §8). |
+| `examples/` | End-to-end runs: `healthy-meal-app` (polished exemplar) and `medremind-fleet-eval` (honest behavioral E2E of the 10-agent spec+plan spine, graded C+ → A across four runs). |
 | `.claude-plugin/` | This repo's own plugin `marketplace.json`. |
 | `.github/workflows/` | CI (`test-plugin-install.yml`) + self-healing weekly refresh (`spindleloom-refresh.yml`). |
 
@@ -178,7 +178,7 @@ All stdlib-only and read-only unless noted. Full detail in [`hooks/HOOKS.md`](ho
 | Hook | Role |
 |---|---|
 | `sloom.py` | **The front door** — one CLI over every tool; `sloom check` auto-detects repo type. |
-| `validate_graph.py` | Fleet integrity — the 12 checks (§4). CI/pre-commit gate. |
+| `validate_graph.py` | Fleet integrity — the 13 checks (§4). CI/pre-commit gate. |
 | `validate_reqs.py` | Req-ID format, dup/orphan detection, RTM coverage, ADR-ref integrity + 29148 quality lint (`--strict` blocks). |
 | `validate_gates.py` | Execution-quality gates — change-verifier PASS artifacts (`.spindleloom/verifications/`); release go/no-go = computed AND over `.spindleloom/signoffs/*.md`. |
 | `validate_targets.py` | Per-harness format conformance (Windsurf 12k rule cap, frontmatter, bundled-hook import resolution). |
@@ -196,15 +196,14 @@ All stdlib-only and read-only unless noted. Full detail in [`hooks/HOOKS.md`](ho
 
 ## 8. Where the conventions live (read before editing that surface)
 
-- **`project_guides/AGENT-AUTHORING.md`** — contract-block schema + prompting conventions. **Read before creating/editing any agent.**
-- **`project_guides/STANDARD.md`** — the authoritative, versioned adopter layout (the `docs/` + `.spindleloom/` tree, profiles, four cadence planes, ID immutability). Greenfield scaffolds it; brownfield converts via `scaffold.py migrate`.
-- **`project_guides/INFORMATION-ARCHITECTURE.md`** — the detailed reference under STANDARD (where artifacts live, the four retrieval paths: RTM · catalog · MCP · wiki).
-- **`project_guides/BEST-PRACTICES.md`** — the funnel, feedback loops, team-size tiers, requirement-quality standard (ISO/IEC/IEEE 29148 + INCOSE, the "system shall" rule), traceability backbone, change control, frameworks (arc42, C4, Diátaxis).
-- **`project_guides/HARNESS-MATRIX.md`** — the 7-surface × 4-tool matrix that the generator targets.
-- **`project_guides/LOOPWRIGHT.md`** — the delivery-loop layer; the `loop:` contract field maps each agent to the loop it tightens.
-- **`project_guides/FLEET-EVAL.md`** — the behavioral regression test (chained contract-strict E2E + independent judge).
+- **`knowledge_hub/AGENT-AUTHORING.md`** — contract-block schema + prompting conventions. **Read before creating/editing any agent.**
+- **`knowledge_hub/GOVERNANCE.md`** — the merged governance standard: Part I the authoritative, versioned adopter layout (greenfield scaffolds it; brownfield converts via `scaffold.py migrate`), Part II story craft, Part III team + Azure DevOps fit.
+- **`knowledge_hub/BEST-PRACTICES.md`** — the funnel, feedback loops, team-size tiers, requirement-quality standard (ISO/IEC/IEEE 29148 + INCOSE, the "system shall" rule), traceability backbone, change control, frameworks (arc42, C4, Diátaxis).
+- **`knowledge_hub/HARNESS-MATRIX.md`** — the 7-surface × 4-tool matrix that the generator targets.
+- **`knowledge_hub/LOOPWRIGHT.md`** — the delivery-loop layer; the `loop:` contract field maps each agent to the loop it tightens.
+- **`knowledge_hub/FLEET-EVAL.md`** — the behavioral regression test (chained contract-strict E2E + independent judge).
 - **`hooks/HOOKS.md`** — every hook, plus how to wire them as Claude Code hooks or CI gates.
-- **Human-facing HTML** (open in a browser): `how-to-use.html` (role-by-role + sample prompts), `for-everyone.html` (plain-language overview), `spindleloom-agent-fleet.html` (the interactive graph), `role-playbooks.html`.
+- **Human-facing HTML** (open in a browser): `project-overview.html` (the canonical end-to-end page), `for-everyone.html` (plain-language story), `personas/` (the 15-role field handbook), `spindleloom-agent-fleet.html` (the interactive graph). Superseded pages live in `knowledge_hub/archive/`.
 
 ---
 
@@ -258,5 +257,5 @@ Both `.pre-commit-config.yaml` and `.github/workflows/test-plugin-install.yml` e
 ## 13. Fastest path to understanding
 
 1. Read `examples/healthy-meal-app/` — a full MRD→TSD run tied by one RTM. The quickest way to see how documents interlock.
-2. Skim `README.md` (fleet overview) and `project_guides/AGENT-AUTHORING.md` (how agents are written).
+2. Skim `README.md` (fleet overview) and `knowledge_hub/AGENT-AUTHORING.md` (how agents are written).
 3. Try it live: ask Claude to "write a BRD for &lt;a feature&gt;" and watch the handoffs down the funnel; then run `py -3 hooks/validate_graph.py` to see the integrity checks.

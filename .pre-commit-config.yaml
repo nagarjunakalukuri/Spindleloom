@@ -47,7 +47,55 @@ repos:
         entry: python hooks/build_harness_artifacts.py --check
         language: python
         pass_filenames: false
-        files: ^(agents|skills|commands|hooks|templates|project_guides)/
+        files: ^(agents|skills|commands|hooks|templates|knowledge_hub|spindleloom_website)/
+        stages: [pre-commit]
+
+      - id: harness-targets-conform
+        name: Harness bundles conform to per-tool format rules (validate_targets)
+        entry: python hooks/validate_targets.py
+        language: python
+        pass_filenames: false
+        files: ^(agents|skills|commands|hooks|templates|knowledge_hub|spindleloom_website|targets)/
+        stages: [pre-commit]
+
+      - id: governance-handbook-fresh
+        name: governance-handbook.html not stale (vs GOVERNANCE.md)
+        entry: python hooks/build_governance_handbook.py --check
+        language: python
+        pass_filenames: false
+        files: ^(knowledge_hub/GOVERNANCE\.md|spindleloom_website/governance-handbook\.html)$
+        stages: [pre-commit]
+
+      - id: doc-counts-fresh
+        name: Doc fleet-counts not stale (validate_counts)
+        entry: python hooks/validate_counts.py --check
+        language: python
+        pass_filenames: false
+        files: ^(agents|skills|commands|templates)/|\.md$|spindleloom_website/.*\.html$
+        stages: [pre-commit]
+
+      - id: personas-in-sync
+        name: Persona hub agents/commands match the contracts (validate_personas)
+        entry: python hooks/validate_personas.py --check
+        language: python
+        pass_filenames: false
+        files: ^(agents/.*\.md|commands/.*\.md|spindleloom_website/personas/index\.html)$
+        stages: [pre-commit]
+
+      - id: fleet-page-fresh
+        name: Fleet map data derived from the contracts (build_fleet_page)
+        entry: python hooks/build_fleet_page.py --check
+        language: python
+        pass_filenames: false
+        files: ^(agents/.*\.md|spindleloom_website/spindleloom-agent-fleet\.html)$
+        stages: [pre-commit]
+
+      - id: guides-site-fresh
+        name: Guides site (twins + index) not stale (build_guides_site)
+        entry: python hooks/build_guides_site.py --check
+        language: python
+        pass_filenames: false
+        files: ^(knowledge_hub/.*\.md|spindleloom_website/.*\.html)$
         stages: [pre-commit]
 
       # ── Shell hook lint ──────────────────────────────────────────────────────

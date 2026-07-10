@@ -1,6 +1,6 @@
 [project]
 name = "spindleloom"
-version = "0.3.0"
+version = "0.5.0"
 description = "Spindleloom — SDLC agent fleet, traceability MCP server, and the harness generator."
 requires-python = ">=3.10"
 # No required runtime dependencies: rtm_core, the validator, and the harness
@@ -16,4 +16,4 @@ semantic = ["chromadb>=1.5.9"]
 # Dev/test loop only. uv installs the `dev` group by default, so `uv run python
 # hooks/test_mcp_server.py` (and `uv run mcp dev …`) get the MCP SDK with no extra flags.
 [dependency-groups]
-dev = ["mcp[cli]>=1.2"]
+dev = ["mcp[cli]>=1.2", "pytest>=7"]

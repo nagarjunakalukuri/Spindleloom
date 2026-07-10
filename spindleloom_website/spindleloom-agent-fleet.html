@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Interactive delegation-graph map of the Spindleloom SDLC agent fleet across its lifecycle phases.">
+<title>Spindleloom Agent Fleet</title>
+<style>
+:root{
+  --ground:#060F1C;--text:#C4D8EE;--text-dim:#3E607E;
+  --accent:#C8982A;--border:#132840;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--ground);color:var(--text);
+  font-family:'Courier New',Courier,monospace;min-height:100vh;overflow-x:auto}
+
+#page-header{
+  display:flex;align-items:center;gap:20px;
+  padding:20px 36px 16px;border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:50;background:var(--ground);
+}
+.brand-label{font-size:9px;letter-spacing:.35em;text-transform:uppercase;color:var(--text-dim);margin-bottom:3px}
+.page-title{font-size:20px;letter-spacing:.1em;color:var(--accent);font-weight:normal}
+.page-subtitle{font-size:9px;letter-spacing:.15em;color:var(--text-dim);margin-top:3px;text-transform:uppercase}
+
+#site-nav{margin-left:auto;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+#site-nav a{font-family:var(--mono, ui-monospace,Consolas,monospace);font-size:11px;color:#7FA3C4;padding:6px 10px;border-radius:8px;text-decoration:none}
+#site-nav a:hover{color:#C8982A}
+#agent-search{font-family:ui-monospace,Consolas,monospace;font-size:12px;color:#C4D8EE;background:#0B1826;
+  border:1px solid #1E3A57;border-radius:8px;padding:7px 12px;width:230px}
+#agent-search:focus-visible{outline:2px solid #C8982A;outline-offset:2px}
+#info-bar a{color:#C8982A;text-decoration:none}#info-bar a:hover{text-decoration:underline}
+#info-bar{
+  padding:7px 36px;font-size:10px;letter-spacing:.07em;color:var(--text-dim);
+  border-bottom:1px solid var(--border);min-height:30px;display:flex;align-items:center;
+  position:sticky;top:63px;z-index:40;background:var(--ground);
+}
+#info-bar span{color:var(--accent)}
+
+#graph-wrap{overflow-x:auto;overflow-y:visible}
+svg#graph{display:block}
+
+#legend{
+  display:flex;flex-wrap:wrap;align-items:center;gap:14px;
+  padding:12px 36px;border-top:1px solid var(--border);
+  font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);
+}
+.lr{display:flex;align-items:center;gap:7px}
+.ld{width:22px;height:1.5px;flex-shrink:0}
+.lc{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+.lsep{width:1px;height:14px;background:var(--border);margin:0 4px}
+
+#skills-bar{padding:11px 36px 15px;border-top:1px solid var(--border)}
+#skills-bar .sb-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+#skills-bar .sb-hint{font-size:9px;letter-spacing:.06em;color:var(--text-dim);margin-left:8px}
+#skill-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{cursor:pointer;font-size:9px;letter-spacing:.04em;color:var(--text-dim);background:#0B1A2C;
+  border:1px solid var(--border);border-radius:2px;padding:3px 8px;user-select:none;transition:border-color .1s,color .1s}
+.chip:hover{border-color:#3D8FB5;color:var(--text)}
+.chip:focus-visible{outline:1px solid var(--accent);outline-offset:1px}
+.chip .n{color:#3D8FB5;margin-left:5px;opacity:.8}
+.chip.active{border-color:var(--accent);color:var(--accent);background:#14243a}
+.chip.active .n{color:var(--accent)}
+
+#tooltip{
+  position:fixed;pointer-events:none;opacity:0;transition:opacity .1s;z-index:200;
+  background:#0B1A2C;border:1px solid var(--accent);padding:10px 14px;
+  max-width:260px;font-size:10px;line-height:1.65;
+}
+#tooltip.show{opacity:1}
+#tip-id{font-size:11px;color:var(--accent);letter-spacing:.06em;margin-bottom:2px}
+#tip-phase{font-size:8px;color:var(--text-dim);letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px}
+#tip-skills{margin-top:7px;padding-top:6px;border-top:1px solid var(--border);font-size:8.5px;color:#5FA8CE;letter-spacing:.03em;line-height:1.55}
+#tip-skills:empty{display:none}
+svg#graph [data-id]{outline:none}
+svg#graph [data-id]:focus > rect:first-child{stroke:var(--accent);stroke-opacity:1;stroke-width:1.6}
+</style>
+</head>
+<body>
+
+<div id="page-header">
+  <canvas id="wl-mark" width="40" height="40" aria-hidden="true" style="flex-shrink:0;width:40px;height:40px"></canvas>
+  <div>
+    <div class="brand-label">Spindleloom Toolkit</div>
+    <div class="page-title">AGENT FLEET MAP</div>
+    <div class="page-subtitle"><span id="agent-count">52</span> Role-Specialist Agents &nbsp;·&nbsp; <span id="hdr-skills">28</span> Methodology Skills &nbsp;·&nbsp; <span id="phase-count">10</span> Lifecycle Phases &nbsp;·&nbsp; Full SDLC Traceability</div>
+  </div>
+  <nav id="site-nav" aria-label="Site">
+    <a href="index.html">Home</a>
+    <a href="personas/index.html">Personas</a>
+    <a href="project-overview.html">Overview</a>
+    <input id="agent-search" type="search" placeholder="Find an agent...  ( / )" aria-label="Find an agent">
+  </nav>
+</div>
+
+<div id="info-bar">Click any agent to trace its delegation chain &nbsp;·&nbsp; Hover for description</div>
+<div id="graph-wrap"><svg id="graph"></svg></div>
+<noscript><div style="max-width:720px;margin:0 auto;padding:30px;color:#C4D8EE;font-family:system-ui,sans-serif">
+<p>The interactive map needs JavaScript. The same information as text:
+<a href="../agents/INDEX.md" style="color:#C8982A">agents/INDEX.md</a> (every agent + hand-offs) &middot;
+<a href="personas/index.html" style="color:#C8982A">the persona handbook</a> &middot;
+<a href="project-overview.html" style="color:#C8982A">the overview</a>.</p></div></noscript>
+
+<div id="legend">
+  <div class="lr"><div class="ld" style="background:#C8982A"></div>Primary delegation</div>
+  <div class="lr"><div class="ld" style="background:#3D8FB5;border-top:1px dashed #3D8FB5;height:0"></div>Secondary / parallel</div>
+  <div class="lr"><div class="ld" style="background:#8055B5;border-top:1px dotted #8055B5;height:0"></div>Feedback loop</div>
+  <div class="lr"><div class="ld" style="background:#4A8AAA;border-top:1px dashed #4A8AAA;height:0;opacity:.6"></div>Indexes (wiki-curator — click to reveal)</div>
+  <div class="lsep"></div>
+  <div id="phase-legend" style="display:flex;flex-wrap:wrap;gap:12px"></div>
+</div>
+
+<div id="skills-bar">
+  <span class="sb-label">Skills (<span id="skill-count">28</span>)</span><span class="sb-hint">click a skill to highlight the agents that arm it &nbsp;·&nbsp; click an agent to see its skills</span>
+  <div id="skill-chips"></div>
+</div>
+
+<div id="tooltip">
+  <div id="tip-id"></div>
+  <div id="tip-phase"></div>
+  <div id="tip-desc"></div>
+  <div id="tip-skills"></div>
+</div>
+
+<script>
+// >>> GENERATED DATA -- build_fleet_page.py (edit contracts, not this block) >>>
+
+const PHASES = [
+  {id:'discovery',    label:'DISCOVERY',    n:'01', color:'#3B7DC4'},
+  {id:'requirements',    label:'REQUIREMENTS',    n:'02', color:'#3A9E6A'},
+  {id:'design',    label:'DESIGN',    n:'03', color:'#6B50B0'},
+  {id:'planning',    label:'PLANNING',    n:'04', color:'#B08030'},
+  {id:'build',    label:'BUILD',    n:'05', color:'#3A6BA0'},
+  {id:'test',    label:'TEST',    n:'06', color:'#984040'},
+  {id:'review',    label:'REVIEW',    n:'07', color:'#307A6A'},
+  {id:'release',    label:'RELEASE',    n:'08', color:'#906040'},
+  {id:'operate',    label:'OPERATE',    n:'09', color:'#7A5030'},
+  {id:'process',    label:'PROCESS',    n:'10', color:'#4040A0'},
+];
+
+const AGENTS = [
+  // 01 DISCOVERY
+  {id:'doc-strategy-advisor', label:'doc-strategy\nadvisor', phase:'discovery',
+   desc:"Use this agent to decide WHICH software-engineering documents a team should actually maintain, and who owns each. Triggers on requests like \"which of these docs do we even need\", \"we're drowning in documentation\", \"set up our doc process\", \"who should own the PRD\", or \"we're a 12-person startup, what should we write\". The agent recommends a streamlined doc set based on team size, assigns owners and consumers, and points to the right specialist agent for each document."},
+  {id:'mrd-writer', label:'mrd-writer', phase:'discovery',
+   desc:"Use this agent to create, review, or update a Market Requirements Document (MRD). Triggers on requests like \"write an MRD\", \"is there a market for this\", \"size the opportunity\", \"who are our competitors\", or \"justify the business case before we build\". The agent captures the market problem, customer personas, and competitive landscape that justify a project — it sits ABOVE the BRD and feeds it. Run this first, before the BRD."},
+  // 02 REQUIREMENTS
+  {id:'brd-writer', label:'brd-writer', phase:'requirements',
+   desc:"Use this agent to create, review, or update Business Requirement Documents (BRDs). Triggers on requests like \"write a BRD\", \"capture the business case\", \"what does the business want\", or \"turn this client brief into requirements\". The agent interviews the user for missing context, then produces a non-technical BRD focused on the \"why\" — business goals, scope, stakeholders, and risks. Run this after the MRD (if one exists) and before the PRD."},
+  {id:'prd-writer', label:'prd-writer', phase:'requirements',
+   desc:"Use this agent to create, review, or update Product Requirements Documents (PRDs). Triggers on requests like \"write a PRD\", \"document requirements for this feature\", \"review my PRD\", or \"turn these notes into requirements\". The agent interviews the user for missing context, then produces a lean, agile-friendly PRD following Atlassian's best practices."},
+  {id:'frd-writer', label:'frd-writer', phase:'requirements',
+   desc:"'Use this agent to create, review, or update a Functional Requirements Document (FRD) — the exact, step-by-step behavior of features. Triggers on requests like \"spec the exact behavior\", \"write the functional requirements\", \"define the user flows and edge cases\", or \"what happens when the user does X\". Also handles the functional-behavior half of an \"FSD\" (Functional Specification Document): when asked for an FSD, cover behavior here and route the technical \"how\" (APIs, data, backend logic) to the sdd-writer/tsd-writer. Sits between the PRD (what) and the technical design (how it''s built). In Agile teams this logic usually lives in Jira/Linear tickets rather than a standalone doc — advise that when it fits.'"},
+  {id:'srs-writer', label:'srs-writer', phase:'requirements',
+   desc:"Use this agent to create, review, or update a Software Requirements Specification (SRS/SRD) — the technical constraints and rules the software must meet. Triggers on requests like \"write the SRS\", \"write the TRD\", \"define the non-functional requirements\", \"what are our scale and performance targets\", or \"spec the security and compliance constraints\". Also covers the **TRD (Technical Requirements Document)** — same technical-requirements layer under a different name. The SRS is the TARGET (rules/limits); the SDD/TSD is the blueprint built to hit it. Sits between the PRD/FRD and the design. Common in regulated, aerospace, robotics, and IoT work; pure-SaaS teams often fold it into the design doc."},
+  {id:'urs-writer', label:'urs-writer', phase:'requirements',
+   desc:"Use this agent to create, review, or update a User Requirements Specification (URS) — the user-and-environment-centric requirements document required in regulated industries (pharma, medical devices, lab/manufacturing systems). Triggers on requests like \"write a URS\", \"what does the user need this system to do\", \"we need a validated-system spec\", \"GAMP/ISPE user requirements\", or \"intended use document\". The URS captures intended use, operator tasks, safety/quality attributes, and the work environment, and is a foundational design input under ISPE/GAMP and FDA 21 CFR 820.30. Run it early, alongside or just after the BRD."},
+  // 03 DESIGN
+  {id:'solution-recon', label:'solution-recon', phase:'design',
+   desc:"Use this agent BEFORE writing or accepting a spec/PBI for work on an EXISTING codebase (brownfield / platform extension) — it reads the code to establish ground truth so the spec isn't built on assumptions. Triggers on \"is the backend ready?\", \"does this endpoint/data exist?\", \"recon before we spec this\", \"ground this PBI in the code\", \"what does the API actually return?\", \"FE-only or BE+FE?\", or \"decompose this PBI into tasks\". Sits between requirements and design/planning; feeds frd/pbi/sdd-writer verified facts and flags spec↔code mismatches back upstream. Skip for true greenfield (no code yet)."},
+  {id:'architect', label:'architect', phase:'design',
+   desc:"Use this agent to ANALYZE a significant, hard-to-reverse technical decision before it is recorded — framing the real options, weighing them on cost / risk / reversibility / blast-radius (grounded in the code, usually via solution-recon), and recommending one. Triggers on \"should we extend X or build new\", \"which approach\", \"architecture decision\", \"evaluate these options\", \"decide before we scale\", or \"what are the trade-offs\". Sits between recon/design and the ADR — it produces the decision *analysis*; `adr-writer` *records* it. Distinct from `rfc-facilitator` (socialize a proposal for comment) and `sdd-writer` (describe the chosen design)."},
+  {id:'rfc-facilitator', label:'rfc-facilitator', phase:'design',
+   desc:"Use this agent to propose a significant technical change and get reactions BEFORE building it — the forward-looking \"request for comments\" / design-review process. Triggers on requests like \"write an RFC\", \"propose a design change\", \"I want feedback before I build X\", \"design proposal for Y\", or \"should we adopt Z — let people weigh in\". An RFC is a proposal under discussion; once decided, its outcome is recorded as an ADR (`adr-writer`) and folded into the SDD. (Distinct from `adr-writer`, which records decisions *after* they're made, and from `sdd-writer`, which documents the *current* design — the RFC is the debate that happens first.)"},
+  {id:'adr-writer', label:'adr-writer', phase:'design',
+   desc:"'Use this agent to create, review, supersede, or maintain Architecture Decision Records (ADRs) — short, append-only records of a single significant technical decision and its rationale. Triggers on requests like \"write an ADR\", \"record this decision\", \"why did we choose X over Y\", \"document our architecture decisions\", or \"supersede the ADR about Z\". ADRs complement the SDD/TSD: the SDD describes the design, ADRs capture the *why* behind each decision over time. They live in the repo (docs-as-code) as one file per decision.'"},
+  {id:'sdd-writer', label:'sdd-writer', phase:'design',
+   desc:"Use this agent to create, review, or update Software Design Documents (SDDs). Triggers on requests like \"write the SDD\", \"design the architecture\", \"how should this system be structured\", or \"document the high-level design\". Also owns the technical \"how\" half of an \"FSD\" (Functional Specification Document) — system function, APIs, databases, backend logic — pairing with the frd-writer for the behavior half. The agent reads the PRD, then produces the architectural blueprint — components, data flows, conceptual data model, API surface, and security considerations — without locking in specific tools. Run this after the PRD and before the TSD."},
+  {id:'api-designer', label:'api-designer', phase:'design',
+   desc:"Use this agent to design API contracts as a first-class, contract-first artifact — REST/GraphQL resources, request/response schemas, error model, versioning, pagination, and auth. Triggers on requests like \"design the API\", \"write the OpenAPI spec\", \"define the endpoints/contract\", \"review this API\", or \"how should we version this\". Produces the contract that frontend and backend build against in parallel; deeper than the TSD's API section."},
+  {id:'data-modeler', label:'data-modeler', phase:'design',
+   desc:"Use this agent to design data models — conceptual/logical/physical schema, ERDs, normalization, indexing for access patterns, and migrations. Triggers on requests like \"design the data model\", \"draw the ERD\", \"design the database schema\", \"how should we index this\", or \"plan this migration\". Deeper than the SDD's conceptual model and the TSD's schema; pairs with backend-developer."},
+  {id:'ux-ui-designer', label:'ux-ui-designer', phase:'design',
+   desc:"Use this agent for product design (UX **and** UI) BEFORE code — user research, personas/scenarios, user flows, information architecture, interaction spec, wireframes, and the visual/UI layer (hi-fi mockups, visual hierarchy, typography, color, spacing) plus the design system it defines. Triggers on requests like \"wireframe this\", \"design the UI/UX\", \"design the visual look\", \"hi-fi mockups\", \"what's the user flow\", \"build the design system\", \"typography/color/spacing\", \"interaction spec for this screen\", or \"we need a design before building\". Sits between prd-writer and frontend-developer — it produces the \"design\" that frontend-developer implements. (Distinct from frontend-developer, which is the *implementation* craft — turning this design into components, state, and code.)"},
+  {id:'tsd-writer', label:'tsd-writer', phase:'design',
+   desc:"Use this agent to create, review, or update Technical Specification Documents (TSDs). Triggers on requests like \"write the TSD\", \"spec out the implementation\", \"finalize the tech stack and endpoints\", or \"give engineers the build playbook\". The agent reads the SDD, then produces the developer playbook — final tech stack, API specs, data models/schemas, testing strategy, and deployment plan. Run this last, after the SDD."},
+  // 04 PLANNING
+  {id:'backlog-manager', label:'backlog-manager', phase:'planning',
+   desc:"Use this agent to turn requirements into a product backlog — breaking a PRD/FRD into epics, user stories (PBIs), and tasks, writing INVEST-compliant stories with acceptance criteria, splitting oversized stories, and ordering the backlog. Triggers on requests like \"create the backlog\", \"turn this PRD into user stories\", \"write PBIs / product backlog items\", \"break this epic into stories\", \"split this story\", or \"groom/refine the backlog\". Bridges the spec agents (prd/frd-writer) to executable agile work; feeds estimation and sprint planning."},
+  {id:'estimation-facilitator', label:'estimation\nfacilitator', phase:'planning',
+   desc:"Use this agent to size backlog items — running story-point estimation, Planning Poker, and capacity/velocity calculations. Triggers on requests like \"estimate these stories\", \"run planning poker\", \"how many points is this\", \"what's our velocity\", or \"how much can we fit in a sprint\". Consumes the backlog-manager's stories and feeds the sprint-planner. Estimates relative effort/complexity/uncertainty, not hours."},
+  {id:'sprint-planner', label:'sprint-planner', phase:'planning',
+   desc:"Use this agent to plan a sprint — setting a sprint goal, selecting a capacity-fit set of backlog items, applying the Definition of Ready, and producing the sprint backlog. Triggers on requests like \"plan the sprint\", \"what goes in this sprint\", \"set a sprint goal\", \"build the sprint backlog\", or \"are these stories ready for the sprint\". Consumes the estimated backlog (backlog-manager + estimation-facilitator); its output is what the team commits to."},
+  // 05 BUILD
+  {id:'dev-onboarding', label:'dev-onboarding', phase:'build',
+   desc:"Use this agent to create a developer onboarding / CONTRIBUTING guide AND to verify the inner-loop readiness gate — how to get a new developer productive, the git branching/commit/PR conventions, and a check that build/test/lint actually run fast and non-flaky locally before work starts. Triggers on requests like \"write our CONTRIBUTING guide\", \"onboard a new dev\", \"how do we run this locally\", \"is the inner loop ready\", \"verify local build/test/lint\", \"what's our branching strategy\", or \"set up commit/PR conventions\". The artifact a junior reads on day one so they can ship without babysitting — plus the gate that stops \"works on my machine\" costing a sprint."},
+  {id:'coding-standards-writer', label:'coding-standards-writer', phase:'build',
+   desc:"Use this agent to author or maintain a team's coding standards / engineering guidelines — \"what good code looks like here\". Triggers on requests like \"write our coding standards\", \"set up engineering guidelines\", \"what's our style guide\", \"define naming/error-handling conventions\", or \"how should we structure code\". Produces a concise, enforceable standard that the code-reviewer and CI lint gates reference, so review is about the rule, not personal taste."},
+  {id:'ai-orchestrator', label:'ai-orchestrator', phase:'build',
+   desc:"Use this agent to govern how AI coding agents are used in the development loop — what to delegate, how to keep a human in the loop, how to set guardrails and evals, and how to review AI-generated output safely. Triggers on requests like \"how should we use AI coding agents\", \"set up our agentic SDLC guardrails\", \"what should we let the AI do autonomously\", \"review this AI-generated PR\", \"how do we stop AI drift\", \"design an autonomous agent loop\", or \"what stop condition should this loop have\". The governance layer for agentic software development AND the architecture of autonomous agent loops (stop conditions, maker/checker, autonomy ladder); pairs with spec-steward and code-reviewer."},
+  {id:'pr-author', label:'pr-author', phase:'build',
+   desc:"Use this agent to draft a pull-request description and commit messages from a diff or set of changes. Triggers on requests like \"write the PR description\", \"draft a commit message\", \"summarize this diff for review\", or \"open a PR for this\". Removes the daily PR-writing chore and makes reviews faster by giving reviewers the context they need. Pairs with code-reviewer (which reviews against the same PR template)."},
+  {id:'backend-developer', label:'backend-developer', phase:'build',
+   desc:"Use this agent for backend engineering — service design, API implementation, data access, reliability, security, and scaling patterns. Triggers on requests like \"build this service/endpoint\", \"design the backend for this feature\", \"how should this scale\", \"review the backend\", or \"make this resilient\". The backend depth the stack-agnostic SDD/TSD don't provide; pairs with api-designer and data-modeler."},
+  {id:'frontend-developer', label:'frontend-developer', phase:'build',
+   desc:"Use this agent for frontend engineering — component architecture, state management, accessibility, responsive/design-system discipline, performance, and distinctive (non-generic) UI. Triggers on requests like \"build this UI\", \"design the component structure\", \"make this accessible\", \"review the frontend\", or \"the UI looks like generic AI slop\". The frontend depth that the stack-agnostic SDD/TSD don't provide."},
+  // 06 TEST
+  {id:'test-plan-writer', label:'test-plan-writer', phase:'test',
+   desc:"Use this agent to create a test plan, test cases, and a QA strategy mapped to requirements. Triggers on requests like \"write the test plan\", \"create test cases\", \"QA strategy for this feature\", \"how do we verify these requirements\", or (regulated) \"IQ/OQ/PQ validation protocols\". Promotes the TSD's high-level testing section into a first-class plan, with every test traced to an FRD/SRS/PBI requirement via the RTM."},
+  {id:'test-author', label:'test-author', phase:'test',
+   desc:"Use this agent to write developer-level tests — unit and integration tests generated from acceptance criteria and the code under change. Triggers on requests like \"write tests for this\", \"add unit tests\", \"cover this function\", or \"what tests does this story need\". The developer's own testing (distinct from test-plan-writer, which is QA strategy, and qa-tester, which executes). Helps hit the Definition of Done's coverage bar."},
+  {id:'qa-tester', label:'qa-tester', phase:'test',
+   desc:"Use this agent for the tester's execution workflow — taking a build from dev, executing tests, reporting bugs, running the defect lifecycle, verifying fixes, and giving a QA sign-off that feeds the go/no-go decision. Triggers on requests like \"test this build\", \"log a bug\", \"write a bug report\", \"is this release-ready from QA\", \"triage these defects\", or \"QA sign-off\". The execution counterpart to the test-plan-writer (which plans; this one runs and reports)."},
+  {id:'test-automation-engineer', label:'test-auto\nengineer', phase:'test',
+   desc:"Use this agent to author and maintain automated tests — end-to-end, integration, and contract suites — and the automation strategy. Triggers on requests like \"automate this test\", \"write an e2e for this flow\", \"what should we automate\", \"our automated suite is slow/brittle\", or \"add this to regression\". The execution-automation counterpart to test-plan-writer (plans) and qa-tester (runs manually). Automating the right checks is the biggest modern QA daily task."},
+  {id:'accessibility-auditor', label:'accessibility\nauditor', phase:'test',
+   desc:"Use this agent to audit and sign off accessibility against WCAG 2.1 AA — a dedicated a11y gate, distinct from build-time craft. Triggers on requests like \"accessibility audit\", \"is this WCAG compliant\", \"a11y review\", \"check keyboard/screen-reader support\", \"accessibility sign-off before release\", or \"ADA/EN 301 549 conformance\". Complements ux-ui-designer (sets a11y intent) and frontend-developer (implements WCAG) by independently verifying and gating — the audit nobody owned."},
+  {id:'ai-eval', label:'ai-eval', phase:'test',
+   desc:"Use this agent to build the EVALS for AI/LLM features — golden datasets, eval suites, scoring rubrics, and regression-eval gates that run in CI. Triggers on requests like \"how do we test this AI feature\", \"build an eval set\", \"is the model output good enough\", \"set up an LLM-as-judge\", \"catch AI regressions\", or \"what's our eval harness\". The execution counterpart to ai-orchestrator (which sets eval *policy*) — this builds the actual datasets and gates. For AI *features you ship*, not just AI used to write code."},
+  {id:'bug-triager', label:'bug-triager', phase:'test',
+   desc:"Use this agent to triage the incoming bug queue — set severity vs priority, deduplicate, route to an owner, and decide fix-now vs defer. Triggers on requests like \"triage these bugs\", \"what should we fix first\", \"is this a dupe\", \"groom the bug backlog\", or \"set severity/priority\". Turns a noisy bug pile into an ordered, owned, deduplicated queue — a daily QA/lead chore."},
+  {id:'flaky-test-detective', label:'flaky-test\ndetective', phase:'test',
+   desc:"Use this agent to find, quarantine, and fix flaky tests — tests that pass and fail without code changes. Triggers on requests like \"this test is flaky\", \"CI is red intermittently\", \"find our flaky tests\", \"quarantine this test\", or \"why does this pass locally but fail in CI\". Flaky tests quietly destroy trust in CI; this agent keeps the suite trustworthy — a recurring dev/QA pain."},
+  {id:'debugger', label:'debugger', phase:'test',
+   desc:"Use this agent to root-cause a bug or failure systematically — from a stack trace, failing test, error message, or log. Triggers on requests like \"why is this failing\", \"debug this error\", \"root-cause this stack trace\", \"this test is red\", or \"production threw X\". Replaces flailing with a disciplined method; debugging is the single biggest time sink in a developer's day."},
+  {id:'change-verifier', label:'change-verifier', phase:'test',
+   desc:"Use this agent as the independent checker in a maker/checker loop — it verifies a code change against its acceptance criteria by RUNNING it, not by reading it. Triggers on \"verify this change\", \"did this actually work\", \"check this against the acceptance criteria\", \"is this ready for PR\", or \"run and confirm\". Distinct from code-reviewer (judges code quality/style statically) and qa-tester (system/exploratory QA on a deployed build) — this is the in-loop execution gate between the builder and the PR: build, run the changed tests + lint, exercise each acceptance criterion, and return a pass/fail verdict with evidence. Run it on a different model than the maker where possible."},
+  // 07 REVIEW
+  {id:'code-reviewer', label:'code-reviewer', phase:'review',
+   desc:"Use this agent to review a pull request or set of code changes against a shared bar. Triggers on requests like \"review this PR\", \"review my changes\", \"is this ready to merge\", or \"what should I check before approving\". Reviews against the team's coding standards and the Definition of Done; produces specific, actionable, kindly-worded feedback grouped by severity. Makes the DoD's \"peer-reviewed\" gate real."},
+  {id:'security-reviewer', label:'security-reviewer', phase:'review',
+   desc:"Use this agent for application security — threat modeling (STRIDE), security requirements, authn/authz design review, and an AppSec / dependency-scan checklist. Triggers on requests like \"threat model this\", \"security review\", \"is this design secure\", \"what are the security requirements\", \"STRIDE this feature\", or \"review this for vulnerabilities\". The human-judgement security owner that complements pipeline-engineer's automated scanners (SAST/dep-scan) and code-reviewer's general bar. Injects at the SRS/SDD (design) and gates at code-reviewer/CI."},
+  {id:'performance-engineer', label:'performance\nengineer', phase:'review',
+   desc:"Use this agent to find and fix performance problems — profiling, bottleneck analysis, memory/leak hunting, slow queries (N+1), bundle size / Core Web Vitals, and load-test-driven optimization against a budget. Triggers on requests like \"optimize this\", \"it's slow\", \"find the bottleneck\", \"reduce memory\", \"why is the page slow\", \"improve Core Web Vitals\", \"this query is slow\", or \"make it scale\". The performance owner — distinct from sre (proactive SLOs/observability) and backend-developer (builds the service); this profiles and optimizes what exists, behavior-preserving."},
+  {id:'raid-keeper', label:'raid-keeper', phase:'review',
+   desc:"Use this agent to maintain a RAID log — the living register of Risks, Assumptions, Issues, and Decisions for a project. Triggers on requests like \"start a RAID log\", \"log this risk/issue\", \"what are our open risks\", \"track this assumption\", \"record this decision\", or \"review the RAID\". Consolidates governance items scattered across the BRD (risks), ADRs (decisions), and sprint work into one tracked, owned, reviewed register."},
+  {id:'status-reporter', label:'status-reporter', phase:'review',
+   desc:"Use this agent to produce project status reports and a project-health snapshot. Triggers on requests like \"write the status report\", \"weekly update\", \"how's the project doing\", \"exec summary for the steering committee\", or \"sprint status\". Synthesizes the backlog, sprint plan, metrics, RAID log, and retro actions into an audience-tailored report with a RAG (red/amber/green) health rating."},
+  // 08 RELEASE
+  {id:'pipeline-engineer', label:'pipeline-engineer', phase:'release',
+   desc:"Use this agent to design or document a CI/CD pipeline — the automated stages and gates code passes through from commit to production. Triggers on requests like \"design our CI/CD pipeline\", \"what should our build pipeline do\", \"set up the deploy gates\", \"define required checks for merge\", or \"how do we get to continuous delivery\". Makes the DoD's \"tests pass / build green\" automatic and defines the path to production."},
+  {id:'release-manager', label:'release-manager', phase:'release',
+   desc:"Use this agent to plan and ship a release — building a release plan, running the go/no-go decision, and writing release notes. Triggers on requests like \"plan the release\", \"are we go for launch\", \"go/no-go checklist\", \"write the release notes\", or \"what's our rollout plan\". Consolidates the QA sign-off, CI/CD readiness, and open risks into one decision and a clean rollout."},
+  // 09 OPERATE
+  {id:'sre', label:'sre', phase:'operate',
+   desc:"Use this agent for PROACTIVE operations & reliability engineering — defining SLO/SLIs and error budgets, observability (metrics/logs/traces) design, alerting, runbooks, deploy/rollback strategy, capacity, and cloud cost. Triggers on requests like \"set up our SLOs\", \"design monitoring/observability\", \"what should we alert on\", \"write a runbook\", \"rollback strategy\", \"are we ready to operate this\", or \"on-call setup\". The proactive run-and-operate owner — distinct from pipeline-engineer (build→deploy plumbing) and incident-responder (reactive, after a failure)."},
+  {id:'incident-responder', label:'incident\nresponder', phase:'operate',
+   desc:"Use this agent for production incidents — running the response and writing a blameless postmortem, plus maintaining runbooks. Triggers on requests like \"we have an incident\", \"write the postmortem\", \"incident retro\", \"create a runbook for X\", or \"what's our on-call process\". Distinct from the sprint retrospective (process) — this is about production failures and learning from them."},
+  // 10 PROCESS
+  {id:'feature-docs-writer', label:'feature-docs\nwriter', phase:'process',
+   desc:"Use this agent to write the user-facing documentation for a shipped feature — the how-to guides and reference a user or operator actually reads, structured with Diátaxis. Triggers on \"document this feature for users\", \"write the how-to / user guide\", \"API reference for these endpoints\", \"our docs are a chaotic mess\", or \"what docs ship with this release\". Distinct from the spec agents (PRD/FRD describe intent for the team); this produces docs for the people who *use* the system, derived from the spec so they don't drift."},
+  {id:'product-analytics', label:'product-analytics', phase:'process',
+   desc:"'Use this agent to instrument and measure whether a shipped product actually works — event/telemetry spec, success-metric tracking, funnels, and A/B-test/experiment design. Triggers on requests like \"what should we track\", \"instrument this feature\", \"design an A/B test\", \"are we hitting the PRD''s success metrics\", \"set up the analytics events\", or \"did this feature move the metric\". Closes the build→learn loop: the PRD sets target metrics, this agent measures them. (Distinct from status-reporter/engineering-metrics, which are DELIVERY metrics; this is PRODUCT metrics.)'"},
+  {id:'retrospective-facilitator', label:'retrospective\nfacilitator', phase:'process',
+   desc:"'Use this agent to run a sprint retrospective — structuring a blameless reflection on what went well and what didn''t, and turning it into a few concrete, owned action items that get tracked sprint to sprint. Triggers on requests like \"run a retro\", \"sprint retrospective\", \"what should we improve\", \"facilitate a retro\", or \"follow up on last retro''s actions\". Closes the agile loop: the Sprint Review inspects the product, the retro inspects the team''s process.'"},
+  {id:'spec-steward', label:'spec-steward', phase:'process',
+   desc:"'Use this agent to adopt or improve Spec-Driven Development (Spec-DD) with AI coding tools. Triggers on requests like \"set up a CLAUDE.md / AGENTS.md\", \"write a spec for this feature before we build it\", \"our AI agent keeps drifting from intent\", \"make our spec the source of truth\", or \"what spec maturity level are we at\". The agent assesses which of three maturity rungs the team is on and helps them author and maintain a living specification that stays ahead of the code. (Note: \"Spec-Driven Development\" here is distinct from the sdd-writer agent''s \"Software Design Document\" — this agent is about keeping specs authoritative, not producing an architecture doc.)'"},
+  {id:'tech-debt-keeper', label:'tech-debt\nkeeper', phase:'process',
+   desc:"Use this agent to maintain a technical-debt register — a living, owned list of what's rotting and why, so debt is negotiable with the PM instead of invisible. Triggers on requests like \"track our tech debt\", \"we keep meaning to fix that\", \"log this shortcut\", \"what debt do we have\", or \"groom the debt list\". Each item carries impact, interest (how fast it worsens), effort, an owner, and a decision; items past a threshold get promoted to the backlog. Fed by postmortems, retros, and code reviews; gives architects a cross-team view of where the rot is concentrated."},
+  {id:'tech-radar-curator', label:'tech-radar-curator', phase:'process',
+   desc:"Use this agent to create and maintain a technology radar — the architect-owned, team-consumed snapshot of what to Adopt / Trial / Assess / Hold across Languages & Frameworks, Tools, Platforms, and Techniques. Triggers on requests like \"build a tech radar\", \"what are we allowed to use here\", \"publish our sanctioned tech choices\", \"should we hold X\", or \"align frontend/backend on tooling\". The radar broadcasts technical direction across multiple teams so choices cohere; movement between rings is driven by ADRs."},
+  {id:'wiki-curator', label:'wiki-curator', phase:'process',
+   desc:"'Use this agent to build and maintain the project wiki / knowledge base — the home/landing page, navigation structure, the index of where each artifact lives, and links to every system of record. Triggers on requests like \"set up our project wiki\", \"build the docs home page\", \"organize our Confluence / Azure DevOps Wiki\", \"where do I find X\", or \"our wiki is a mess\". Operationalizes the information-architecture model: it''s the front door that makes the source of truth discoverable. Distinct from doc-strategy-advisor (which decides *which* docs) — this one *builds and keeps* the wiki.'"},
+  {id:'run-orchestrator', label:'run-orchestrator', phase:'process',
+   desc:"Use this agent to DRIVE a multi-agent run end-to-end against a goal — it reads the contract graph plus a run-state spine, proposes the next agent(s) to dispatch, enforces the stop-condition contract and the gates between handoffs, and records progress so the run is resumable. Triggers on \"orchestrate building X\", \"run the funnel for X\", \"drive this feature through the fleet\", \"what's the next agent\", \"continue the run\", or \"coordinate the agents to ship X\". The conductor for the fleet — distinct from ai-orchestrator (which writes the governance *policy*) and from any single specialist (which does one step). Proposes-and-confirms by default; never auto-dispatches to protected paths."},
+];
+
+const EDGES = [
+  {from:'doc-strategy-advisor', to:'mrd-writer', t:'p'},
+  {from:'doc-strategy-advisor', to:'brd-writer', t:'p'},
+  {from:'doc-strategy-advisor', to:'prd-writer', t:'s'},
+  {from:'doc-strategy-advisor', to:'solution-recon', t:'s'},
+  {from:'doc-strategy-advisor', to:'urs-writer', t:'s'},
+  {from:'doc-strategy-advisor', to:'wiki-curator', t:'s'},
+  {from:'mrd-writer', to:'brd-writer', t:'p'},
+  {from:'brd-writer', to:'prd-writer', t:'p'},
+  {from:'brd-writer', to:'urs-writer', t:'s'},
+  {from:'prd-writer', to:'frd-writer', t:'p'},
+  {from:'prd-writer', to:'backlog-manager', t:'s'},
+  {from:'prd-writer', to:'solution-recon', t:'s'},
+  {from:'prd-writer', to:'ux-ui-designer', t:'p'},
+  {from:'prd-writer', to:'ai-eval', t:'s'},
+  {from:'prd-writer', to:'product-analytics', t:'s'},
+  {from:'frd-writer', to:'srs-writer', t:'p'},
+  {from:'frd-writer', to:'backlog-manager', t:'s'},
+  {from:'frd-writer', to:'test-plan-writer', t:'p'},
+  {from:'frd-writer', to:'api-designer', t:'p'},
+  {from:'frd-writer', to:'feature-docs-writer', t:'s'},
+  {from:'frd-writer', to:'solution-recon', t:'s'},
+  {from:'frd-writer', to:'ux-ui-designer', t:'s'},
+  {from:'frd-writer', to:'product-analytics', t:'s'},
+  {from:'frd-writer', to:'architect', t:'s'},
+  {from:'frd-writer', to:'sdd-writer', t:'s'},
+  {from:'srs-writer', to:'sdd-writer', t:'p'},
+  {from:'srs-writer', to:'test-plan-writer', t:'s'},
+  {from:'srs-writer', to:'backlog-manager', t:'s'},
+  {from:'srs-writer', to:'data-modeler', t:'p'},
+  {from:'srs-writer', to:'security-reviewer', t:'s'},
+  {from:'srs-writer', to:'sre', t:'s'},
+  {from:'srs-writer', to:'performance-engineer', t:'s'},
+  {from:'srs-writer', to:'rfc-facilitator', t:'s'},
+  {from:'urs-writer', to:'srs-writer', t:'p'},
+  {from:'urs-writer', to:'frd-writer', t:'s'},
+  {from:'urs-writer', to:'prd-writer', t:'s'},
+  {from:'solution-recon', to:'frd-writer', t:'s'},
+  {from:'solution-recon', to:'srs-writer', t:'s'},
+  {from:'solution-recon', to:'sdd-writer', t:'p'},
+  {from:'solution-recon', to:'backlog-manager', t:'s'},
+  {from:'solution-recon', to:'adr-writer', t:'s'},
+  {from:'solution-recon', to:'architect', t:'s'},
+  {from:'solution-recon', to:'estimation-facilitator', t:'s'},
+  {from:'solution-recon', to:'backend-developer', t:'s'},
+  {from:'solution-recon', to:'frontend-developer', t:'s'},
+  {from:'solution-recon', to:'raid-keeper', t:'s'},
+  {from:'architect', to:'adr-writer', t:'p'},
+  {from:'architect', to:'rfc-facilitator', t:'p'},
+  {from:'architect', to:'backend-developer', t:'s'},
+  {from:'architect', to:'frontend-developer', t:'s'},
+  {from:'architect', to:'raid-keeper', t:'s'},
+  {from:'rfc-facilitator', to:'adr-writer', t:'p'},
+  {from:'rfc-facilitator', to:'sdd-writer', t:'s'},
+  {from:'adr-writer', to:'tech-radar-curator', t:'s'},
+  {from:'sdd-writer', to:'backlog-manager', t:'p'},
+  {from:'sdd-writer', to:'adr-writer', t:'s'},
+  {from:'sdd-writer', to:'api-designer', t:'s'},
+  {from:'sdd-writer', to:'data-modeler', t:'s'},
+  {from:'sdd-writer', to:'rfc-facilitator', t:'s'},
+  {from:'sdd-writer', to:'tsd-writer', t:'p'},
+  {from:'sdd-writer', to:'security-reviewer', t:'p'},
+  {from:'sdd-writer', to:'sre', t:'s'},
+  {from:'sdd-writer', to:'architect', t:'f'},
+  {from:'api-designer', to:'backend-developer', t:'p'},
+  {from:'api-designer', to:'frontend-developer', t:'p'},
+  {from:'api-designer', to:'test-automation-engineer', t:'s'},
+  {from:'data-modeler', to:'backend-developer', t:'p'},
+  {from:'ux-ui-designer', to:'frontend-developer', t:'p'},
+  {from:'ux-ui-designer', to:'accessibility-auditor', t:'s'},
+  {from:'tsd-writer', to:'backlog-manager', t:'p'},
+  {from:'tsd-writer', to:'backend-developer', t:'p'},
+  {from:'tsd-writer', to:'pipeline-engineer', t:'s'},
+  {from:'backlog-manager', to:'estimation-facilitator', t:'p'},
+  {from:'backlog-manager', to:'sprint-planner', t:'s'},
+  {from:'backlog-manager', to:'status-reporter', t:'s'},
+  {from:'backlog-manager', to:'test-author', t:'s'},
+  {from:'estimation-facilitator', to:'sprint-planner', t:'p'},
+  {from:'sprint-planner', to:'frontend-developer', t:'p'},
+  {from:'sprint-planner', to:'backend-developer', t:'p'},
+  {from:'sprint-planner', to:'retrospective-facilitator', t:'s'},
+  {from:'sprint-planner', to:'raid-keeper', t:'s'},
+  {from:'dev-onboarding', to:'backend-developer', t:'s'},
+  {from:'dev-onboarding', to:'frontend-developer', t:'s'},
+  {from:'dev-onboarding', to:'flaky-test-detective', t:'s'},
+  {from:'coding-standards-writer', to:'code-reviewer', t:'p'},
+  {from:'coding-standards-writer', to:'frontend-developer', t:'s'},
+  {from:'coding-standards-writer', to:'backend-developer', t:'s'},
+  {from:'coding-standards-writer', to:'pipeline-engineer', t:'s'},
+  {from:'ai-orchestrator', to:'ai-eval', t:'p'},
+  {from:'pr-author', to:'code-reviewer', t:'p'},
+  {from:'backend-developer', to:'change-verifier', t:'s'},
+  {from:'backend-developer', to:'code-reviewer', t:'p'},
+  {from:'backend-developer', to:'qa-tester', t:'p'},
+  {from:'backend-developer', to:'performance-engineer', t:'s'},
+  {from:'backend-developer', to:'debugger', t:'p'},
+  {from:'frontend-developer', to:'change-verifier', t:'s'},
+  {from:'frontend-developer', to:'code-reviewer', t:'p'},
+  {from:'frontend-developer', to:'qa-tester', t:'p'},
+  {from:'frontend-developer', to:'accessibility-auditor', t:'p'},
+  {from:'frontend-developer', to:'performance-engineer', t:'s'},
+  {from:'frontend-developer', to:'debugger', t:'p'},
+  {from:'test-plan-writer', to:'test-author', t:'p'},
+  {from:'test-plan-writer', to:'qa-tester', t:'p'},
+  {from:'test-plan-writer', to:'test-automation-engineer', t:'p'},
+  {from:'test-author', to:'change-verifier', t:'s'},
+  {from:'test-author', to:'code-reviewer', t:'p'},
+  {from:'test-author', to:'debugger', t:'p'},
+  {from:'test-author', to:'flaky-test-detective', t:'p'},
+  {from:'qa-tester', to:'bug-triager', t:'p'},
+  {from:'qa-tester', to:'release-manager', t:'s'},
+  {from:'qa-tester', to:'debugger', t:'s'},
+  {from:'test-automation-engineer', to:'pipeline-engineer', t:'p'},
+  {from:'accessibility-auditor', to:'release-manager', t:'s'},
+  {from:'ai-eval', to:'pipeline-engineer', t:'s'},
+  {from:'bug-triager', to:'debugger', t:'p'},
+  {from:'bug-triager', to:'backlog-manager', t:'f'},
+  {from:'flaky-test-detective', to:'test-automation-engineer', t:'f'},
+  {from:'debugger', to:'test-author', t:'f'},
+  {from:'change-verifier', to:'pr-author', t:'p'},
+  {from:'change-verifier', to:'code-reviewer', t:'p'},
+  {from:'change-verifier', to:'debugger', t:'f'},
+  {from:'code-reviewer', to:'pipeline-engineer', t:'p'},
+  {from:'code-reviewer', to:'release-manager', t:'s'},
+  {from:'code-reviewer', to:'tech-debt-keeper', t:'s'},
+  {from:'code-reviewer', to:'backend-developer', t:'f'},
+  {from:'code-reviewer', to:'frontend-developer', t:'f'},
+  {from:'security-reviewer', to:'code-reviewer', t:'p'},
+  {from:'security-reviewer', to:'pipeline-engineer', t:'s'},
+  {from:'security-reviewer', to:'backend-developer', t:'f'},
+  {from:'security-reviewer', to:'frontend-developer', t:'f'},
+  {from:'performance-engineer', to:'sre', t:'s'},
+  {from:'performance-engineer', to:'release-manager', t:'s'},
+  {from:'raid-keeper', to:'status-reporter', t:'p'},
+  {from:'pipeline-engineer', to:'release-manager', t:'p'},
+  {from:'pipeline-engineer', to:'flaky-test-detective', t:'s'},
+  {from:'pipeline-engineer', to:'sre', t:'s'},
+  {from:'pipeline-engineer', to:'status-reporter', t:'s'},
+  {from:'release-manager', to:'incident-responder', t:'s'},
+  {from:'release-manager', to:'feature-docs-writer', t:'p'},
+  {from:'release-manager', to:'wiki-curator', t:'s'},
+  {from:'sre', to:'incident-responder', t:'p'},
+  {from:'sre', to:'release-manager', t:'s'},
+  {from:'incident-responder', to:'backlog-manager', t:'f'},
+  {from:'incident-responder', to:'retrospective-facilitator', t:'f'},
+  {from:'incident-responder', to:'tech-debt-keeper', t:'s'},
+  {from:'incident-responder', to:'raid-keeper', t:'s'},
+  {from:'feature-docs-writer', to:'wiki-curator', t:'p'},
+  {from:'product-analytics', to:'status-reporter', t:'s'},
+  {from:'product-analytics', to:'backlog-manager', t:'s'},
+  {from:'retrospective-facilitator', to:'backlog-manager', t:'f'},
+  {from:'retrospective-facilitator', to:'tech-debt-keeper', t:'s'},
+  {from:'spec-steward', to:'doc-strategy-advisor', t:'f'},
+  {from:'tech-debt-keeper', to:'backlog-manager', t:'f'},
+  // wiki-curator index overlay (t:'i' -- exempt from check 12, curated above)
+  {from:'adr-writer', to:'wiki-curator', t:'i'},
+  {from:'api-designer', to:'wiki-curator', t:'i'},
+  {from:'backlog-manager', to:'wiki-curator', t:'i'},
+  {from:'brd-writer', to:'wiki-curator', t:'i'},
+  {from:'coding-standards-writer', to:'wiki-curator', t:'i'},
+  {from:'data-modeler', to:'wiki-curator', t:'i'},
+  {from:'dev-onboarding', to:'wiki-curator', t:'i'},
+  {from:'frd-writer', to:'wiki-curator', t:'i'},
+  {from:'incident-responder', to:'wiki-curator', t:'i'},
+  {from:'mrd-writer', to:'wiki-curator', t:'i'},
+  {from:'pipeline-engineer', to:'wiki-curator', t:'i'},
+  {from:'prd-writer', to:'wiki-curator', t:'i'},
+  {from:'qa-tester', to:'wiki-curator', t:'i'},
+  {from:'raid-keeper', to:'wiki-curator', t:'i'},
+  {from:'sdd-writer', to:'wiki-curator', t:'i'},
+  {from:'sre', to:'wiki-curator', t:'i'},
+  {from:'status-reporter', to:'wiki-curator', t:'i'},
+  {from:'test-plan-writer', to:'wiki-curator', t:'i'},
+  {from:'tsd-writer', to:'wiki-curator', t:'i'},
+  {from:'urs-writer', to:'wiki-curator', t:'i'},
+  {from:'ux-ui-designer', to:'wiki-curator', t:'i'},
+];
+
+const AGENT_SKILLS = {
+  'accessibility-auditor':['verification-run-and-observe'],
+  'adr-writer':['ubiquitous-language','architecture-decision-framing'],
+  'ai-eval':['eval-harness-design','agentic-loop-design','verification-run-and-observe','llm-cost-optimization'],
+  'ai-orchestrator':['agentic-loop-design','eval-harness-design','llm-cost-optimization'],
+  'api-designer':['api-contract','threat-modeling-stride'],
+  'architect':['architecture-decision-framing','threat-modeling-stride','agent-handoff-context'],
+  'backend-developer':['verification-run-and-observe','code-minimalism','systematic-debugging','conventional-commits-pr','observability-slo-design','brownfield-recon','agent-handoff-context','context-engineering'],
+  'backlog-manager':['backlog-decomposition','relative-estimation','traceability-rtm','agent-handoff-context'],
+  'brd-writer':['requirement-quality','requirement-elicitation'],
+  'bug-triager':['defect-triage','agent-handoff-context'],
+  'change-verifier':['verification-run-and-observe','test-design','agentic-loop-design','traceability-rtm','agent-handoff-context','eval-harness-design'],
+  'code-reviewer':['code-minimalism','cross-artifact-analysis','traceability-rtm','agent-handoff-context'],
+  'coding-standards-writer':[],
+  'data-modeler':['threat-modeling-stride','verification-run-and-observe'],
+  'debugger':['verification-run-and-observe','systematic-debugging','agent-handoff-context'],
+  'dev-onboarding':['conventional-commits-pr'],
+  'doc-strategy-advisor':[],
+  'estimation-facilitator':['relative-estimation','brownfield-recon'],
+  'feature-docs-writer':['agent-handoff-context'],
+  'flaky-test-detective':['systematic-debugging','verification-run-and-observe'],
+  'frd-writer':['requirement-quality','requirement-elicitation','ubiquitous-language','traceability-rtm','agent-handoff-context'],
+  'frontend-developer':['verification-run-and-observe','code-minimalism','systematic-debugging','conventional-commits-pr','brownfield-recon','agent-handoff-context','context-engineering'],
+  'incident-responder':['systematic-debugging','observability-slo-design','production-incident-response','defect-triage'],
+  'mrd-writer':['requirement-quality'],
+  'performance-engineer':['observability-slo-design','production-incident-response'],
+  'pipeline-engineer':['agentic-loop-design','eval-harness-design','observability-slo-design'],
+  'pr-author':['conventional-commits-pr','agent-handoff-context'],
+  'prd-writer':['requirement-quality','requirement-elicitation','ubiquitous-language'],
+  'product-analytics':['analytics-instrumentation'],
+  'qa-tester':['verification-run-and-observe','defect-triage','agent-handoff-context'],
+  'raid-keeper':['agent-handoff-context'],
+  'release-manager':['production-incident-response','agent-handoff-context'],
+  'retrospective-facilitator':['sprint-facilitation','agent-handoff-context'],
+  'rfc-facilitator':['architecture-decision-framing','requirement-elicitation'],
+  'run-orchestrator':['agentic-loop-design','traceability-rtm','agent-handoff-context','context-engineering'],
+  'sdd-writer':['architecture-decision-framing','threat-modeling-stride','agent-handoff-context'],
+  'security-reviewer':['threat-modeling-stride','agent-handoff-context'],
+  'solution-recon':['api-contract','brownfield-recon','agent-handoff-context','context-engineering'],
+  'spec-steward':['cross-artifact-analysis','traceability-rtm','ubiquitous-language'],
+  'sprint-planner':['relative-estimation','sprint-facilitation','agent-handoff-context'],
+  'sre':['observability-slo-design','production-incident-response','agent-handoff-context'],
+  'srs-writer':['requirement-quality','traceability-rtm','agent-handoff-context'],
+  'status-reporter':['sprint-facilitation'],
+  'tech-debt-keeper':['agent-handoff-context'],
+  'tech-radar-curator':['agent-handoff-context'],
+  'test-author':['test-design','verification-run-and-observe','agent-handoff-context','test-data'],
+  'test-automation-engineer':['test-design','verification-run-and-observe','test-data'],
+  'test-plan-writer':['test-design'],
+  'tsd-writer':['architecture-decision-framing','agent-handoff-context'],
+  'urs-writer':['requirement-quality'],
+  'ux-ui-designer':['ux-design-method'],
+  'wiki-curator':['agent-handoff-context'],
+};
+// reverse index: skill -> agents that arm it (derived, never drifts)
+const SKILL_AGENTS = {};
+Object.entries(AGENT_SKILLS).forEach(([a, ss]) => ss.forEach(s => { (SKILL_AGENTS[s] = SKILL_AGENTS[s] || []).push(a); }));
+const SKILLS = Object.keys(SKILL_AGENTS).sort();
+
+// <<< GENERATED DATA <<<
+
+// ─── LAYOUT ──────────────────────────────────────────────────────────────────
+const SVG_W   = 2060;
+const L_MAR   = 148;
+const R_MAR   = 20;
+const LANE_H  = 122;
+const NODE_W  = 134;
+const NODE_H  = 44;
+const HDR_H   = 34;
+
+const phaseIdx = {};
+PHASES.forEach((p,i)=>phaseIdx[p.id]=i);
+
+const phaseAgents={};
+PHASES.forEach(p=>{phaseAgents[p.id]=[]});
+AGENTS.forEach(a=>phaseAgents[a.phase].push(a));
+
+const pos={}; // id→{cx,cy}
+PHASES.forEach((ph,pi)=>{
+  const list=phaseAgents[ph.id];
+  const lY=HDR_H+pi*LANE_H;
+  const usable=SVG_W-L_MAR-R_MAR;
+  list.forEach((a,ai)=>{
+    pos[a.id]={cx: L_MAR+(usable/list.length)*(ai+0.5), cy: lY+LANE_H/2};
+  });
+});
+const SVG_H=HDR_H+PHASES.length*LANE_H+22;
+
+// ─── BUILD SVG ───────────────────────────────────────────────────────────────
+const svg=document.getElementById('graph');
+const ns='http://www.w3.org/2000/svg';
+svg.setAttribute('width',SVG_W);
+svg.setAttribute('height',SVG_H);
+svg.setAttribute('viewBox',`0 0 ${SVG_W} ${SVG_H}`);
+
+function el(tag,attrs,text){
+  const e=document.createElementNS(ns,tag);
+  for(const [k,v] of Object.entries(attrs)) e.setAttribute(k,v);
+  if(text!=null) e.textContent=text;
+  return e;
+}
+
+// Defs
+const defs=el('defs',{});
+const gp=el('pattern',{id:'grid',width:'40',height:'40',patternUnits:'userSpaceOnUse'});
+gp.appendChild(el('path',{d:'M 40 0 L 0 0 0 40',fill:'none',stroke:'#0E2238','stroke-width':'0.35'}));
+defs.appendChild(gp);
+function mkArr(id,color){
+  const m=el('marker',{id,markerWidth:'7',markerHeight:'7',refX:'5.5',refY:'3',orient:'auto'});
+  m.appendChild(el('path',{d:'M0,0 L7,3 L0,6 Z',fill:color}));
+  return m;
+}
+defs.appendChild(mkArr('arr-p','#C8982A'));
+defs.appendChild(mkArr('arr-s','#3D8FB5'));
+defs.appendChild(mkArr('arr-f','#8055B5'));
+svg.appendChild(defs);
+
+// Background
+svg.appendChild(el('rect',{width:SVG_W,height:SVG_H,fill:'#060F1C'}));
+svg.appendChild(el('rect',{width:SVG_W,height:SVG_H,fill:'url(#grid)'}));
+
+// Phase lanes
+PHASES.forEach((ph,pi)=>{
+  const ly=HDR_H+pi*LANE_H;
+  svg.appendChild(el('rect',{x:0,y:ly,width:SVG_W,height:LANE_H,fill:ph.color,opacity:'0.055'}));
+  svg.appendChild(el('rect',{x:0,y:ly,width:L_MAR-8,height:LANE_H,fill:ph.color,opacity:'0.14'}));
+  if(pi>0) svg.appendChild(el('line',{x1:0,y1:ly,x2:SVG_W,y2:ly,stroke:ph.color,'stroke-width':'0.5',opacity:'0.28'}));
+  svg.appendChild(el('text',{x:9,y:ly+17,fill:ph.color,opacity:'0.6','font-family':'Courier New,monospace','font-size':'9','letter-spacing':'0.14em'},ph.n));
+  svg.appendChild(el('text',{x:9,y:ly+30,fill:ph.color,'font-family':'Courier New,monospace','font-size':'8','letter-spacing':'0.09em'},ph.label));
+});
+
+// ─── EDGES ───────────────────────────────────────────────────────────────────
+const edgeLayer=el('g',{});
+svg.appendChild(edgeLayer);
+
+const ECFG={
+  p:{stroke:'#C8982A',sw:1.5, op:0.55,dash:'none', arr:'arr-p'},
+  s:{stroke:'#3D8FB5',sw:0.85,op:0.26,dash:'5,4',  arr:'arr-s'},
+  f:{stroke:'#8055B5',sw:0.85,op:0.38,dash:'2,5',  arr:'arr-f'},
+  i:{stroke:'#4A8AAA',sw:0.7, op:0,   dash:'3,6',  arr:'arr-s'}, // indexes — hidden until wiki-curator selected
+};
+const edgeEls={};
+
+EDGES.forEach(edge=>{
+  const a=pos[edge.from], b=pos[edge.to];
+  if(!a||!b) return;
+  const key=edge.from+'→'+edge.to;
+  const pA=phaseIdx[AGENTS.find(x=>x.id===edge.from)?.phase]??-1;
+  const pB=phaseIdx[AGENTS.find(x=>x.id===edge.to)?.phase]??-1;
+  const cfg=ECFG[edge.t];
+  let d;
+  if(pA===pB){
+    const mx=(a.cx+b.cx)/2;
+    d=`M${a.cx},${a.cy-NODE_H/2} Q${mx},${a.cy-NODE_H/2-48} ${b.cx},${b.cy-NODE_H/2}`;
+  } else if(pB<pA){
+    const ox=Math.max(a.cx,b.cx)+90;
+    d=`M${a.cx},${a.cy} C${ox},${a.cy} ${ox},${b.cy} ${b.cx+NODE_W/2},${b.cy}`;
+  } else {
+    const mY=(a.cy+b.cy)/2;
+    d=`M${a.cx},${a.cy+NODE_H/2} C${a.cx},${mY} ${b.cx},${mY} ${b.cx},${b.cy-NODE_H/2}`;
+  }
+  const path=el('path',{d,fill:'none',stroke:cfg.stroke,'stroke-width':cfg.sw,
+    opacity:cfg.op,'stroke-dasharray':cfg.dash,'marker-end':`url(#${cfg.arr})`});
+  edgeLayer.appendChild(path);
+  edgeEls[key]={el:path,from:edge.from,to:edge.to,t:edge.t,cfg};
+});
+
+// ─── NODES ───────────────────────────────────────────────────────────────────
+const nodeLayer=el('g',{});
+svg.appendChild(nodeLayer);
+const nodeEls={};
+
+AGENTS.forEach(agent=>{
+  const p=pos[agent.id]; if(!p) return;
+  const ph=PHASES.find(x=>x.id===agent.phase);
+  const c=ph.color;
+  const g=document.createElementNS(ns,'g');
+  g.setAttribute('data-id',agent.id);
+  g.style.cursor='pointer';
+  g.setAttribute('transform',`translate(${p.cx-NODE_W/2},${p.cy-NODE_H/2})`);
+
+  const r=el('rect',{width:NODE_W,height:NODE_H,rx:'2',ry:'2',
+    fill:c,'fill-opacity':'0.13',stroke:c,'stroke-width':'0.85','stroke-opacity':'0.65'});
+  g.appendChild(r);
+  g.appendChild(el('rect',{x:0,y:0,width:5,height:5,fill:c,opacity:'0.8'}));
+  g.appendChild(el('rect',{x:NODE_W-5,y:NODE_H-5,width:5,height:5,fill:c,opacity:'0.45'}));
+
+  const lines=agent.label.split('\n');
+  const baseY=lines.length===1 ? NODE_H/2+4 : NODE_H/2-3;
+  lines.forEach((ln,li)=>{
+    g.appendChild(el('text',{x:NODE_W/2,y:baseY+li*13,fill:'#C4D8EE',
+      'font-family':'Courier New,monospace','font-size':'9','text-anchor':'middle',
+      'letter-spacing':'0.04em'},ln));
+  });
+
+  g.setAttribute('tabindex','0');
+  g.setAttribute('role','button');
+  g.setAttribute('aria-label',`${agent.id} — ${ph.label} phase — ${agent.desc}`);
+  g.addEventListener('mouseenter',e=>showTip(e,agent,ph));
+  g.addEventListener('mouseleave',()=>tip.classList.remove('show'));
+  g.addEventListener('click',()=>selectAgent(agent.id));
+  g.addEventListener('keydown',ev=>{
+    if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();selectAgent(agent.id)}
+    else if(ev.key==='Escape'){clearSel();g.blur()}
+  });
+  nodeLayer.appendChild(g);
+  nodeEls[agent.id]=g;
+});
+
+// ─── INTERACTION ─────────────────────────────────────────────────────────────
+const tip=document.getElementById('tooltip');
+const infoBar=document.getElementById('info-bar');
+let selected=null;
+
+function showTip(e,agent,ph){
+  document.getElementById('tip-id').textContent=agent.id;
+  document.getElementById('tip-phase').textContent=ph.label;
+  document.getElementById('tip-desc').textContent=agent.desc;
+  const sk=AGENT_SKILLS[agent.id]||[];
+  document.getElementById('tip-skills').textContent = sk.length ? ('▸ skills: '+sk.join(', ')) : '';
+  tip.classList.add('show');
+  moveTip(e);
+}
+document.addEventListener('mousemove',e=>{if(tip.classList.contains('show'))moveTip(e)});
+function moveTip(e){
+  tip.style.left=Math.min(e.clientX+18,window.innerWidth-280)+'px';
+  tip.style.top=Math.min(e.clientY+14,window.innerHeight-140)+'px';
+}
+
+function selectAgent(id){
+  if(selected===id){clearSel();return}
+  clearSel();
+  selected=id;
+  Object.values(chipEls).forEach(c=>c.classList.remove('active'));
+  const linked=new Set([id]);
+  const linkedEdges=new Set();
+  Object.keys(edgeEls).forEach(k=>{
+    const e=edgeEls[k];
+    if(e.from===id||e.to===id){linked.add(e.from);linked.add(e.to);linkedEdges.add(k)}
+  });
+  Object.keys(nodeEls).forEach(nid=>{
+    const g=nodeEls[nid];
+    if(linked.has(nid)){
+      g.style.opacity='1';
+      g.querySelector('rect').setAttribute('fill-opacity',nid===id?'0.38':'0.22');
+    } else {
+      g.style.opacity='0.1';
+    }
+  });
+  Object.keys(edgeEls).forEach(k=>{
+    const e=edgeEls[k];
+    if(linkedEdges.has(k)){
+      const hiOp = e.t==='p'?'0.95': e.t==='f'?'0.8': e.t==='i'?'0.45':'0.55';
+      e.el.setAttribute('opacity',hiOp);
+      if(e.t==='p') e.el.setAttribute('stroke-width','2.2');
+    } else {
+      e.el.setAttribute('opacity','0.03');
+    }
+  });
+  const agent=AGENTS.find(a=>a.id===id);
+  const ph=PHASES.find(p=>p.id===agent.phase);
+  // real delegation only — index (t:'i') edges are a wiki-curator overlay, not handoffs,
+  // so counting them would wrongly give e.g. status-reporter "1 outgoing" (it's terminal).
+  const out=EDGES.filter(e=>e.from===id && e.t!=='i').length;
+  const inc=EDGES.filter(e=>e.to===id && e.t!=='i').length;
+  const idxIn=EDGES.filter(e=>e.to===id && e.t==='i').length;
+  const idxTxt=idxIn?` &nbsp;·&nbsp; indexes ${idxIn} artifacts`:'';
+  const sk=AGENT_SKILLS[id]||[];
+  const skTxt=sk.length?` &nbsp;·&nbsp; skills: ${sk.join(', ')}`:'';
+  infoBar.innerHTML=`<span>${id}</span> &nbsp;·&nbsp; ${ph.label} &nbsp;·&nbsp; ${inc} incoming &nbsp;·&nbsp; ${out} outgoing${idxTxt}${skTxt} &nbsp;·&nbsp; <a href="../agents/${id}.md">contract</a> &nbsp;·&nbsp; click again to clear`;
+  try{history.replaceState(null,'','#'+id);}catch(e){}
+}
+
+function focusAgent(id){
+  if(!AGENTS.some(a=>a.id===id))return false;
+  selectAgent(id);
+  const g=nodeEls[id];
+  if(g&&g.getBBox){
+    const bb=g.getBBox(),wrap=document.getElementById('graph-wrap');
+    wrap.scrollLeft=Math.max(0,bb.x-wrap.clientWidth/2+bb.width/2);
+    g.scrollIntoView({block:'center',behavior:'smooth'});
+  }
+  return true;
+}
+
+function clearSel(){
+  selected=null;
+  selectedSkill=null;
+  Object.values(chipEls).forEach(c=>c.classList.remove('active'));
+  Object.keys(nodeEls).forEach(nid=>{
+    nodeEls[nid].style.opacity='1';
+    nodeEls[nid].querySelector('rect').setAttribute('fill-opacity','0.13');
+  });
+  Object.keys(edgeEls).forEach(k=>{
+    const e=edgeEls[k];
+    e.el.setAttribute('opacity',e.cfg.op);
+    e.el.setAttribute('stroke-width',e.cfg.sw);
+  });
+  infoBar.innerHTML='Click any agent to trace its delegation chain &nbsp;·&nbsp; Hover for description';
+  try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}
+}
+svg.addEventListener('click',e=>{if(!e.target.closest('[data-id]'))clearSel()});
+
+// find-an-agent: substring match on id; Enter selects + centers; / focuses
+const searchBox=document.getElementById('agent-search');
+searchBox.addEventListener('input',()=>{
+  const v=searchBox.value.trim().toLowerCase();
+  Object.keys(nodeEls).forEach(nid=>{
+    nodeEls[nid].style.opacity = (!v||nid.includes(v)) ? '1' : '0.12';
+  });
+  if(!v&&!selected)clearSel();
+});
+searchBox.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    const v=searchBox.value.trim().toLowerCase();
+    const hit=AGENTS.find(a=>a.id===v)||AGENTS.find(a=>a.id.includes(v));
+    if(hit){focusAgent(hit.id);searchBox.blur();}
+  }
+  if(e.key==='Escape'){searchBox.value='';clearSel();searchBox.blur();}
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='/'&&!e.target.closest('input,select,textarea')){e.preventDefault();searchBox.focus();}
+});
+
+// deep link: #agent-id selects and centers that agent on load
+if(location.hash.length>1)focusAgent(location.hash.slice(1));
+
+// ─── LEGEND ──────────────────────────────────────────────────────────────────
+const pl=document.getElementById('phase-legend');
+PHASES.forEach(ph=>{
+  const r=document.createElement('div');
+  r.className='lr';
+  const d=document.createElement('div');
+  d.className='lc';d.style.background=ph.color;
+  r.appendChild(d);
+  r.appendChild(document.createTextNode(ph.label));
+  pl.appendChild(r);
+});
+
+// ─── SKILL CHIPS + reverse highlight ─────────────────────────────────────────
+let selectedSkill = null;
+const chipEls = {};
+const chipWrap = document.getElementById('skill-chips');
+SKILLS.forEach(s=>{
+  const n = SKILL_AGENTS[s].length;
+  const c = document.createElement('span');
+  c.className='chip'; c.tabIndex=0; c.setAttribute('role','button');
+  c.setAttribute('aria-label',`skill ${s} — armed to ${n} agent${n===1?'':'s'}`);
+  c.innerHTML = `${s}<span class="n">${n}</span>`;
+  c.addEventListener('click',()=>selectSkill(s));
+  c.addEventListener('keydown',ev=>{
+    if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();selectSkill(s)}
+    else if(ev.key==='Escape'){clearSel()}
+  });
+  chipWrap.appendChild(c);
+  chipEls[s]=c;
+});
+
+function selectSkill(s){
+  if(selectedSkill===s){clearSel();return}
+  clearSel();
+  selectedSkill=s;
+  const armed=new Set(SKILL_AGENTS[s]);
+  Object.keys(nodeEls).forEach(nid=>{
+    const g=nodeEls[nid];
+    if(armed.has(nid)){g.style.opacity='1';g.querySelector('rect').setAttribute('fill-opacity','0.30');}
+    else g.style.opacity='0.1';
+  });
+  Object.values(edgeEls).forEach(e=>e.el.setAttribute('opacity','0.03'));
+  chipEls[s].classList.add('active');
+  const list=[...armed].sort().join(', ');
+  infoBar.innerHTML=`<span>${s}</span> &nbsp;·&nbsp; skill &nbsp;·&nbsp; armed to ${armed.size} agent${armed.size===1?'':'s'}: ${list} &nbsp;·&nbsp; click again to clear`;
+}
+
+// ─── HEADER COUNTS (derived from the data — never drift) ─────────────────────
+document.getElementById('agent-count').textContent = AGENTS.length;
+document.getElementById('phase-count').textContent = PHASES.length;
+document.getElementById('skill-count').textContent = SKILLS.length;
+document.getElementById('hdr-skills').textContent = SKILLS.length;
+</script>
+
+<script>
+(function(){
+  var cv=document.getElementById("wl-mark"); if(!cv||!cv.getContext) return;
+  var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion:reduce)").matches;
+  var dpr=Math.min(window.devicePixelRatio||1,3), S=40;
+  cv.width=S*dpr;cv.height=S*dpr;
+  var c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);c.lineJoin="round";c.lineCap="round";
+  var BLUE="#3D8FB5",GOLD="#C8982A",GOLD_LT="#E7BE58",BLUE_LT="#6FC0E8",INK="#060F1C";
+  var af=0.345,ys=1.34,cx=S/2,cy=S/2,w=S*0.085,n=240,q=n/4;
+  var PTS=[];for(var i=0;i<=n;i++){var t=i/n*2*Math.PI,s=Math.sin(t),cc=Math.cos(t),d=1+s*s;
+    PTS.push([cx+S*af*cc/d,cy+(S*af*s*cc/d)*ys]);}
+  function seg(i0,i1,col,ww){c.beginPath();
+    for(var i=i0;i<=i1;i++){var p=PTS[i];i===i0?c.moveTo(p[0],p[1]):c.lineTo(p[0],p[1]);}
+    c.strokeStyle=col;c.lineWidth=ww;c.stroke();}
+  function draw(head){
+    c.clearRect(0,0,S,S);
+    seg(q,3*q,BLUE,w);seg(0,q,GOLD,w);seg(3*q,n,GOLD,w);
+    if(head!=null){var L=26;
+      for(var k=L;k>=0;k--){var idx=((head-k)%n+n)%n,p0=PTS[idx],p1=PTS[(idx+1)%n];
+        c.globalAlpha=(1-k/L)*(1-k/L);
+        c.beginPath();c.moveTo(p0[0],p0[1]);c.lineTo(p1[0],p1[1]);
+        c.strokeStyle=(idx<=q||idx>=3*q)?GOLD_LT:BLUE_LT;c.lineWidth=w*1.1;c.stroke();}
+      c.globalAlpha=1;}
+    c.beginPath();c.arc(cx,cy,w*1.7,0,7);c.fillStyle=INK;c.fill();
+    c.beginPath();c.arc(cx,cy,w,0,7);c.fillStyle=GOLD;c.fill();
+    c.beginPath();c.arc(cx,cy,w*0.42,0,7);c.fillStyle=INK;c.fill();
+  }
+  var head=0;
+  function frame(){draw(head);head=(head+1)%n;requestAnimationFrame(frame);}
+  if(reduce)draw(null);else frame();
+})();
+</script>
+</body>
+</html>

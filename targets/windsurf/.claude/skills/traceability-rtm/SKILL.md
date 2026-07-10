@@ -5,7 +5,7 @@ description: Build or audit a Requirements Traceability Matrix (RTM) — the cha
 
 # Traceability & the RTM
 
-The RTM is the one artifact that proves nothing was dropped and shows the blast radius of any change (`project_guides/BEST-PRACTICES.md`). One RTM per project/initiative, kept living.
+The RTM is the one artifact that proves nothing was dropped and shows the blast radius of any change (`knowledge_hub/BEST-PRACTICES.md`). One RTM per project/initiative, kept living.
 
 ## The chain
 ```
@@ -14,7 +14,7 @@ MRD (market goal) → BRD (scope) → PRD (story) → FRD (behavior)
 ```
 
 ## Req-ID convention
-The shared `<DOC>-<AREA>-<NUM>` convention — canonical definition, prefixes, and examples in `project_guides/BEST-PRACTICES.md`. IDs never change once assigned. RTM-specific: align PBI AREA codes to the FRD AREA codes they trace to, so a row reads cleanly.
+The shared `<DOC>-<AREA>-<NUM>` convention — canonical definition, prefixes, and examples in `knowledge_hub/BEST-PRACTICES.md`. IDs never change once assigned. RTM-specific: align PBI AREA codes to the FRD AREA codes they trace to, so a row reads cleanly.
 
 ## RTM table shape
 | Business goal (BRD) | Product story (PRD) | Functional req (FRD) | Software req (SRS) | Design (SDD) | Build/test (PBI) |

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agent Authoring Conventions -- Spindleloom Guides</title>
+<style>
+:root{
+  --ground:#0E1524; --panel:#141E2E; --panel-2:#18263A;
+  --ink:#DBE5F1; --ink-mid:#93A6BC; --ink-dim:#8497AE; --hair:#1E2E45; --hair-2:#2A3E5C;
+  --gold:#CFA23A; --gold-hi:#E7BE58; --weft:#5C90BE;
+  --shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34);
+  --serif:"Hoefler Text","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:light){:root{
+  --ground:#E9EAE5; --panel:#FFFFFF; --panel-2:#F3F3EF;
+  --ink:#16202E; --ink-mid:#47586B; --ink-dim:#556575; --hair:#DEDFD8; --hair-2:#C9CBC1;
+  --gold:#8A6816; --gold-hi:#7C5D12; --weft:#3C6C93;
+  --shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07);
+}}
+:root[data-theme="light"]{--ground:#E9EAE5;--panel:#FFFFFF;--panel-2:#F3F3EF;--ink:#16202E;--ink-mid:#47586B;--ink-dim:#556575;--hair:#DEDFD8;--hair-2:#C9CBC1;--gold:#8A6816;--gold-hi:#7C5D12;--weft:#3C6C93;--shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07)}
+:root[data-theme="dark"]{--ground:#0E1524;--panel:#141E2E;--panel-2:#18263A;--ink:#DBE5F1;--ink-mid:#93A6BC;--ink-dim:#8497AE;--hair:#1E2E45;--hair-2:#2A3E5C;--gold:#CFA23A;--gold-hi:#E7BE58;--weft:#5C90BE;--shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.66;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+b,strong{color:var(--ink)}
+::selection{background:color-mix(in srgb,var(--gold) 30%,transparent)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:2px}
+.bar{position:sticky;top:0;z-index:80;display:flex;align-items:center;gap:14px;padding:11px 26px;
+  background:color-mix(in srgb,var(--ground) 88%,transparent);backdrop-filter:blur(9px);border-bottom:1px solid var(--hair)}
+.bar .brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--ink-mid);white-space:nowrap}
+.bar .brand b{color:var(--gold)}
+.bar nav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.bar nav a{font-family:var(--mono);font-size:11px;color:var(--ink-mid);padding:6px 10px;border-radius:8px}
+.bar nav a:hover{color:var(--gold);text-decoration:none}
+.toggle{font-family:var(--mono);font-size:11px;color:var(--ink-mid);background:transparent;border:1px solid var(--hair-2);
+  border-radius:20px;padding:6px 13px;cursor:pointer;white-space:nowrap}
+.toggle:hover{border-color:var(--gold);color:var(--gold)}
+.hero{border-bottom:1px solid var(--hair)}
+.hero .in{max-width:1120px;margin:0 auto;padding:44px 30px 34px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-mid)}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,46px);line-height:1.05;letter-spacing:-.02em;margin:12px 0 0;text-wrap:balance}
+.hero .note{font-family:var(--mono);font-size:11.5px;color:var(--ink-mid);margin-top:14px}
+.layout{max-width:1120px;margin:0 auto;padding:34px 30px 80px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:44px}
+@media(max-width:960px){.layout{grid-template-columns:1fr}.spine{display:none}}
+.spine{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 90px);overflow:auto;font-size:12.5px}
+.spine .sp-part{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;margin:18px 0 6px;color:var(--gold)}
+.spine ol{list-style:none}
+.spine li a{display:block;color:var(--ink-mid);padding:3px 0 3px 12px;border-left:2px solid var(--hair)}
+.spine li a:hover{color:var(--ink);text-decoration:none}
+.spine li.on a{color:var(--gold);border-left-color:var(--gold)}
+article h3{font-family:var(--serif);font-weight:600;font-size:23px;letter-spacing:-.01em;margin:40px 0 12px;scroll-margin-top:72px}
+article h4{font-size:15.5px;margin:26px 0 8px;scroll-margin-top:72px}
+article p{margin:0 0 13px;max-width:76ch;color:var(--ink-mid)}
+article li{margin:0 0 7px;color:var(--ink-mid)}
+article ul,article ol{margin:0 0 14px;padding-left:22px}
+article blockquote{border-left:3px solid var(--gold);background:var(--panel);border-radius:0 10px 10px 0;
+  padding:12px 18px;margin:0 0 16px}
+article blockquote p{margin:0}
+article hr{border:0;height:1px;background:var(--hair);margin:34px 0}
+article code{font-family:var(--mono);font-size:.86em;background:var(--panel-2);border:1px solid var(--hair);border-radius:5px;padding:1px 6px;color:var(--gold-hi)}
+article pre{font-family:var(--mono);font-size:12.5px;line-height:1.55;background:var(--panel);border:1px solid var(--hair);
+  border-radius:12px;padding:16px 18px;overflow-x:auto;margin:0 0 16px;color:var(--ink-mid)}
+.tw{overflow-x:auto;margin:0 0 18px;border:1px solid var(--hair);border-radius:12px;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel)}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mid);
+  text-align:left;padding:10px 14px;border-bottom:1px solid var(--hair-2);background:var(--panel-2)}
+td{padding:10px 14px;border-bottom:1px solid var(--hair);vertical-align:top;color:var(--ink-mid)}
+tr:last-child td{border-bottom:0}
+footer{border-top:1px solid var(--hair)}
+footer .in{max-width:1120px;margin:0 auto;padding:22px 30px;font-size:12.5px;color:var(--ink-mid)}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="brand"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style="flex-shrink:0;vertical-align:-4px"><path d="M10 10 C7.6 6.9 3.1 6.6 3.1 10 C3.1 13.4 7.6 13.1 10 10" fill="none" stroke="var(--weft)" stroke-width="1.7" stroke-linecap="round"/><path d="M10 10 C12.4 6.9 16.9 6.6 16.9 10 C16.9 13.4 12.4 13.1 10 10" fill="none" stroke="var(--gold)" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="10" r="2.9" fill="var(--ground)"/><circle cx="10" cy="10" r="1.7" fill="var(--gold)"/><circle cx="10" cy="10" r="0.7" fill="var(--ground)"/></svg> Spindleloom &middot; <b>Guides</b></span>
+  <nav aria-label="Site">
+    <a href="index.html">Home</a>
+    <a href="personas/index.html">Hub</a>
+    <a href="project-overview.html">Overview</a>
+    <a href="governance-handbook.html">Governance</a>
+    <a href="readme.html">All guides</a>
+  </nav>
+  <button class="toggle" id="themeToggle" aria-label="Toggle light or dark theme">&#9681; theme</button>
+</div>
+<header class="hero"><div class="in">
+  <div class="kicker">Spindleloom &middot; knowledge hub</div>
+  <h1>Agent Authoring Conventions</h1>
+  <p class="note">Generated reading view. Source of truth: <a href="../knowledge_hub/AGENT-AUTHORING.md"><code>knowledge_hub/AGENT-AUTHORING.md</code></a> --
+  edit the MD, then run <code>python hooks/build_guides_site.py</code>.</p>
+</div></header>
+<div class="layout">
+  <nav class="spine" aria-label="Contents"><div class="sp-part">On this page</div><ol><li><a href="#g-prompting-principles-we-follow">Prompting principles we follow</a></li>
+<li><a href="#g-frontmatter-conventions">Frontmatter conventions</a></li>
+<li><a href="#g-agent-classes">Agent classes</a></li>
+<li><a href="#g-shared-standards-every-agent-points-to">Shared standards every agent points to</a></li>
+<li><a href="#g-checklist-for-adding-a-new-agent">Checklist for adding a new agent</a></li></ol></nav>
+  <main><article><p>How every agent in this project is written, so the fleet stays consistent as it grows. Distilled from Anthropic's <a href="https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices">prompting best practices</a> and tailored to document-writing agents. Read this before adding or editing an agent.</p>
+<h3 id="g-prompting-principles-we-follow">Prompting principles we follow</h3>
+<ol>
+<li>**Clear role + context with the <i>why</i>.** Open with a one-line role ("You are a senior business analyst…") and explain <i>why</i> the document matters. Models generalize better from motivation than from rules alone. (Best practices: <i>Give Claude a role</i>, <i>Add context</i>.)</li>
+<li><b>Sequential, numbered workflow.</b> Steps where order/completeness matters go in numbered lists (our <code>When asked to CREATE/REVIEW/UPDATE</code> sections). (<i>Be clear and direct</i>.)</li>
+<li><b>Calm instructions — no overtriggering.</b> Do <b>not</b> use shouty imperatives like "CRITICAL", "you MUST", "ALWAYS", "NEVER" to force behavior. Modern Claude models (Opus 4.5+) <i>overtrigger</i> on aggressive language. Use normal phrasing: "Use X when…", "Prefer…". (<i>Tool usage</i>, <i>Overthinking</i>.)</li>
+<li><b>Ground, don't fabricate.</b> Agents read the upstream document(s) before drafting, verify facts (WebSearch for market data, current standards, library versions), cite sources with dates, and explicitly flag any value they assumed rather than confirmed. Never invent figures or requirements. (<i>Minimizing hallucinations</i>.)</li>
+<li><b>Right-sized output — fight documentation fatigue.</b> Produce the leanest document that does the job for the team's tier; don't pad. No feature/section beyond what the task needs. This mirrors the doc's anti-overengineering guidance and our own "documentation fatigue" theme. (<i>Overeagerness</i>.)</li>
+<li><b>Examples teach format.</b> Where an exemplar helps, point to or wrap a concrete example in <code>&lt;example&gt;</code> tags so the model distinguishes it from instructions. The <code>examples/healthy-meal-app/</code> set is the project's canonical end-to-end exemplar — reference it rather than re-inventing samples. (<i>Use examples effectively</i>.)</li>
+<li><b>Tri-mode + handoffs.</b> Every document agent supports create / review / update, names the agent it hands off to, and flags discoveries back upstream (feedback loops in <code>BEST-PRACTICES.md</code>).</li>
+</ol>
+<h3 id="g-frontmatter-conventions">Frontmatter conventions</h3>
+<pre>---
+name: &lt;kebab-case; `-writer` for document agents, a role/action name for others (e.g. doc-strategy-advisor, backlog-manager, estimation-facilitator, sprint-planner, retrospective-facilitator, spec-steward)&gt;
+description: One sentence on purpose + explicit trigger phrases the user might say + any aliases (e.g. FSD→frd/sdd, TRD→srs) + where it sits in the funnel.
+tools: Read, Write, Edit, Glob, Grep[, WebSearch, WebFetch]   # add web tools only if the agent verifies external facts
+model: inherit
+examples:                       # 1-2 copy-paste prompts a user would TYPE to invoke this agent
+  - &quot;Break docs/prd.md into INVEST user stories with acceptance criteria, ordered by MoSCoW.&quot;
+  - &quot;Split PBI-CHECKOUT-007 into 2-4 stories that still trace to FRD-ORD-001.&quot;
+---</pre>
+<ul>
+<li><b>description does the triggering</b> — list the real phrases a user would type, plus aliases, plus run-order ("Run after the PRD"). This is what routes work to the right agent.</li>
+<li><b>examples</b> are the copy-paste prompts surfaced by <code>/help-role</code>, <code>agents/HELP.md</code>, and the generated <code>AGENTS.md</code>. Keep them specific to <i>this</i> agent (not swappable), in natural user phrasing (what a person types, not a description), calm (no shouty caps), and one tight sentence each. Quote each entry; YAML-escape literal quotes. <code>validate_graph.py</code> fails if an agent has none. Generate at scale with the <code>author-agent-examples</code> workflow → <code>hooks/add_examples.py</code>.</li>
+<li><b>tools:</b> document agents need Read/Write/Edit/Glob/Grep; add WebSearch/WebFetch only for agents that verify external facts (mrd, srs, sdd, tsd, urs). Router/log and delivery/facilitator agents (doc-strategy-advisor, adr-writer, backlog-manager, estimation-facilitator, sprint-planner, retrospective-facilitator) omit web tools.</li>
+</ul>
+<h4 id="g-machine-readable-contract-the-handoff-graph">Machine-readable contract (the handoff graph)</h4>
+<p>The framework's value is an unbroken handoff chain feeding one RTM — but that chain lives only in prose across the agent files, so a new team has to reverse-engineer it. Every agent therefore also declares a <b>contract block</b> in frontmatter so the funnel is discoverable and tool-parseable (auto-build the graph, validate coverage, drop into any <code>.claude/</code>):</p>
+<pre>phase: planning                       # discovery|requirements|design|planning|build|test|review|release|operate|process
+loop: planning                        # which delivery loop it tightens: inner|outer-integrate|outer-ship|planning|governance (LOOPWRIGHT.md §6)
+agentic_role: facilitator             # role in the agentic loop: maker|checker|facilitator|keeper|orchestrator|advisor
+inputs: [PRD, FRD]                    # upstream artifacts this agent reads
+outputs: backlog                      # the artifact it produces/maintains
+id_prefix: PBI                        # ID convention it owns (omit if it produces no IDs)
+rtm_column: &quot;Product story → Backlog item (PBI)&quot;   # the RTM column it populates (&#x27;—&#x27; if none)
+upstream: [prd-writer, frd-writer]    # agents it receives handoffs from
+downstream: [estimation-facilitator, sprint-planner]   # agents it hands off to
+gate: definition-of-ready-done-template.md   # entry/exit criteria it enforces (omit if none)
+skills: [backlog-decomposition]       # skills it relies on (so they self-arm)
+claude_code: { command: /plan-next, subagent_type: backlog-manager }   # portability mapping</pre>
+<ul>
+<li><b>Additive and convention-only</b> — no behavior change; it makes the handoff/traceability data that was prose into something a hook, an index generator, or <code>/agents</code> can read.</li>
+<li><b><code>loop</code> + <code>agentic_role</code></b> classify the agent along the two loop dimensions: which <i>delivery</i> loop it tightens (<code>LOOPWRIGHT.md</code> §6 — <code>inner</code> = the developer's edit/build/test cycle, <code>outer-integrate</code> = PR→CI→QA, <code>outer-ship</code> = release→operate, <code>planning</code> = the spec/agile planning loop, <code>governance</code> = cross-cutting registers and orchestration) and which <i>agentic</i> role it plays in a maker/checker loop (<code>maker</code> produces an artifact, <code>checker</code> returns a verdict without patching the work under review, <code>facilitator</code> runs a ceremony/process, <code>keeper</code> maintains a living register, <code>orchestrator</code> dispatches other agents, <code>advisor</code> analyzes and recommends). <code>validate_graph.py</code> enforces both fields exist with valid values; the run-orchestrator and generators may route or group by them.</li>
+<li>Build/design agents that produce ad-hoc notes still get an <code>id_prefix</code> (e.g. <code>API-</code>, <code>DM-</code>, <code>FE-</code>, <code>BE-</code>) so the RTM chain doesn't dead-end at the design/build layer.</li>
+<li>Top-of-funnel and log agents set <code>upstream: []</code> / <code>rtm_column: &quot;—&quot;</code> as appropriate — empty is a valid, explicit answer.</li>
+<li><b>The Digest convention.</b> Every document agent ends its CREATE output with a <code>## Digest</code> — ≤5 bullets: what the doc decides, the IDs it mints, what downstream must not miss. It's an abstract (pointers), not a copy; <code>build_context_pack.py</code> surfaces it so downstream agents can triage before full-reading (see the <code>context-engineering</code> skill).</li>
+<li><b>Context layers — one home per kind of context.</b> Three stores exist while a run executes; the same fact in two of them is a defect (the golden rule applied to context): <b>facts/decisions of record</b> → the docs tree + RTM/ADRs (durable, reviewed); <b>compressed working notes</b> — decisions-in-flight with reasons, output paths, blockers, inherited constraints, resolved incantations → the <code>sloom</code> context memory (<code>save_context</code>/<code>recall_context</code>; the committed, git-mergeable <code>.spindleloom/context-log.jsonl</code> is the cross-machine source of truth, <code>.spindleloom/context.db</code> its local gitignored index — teammates run <code>sloom context . --import</code> after a pull), ≤5 bullets per entry, scoped by <code>task_id</code>; <b>orchestration state</b> — stop contract, ledger, gates → <code>.spindleloom/runs/&lt;run-id&gt;.json</code> (one file per run, so concurrent runs by different teammates never clobber each other). Ad-hoc handoff files (a shared log everyone appends to) are the anti-pattern: lossy, unscoped, and invisible to <code>validate_gates --context</code>.</li>
+<li><b>Edge semantics.</b> <code>upstream</code>/<code>downstream</code> model <b>artifact handoffs and routing</b> in the forward direction only. Two flows are deliberately <i>not</i> graph edges: (a) <b>feedback flag-backs</b> — the prose "Feedback loop" sections route push-backs (e.g. sdd-writer's reality-check to prd/srs-writer) out-of-band, so a run driver must read them from the body, not the graph; (b) <b>the recon context pack</b> — developers receive FRD/SRS/SDD content via <code>solution-recon-findings</code> (the warm build context), not via direct edges from each writer. Advisor/router agents' downstream edges mean "routes to", not "hands an artifact to".</li>
+</ul>
+<h3 id="g-agent-classes">Agent classes</h3>
+<ul>
+<li><b>Document agents</b> (<code>*-writer</code>): produce a versioned document; body = role → principles → create/review/update → embedded template → who participates → common pitfalls → feedback loop (if it has meaningful upstream feedback) → style rules. Always ship a matching <code>templates/</code> file.</li>
+<li><b>Facilitator/delivery agents</b> (backlog-manager, estimation-facilitator, sprint-planner, retrospective-facilitator): run a recurring agile activity and maintain living state (backlog, estimates, sprint plan, retro log). Same body shape, but the "template" is the artifact they maintain, and they chain to each other rather than feeding the document funnel.</li>
+<li><b>Router/practice agents</b> (doc-strategy-advisor, spec-steward): advise or assess rather than produce a fixed artifact; a template is optional.</li>
+<li><b>model:</b> <code>inherit</code> unless a task needs a specific model.</li>
+</ul>
+<h3 id="g-shared-standards-every-agent-points-to">Shared standards every agent points to</h3>
+<ul>
+<li>Requirement quality (29148/INCOSE checklist, "the system shall…", one obligation per statement) → <code>BEST-PRACTICES.md</code>.</li>
+<li>Req-ID convention <code>&lt;DOC&gt;-&lt;AREA&gt;-&lt;NUM&gt;</code> and the RTM traceability backbone → <code>BEST-PRACTICES.md</code>.</li>
+<li>Feedback loops, change control, team-size tiers, frameworks (arc42, C4, Diátaxis, Docs-as-Code) → <code>BEST-PRACTICES.md</code>.</li>
+</ul>
+<h3 id="g-checklist-for-adding-a-new-agent">Checklist for adding a new agent</h3>
+<ol>
+<li>Confirm it fills a real gap, not an alias of an existing doc (check the alias map in <code>doc-strategy-advisor.md</code>).</li>
+<li>Write frontmatter per the conventions above (triggers, aliases, tools, run-order) <b>plus the machine-readable contract block</b> (phase, inputs/outputs, id_prefix, rtm_column, upstream/downstream, gate, skills, claude_code) <b>plus 1-2 <code>examples:</code> prompts</b> (<code>validate_graph.py</code> enforces their presence).</li>
+<li>Body: role + why → core principles → create/review/update workflow → embedded template → who participates → common pitfalls → feedback loop (include only where the agent has meaningful upstream feedback — top-of-funnel and log agents may omit it) → style rules.</li>
+</ol>
+<ul>
+<li><b>Gate/verification agents</b> (review, test, security, accessibility, CI, AI-orchestration) should also carry a short <b>Anti-rationalization</b> table — the excuses used to skip the gate paired with the rebuttal — placed just before "Common pitfalls". It keeps a gate from being waved through, especially by an AI agent talking itself out of the check. Keep it calm and tailored (3–5 rows), not generic.</li>
+</ul>
+<ol>
+<li>Use the shared Req-ID convention and reference the quality checklist; don't redefine them.</li>
+<li>Add a matching <code>templates/&lt;doc&gt;-template.md</code>.</li>
+<li>Register it: <code>README.md</code> (agent table + templates list), <code>doc-strategy-advisor.md</code> (funnel/tiers/ownership), and <code>BEST-PRACTICES.md</code> if it changes the funnel.</li>
+<li>Add it to the <code>examples/healthy-meal-app/</code> run if it belongs in the mainline chain.</li>
+<li>Run a consistency check: no aggressive caps, no fabricated samples, references resolve.</li>
+</ol></article></main>
+</div>
+<footer><div class="in">
+  Part of the <a href="readme.html">Spindleloom website</a> &middot; front door: the
+  <a href="personas/index.html">Persona Field Handbook</a>.
+</div></footer>
+<script>
+const root=document.documentElement;
+try{const _st=localStorage.getItem("sl-theme");if(_st)root.setAttribute("data-theme",_st);}catch(e){}
+document.getElementById("themeToggle").addEventListener("click",()=>{
+  const dark=matchMedia("(prefers-color-scheme:dark)").matches;
+  const cur=root.getAttribute("data-theme")||(dark?"dark":"light");
+  const next=cur==="dark"?"light":"dark";
+  root.setAttribute("data-theme",next);
+  try{localStorage.setItem("sl-theme",next);}catch(e){}
+});
+const items=[...document.querySelectorAll(".spine li")];
+const map={};items.forEach(li=>{const a=li.querySelector("a");if(a)map[a.getAttribute("href").slice(1)]=li;});
+const spy=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){
+  items.forEach(l=>l.classList.remove("on"));const li=map[e.target.id];if(li)li.classList.add("on");}}),
+  {rootMargin:"-20% 0px -70% 0px"});
+document.querySelectorAll("article h3[id]").forEach(h=>spy.observe(h));
+</script>
+</body>
+</html>

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-azure_boards_adapter.py — Spindleloom: the live Azure Boards push() for emit_backlog.py (IMP-007).
+azure_boards_adapter.py — Spindleloom: the live Azure Boards push() for emit_backlog.py
+(IMP-007 in knowledge_hub/archive/IMPROVEMENTS.md — the retired pilot-era register).
 
 emit_backlog.py field-maps backlog.md -> tracker-agnostic work-item payloads and leaves the
 network push to "YOUR adapter". This IS that adapter for Azure DevOps Boards — the last mile,
@@ -14,14 +15,14 @@ Stdlib only (urllib) — no azure SDK. Network writes happen ONLY with --apply a
 Config (env):
     AZURE_DEVOPS_ORG_URL   e.g. https://dev.azure.com/your-org   (or AZURE_DEVOPS_ORG=your-org)
     AZURE_DEVOPS_PROJECT   the project name
-    AZURE_DEVOPS_PAT       a Personal Access Token with **Work Items (Read, write, & manage)** scope (IMP-008)
+    AZURE_DEVOPS_PAT       a Personal Access Token with **Work Items (Read, write, & manage)** scope (archive register IMP-008)
 
 Usage:
     python hooks/azure_boards_adapter.py <backlog.md>                        # dry-run: what it WOULD create
     python hooks/azure_boards_adapter.py <backlog.md> --apply                # create work items (needs creds)
     python hooks/azure_boards_adapter.py <backlog.md> --apply --link-epics --rtm docs/RTM.md
 
-Caveats (IMP-008):
+Caveats (archive register IMP-008):
   - Iteration / Area paths are NOT created here — pre-create them or assign in Boards.
   - StoryPoints is set only for User Story / Bug (Task uses Remaining Work; left unset).
   - Headless/agent runs that --apply perform NETWORK WRITES — pre-approve the command in the runner.

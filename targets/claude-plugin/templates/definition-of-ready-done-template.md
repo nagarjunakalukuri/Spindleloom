@@ -12,9 +12,9 @@ One living team artifact. The **DoR** is the gate a backlog item must pass to *e
 A PBI is Ready when **all** are true:
 
 - [ ] Written as a user story ("As a… I want… so that…") or a clearly-typed item (bug/spike/task)
-- [ ] Has testable **acceptance criteria** (Gherkin *or* rule-checklist), **co-authored in a Three Amigos pass** — not written solo (`project_guides/STORY-CRAFT.md` §3)
+- [ ] Has testable **acceptance criteria** (Gherkin *or* rule-checklist), **co-authored in a Three Amigos pass** — not written solo (`knowledge_hub/GOVERNANCE.md` Part II §3)
 - [ ] Meets **INVEST** (Independent, Negotiable, Valuable, Estimable, Small, Testable)
-- [ ] **Right-sized** — 6–10 similar stories fit one sprint (`project_guides/STORY-CRAFT.md` §5)
+- [ ] **Right-sized** — 6–10 similar stories fit one sprint (`knowledge_hub/GOVERNANCE.md` Part II §5)
 - [ ] **Estimated** (story points)
 - [ ] No blocking dependency (or the dependency is scheduled first)
 - [ ] Traces to a source requirement (PRD/FRD ID) in the RTM

@@ -6,7 +6,7 @@
 | Period | <e.g. Sprint 7 / 2026-06-01..06-14> |
 | Source | <CI/CD dashboard, board, incident log> |
 
-> Operationalizes the measurement guidance in `project_guides/LOOPWRIGHT.md`: DORA for *how fast and safe* the outer loop runs, cycle-time breakdown for *where it stalls*, and a SPACE/DevEx pulse so speed gains aren't burning the team. Feeds the `status-reporter` Delivery-metrics table.
+> Operationalizes the measurement guidance in `knowledge_hub/LOOPWRIGHT.md`: DORA for *how fast and safe* the outer loop runs, cycle-time breakdown for *where it stalls*, and a SPACE/DevEx pulse so speed gains aren't burning the team. Feeds the `status-reporter` Delivery-metrics table.
 
 ## DORA four keys
 | Metric | This period | Prev | Trend | Target / band |

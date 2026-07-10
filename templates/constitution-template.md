@@ -36,4 +36,4 @@ Numbered, each a *testable* rule (apply the "the system shall" discipline from t
 - <What this project deliberately does not do — guards against scope creep and "helpful" agents adding unwanted behavior.>
 
 ## Amendment process
-The constitution is versioned and PR-reviewed like code. Changing a **principle** (not a typo) bumps the version and requires an ADR (`adr-writer`) recording the why and the rejected alternatives. Supersede, don't silently rewrite — per the change-control & baseline model in `project_guides/BEST-PRACTICES.md`.
+The constitution is versioned and PR-reviewed like code. Changing a **principle** (not a typo) bumps the version and requires an ADR (`adr-writer`) recording the why and the rejected alternatives. Supersede, don't silently rewrite — per the change-control & baseline model in `knowledge_hub/BEST-PRACTICES.md`.

@@ -136,7 +136,7 @@ def check_conformance() -> dict:
     """Does this repo match the Spindleloom Standard? Returns the conformance report
     (declared profile/version vs the toolkit's, plus duplicate artifact IDs — e.g. two
     RTMs or two ADR files claiming one id) alongside the RTM/Req-ID audit (which now
-    flags duplicate ADRs and multiple ADR directories). See project_guides/STANDARD.md §11."""
+    flags duplicate ADRs and multiple ADR directories). See knowledge_hub/GOVERNANCE.md Part I §11."""
     return {"conformance": rtm_core.conformance(_project_root()), "audit": rtm_core.audit(_root())}
 
 
@@ -144,7 +144,7 @@ def check_conformance() -> dict:
 def scaffold_project(profile: str = "mid", feature: str = "feature-1") -> dict:
     """WRITE TOOL (opt-in) — lay down the canonical Spindleloom doc layout under the
     project root: the docs/ funnel, the RTM backbone, the cyclic sprints/ home, and the
-    .spindleloom/ machinery (per project_guides/STANDARD.md). profile is 'lean' | 'mid' | 'enterprise'.
+    .spindleloom/ machinery (per knowledge_hub/GOVERNANCE.md Part I). profile is 'lean' | 'mid' | 'enterprise'.
     Idempotent: never overwrites an existing file. Disabled unless the server was started
     with SPINDLELOOM_WRITABLE=1."""
     if not _writable():

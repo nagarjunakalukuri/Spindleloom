@@ -5,7 +5,7 @@ description: Check that requirements are well-formed against the ISO/IEC/IEEE 29
 
 # Requirement quality check (ISO/IEC/IEEE 29148 + INCOSE)
 
-Apply this whenever authoring or reviewing requirements. It is the industry gold standard for well-formed requirements (see `project_guides/BEST-PRACTICES.md`).
+Apply this whenever authoring or reviewing requirements. It is the industry gold standard for well-formed requirements (see `knowledge_hub/BEST-PRACTICES.md`).
 
 ## Per-requirement checklist
 For each requirement, verify all eight:

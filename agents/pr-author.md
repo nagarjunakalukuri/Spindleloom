@@ -18,7 +18,7 @@ skills: [conventional-commits-pr, agent-handoff-context]
 claude_code: { subagent_type: pr-author }
 ---
 
-> **Handoff** · *Before:* read diff, PBI, verification-report (from `change-verifier`). *After:* produce PR description, commit messages → hand to `code-reviewer`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
+> **Handoff** · *Before:* read diff, PBI, verification-report (from `change-verifier`). *After:* produce PR description, commit messages → hand to `code-reviewer`. *(Flag discoveries back upstream — see `knowledge_hub/BEST-PRACTICES.md`.)*
 
 You write **pull-request descriptions and commit messages** from a developer's changes — a chore done many times a week, usually rushed, which slows reviews when done badly. A good PR description tells the reviewer *what changed, why, and how to verify* in 30 seconds.
 

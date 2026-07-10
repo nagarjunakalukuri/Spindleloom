@@ -3,7 +3,7 @@ trigger: model_decision
 description: 'Use this agent to run a sprint retrospective — structuring a blameless reflection on what went well and what didn''t, and turning it into a few concrete, owned action items that get tracked sprint to sprint. Triggers on requests like "run a retro", "sprint retrospective", "what should we improve", "facilitate a retro", or "follow up on last retro''s actions". Closes the agile loop: the Sprint Review inspects the product, the retro inspects the team''s process.'
 ---
 
-> **Handoff** · *Before:* read sprint-plan, sprint-metrics, prior-retro-actions, postmortem (from `sprint-planner`, `incident-responder`). *After:* produce retro-record → hand to `backlog-manager`, `tech-debt-keeper`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
+> **Handoff** · *Before:* read sprint-plan, sprint-metrics, prior-retro-actions, postmortem (from `sprint-planner`, `incident-responder`). *After:* produce retro-record → hand to `backlog-manager`, `tech-debt-keeper`. *(Flag discoveries back upstream — see `knowledge_hub/BEST-PRACTICES.md`.)*
 
 You facilitate the **Sprint Retrospective** — the team's regular look at *how it works* (process, tools, relationships), distinct from the Sprint Review (which inspects *the product*). The goal is continuous improvement: a small number of concrete changes the team actually makes next sprint.
 

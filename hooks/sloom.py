@@ -29,10 +29,17 @@ individual contracts (and muscle memory) still work.
                                 record a phase-boundary acceptance token
                                 (.spindleloom/approvals/<feature>/<phase>.md);
                                 --notify-tracker mirrors it as a work-item comment
+    sloom flags [<root>] [--strict]              open FLAG(owner) re-work register
+    sloom signoff <gate> --verdict GO --by "<name>" [--evidence <path>]
+                  [--release-id <id>] [--feature <slug>] [<root>]
+                                record a release sign-off token
+                                (.spindleloom/signoffs/[<release-id>/]<gate>.md)
 
 `sloom check` batteries:
   toolkit repo  (agents/ + hooks/validate_graph.py present)
       -> validate_graph · build_handoffs --check · build_harness_artifacts --check
+         · validate_targets · build_governance_handbook --check · validate_counts --check
+         · validate_personas --check · build_guides_site --check · build_fleet_page --check
   adopter repo  (anything else)
       -> validate_reqs · build_rtm --check · registry --check (when a catalog exists)
          · validate_gates (artifact audit)
@@ -74,7 +81,12 @@ def check(root):
         battery = [("validate_graph.py", []),
                    ("build_handoffs.py", ["--check"]),
                    ("build_harness_artifacts.py", ["--check"]),
-                   ("validate_targets.py", [])]
+                   ("validate_targets.py", []),
+                   ("build_governance_handbook.py", ["--check"]),
+                   ("validate_counts.py", ["--check"]),
+                   ("validate_personas.py", ["--check"]),
+                   ("build_guides_site.py", ["--check"]),
+                   ("build_fleet_page.py", ["--check"])]
     else:
         print(f"sloom check: adopter repo — spec battery on {root}\n")
         battery = [("validate_reqs.py", [str(root)]),
@@ -434,6 +446,59 @@ def flags_cmd(rest):
     return 1 if "--strict" in rest else 0
 
 
+def signoff_cmd(rest):
+    """Write a release sign-off token -- the writer half of the go/no-go AND that
+    `validate_gates --release` computes. The six release gates (qa, security,
+    performance, accessibility, raid, dod) each need a `.spindleloom/signoffs/
+    [<release-id>/]<gate>.md` with a GO/PASS verdict and an Evidence line; before this
+    command they had an enforcement side but no writer. Mirrors `sloom approve`:
+    the local token is canonical; a named human records it with cited evidence."""
+    VALUE_FLAGS = {"--verdict", "--by", "--evidence", "--release-id", "--feature", "--notes"}
+    args, i = [], 0
+    while i < len(rest):
+        t = rest[i]
+        if t.startswith("--"):
+            i += 2 if (t in VALUE_FLAGS and i + 1 < len(rest)) else 1
+        else:
+            args.append(t); i += 1
+    if not args:
+        print('usage: sloom signoff <gate> --verdict GO --by "<name>" --evidence <path-or-note>\n'
+              '                      [--release-id <id>] [--feature <slug>] [--notes <text>] [<root>]\n'
+              "       gates (release AND): qa, security, performance, accessibility, raid, dod")
+        return 2
+    gate, root = args[0], (args[1] if len(args) > 1 else ".")
+
+    def opt(name, default=None):
+        if name in rest:
+            j = rest.index(name)
+            return rest[j + 1] if j + 1 < len(rest) else default
+        return default
+
+    verdict = (opt("--verdict", "GO") or "GO").upper()
+    by, evidence = opt("--by"), opt("--evidence")
+    if not by:
+        print("sloom signoff: --by is required -- a sign-off is a named human's act")
+        return 2
+    if verdict in ("GO", "PASS") and not evidence:
+        print("sloom signoff: --evidence is required for a GO -- an unevidenced sign-off is a forged gate")
+        return 2
+    from datetime import date
+    rid = opt("--release-id")
+    sdir = Path(root) / ".spindleloom" / "signoffs" / (rid if rid else "")
+    tok = sdir / f"{gate}.md"
+    tok.parent.mkdir(parents=True, exist_ok=True)
+    lines = [f"# Sign-off -- {gate}" + (f" (release {rid})" if rid else ""), "",
+             f"Verdict: {verdict}", f"By: {by}", f"Date: {date.today().isoformat()}",
+             f"Evidence: {evidence or '(none)'}"]
+    if opt("--feature"):
+        lines.append(f"Feature: {opt('--feature')}")
+    if opt("--notes"):
+        lines.append(f"Notes: {opt('--notes')}")
+    tok.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print(f"sloom signoff: wrote {tok} ({verdict})")
+    return 0
+
+
 def main(argv):
     if len(argv) < 2 or argv[1] in ("help", "--help", "-h"):
         print(__doc__)
@@ -447,6 +512,8 @@ def main(argv):
         return approve_cmd(rest)
     if cmd == "flags":
         return flags_cmd(rest)
+    if cmd == "signoff":
+        return signoff_cmd(rest)
     if cmd == "index":
         rc = 0
         for s in ("build_agent_index.py", "build_help.py", "build_handoffs.py"):

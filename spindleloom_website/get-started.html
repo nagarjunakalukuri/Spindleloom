@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Get started -- Spindleloom</title>
+<style>
+:root{
+  --ground:#0E1524; --panel:#141E2E; --panel-2:#18263A;
+  --ink:#DBE5F1; --ink-mid:#93A6BC; --ink-dim:#8497AE; --hair:#1E2E45; --hair-2:#2A3E5C;
+  --gold:#CFA23A; --gold-hi:#E7BE58; --weft:#5C90BE;
+  --shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34);
+  --serif:"Hoefler Text","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:light){:root{
+  --ground:#E9EAE5; --panel:#FFFFFF; --panel-2:#F3F3EF;
+  --ink:#16202E; --ink-mid:#47586B; --ink-dim:#556575; --hair:#DEDFD8; --hair-2:#C9CBC1;
+  --gold:#8A6816; --gold-hi:#7C5D12; --weft:#3C6C93;
+  --shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07);
+}}
+:root[data-theme="light"]{--ground:#E9EAE5;--panel:#FFFFFF;--panel-2:#F3F3EF;--ink:#16202E;--ink-mid:#47586B;--ink-dim:#556575;--hair:#DEDFD8;--hair-2:#C9CBC1;--gold:#8A6816;--gold-hi:#7C5D12;--weft:#3C6C93;--shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07)}
+:root[data-theme="dark"]{--ground:#0E1524;--panel:#141E2E;--panel-2:#18263A;--ink:#DBE5F1;--ink-mid:#93A6BC;--ink-dim:#8497AE;--hair:#1E2E45;--hair-2:#2A3E5C;--gold:#CFA23A;--gold-hi:#E7BE58;--weft:#5C90BE;--shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.66;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+b,strong{color:var(--ink)}
+::selection{background:color-mix(in srgb,var(--gold) 30%,transparent)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:2px}
+.bar{position:sticky;top:0;z-index:80;display:flex;align-items:center;gap:14px;padding:11px 26px;
+  background:color-mix(in srgb,var(--ground) 88%,transparent);backdrop-filter:blur(9px);border-bottom:1px solid var(--hair)}
+.bar .brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--ink-mid);white-space:nowrap}
+.bar .brand b{color:var(--gold)}
+.bar nav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.bar nav a{font-family:var(--mono);font-size:11px;color:var(--ink-mid);padding:6px 10px;border-radius:8px}
+.bar nav a:hover{color:var(--gold);text-decoration:none}
+.toggle{font-family:var(--mono);font-size:11px;color:var(--ink-mid);background:transparent;border:1px solid var(--hair-2);
+  border-radius:20px;padding:6px 13px;cursor:pointer;white-space:nowrap}
+.toggle:hover{border-color:var(--gold);color:var(--gold)}
+.hero{border-bottom:1px solid var(--hair)}
+.hero .in{max-width:980px;margin:0 auto;padding:48px 30px 36px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-mid)}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(32px,4.4vw,50px);line-height:1.04;letter-spacing:-.02em;margin:12px 0 0;text-wrap:balance}
+.hero h1 em{font-style:italic;color:var(--gold)}
+.hero .dek{color:var(--ink-mid);max-width:62ch;margin:16px 0 0;font-size:16px}
+.wrap{max-width:980px;margin:0 auto;padding:10px 30px 70px}
+.step{margin:38px 0 0}
+.step .sh{display:flex;align-items:baseline;gap:14px;margin-bottom:10px}
+.step .n{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ground);background:var(--gold);border-radius:7px;padding:2px 10px}
+.step h2{font-family:var(--serif);font-weight:600;font-size:clamp(21px,2.8vw,28px);letter-spacing:-.01em}
+.step p{color:var(--ink-mid);font-size:14px;max-width:74ch;margin:0 0 12px}
+.cmd{position:relative;background:var(--panel);border:1px solid var(--hair);border-radius:12px;margin:0 0 12px;box-shadow:var(--shadow)}
+.cmd pre{font-family:var(--mono);font-size:12.5px;line-height:1.6;padding:14px 90px 14px 18px;overflow-x:auto;color:var(--ink);white-space:pre}
+.cmd .lbl{position:absolute;top:10px;right:76px;font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim)}
+.copy{position:absolute;top:8px;right:10px;font-family:var(--mono);font-size:10.5px;color:var(--ink-mid);
+  background:var(--panel-2);border:1px solid var(--hair-2);border-radius:7px;padding:4px 10px;cursor:pointer}
+.copy:hover{border-color:var(--gold);color:var(--gold)}
+.copy.done{color:var(--gold);border-color:var(--gold)}
+.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin:0 0 6px}
+.tool{background:var(--panel);border:1px solid var(--hair);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow)}
+.tool b{font-family:var(--serif);font-size:16px;display:block;margin-bottom:6px}
+.tool p{font-size:12.5px;margin:0 0 8px}
+.tool code{font-family:var(--mono);font-size:11px;background:var(--panel-2);border:1px solid var(--hair);border-radius:5px;padding:1px 6px;color:var(--gold-hi)}
+.next{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:8px}
+.next a{display:block;background:var(--panel);border:1px solid var(--hair);border-radius:12px;padding:14px 18px;color:inherit;box-shadow:var(--shadow)}
+.next a:hover{border-color:var(--gold);text-decoration:none}
+.next b{font-family:var(--serif);font-size:15.5px;color:var(--ink);display:block;margin-bottom:3px}
+.next span{font-size:12px;color:var(--ink-mid)}
+footer{border-top:1px solid var(--hair)}
+footer .in{max-width:980px;margin:0 auto;padding:20px 30px;font-size:12.5px;color:var(--ink-mid)}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="brand"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style="flex-shrink:0;vertical-align:-4px"><path d="M10 10 C7.6 6.9 3.1 6.6 3.1 10 C3.1 13.4 7.6 13.1 10 10" fill="none" stroke="var(--weft)" stroke-width="1.7" stroke-linecap="round"/><path d="M10 10 C12.4 6.9 16.9 6.6 16.9 10 C16.9 13.4 12.4 13.1 10 10" fill="none" stroke="var(--gold)" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="10" r="2.9" fill="var(--ground)"/><circle cx="10" cy="10" r="1.7" fill="var(--gold)"/><circle cx="10" cy="10" r="0.7" fill="var(--ground)"/></svg> Spindleloom &middot; <b>Get started</b></span>
+  <nav aria-label="Site">
+    <a href="index.html">Home</a>
+    <a href="install.html">Full install reference</a>
+    <a href="personas/index.html">Personas</a>
+    <a href="project-overview.html">Overview</a>
+  </nav>
+  <button class="toggle" id="themeToggle" aria-label="Toggle light or dark theme">&#9681; theme</button>
+</div>
+<header class="hero"><div class="in">
+  <div class="kicker">Install &rarr; first run &rarr; daily driving</div>
+  <h1>Get started in <em>ten minutes</em></h1>
+  <p class="dek">One page from a fresh clone to your first agent hand-off. The long tail
+  (enterprise rollout, MCP details, troubleshooting) lives in the
+  <a href="install.html">full install reference</a>.</p>
+</div></header>
+<div class="wrap">
+
+<div class="step"><div class="sh"><span class="n">1</span><h2>Get the source</h2></div>
+<p>Clone next to (or inside) the project you want the fleet to work on. Prerequisites: Git + Python 3.10+.</p>
+<div class="cmd"><span class="lbl">any OS</span><button class="copy">Copy</button>
+<pre>git clone https://github.com/&lt;your-org&gt;/spindleloom.git</pre></div>
+</div>
+
+<div class="step"><div class="sh"><span class="n">2</span><h2>Install into your tool</h2></div>
+<p>Pick one. Claude Code gets the one-command plugin; the others get native bundles emitted by the harness generator.</p>
+<div class="tools">
+<div class="tool"><b>Claude Code (recommended)</b><p>The plugin bundles agents + commands + skills + hooks + MCP:</p>
+<div class="cmd"><button class="copy">Copy</button><pre>/plugin marketplace add ./spindleloom
+/plugin install sloom@spindleloom</pre></div></div>
+<div class="tool"><b>Cursor / Copilot / Windsurf</b><p>The installer copies that tool&#39;s native bundle into your repo:</p>
+<div class="cmd"><span class="lbl">Windows</span><button class="copy">Copy</button><pre>py -3 spindleloom\hooks\install.py --target cursor --repo .</pre></div>
+<p style="margin:0"><code>--target copilot</code> or <code>--target windsurf</code> for the others; <code>--dry-run</code> previews.</p></div>
+<div class="tool"><b>Any other assistant</b><p>One file every tool reads:</p>
+<div class="cmd"><button class="copy">Copy</button><pre>Copy-Item spindleloom\targets\agents-md\AGENTS.md .</pre></div></div>
+</div></div>
+
+<div class="step"><div class="sh"><span class="n">3</span><h2>Verify it is healthy</h2></div>
+<p>The validator prints the live fleet counts and exits 0 when the contract graph is sound.</p>
+<div class="cmd"><span class="lbl">Windows</span><button class="copy">Copy</button><pre>py -3 spindleloom\hooks\validate_graph.py</pre></div>
+<div class="cmd"><span class="lbl">macOS / Linux</span><button class="copy">Copy</button><pre>python3 spindleloom/hooks/validate_graph.py</pre></div>
+</div>
+
+<div class="step"><div class="sh"><span class="n">4</span><h2>Scaffold your project</h2></div>
+<p>Lays down the governed tree (<code>docs/</code> + <code>.spindleloom/</code>) any tool can work in.
+In Claude Code, <code>/spec-new &lt;feature&gt;</code> does the same and starts the spec funnel.</p>
+<div class="cmd"><span class="lbl">greenfield</span><button class="copy">Copy</button><pre>py -3 spindleloom\hooks\scaffold.py . --profile mid</pre></div>
+<div class="cmd"><span class="lbl">existing repo</span><button class="copy">Copy</button><pre>py -3 spindleloom\hooks\scaffold.py . migrate</pre></div>
+</div>
+
+<div class="step"><div class="sh"><span class="n">5</span><h2>First run &mdash; describe the work</h2></div>
+<p>You do not memorize 52 agents. Say what you want; the right specialist triggers and hands off down the chain.</p>
+<div class="cmd"><span class="lbl">in your assistant</span><button class="copy">Copy</button><pre>Write a BRD for prescription refill reminders for a pharmacy chain.</pre></div>
+<p>Watch it hand off (BRD &rarr; PRD &rarr; FRD &rarr; ...), then prove nothing was dropped:</p>
+<div class="cmd"><span class="lbl">Claude Code</span><button class="copy">Copy</button><pre>/spec-check</pre></div>
+</div>
+
+<div class="step"><div class="sh"><span class="n">6</span><h2>Daily driving</h2></div>
+<p>The typed surface, end to end: <code>/spec-*</code> authors the funnel &middot; <code>/plan-*</code> runs the cadence
+&middot; <code>/build-*</code> and <code>/test-*</code> verify &middot; <code>/ship-*</code> and <code>/ops-*</code> release and operate
+&middot; <code>/run</code> drives a whole resumable run. Outside the assistant, one CLI front door:</p>
+<div class="cmd"><span class="lbl">the gate battery</span><button class="copy">Copy</button><pre>py -3 spindleloom\hooks\sloom.py check</pre></div>
+<div class="cmd"><span class="lbl">the concurrency layer</span><button class="copy">Copy</button><pre>py -3 spindleloom\hooks\sloom.py run status &lt;run-id&gt;
+py -3 spindleloom\hooks\sloom.py approve requirements --feature &lt;slug&gt; --role po --by "&lt;name&gt;"
+py -3 spindleloom\hooks\sloom.py signoff qa --verdict GO --by "&lt;name&gt;" --evidence &lt;path&gt;</pre></div>
+<p><b>Where next:</b></p>
+<div class="next">
+<a href="personas/index.html#/start"><b>Start here (by role)</b><span>Pick your persona: the agents you drive, copy-ready prompts, the gates you own.</span></a>
+<a href="personas/index.html#/prompts"><b>The prompt library</b><span>All 54 prompts, filterable by role, phase and MCP.</span></a>
+<a href="install.html"><b>Full install reference</b><span>Per-tool detail, MCP wiring, tracker setup, the enterprise rollout checklist.</span></a>
+</div></div>
+
+</div>
+<footer><div class="in">
+  Generated by <code>hooks/build_guides_site.py</code> &middot; source of truth for the long form:
+  <a href="../INSTALL.md"><code>INSTALL.md</code></a> &middot; back to the <a href="index.html">homepage</a>.
+</div></footer>
+<script>
+const root=document.documentElement;
+try{const _st=localStorage.getItem("sl-theme");if(_st)root.setAttribute("data-theme",_st);}catch(e){}
+document.getElementById("themeToggle").addEventListener("click",()=>{
+  const dark=matchMedia("(prefers-color-scheme:dark)").matches;
+  const cur=root.getAttribute("data-theme")||(dark?"dark":"light");
+  const next=cur==="dark"?"light":"dark";
+  root.setAttribute("data-theme",next);
+  try{localStorage.setItem("sl-theme",next);}catch(e){}
+});
+document.querySelectorAll(".cmd").forEach(card=>{
+  const btn=card.querySelector(".copy"),pre=card.querySelector("pre");if(!btn)return;
+  btn.addEventListener("click",async()=>{const txt=pre.textContent;
+    try{await navigator.clipboard.writeText(txt);}catch(e){
+      const r=document.createRange();r.selectNodeContents(pre);const s=getSelection();
+      s.removeAllRanges();s.addRange(r);try{document.execCommand("copy");}catch(_){}}
+    btn.textContent="Copied";btn.classList.add("done");
+    setTimeout(()=>{btn.textContent="Copy";btn.classList.remove("done");},1400);});
+});
+</script>
+</body>
+</html>

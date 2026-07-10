@@ -72,7 +72,7 @@ def handoff_line(block):
     else:
         after = f"produce {out} (terminal — no downstream agent)"
 
-    return f"{MARKER} · *Before:* {before}. *After:* {after}. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*"
+    return f"{MARKER} · *Before:* {before}. *After:* {after}. *(Flag discoveries back upstream — see `knowledge_hub/BEST-PRACTICES.md`.)*"
 
 
 def main(argv):

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Contributing to Spindleloom -- Spindleloom Guides</title>
+<style>
+:root{
+  --ground:#0E1524; --panel:#141E2E; --panel-2:#18263A;
+  --ink:#DBE5F1; --ink-mid:#93A6BC; --ink-dim:#8497AE; --hair:#1E2E45; --hair-2:#2A3E5C;
+  --gold:#CFA23A; --gold-hi:#E7BE58; --weft:#5C90BE;
+  --shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34);
+  --serif:"Hoefler Text","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:light){:root{
+  --ground:#E9EAE5; --panel:#FFFFFF; --panel-2:#F3F3EF;
+  --ink:#16202E; --ink-mid:#47586B; --ink-dim:#556575; --hair:#DEDFD8; --hair-2:#C9CBC1;
+  --gold:#8A6816; --gold-hi:#7C5D12; --weft:#3C6C93;
+  --shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07);
+}}
+:root[data-theme="light"]{--ground:#E9EAE5;--panel:#FFFFFF;--panel-2:#F3F3EF;--ink:#16202E;--ink-mid:#47586B;--ink-dim:#556575;--hair:#DEDFD8;--hair-2:#C9CBC1;--gold:#8A6816;--gold-hi:#7C5D12;--weft:#3C6C93;--shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07)}
+:root[data-theme="dark"]{--ground:#0E1524;--panel:#141E2E;--panel-2:#18263A;--ink:#DBE5F1;--ink-mid:#93A6BC;--ink-dim:#8497AE;--hair:#1E2E45;--hair-2:#2A3E5C;--gold:#CFA23A;--gold-hi:#E7BE58;--weft:#5C90BE;--shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.66;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+b,strong{color:var(--ink)}
+::selection{background:color-mix(in srgb,var(--gold) 30%,transparent)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:2px}
+.bar{position:sticky;top:0;z-index:80;display:flex;align-items:center;gap:14px;padding:11px 26px;
+  background:color-mix(in srgb,var(--ground) 88%,transparent);backdrop-filter:blur(9px);border-bottom:1px solid var(--hair)}
+.bar .brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--ink-mid);white-space:nowrap}
+.bar .brand b{color:var(--gold)}
+.bar nav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.bar nav a{font-family:var(--mono);font-size:11px;color:var(--ink-mid);padding:6px 10px;border-radius:8px}
+.bar nav a:hover{color:var(--gold);text-decoration:none}
+.toggle{font-family:var(--mono);font-size:11px;color:var(--ink-mid);background:transparent;border:1px solid var(--hair-2);
+  border-radius:20px;padding:6px 13px;cursor:pointer;white-space:nowrap}
+.toggle:hover{border-color:var(--gold);color:var(--gold)}
+.hero{border-bottom:1px solid var(--hair)}
+.hero .in{max-width:1120px;margin:0 auto;padding:44px 30px 34px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-mid)}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,46px);line-height:1.05;letter-spacing:-.02em;margin:12px 0 0;text-wrap:balance}
+.hero .note{font-family:var(--mono);font-size:11.5px;color:var(--ink-mid);margin-top:14px}
+.layout{max-width:1120px;margin:0 auto;padding:34px 30px 80px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:44px}
+@media(max-width:960px){.layout{grid-template-columns:1fr}.spine{display:none}}
+.spine{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 90px);overflow:auto;font-size:12.5px}
+.spine .sp-part{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;margin:18px 0 6px;color:var(--gold)}
+.spine ol{list-style:none}
+.spine li a{display:block;color:var(--ink-mid);padding:3px 0 3px 12px;border-left:2px solid var(--hair)}
+.spine li a:hover{color:var(--ink);text-decoration:none}
+.spine li.on a{color:var(--gold);border-left-color:var(--gold)}
+article h3{font-family:var(--serif);font-weight:600;font-size:23px;letter-spacing:-.01em;margin:40px 0 12px;scroll-margin-top:72px}
+article h4{font-size:15.5px;margin:26px 0 8px;scroll-margin-top:72px}
+article p{margin:0 0 13px;max-width:76ch;color:var(--ink-mid)}
+article li{margin:0 0 7px;color:var(--ink-mid)}
+article ul,article ol{margin:0 0 14px;padding-left:22px}
+article blockquote{border-left:3px solid var(--gold);background:var(--panel);border-radius:0 10px 10px 0;
+  padding:12px 18px;margin:0 0 16px}
+article blockquote p{margin:0}
+article hr{border:0;height:1px;background:var(--hair);margin:34px 0}
+article code{font-family:var(--mono);font-size:.86em;background:var(--panel-2);border:1px solid var(--hair);border-radius:5px;padding:1px 6px;color:var(--gold-hi)}
+article pre{font-family:var(--mono);font-size:12.5px;line-height:1.55;background:var(--panel);border:1px solid var(--hair);
+  border-radius:12px;padding:16px 18px;overflow-x:auto;margin:0 0 16px;color:var(--ink-mid)}
+.tw{overflow-x:auto;margin:0 0 18px;border:1px solid var(--hair);border-radius:12px;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel)}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mid);
+  text-align:left;padding:10px 14px;border-bottom:1px solid var(--hair-2);background:var(--panel-2)}
+td{padding:10px 14px;border-bottom:1px solid var(--hair);vertical-align:top;color:var(--ink-mid)}
+tr:last-child td{border-bottom:0}
+footer{border-top:1px solid var(--hair)}
+footer .in{max-width:1120px;margin:0 auto;padding:22px 30px;font-size:12.5px;color:var(--ink-mid)}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="brand"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style="flex-shrink:0;vertical-align:-4px"><path d="M10 10 C7.6 6.9 3.1 6.6 3.1 10 C3.1 13.4 7.6 13.1 10 10" fill="none" stroke="var(--weft)" stroke-width="1.7" stroke-linecap="round"/><path d="M10 10 C12.4 6.9 16.9 6.6 16.9 10 C16.9 13.4 12.4 13.1 10 10" fill="none" stroke="var(--gold)" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="10" r="2.9" fill="var(--ground)"/><circle cx="10" cy="10" r="1.7" fill="var(--gold)"/><circle cx="10" cy="10" r="0.7" fill="var(--ground)"/></svg> Spindleloom &middot; <b>Guides</b></span>
+  <nav aria-label="Site">
+    <a href="index.html">Home</a>
+    <a href="personas/index.html">Hub</a>
+    <a href="project-overview.html">Overview</a>
+    <a href="governance-handbook.html">Governance</a>
+    <a href="readme.html">All guides</a>
+  </nav>
+  <button class="toggle" id="themeToggle" aria-label="Toggle light or dark theme">&#9681; theme</button>
+</div>
+<header class="hero"><div class="in">
+  <div class="kicker">Spindleloom &middot; knowledge hub</div>
+  <h1>Contributing to Spindleloom</h1>
+  <p class="note">Generated reading view. Source of truth: <a href="../CONTRIBUTING.md"><code>CONTRIBUTING.md</code></a> --
+  edit the MD, then run <code>python hooks/build_guides_site.py</code>.</p>
+</div></header>
+<div class="layout">
+  <nav class="spine" aria-label="Contents"><div class="sp-part">On this page</div><ol><li><a href="#g-get-set-up-5-minutes">Get set up (≈ 5 minutes)</a></li>
+<li><a href="#g-codebase-map">Codebase map</a></li>
+<li><a href="#g-how-change-flows">How change flows</a></li>
+<li><a href="#g-catch-overlaps-before-you-open-a-pr">Catch overlaps before you open a PR</a></li>
+<li><a href="#g-adding-an-agent">Adding an agent</a></li>
+<li><a href="#g-adding-a-skill">Adding a skill</a></li>
+<li><a href="#g-adding-a-shell-hook">Adding a shell hook</a></li>
+<li><a href="#g-ci-gates-must-be-green-before-merge">CI gates (must be green before merge)</a></li>
+<li><a href="#g-getting-help">Getting help</a></li></ol></nav>
+  <main><article><p>Spindleloom is a fleet of 52 AI agents for the full SDLC.  Changes here affect every team that installs it — so the bar is: add value, don't break symmetry, don't create hidden dependencies.</p>
+<hr>
+<h3 id="g-get-set-up-5-minutes">Get set up (≈ 5 minutes)</h3>
+<p><b>Prerequisites:</b> Python 3.10+, Git, bash/zsh (for shell hooks), shellcheck (optional, for local lint).</p>
+<pre>git clone &lt;repo-url&gt;
+cd spindleloom
+
+# Verify the fleet is healthy — should print &quot;OK&quot; with counts:
+py -3 hooks/validate_graph.py
+
+# Build harness bundles (targets/ directory):
+py -3 hooks/build_harness_artifacts.py</pre>
+<p>No <code>pip install</code> required for the core hooks (stdlib-only). The MCP server needs:</p>
+<pre>pip install &quot;mcp[cli]&quot;</pre>
+<hr>
+<h3 id="g-codebase-map">Codebase map</h3>
+<div class="tw"><table>
+<tr><th>Path</th><th>What lives here</th></tr>
+<tr><td><code>agents/</code></td><td>52 agent definitions (one <code>.md</code> per agent; frontmatter is the contract)</td></tr>
+<tr><td><code>skills/</code></td><td>28 reusable methodology skills (one <code>&lt;name&gt;/SKILL.md</code> each)</td></tr>
+<tr><td><code>templates/</code></td><td>52 document templates (filled by agents, checked into project repos)</td></tr>
+<tr><td><code>commands/</code></td><td>23 slash commands wired into Claude Code</td></tr>
+<tr><td><code>hooks/</code></td><td>Python automation (validators, generators, MCP server, Azure adapter)</td></tr>
+<tr><td><code>hooks/*.sh</code></td><td>Shell hooks (SSRF-safe URL caching for remote spec fetches)</td></tr>
+<tr><td><code>targets/</code></td><td>Generated harness bundles — <b>do not edit by hand</b></td></tr>
+<tr><td><code>examples/</code></td><td>End-to-end project artifacts (healthy-meal-app reference)</td></tr>
+<tr><td><code>docs/</code></td><td>Spindleloom-level docs (per-agent config, onboarding, etc.)</td></tr>
+<tr><td><code>.github/workflows/</code></td><td>CI (fleet integrity, harness bundles, shellcheck, plugin install)</td></tr>
+</table></div>
+<p>Key single-source files: <code>knowledge_hub/GOVERNANCE.md</code> (governance: layout standard Part I, story craft Part II, team/ADO Part III), <code>knowledge_hub/BEST-PRACTICES.md</code> (fleet conventions), <code>knowledge_hub/HARNESS-MATRIX.md</code> (per-tool feature surface), <code>hooks/HOOKS.md</code> (hook reference).</p>
+<hr>
+<h3 id="g-how-change-flows">How change flows</h3>
+<ul>
+<li><b>Branch:</b> from <code>main</code>; name <code>feature/&lt;slug&gt;</code> or <code>fix/&lt;slug&gt;</code> (no PBI ref required for doc-only changes; include one for agent/skill changes that map to a roadmap item)</li>
+<li><b>Commit:</b> Conventional Commits (<code>feat:</code>, <code>fix:</code>, <code>docs:</code>, <code>chore:</code>); small and logical; one concern per commit</li>
+<li><b>PR:</b> use <code>templates/pr-template.md</code>; keep it reviewable; CI must be green</li>
+<li><b>Ready / Done:</b> see <code>templates/definition-of-ready-done-template.md</code></li>
+<li><b>Review bar:</b> see <code>knowledge_hub/AGENT-AUTHORING.md</code> for agent quality bar; <code>knowledge_hub/BEST-PRACTICES.md</code> for general conventions</li>
+</ul>
+<hr>
+<h3 id="g-catch-overlaps-before-you-open-a-pr">Catch overlaps before you open a PR</h3>
+<p>Run these commands before submitting to avoid "this already exists" in review:</p>
+<pre># Does an agent with a similar purpose already exist?
+grep -ri &quot;your-topic&quot; agents/ --include=&quot;*.md&quot; -l
+
+# Does a skill covering this methodology already exist?
+grep -ri &quot;your-topic&quot; skills/ --include=&quot;*.md&quot; -l
+
+# Does a template for this document type already exist?
+ls templates/ | grep -i &quot;your-topic&quot;
+
+# Check the agent index for coverage gaps or near-duplicates:
+grep -i &quot;your-topic&quot; agents/INDEX.md
+
+# Full-text search across all agent descriptions:
+grep -ri &quot;triggers on requests like&quot; agents/ | grep -i &quot;your-topic&quot;</pre>
+<p>If you find a near-duplicate, consider whether your change belongs as:</p>
+<ol>
+<li>An addition to the existing agent's workflow section, or</li>
+<li>A new skill armed to the existing agent, or</li>
+<li>A genuinely distinct new agent (justify in the PR why it can't extend the existing one)</li>
+</ol>
+<hr>
+<h3 id="g-adding-an-agent">Adding an agent</h3>
+<ol>
+<li>Copy the structure from any existing agent as a starting point.</li>
+<li>Fill in the full frontmatter contract block: <code>name</code>, <code>description</code>, <code>tools</code>, <code>model</code>, <code>examples</code>, <code>phase</code>, <code>inputs</code>, <code>outputs</code>, <code>upstream</code>, <code>downstream</code>, <code>skills</code>, <code>claude_code</code>, <b><code>loop</code></b>, <b><code>agentic_role</code></b> (both enum-validated by <code>validate_graph.py</code> check 11 -- see <code>AGENT-AUTHORING.md</code> for the allowed values), plus <code>rtm_column</code>/<code>id_prefix</code>/<code>gate</code> where they apply.</li>
+<li>Add reciprocal edges: every agent you list in <code>downstream</code> must list you in their <code>upstream</code>, and vice versa. The validator will catch this, but fix it before committing.</li>
+<li>Run the generators and validator:</li>
+<p>``<code>bash py -3 hooks/build_agent_index.py    # refreshes agents/INDEX.md py -3 hooks/build_handoffs.py       # injects/refreshes the Handoff blockquote py -3 hooks/build_help.py           # refreshes agents/HELP.md (pre-commit gates this) py -3 hooks/validate_graph.py       # symmetry + dangling refs + skills + INDEX + fleet-HTML py -3 hooks/build_harness_artifacts.py   # rebuild bundles </code>``</p>
+<li><b>Regenerate the fleet map data</b>: <code>py -3 hooks/build_fleet_page.py</code> derives the page's nodes, edges, descriptions and skills from the contracts (edge p/s/f styling defaults to backward=feedback; add an <code>EDGE_TYPE_OVERRIDES</code> entry in the hook only if you want a secondary/parallel edge). <code>validate_graph.py</code> checks 12/12b/13 then verify the result independently. The artifact-chain check (13) requires each edge's endpoints to share an output&lt;-&gt;input token; see <code>AGENT-AUTHORING.md</code> "Edge semantics".</li>
+<li>Add the new agent to the fleet count table in <code>README.md</code>.</li>
+<li>See <code>knowledge_hub/AGENT-AUTHORING.md</code> for the full quality bar (examples block, handoff line, style rules).</li>
+</ol>
+<hr>
+<h3 id="g-adding-a-skill">Adding a skill</h3>
+<ol>
+<li>Create <code>skills/&lt;kebab-name&gt;/SKILL.md</code> — follow the pattern of an existing skill (frontmatter: <code>name</code>, <code>description</code>; body: principle, workflow, anti-patterns, style rules).</li>
+<li>Arm it to at least one agent: add the skill slug to that agent's <code>skills:</code> array.</li>
+<li>Run <code>py -3 hooks/validate_graph.py</code> — it checks that every declared skill has a corresponding <code>SKILL.md</code>.</li>
+<li>Update <code>README.md</code> skill count.</li>
+</ol>
+<hr>
+<h3 id="g-adding-a-shell-hook">Adding a shell hook</h3>
+<ol>
+<li>Write it to <code>hooks/&lt;name&gt;.sh</code> — use <code>#!/usr/bin/env bash</code> and <code>set -euo pipefail</code>.</li>
+<li>Mirror the <code>validate_url()</code> SSRF guard from <code>hooks/sdd-cache-pre.sh</code> for any hook that accepts or constructs URLs.</li>
+<li>Use <code>--max-redirs 0</code> for all <code>curl</code> calls — no redirect-following.</li>
+<li>Run <code>shellcheck --severity=warning hooks/&lt;name&gt;.sh</code> locally before committing.</li>
+<li>Add a row to <code>hooks/HOOKS.md</code>.</li>
+</ol>
+<hr>
+<h3 id="g-ci-gates-must-be-green-before-merge">CI gates (must be green before merge)</h3>
+<div class="tw"><table>
+<tr><th>Job</th><th>What it checks</th></tr>
+<tr><td><code>validate-fleet</code></td><td>Graph symmetry, INDEX freshness, harness bundles not stale</td></tr>
+<tr><td><code>validate-traceability</code></td><td>RTM coverage on changed spec folders</td></tr>
+<tr><td><code>lint-hooks</code></td><td><code>shellcheck --severity=warning</code> on all <code>hooks/*.sh</code></td></tr>
+<tr><td><code>test-hooks</code></td><td>All <code>hooks/test_*.py</code> unit tests</td></tr>
+<tr><td><code>plugin-install</code></td><td>Builds <code>targets/</code> and checks <code>claude-plugin</code> manifest structure</td></tr>
+</table></div>
+<hr>
+<h3 id="g-getting-help">Getting help</h3>
+<ul>
+<li>Read <code>knowledge_hub/BEST-PRACTICES.md</code> and <code>knowledge_hub/AGENT-AUTHORING.md</code> before authoring new agents.</li>
+<li>Run <code>py -3 hooks/validate_graph.py</code> — it tells you exactly what's wrong.</li>
+<li>Stuck? Open a discussion issue with the <code>question</code> label.</li>
+</ul></article></main>
+</div>
+<footer><div class="in">
+  Part of the <a href="readme.html">Spindleloom website</a> &middot; front door: the
+  <a href="personas/index.html">Persona Field Handbook</a>.
+</div></footer>
+<script>
+const root=document.documentElement;
+try{const _st=localStorage.getItem("sl-theme");if(_st)root.setAttribute("data-theme",_st);}catch(e){}
+document.getElementById("themeToggle").addEventListener("click",()=>{
+  const dark=matchMedia("(prefers-color-scheme:dark)").matches;
+  const cur=root.getAttribute("data-theme")||(dark?"dark":"light");
+  const next=cur==="dark"?"light":"dark";
+  root.setAttribute("data-theme",next);
+  try{localStorage.setItem("sl-theme",next);}catch(e){}
+});
+const items=[...document.querySelectorAll(".spine li")];
+const map={};items.forEach(li=>{const a=li.querySelector("a");if(a)map[a.getAttribute("href").slice(1)]=li;});
+const spy=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){
+  items.forEach(l=>l.classList.remove("on"));const li=map[e.target.id];if(li)li.classList.add("on");}}),
+  {rootMargin:"-20% 0px -70% 0px"});
+document.querySelectorAll("article h3[id]").forEach(h=>spy.observe(h));
+</script>
+</body>
+</html>

@@ -19,7 +19,8 @@ on:
       - "skills/**"
       - "commands/**"
       - "templates/**"
-      - "project_guides/**"
+      - "knowledge_hub/**"
+      - "spindleloom_website/**"
       - "hooks/**"
 
 permissions:
@@ -65,7 +66,7 @@ jobs:
           body: |
             Automated refresh of generated fleet artifacts (`agents/INDEX.md`,
             per-agent handoff lines, `agents/HELP.md`, `targets/`) from the current `agents/`, `skills/`,
-            `commands/`, `templates/`, and `project_guides/` source.
+            `commands/`, `templates/`, `knowledge_hub/`, and `spindleloom_website/` source.
 
             Opened automatically because regenerating these derived files produced
             a diff — someone edited source without re-running

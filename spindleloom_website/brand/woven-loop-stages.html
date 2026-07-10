@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spindleloom — Woven Loop (brand study, v4)</title>
+<style>
+  :root{
+    --ink:#12151F; --ink-2:#1A1F2E; --line:rgba(255,255,255,.09);
+    --paper:#EEF1F5;
+    --blue:#2E6FB5; --blue-lt:#7FB0E6; --amber:#C8982A; --amber-lt:#E7BE58;
+    --text:#D9DEE7; --muted:#8B94A4; --muted-2:#5E6675;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:ui-monospace,"Cascadia Code","SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} body{margin:0}
+  .wrap{background:var(--ink);color:var(--text);font-family:var(--sans);min-height:100vh;
+    padding:clamp(28px,5vw,72px) clamp(20px,5vw,64px);line-height:1.55;
+    background-image:radial-gradient(120% 90% at 85% -10%, rgba(46,111,181,.13), transparent 55%),
+      radial-gradient(90% 80% at 5% 110%, rgba(200,152,42,.09), transparent 50%);}
+  .inner{max-width:1040px;margin:0 auto}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--muted);margin:0 0 18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--amber);display:inline-block}
+  h1{font-size:clamp(30px,5.4vw,52px);line-height:1.04;letter-spacing:-.025em;margin:0 0 18px;
+    font-weight:680;text-wrap:balance;max-width:17ch}
+  h1 .warp{color:var(--blue-lt)} h1 .weft{color:var(--amber)}
+  .dek{font-size:clamp(15px,2vw,17.5px);color:var(--muted);max-width:64ch;margin:0}
+  .dek b{color:var(--text);font-weight:600}
+  .rule{height:1px;background:var(--line);border:0;margin:clamp(32px,5vw,52px) 0}
+
+  .stage-hero{display:flex;gap:clamp(20px,4vw,48px);align-items:center;flex-wrap:wrap;
+    border:1px solid rgba(200,152,42,.3);border-radius:22px;padding:clamp(20px,4vw,40px);
+    background:linear-gradient(180deg,rgba(200,152,42,.06),rgba(46,111,181,.05))}
+  .canvaswrap{display:flex;flex-direction:column;align-items:center;gap:12px;flex:0 0 auto}
+  #stage{display:block;max-width:100%;height:auto}
+  .readout{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--muted);
+    display:flex;align-items:center;gap:8px;min-height:18px}
+  .readout .now{color:var(--text);font-weight:600}
+  .readout .pip{width:8px;height:8px;border-radius:50%;background:var(--amber);box-shadow:0 0 8px var(--amber)}
+  .copy{flex:1;min-width:250px}
+  .copy h2{font-size:clamp(20px,3vw,26px);margin:0 0 10px;letter-spacing:-.02em;font-weight:660}
+  .copy p{color:var(--muted);font-size:14.5px;margin:0 0 12px;max-width:50ch}
+  .copy p b{color:var(--text);font-weight:600}
+  .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+  .mbtn{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--text);
+    border:1px solid var(--line);border-radius:8px;padding:7px 12px;background:rgba(255,255,255,.03);cursor:pointer}
+  .mbtn:hover{border-color:rgba(200,152,42,.5)} .mbtn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+
+  .sys{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:clamp(30px,4vw,48px)}
+  @media(max-width:720px){.sys{grid-template-columns:1fr}}
+  .syscard{border:1px solid var(--line);border-radius:16px;background:var(--ink-2);padding:20px}
+  .syscard h3{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin:0 0 12px;color:var(--amber)}
+  .syscard .row{display:flex;align-items:center;gap:14px;margin:10px 0}
+  .syscard .lbl{font-family:var(--mono);font-size:10px;color:var(--muted-2)}
+  .syscard p{font-size:13px;color:var(--muted);margin:12px 0 0;line-height:1.5}
+  .tile{border-radius:24%;display:flex;align-items:center;justify-content:center;background:#10131c;border:1px solid rgba(255,255,255,.06)}
+
+  .note{margin-top:clamp(28px,4vw,44px);border-left:2px solid var(--amber);padding:4px 0 4px 18px}
+  .note .t{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin:0 0 6px}
+  .note p{margin:0;color:var(--muted);font-size:14px;max-width:62ch}
+  .note p b{color:var(--text);font-weight:600}
+  .foot{font-family:var(--mono);font-size:11.5px;color:var(--muted-2);margin-top:34px;letter-spacing:.03em;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="inner">
+
+  <p class="eyebrow"><span class="dot"></span> Woven Loop · stages in the loop · v4 · repo edition (gold-aligned)</p>
+  <h1>The agent, <span class="warp">walking</span> the <span class="weft">lifecycle</span></h1>
+  <p class="dek">Stages placed around the loop turn the mark into a map of the SDLC. The left lobe is the <b>make</b> side, the right lobe is the <b>run</b> side, and the core node is the <b>hand-off</b> the agent crosses between them. The travelling light is the agent — it <b>lights the stage it's working</b> right now.</p>
+
+  <hr class="rule">
+
+  <div class="stage-hero">
+    <div class="canvaswrap">
+      <canvas id="stage" width="400" height="400" aria-label="Animated SDLC loop with stages"></canvas>
+      <div class="readout"><span class="pip"></span> working&nbsp;<span class="now" id="now">PLAN</span></div>
+    </div>
+    <div class="copy">
+      <h2>Stages = a living diagram</h2>
+      <p>This is the <b>illustration</b> form — for the hero, docs, onboarding, and an <b>“agent working” loading state</b>. As the light reaches each node it pulses and the read-out updates, so the loop literally narrates what the orchestrator is doing.</p>
+      <p>The flow: <b style="color:var(--blue-lt)">Plan → Build → Test</b> → <i>hand-off</i> → <b style="color:var(--amber)">Ship → Operate → Learn</b> → back to Plan. The loop the README promises — <b>build → ship → operate → learn → repeat</b> — agent-driven.</p>
+      <div class="btnrow">
+        <button class="mbtn" id="toggle">⏸ pause</button>
+        <button class="mbtn" id="speed">speed ×1</button>
+        <button class="mbtn" id="labels">hide labels</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sys">
+    <div class="syscard">
+      <h3>Logo · small</h3>
+      <div class="row"><div class="tile" style="width:48px;height:48px"><canvas data-k="node" data-s="40"></canvas></div><span class="lbl">favicon / nav</span></div>
+      <div class="row"><div class="tile" style="width:30px;height:30px"><canvas data-k="node" data-s="22"></canvas></div><span class="lbl">16–28px</span></div>
+      <p>Clean Core Node. No stages — they'd turn to mud. This is the mark that ships everywhere (now inlined in the fleet map and persona hub).</p>
+    </div>
+    <div class="syscard">
+      <h3>App tile · medium</h3>
+      <div class="row"><div class="tile" style="width:84px;height:84px"><canvas data-k="dots" data-s="72"></canvas></div><span class="lbl">64–128px</span></div>
+      <p>Stage <b>dots</b> appear — no labels yet. Detail rewards a closer look without breaking the silhouette.</p>
+    </div>
+    <div class="syscard">
+      <h3>Diagram · large</h3>
+      <div class="row"><div class="tile" style="width:108px;height:108px;border-radius:14%"><canvas data-k="mini-stage" data-s="96"></canvas></div><span class="lbl">hero / docs</span></div>
+      <p>Full labelled, animated loop. The marketing &amp; product-narrative asset. The live, run-state-driven version is <b>loop-widget.html</b> beside this file.</p>
+    </div>
+  </div>
+
+  <div class="note">
+    <p class="t">Realised upgrades</p>
+    <p><b>(2) is built:</b> <b>loop-widget.html</b> (beside this file) drives the light from a <b>real run ledger</b> (.spindleloom/runs/&lt;id&gt;.json) — completed stages filled, pending hollow, blocked glowing red. Remaining: <b>(1)</b> per-stage hover tooltips in-product, <b>(3)</b> richer health semantics (open FLAGs as amber).</p>
+  </div>
+
+  <p class="foot">
+    All vector / canvas. Palette is the brand system: gold <b style="color:var(--amber)">#C8982A</b> (weft) · blue <b style="color:var(--blue-lt)">#2E6FB5/#7FB0E6</b> (warp) on ink #12151F — matching assets/spindleloom-mark.svg, the fleet map and the persona hub. LEARN replaces OBSERVE so the mark speaks the README's loop.
+  </p>
+
+</div></div>
+
+<script>
+(function(){
+  var BLUE="#2E6FB5", BLUE_LT="#7FB0E6", AMBER="#C8982A", AMBER_LT="#E7BE58", INK="#12151F", TILE="#10131c";
+  var dpr=Math.min(window.devicePixelRatio||1,2.5);
+  var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+
+  function ctxFor(cv,size){cv.width=size*dpr;cv.height=size*dpr;cv.style.width=size+"px";cv.style.height=size+"px";
+    var c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);c.lineJoin="round";return c;}
+
+  function lemPts(S,n,af,ys,cx,cy){
+    af=af||0.345;ys=ys||1.34;cx=cx==null?S*0.5:cx;cy=cy==null?S*0.5:cy;
+    var a=S*af,pts=[];
+    for(var i=0;i<=n;i++){var t=i/n*2*Math.PI,s=Math.sin(t),c=Math.cos(t),d=1+s*s;
+      pts.push([cx+a*c/d, cy+(a*s*c/d)*ys]);}
+    return pts;
+  }
+  function strokeAll(c,pts,color,w){c.lineCap="round";c.beginPath();
+    for(var i=0;i<pts.length;i++){var p=pts[i];i===0?c.moveTo(p[0],p[1]):c.lineTo(p[0],p[1]);}
+    c.strokeStyle=color;c.lineWidth=w;c.stroke();}
+  function strokeSeg(c,pts,i0,i1,color,w){c.lineCap="round";c.beginPath();
+    for(var i=i0;i<=i1;i++){var p=pts[i];i===i0?c.moveTo(p[0],p[1]):c.lineTo(p[0],p[1]);}
+    c.strokeStyle=color;c.lineWidth=w;c.stroke();}
+
+  function hub(c,cx,cy,w,ground){
+    c.beginPath();c.arc(cx,cy,w*1.7,0,7);c.fillStyle=ground;c.fill();
+    c.beginPath();c.arc(cx,cy,w*1.0,0,7);c.fillStyle=AMBER;c.fill();
+    c.beginPath();c.arc(cx,cy,w*0.42,0,7);c.fillStyle=ground;c.fill();
+  }
+
+  // simple icon renderer for the system row. k: 'node' | 'dots'
+  function icon(c,S,ground,k){
+    var n=240,q=n/4,pts=lemPts(S,n),w=S*0.085,cx=S*0.5,cy=S*0.5;
+    strokeAll(c,pts,BLUE,w);strokeSeg(c,pts,0,q,AMBER,w);strokeSeg(c,pts,3*q,n,AMBER,w);
+    if(k==="dots"){
+      var degs=[120,180,240,300,360,60], cols=[BLUE_LT,BLUE_LT,BLUE_LT,AMBER_LT,AMBER_LT,AMBER_LT];
+      for(var i=0;i<degs.length;i++){
+        var t=degs[i]*Math.PI/180,s=Math.sin(t),cc=Math.cos(t),d=1+s*s;
+        var x=cx+S*0.345*cc/d, y=cy+(S*0.345*s*cc/d)*1.34;
+        c.beginPath();c.arc(x,y,w*0.92,0,7);c.fillStyle=ground;c.fill();
+        c.beginPath();c.arc(x,y,w*0.62,0,7);c.fillStyle=cols[i];c.fill();
+      }
+    }
+    hub(c,cx,cy,w,ground);
+  }
+
+  // ---- stage diagram (animated) ----
+  var STAGES=[
+    {deg:120,label:"PLAN",  c:BLUE_LT,  side:"make"},
+    {deg:180,label:"BUILD", c:BLUE_LT,  side:"make"},
+    {deg:240,label:"TEST",  c:BLUE_LT,  side:"make"},
+    {deg:300,label:"SHIP",  c:AMBER_LT, side:"run"},
+    {deg:360,label:"OPERATE",c:AMBER_LT,side:"run"},
+    {deg:60, label:"LEARN", c:AMBER_LT, side:"run"}
+  ].map(function(s){return {deg:s.deg,t:s.deg*Math.PI/180,label:s.label,c:s.c,side:s.side};})
+   .sort(function(a,b){return a.t-b.t;});
+
+  function stagePoint(S,t,af,ys,cx,cy){
+    var s=Math.sin(t),cc=Math.cos(t),d=1+s*s;
+    return [cx+S*af*cc/d, cy+(S*af*s*cc/d)*ys];
+  }
+
+  function drawStageDiagram(c,S,opts){
+    opts=opts||{};
+    var af=0.27, ys=1.28, cx=S*0.5, cy=S*0.5, n=600, w=S*0.052;
+    var pts=lemPts(S,n,af,ys,cx,cy), q=n/4;
+    var headT=opts.headT, showLabels=opts.labels!==false, active=opts.active;
+
+    c.clearRect(0,0,S,S);
+    c.globalAlpha=.20;strokeAll(c,pts,"#aeb7c6",w);c.globalAlpha=1;
+    c.globalAlpha=.55;
+    strokeSeg(c,pts,0,q,AMBER,w);strokeSeg(c,pts,3*q,n,AMBER,w);
+    strokeSeg(c,pts,q,3*q,BLUE,w);
+    c.globalAlpha=1;
+
+    if(headT!=null){
+      var headIdx=Math.round(headT/(2*Math.PI)*n);
+      var L=64;
+      for(var k=L;k>=0;k--){
+        var idx=((headIdx-k)%n+n)%n,p0=pts[idx],p1=pts[(idx+1)%n];
+        c.globalAlpha=(1-k/L)*(1-k/L);
+        var col=(idx<=q||idx>=3*q)?AMBER_LT:BLUE_LT;
+        c.lineCap="round";c.beginPath();c.moveTo(p0[0],p0[1]);c.lineTo(p1[0],p1[1]);
+        c.strokeStyle=col;c.lineWidth=w*1.15;c.stroke();
+      }
+      c.globalAlpha=1;
+      var hp=pts[headIdx%n];
+      var rg=c.createRadialGradient(hp[0],hp[1],0,hp[0],hp[1],w*3);
+      rg.addColorStop(0,"rgba(255,247,228,.95)");rg.addColorStop(1,"rgba(255,247,228,0)");
+      c.fillStyle=rg;c.beginPath();c.arc(hp[0],hp[1],w*3,0,7);c.fill();
+    }
+
+    c.font="600 "+(S*0.034)+"px "+("ui-monospace,Menlo,Consolas,monospace");
+    STAGES.forEach(function(st,i){
+      var p=stagePoint(S,st.t,af,ys,cx,cy);
+      var isActive=(active===i);
+      var rr=isActive?w*1.5:w*0.95;
+      if(isActive){
+        var gg=c.createRadialGradient(p[0],p[1],0,p[0],p[1],w*3.2);
+        gg.addColorStop(0,(st.side==="run"?"rgba(231,190,88,.5)":"rgba(127,176,230,.5)"));
+        gg.addColorStop(1,"rgba(0,0,0,0)");
+        c.fillStyle=gg;c.beginPath();c.arc(p[0],p[1],w*3.2,0,7);c.fill();
+      }
+      c.beginPath();c.arc(p[0],p[1],rr+w*0.5,0,7);c.fillStyle=INK;c.fill();
+      c.beginPath();c.arc(p[0],p[1],rr,0,7);c.fillStyle=st.c;c.fill();
+      if(showLabels){
+        var dx=p[0]-cx, dy=p[1]-cy, m=Math.sqrt(dx*dx+dy*dy)||1, off=w*2.4;
+        var lx=p[0]+dx/m*off, ly=p[1]+dy/m*off;
+        c.textBaseline="middle";
+        c.textAlign = dx<-S*0.04?"right":dx>S*0.04?"left":"center";
+        c.fillStyle=isActive?"#FFFFFF":"#9AA3B2";
+        c.fillText(st.label,lx,ly);
+      }
+    });
+
+    hub(c,cx,cy,w,INK);
+  }
+
+  // paint system-row icons
+  document.querySelectorAll('canvas[data-k]').forEach(function(cv){
+    var s=parseInt(cv.getAttribute("data-s"),10),k=cv.getAttribute("data-k");
+    var c=ctxFor(cv,s);
+    if(k==="mini-stage"){ drawStageDiagram(c,s,{labels:false,active:1,headT:1.6}); }
+    else { icon(c,s,TILE,k); }
+  });
+
+  // ---- animate hero ----
+  var cv=document.getElementById("stage"), S=400, c=ctxFor(cv,S);
+  var n=600, head=0, speed=1, running=!reduce, showLabels=true, raf=null;
+  var nowEl=document.getElementById("now");
+  var stagesByT=STAGES;
+
+  function activeStage(headT){
+    var best=0,bestd=1e9;
+    for(var i=0;i<stagesByT.length;i++){
+      var d=((headT-stagesByT[i].t)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);
+      if(d<bestd){bestd=d;best=i;}
+    }
+    return best;
+  }
+  function render(){
+    var headT=head/n*2*Math.PI;
+    var ai=activeStage(headT);
+    drawStageDiagram(c,S,{headT:headT,labels:showLabels,active:ai});
+    if(nowEl&&nowEl.textContent!==stagesByT[ai].label){nowEl.textContent=stagesByT[ai].label;}
+    if(running){head=(head+1.15*speed)%n;raf=requestAnimationFrame(render);}
+  }
+  if(reduce){ drawStageDiagram(c,S,{headT:1.6,labels:true,active:activeStage(1.6)}); }
+  else render();
+
+  document.getElementById("toggle").addEventListener("click",function(){
+    running=!running;this.textContent=running?"⏸ pause":"▶ play";
+    if(running)render();else if(raf)cancelAnimationFrame(raf);
+  });
+  document.getElementById("speed").addEventListener("click",function(){
+    speed=speed>=2?.5:speed+0.5;this.textContent="speed ×"+speed;
+  });
+  document.getElementById("labels").addEventListener("click",function(){
+    showLabels=!showLabels;this.textContent=showLabels?"hide labels":"show labels";
+    if(!running){var headT=head/n*2*Math.PI;drawStageDiagram(c,S,{headT:headT,labels:showLabels,active:activeStage(headT)});}
+  });
+})();
+</script>
+</body>
+</html>

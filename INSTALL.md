@@ -17,14 +17,15 @@ py -3 spindleloom/hooks/validate_graph.py   # Windows
 # python3 spindleloom/hooks/validate_graph.py  # macOS/Linux
 
 # 3. Copy agents + skills + commands into your project's .claude/ folder
-mkdir -p .claude/agents .claude/skills .claude/commands
 
 # Windows (PowerShell)
+New-Item -ItemType Directory -Force .claude\agents, .claude\skills, .claude\commands | Out-Null
 Copy-Item spindleloom\agents\*   .claude\agents\
 Copy-Item spindleloom\skills\*   .claude\skills\ -Recurse
 Copy-Item spindleloom\commands\* .claude\commands\
 
 # macOS / Linux
+mkdir -p .claude/agents .claude/skills .claude/commands
 cp spindleloom/agents/*       .claude/agents/
 cp -r spindleloom/skills/*    .claude/skills/
 cp spindleloom/commands/*     .claude/commands/
@@ -35,7 +36,7 @@ cp spindleloom/commands/*     .claude/commands/
 #    @prd-writer       → invoke a specific agent
 ```
 
-That's it for trying it out. When you're ready to go further: Step 4 covers the plugin install (one command, everything included), Steps 6–7 add tracker integration and quality gates.
+That's it for trying it out. To lay down the mandated project tree in **any** tool (not just Claude Code's `/spec-new`), run the scaffolder directly: `py -3 spindleloom\hooks\scaffold.py . --profile mid` (Windows) / `python3 spindleloom/hooks/scaffold.py . --profile mid` (macOS/Linux), or `... <dir> migrate` to convert an existing repo. When you're ready to go further: Step 4 covers the plugin install (one command, everything included), Steps 6–7 add tracker integration and quality gates.
 
 ---
 
@@ -46,12 +47,12 @@ For teams rolling out Spindleloom across multiple repos or to 10+ developers.
 ### Phase 1 — Validate and package (owner/champion, 1 day)
 
 - [ ] Clone source, run `validate_graph.py` — confirm OK
-- [ ] Run `build_harness_artifacts.py` — confirm 387 artifacts across 6 harnesses
-- [ ] Run all hook tests: `py -3 -m unittest discover -s hooks -p "test_*.py"` — all pass
+- [ ] Run `build_harness_artifacts.py` — confirm ~615 artifacts across 6 harnesses (count grows across releases)
+- [ ] Run all hook tests: `py -3 -m pytest hooks/ -q` — all pass (needs pytest; `unittest discover` silently collects only ~13 of ~90)
 - [ ] Decide install method: **plugin** (recommended for Claude Code teams) or **manual copy**
 - [ ] Decide tracker: Azure Boards (set `AZURE_DEVOPS_*` vars) or Jira (set `JIRA_*` vars)
 - [ ] Create a shared internal fork/mirror if policies require (the source is product-agnostic)
-- [ ] Set `SPINDLELOOM_SPEC_ROOT` to your org's standard `docs/` location
+- [ ] Set `SPINDLELOOM_SPEC_ROOT` to your project root (the server resolves `docs/` under it)
 
 ### Phase 2 — Pilot repo (1–2 days)
 
@@ -79,7 +80,7 @@ For teams rolling out Spindleloom across multiple repos or to 10+ developers.
 - [ ] Wire `build_harness_artifacts.py --check` as a CI drift gate so stale bundles can't merge
 - [ ] After any Spindleloom source update: re-run `build_harness_artifacts.py` and re-distribute
 - [ ] Use `run-orchestrator` + `.spindleloom/run-state.json` for any autonomous fleet runs
-- [ ] Review `project_guides/PILOT-READOUT.md` for known adjustment areas before wider rollout
+- [ ] Review `knowledge_hub/archive/PILOT-READOUT.md` for known adjustment areas before wider rollout
 
 ### Size your adoption
 
@@ -99,6 +100,7 @@ Run `doc-strategy-advisor` — it picks the right subset for your context.
 |---|---|---|---|---|
 | **Git** | clone the repo | [git-scm.com](https://git-scm.com) | `brew install git` | `apt install git` |
 | **Python 3.10+** | run hooks (stdlib-only, no venv needed) | `py -3 --version` | `python3 --version` | `python3 --version` |
+| **pytest** | run the hook test suite (dev only) | `py -3 -m pip install pytest` | `pip install pytest` | `pip install pytest` |
 | **uv** | MCP server only (auto-provisions SDK) | `irm https://astral.sh/uv/install.ps1 \| iex` | `curl -LsSf https://astral.sh/uv/install.sh \| sh` | same as macOS |
 | **shellcheck** | lint `hooks/*.sh` in CI / pre-commit | `scoop install shellcheck` or WSL | `brew install shellcheck` | `apt install shellcheck` |
 | **pre-commit** | local gate before `git commit` | `pip install pre-commit` | `brew install pre-commit` | `pip install pre-commit` |
@@ -128,7 +130,7 @@ python3 hooks/validate_graph.py
 
 Expected output:
 ```
-agents: 52 | templates: 50 | skills: 22 | commands: 13
+agents: 52 | templates: 51 | skills: 28 | commands: 23
 OK — graph symmetric, no dangling refs, declared skills present, INDEX current, claude_code mappings resolve.
 ```
 
@@ -185,8 +187,9 @@ Use when you don't want the plugin install step.
 **Option A — automated (recommended):**
 
 ```bash
-python3 spindleloom/hooks/install.py --target claude-code --repo .
-# or --dry-run to preview first
+py -3 spindleloom\hooks\install.py --target claude-code --repo .    # Windows
+python3 spindleloom/hooks/install.py --target claude-code --repo .  # macOS/Linux
+# or add --dry-run to preview first
 ```
 
 **Option B — manual copy:**
@@ -231,7 +234,8 @@ Copy-Item spindleloom\targets\claude-code\agents\* "$env:USERPROFILE\.claude\age
 ### Cursor
 
 ```bash
-python3 spindleloom/hooks/install.py --target cursor --repo .
+py -3 spindleloom\hooks\install.py --target cursor --repo .    # Windows
+python3 spindleloom/hooks/install.py --target cursor --repo .  # macOS/Linux
 ```
 
 Or manually:
@@ -259,7 +263,8 @@ Each role becomes a description-triggered `.mdc` rule. `000-spindleloom-conventi
 ### GitHub Copilot
 
 ```bash
-python3 spindleloom/hooks/install.py --target copilot --repo .
+py -3 spindleloom\hooks\install.py --target copilot --repo .    # Windows
+python3 spindleloom/hooks/install.py --target copilot --repo .  # macOS/Linux
 ```
 
 Or manually:
@@ -287,7 +292,8 @@ Custom chat modes + `copilot-instructions.md` + `.vscode/mcp.json` for live trac
 ### Windsurf
 
 ```bash
-python3 spindleloom/hooks/install.py --target windsurf --repo .
+py -3 spindleloom\hooks\install.py --target windsurf --repo .    # Windows
+python3 spindleloom/hooks/install.py --target windsurf --repo .  # macOS/Linux
 # The script also prints the user-global mcp_config.json snippet with absolute paths filled in.
 ```
 
@@ -335,7 +341,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-The generated `.mcp.json` auto-discovers and launches the server. Set `SPINDLELOOM_SPEC_ROOT` to your project's `docs/` folder:
+The generated `.mcp.json` auto-discovers and launches the server. Set `SPINDLELOOM_SPEC_ROOT` to your **project root** (the server resolves `docs/` beneath it — do not point it at `docs/` directly):
 
 ```json
 // .mcp.json (already generated — just set the env var)
@@ -344,7 +350,7 @@ The generated `.mcp.json` auto-discovers and launches the server. Set `SPINDLELO
     "sloom": {
       "command": "uv",
       "args": ["run", "--with", "mcp[cli]", "python", "mcp/mcp_server.py"],
-      "env": { "SPINDLELOOM_SPEC_ROOT": "${CLAUDE_PROJECT_DIR}/docs" }
+      "env": { "SPINDLELOOM_SPEC_ROOT": "${CLAUDE_PROJECT_DIR}" }
     }
   }
 }
@@ -499,7 +505,7 @@ py -3 hooks/validate_graph.py           # → OK
 py -3 hooks/build_harness_artifacts.py --check   # → exit 0
 
 # 3. All tests pass
-py -3 -m unittest discover -s hooks -p "test_*.py" -v
+py -3 -m pytest hooks/ -q
 
 # 4. MCP server (if wired)
 uv run python hooks/test_mcp_server.py  # → OK
@@ -553,7 +559,7 @@ Then re-copy the updated bundle for your tool (same Step 4 commands). The plugin
 | Rebuild INDEX | `py -3 hooks/build_agent_index.py` | `python3 hooks/build_agent_index.py` |
 | Build bundles | `py -3 hooks/build_harness_artifacts.py` | `python3 hooks/build_harness_artifacts.py` |
 | Check bundles | `py -3 hooks/build_harness_artifacts.py --check` | `python3 hooks/build_harness_artifacts.py --check` |
-| Run all tests | `py -3 -m unittest discover -s hooks -p "test_*.py"` | `python3 -m unittest discover -s hooks -p "test_*.py"` |
+| Run all tests | `py -3 -m pytest hooks/ -q` | `python3 -m pytest hooks/ -q` |
 | Azure dry-run | `py -3 hooks/azure_boards_adapter.py backlog.md` | `python3 hooks/azure_boards_adapter.py backlog.md` |
 | Jira dry-run | `py -3 hooks/jira_adapter.py backlog.md` | `python3 hooks/jira_adapter.py backlog.md` |
 | Jira list fields | `py -3 hooks/jira_adapter.py --list-fields` | `python3 hooks/jira_adapter.py --list-fields` |

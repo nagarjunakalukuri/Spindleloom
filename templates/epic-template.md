@@ -1,6 +1,6 @@
 # Epic — <capability name>
 
-> For work too large for one sprint. An epic is a **placeholder, progressively decomposed** as it nears the top of the backlog (see `project_guides/STORY-CRAFT.md` §6). The system of record is the work tracker; this file is the staging/source artifact synced to it.
+> For work too large for one sprint. An epic is a **placeholder, progressively decomposed** as it nears the top of the backlog (see `knowledge_hub/GOVERNANCE.md` Part II §6). The system of record is the work tracker; this file is the staging/source artifact synced to it.
 
 | Field | Value |
 |---|---|
@@ -27,7 +27,7 @@
 1. <slice — delivers standalone, user-visible value>
 2. <...>
 
-> Compound → split by CRUD/data. Complex → story 1 = timeboxed spike; story 2 = the real feature. Each child must be an INVEST-valid, vertically-sliced story (see `project_guides/STORY-CRAFT.md` §4).
+> Compound → split by CRUD/data. Complex → story 1 = timeboxed spike; story 2 = the real feature. Each child must be an INVEST-valid, vertically-sliced story (see `knowledge_hub/GOVERNANCE.md` Part II §4).
 
 ## Success criteria / Done when
 <Epic-level success measure or metric — the condition under which the epic is complete. Distinct from any single story's acceptance criteria.>

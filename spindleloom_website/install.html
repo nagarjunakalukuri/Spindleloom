@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Install — Spindleloom Agent Fleet -- Spindleloom Guides</title>
+<style>
+:root{
+  --ground:#0E1524; --panel:#141E2E; --panel-2:#18263A;
+  --ink:#DBE5F1; --ink-mid:#93A6BC; --ink-dim:#8497AE; --hair:#1E2E45; --hair-2:#2A3E5C;
+  --gold:#CFA23A; --gold-hi:#E7BE58; --weft:#5C90BE;
+  --shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34);
+  --serif:"Hoefler Text","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:light){:root{
+  --ground:#E9EAE5; --panel:#FFFFFF; --panel-2:#F3F3EF;
+  --ink:#16202E; --ink-mid:#47586B; --ink-dim:#556575; --hair:#DEDFD8; --hair-2:#C9CBC1;
+  --gold:#8A6816; --gold-hi:#7C5D12; --weft:#3C6C93;
+  --shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07);
+}}
+:root[data-theme="light"]{--ground:#E9EAE5;--panel:#FFFFFF;--panel-2:#F3F3EF;--ink:#16202E;--ink-mid:#47586B;--ink-dim:#556575;--hair:#DEDFD8;--hair-2:#C9CBC1;--gold:#8A6816;--gold-hi:#7C5D12;--weft:#3C6C93;--shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07)}
+:root[data-theme="dark"]{--ground:#0E1524;--panel:#141E2E;--panel-2:#18263A;--ink:#DBE5F1;--ink-mid:#93A6BC;--ink-dim:#8497AE;--hair:#1E2E45;--hair-2:#2A3E5C;--gold:#CFA23A;--gold-hi:#E7BE58;--weft:#5C90BE;--shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.66;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+b,strong{color:var(--ink)}
+::selection{background:color-mix(in srgb,var(--gold) 30%,transparent)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:2px}
+.bar{position:sticky;top:0;z-index:80;display:flex;align-items:center;gap:14px;padding:11px 26px;
+  background:color-mix(in srgb,var(--ground) 88%,transparent);backdrop-filter:blur(9px);border-bottom:1px solid var(--hair)}
+.bar .brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--ink-mid);white-space:nowrap}
+.bar .brand b{color:var(--gold)}
+.bar nav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.bar nav a{font-family:var(--mono);font-size:11px;color:var(--ink-mid);padding:6px 10px;border-radius:8px}
+.bar nav a:hover{color:var(--gold);text-decoration:none}
+.toggle{font-family:var(--mono);font-size:11px;color:var(--ink-mid);background:transparent;border:1px solid var(--hair-2);
+  border-radius:20px;padding:6px 13px;cursor:pointer;white-space:nowrap}
+.toggle:hover{border-color:var(--gold);color:var(--gold)}
+.hero{border-bottom:1px solid var(--hair)}
+.hero .in{max-width:1120px;margin:0 auto;padding:44px 30px 34px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-mid)}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,46px);line-height:1.05;letter-spacing:-.02em;margin:12px 0 0;text-wrap:balance}
+.hero .note{font-family:var(--mono);font-size:11.5px;color:var(--ink-mid);margin-top:14px}
+.layout{max-width:1120px;margin:0 auto;padding:34px 30px 80px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:44px}
+@media(max-width:960px){.layout{grid-template-columns:1fr}.spine{display:none}}
+.spine{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 90px);overflow:auto;font-size:12.5px}
+.spine .sp-part{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;margin:18px 0 6px;color:var(--gold)}
+.spine ol{list-style:none}
+.spine li a{display:block;color:var(--ink-mid);padding:3px 0 3px 12px;border-left:2px solid var(--hair)}
+.spine li a:hover{color:var(--ink);text-decoration:none}
+.spine li.on a{color:var(--gold);border-left-color:var(--gold)}
+article h3{font-family:var(--serif);font-weight:600;font-size:23px;letter-spacing:-.01em;margin:40px 0 12px;scroll-margin-top:72px}
+article h4{font-size:15.5px;margin:26px 0 8px;scroll-margin-top:72px}
+article p{margin:0 0 13px;max-width:76ch;color:var(--ink-mid)}
+article li{margin:0 0 7px;color:var(--ink-mid)}
+article ul,article ol{margin:0 0 14px;padding-left:22px}
+article blockquote{border-left:3px solid var(--gold);background:var(--panel);border-radius:0 10px 10px 0;
+  padding:12px 18px;margin:0 0 16px}
+article blockquote p{margin:0}
+article hr{border:0;height:1px;background:var(--hair);margin:34px 0}
+article code{font-family:var(--mono);font-size:.86em;background:var(--panel-2);border:1px solid var(--hair);border-radius:5px;padding:1px 6px;color:var(--gold-hi)}
+article pre{font-family:var(--mono);font-size:12.5px;line-height:1.55;background:var(--panel);border:1px solid var(--hair);
+  border-radius:12px;padding:16px 18px;overflow-x:auto;margin:0 0 16px;color:var(--ink-mid)}
+.tw{overflow-x:auto;margin:0 0 18px;border:1px solid var(--hair);border-radius:12px;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel)}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mid);
+  text-align:left;padding:10px 14px;border-bottom:1px solid var(--hair-2);background:var(--panel-2)}
+td{padding:10px 14px;border-bottom:1px solid var(--hair);vertical-align:top;color:var(--ink-mid)}
+tr:last-child td{border-bottom:0}
+footer{border-top:1px solid var(--hair)}
+footer .in{max-width:1120px;margin:0 auto;padding:22px 30px;font-size:12.5px;color:var(--ink-mid)}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="brand"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style="flex-shrink:0;vertical-align:-4px"><path d="M10 10 C7.6 6.9 3.1 6.6 3.1 10 C3.1 13.4 7.6 13.1 10 10" fill="none" stroke="var(--weft)" stroke-width="1.7" stroke-linecap="round"/><path d="M10 10 C12.4 6.9 16.9 6.6 16.9 10 C16.9 13.4 12.4 13.1 10 10" fill="none" stroke="var(--gold)" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="10" r="2.9" fill="var(--ground)"/><circle cx="10" cy="10" r="1.7" fill="var(--gold)"/><circle cx="10" cy="10" r="0.7" fill="var(--ground)"/></svg> Spindleloom &middot; <b>Guides</b></span>
+  <nav aria-label="Site">
+    <a href="index.html">Home</a>
+    <a href="personas/index.html">Hub</a>
+    <a href="project-overview.html">Overview</a>
+    <a href="governance-handbook.html">Governance</a>
+    <a href="readme.html">All guides</a>
+  </nav>
+  <button class="toggle" id="themeToggle" aria-label="Toggle light or dark theme">&#9681; theme</button>
+</div>
+<header class="hero"><div class="in">
+  <div class="kicker">Spindleloom &middot; knowledge hub</div>
+  <h1>Install — Spindleloom Agent Fleet</h1>
+  <p class="note">Generated reading view. Source of truth: <a href="../INSTALL.md"><code>INSTALL.md</code></a> --
+  edit the MD, then run <code>python hooks/build_guides_site.py</code>.</p>
+</div></header>
+<div class="layout">
+  <nav class="spine" aria-label="Contents"><div class="sp-part">On this page</div><ol><li><a href="#g-5-minute-quickstart-claude-code">5-minute quickstart (Claude Code)</a></li>
+<li><a href="#g-enterprise-rollout-checklist">Enterprise rollout checklist</a></li>
+<li><a href="#g-prerequisites">Prerequisites</a></li>
+<li><a href="#g-step-1-get-the-source">Step 1 — Get the source</a></li>
+<li><a href="#g-step-2-verify-it-s-healthy">Step 2 — Verify it&#x27;s healthy</a></li>
+<li><a href="#g-step-3-build-harness-bundles-one-time-then-after-source-chan">Step 3 — Build harness bundles (one-time, then after source changes)</a></li>
+<li><a href="#g-step-4-install-into-your-ai-coding-tool">Step 4 — Install into your AI coding tool</a></li>
+<li><a href="#g-step-5-wire-the-mcp-server-optional-recommended">Step 5 — Wire the MCP server (optional, recommended)</a></li>
+<li><a href="#g-step-6-wire-tracker-integration-optional">Step 6 — Wire tracker integration (optional)</a></li>
+<li><a href="#g-step-7-wire-quality-gates">Step 7 — Wire quality gates</a></li>
+<li><a href="#g-step-8-verify-end-to-end">Step 8 — Verify end-to-end</a></li>
+<li><a href="#g-upgrade">Upgrade</a></li>
+<li><a href="#g-troubleshooting">Troubleshooting</a></li>
+<li><a href="#g-quick-reference-all-platform-commands">Quick reference — all platform commands</a></li></ol></nav>
+  <main><article><p>52 AI agents for the full SDLC (market → spec → design → build → test → ship → operate), shipped to every AI coding tool from one source.</p>
+<hr>
+<h3 id="g-5-minute-quickstart-claude-code">5-minute quickstart (Claude Code)</h3>
+<p>The fastest path — no bundle step, no MCP, no gates. Just clone and use.</p>
+<pre># 1. Prerequisites: Git + Python 3.10+
+git clone &lt;repo-url&gt; spindleloom
+
+# 2. Verify the source is healthy
+py -3 spindleloom/hooks/validate_graph.py   # Windows
+# python3 spindleloom/hooks/validate_graph.py  # macOS/Linux
+
+# 3. Copy agents + skills + commands into your project&#x27;s .claude/ folder
+
+# Windows (PowerShell)
+New-Item -ItemType Directory -Force .claude\agents, .claude\skills, .claude\commands | Out-Null
+Copy-Item spindleloom\agents\*   .claude\agents\
+Copy-Item spindleloom\skills\*   .claude\skills\ -Recurse
+Copy-Item spindleloom\commands\* .claude\commands\
+
+# macOS / Linux
+mkdir -p .claude/agents .claude/skills .claude/commands
+cp spindleloom/agents/*       .claude/agents/
+cp -r spindleloom/skills/*    .claude/skills/
+cp spindleloom/commands/*     .claude/commands/
+
+# 4. Open Claude Code in your project and try it
+#    /agents           → lists all 52 agents
+#    /spec-new hello   → scaffolds a project
+#    @prd-writer       → invoke a specific agent</pre>
+<p>That's it for trying it out. To lay down the mandated project tree in <b>any</b> tool (not just Claude Code's <code>/spec-new</code>), run the scaffolder directly: <code>py -3 spindleloom\hooks\scaffold.py . --profile mid</code> (Windows) / <code>python3 spindleloom/hooks/scaffold.py . --profile mid</code> (macOS/Linux), or <code>... &lt;dir&gt; migrate</code> to convert an existing repo. When you're ready to go further: Step 4 covers the plugin install (one command, everything included), Steps 6–7 add tracker integration and quality gates.</p>
+<hr>
+<h3 id="g-enterprise-rollout-checklist">Enterprise rollout checklist</h3>
+<p>For teams rolling out Spindleloom across multiple repos or to 10+ developers.</p>
+<h4 id="g-phase-1-validate-and-package-owner-champion-1-day">Phase 1 — Validate and package (owner/champion, 1 day)</h4>
+<ul>
+<li>[ ] Clone source, run <code>validate_graph.py</code> — confirm OK</li>
+<li>[ ] Run <code>build_harness_artifacts.py</code> — confirm ~615 artifacts across 6 harnesses (count grows across releases)</li>
+<li>[ ] Run all hook tests: <code>py -3 -m pytest hooks/ -q</code> — all pass (needs pytest; <code>unittest discover</code> silently collects only ~13 of ~90)</li>
+<li>[ ] Decide install method: <b>plugin</b> (recommended for Claude Code teams) or <b>manual copy</b></li>
+<li>[ ] Decide tracker: Azure Boards (set <code>AZURE_DEVOPS_*</code> vars) or Jira (set <code>JIRA_*</code> vars)</li>
+<li>[ ] Create a shared internal fork/mirror if policies require (the source is product-agnostic)</li>
+<li>[ ] Set <code>SPINDLELOOM_SPEC_ROOT</code> to your project root (the server resolves <code>docs/</code> under it)</li>
+</ul>
+<h4 id="g-phase-2-pilot-repo-1-2-days">Phase 2 — Pilot repo (1–2 days)</h4>
+<ul>
+<li>[ ] Install into one pilot repo (Step 4 below)</li>
+<li>[ ] Wire the MCP server (Step 5) — confirm <code>trace_requirement</code> and <code>rtm_coverage</code> work</li>
+<li>[ ] Run <code>/spec-new &lt;feature&gt;</code> → confirm scaffold produces the right layout</li>
+<li>[ ] Run one agent end-to-end: <code>prd-writer</code> → <code>frd-writer</code> → <code>backlog-manager</code></li>
+<li>[ ] Wire tracker dry-run: confirm <code>emit_backlog.py</code> + adapter produces the right plan</li>
+<li>[ ] Wire quality gates (Step 7): Claude Code hook + CI workflow</li>
+<li>[ ] Run <code>pre-commit install</code> and <code>pre-commit run --all-files</code> — confirm clean</li>
+<li>[ ] Document any org-specific customisations (custom agents, extra skills, team conventions)</li>
+</ul>
+<h4 id="g-phase-3-team-rollout-per-repo-per-developer">Phase 3 — Team rollout (per repo, per developer)</h4>
+<ul>
+<li>[ ] Share the plugin install command (or the internal mirror path) with each team</li>
+<li>[ ] Add the CI workflow (<code>.github/workflows/test-plugin-install.yml</code>) to each repo — or add the <code>validate_graph.py</code> + <code>build_harness_artifacts.py --check</code> steps to the existing CI pipeline</li>
+<li>[ ] Set tracker env vars in CI secrets (<code>AZURE_DEVOPS_PAT</code> / <code>JIRA_API_TOKEN</code>)</li>
+<li>[ ] Share <code>docs/per-agent-configuration.md</code> — per-developer hook setup and model overrides</li>
+<li>[ ] Run <code>dev-onboarding</code> agent on each repo to confirm the environment is ready</li>
+<li>[ ] Run <code>doc-strategy-advisor</code> to pick the right agent subset for each team's size and workflow</li>
+</ul>
+<h4 id="g-phase-4-operate">Phase 4 — Operate</h4>
+<ul>
+<li>[ ] Pin to a release tag so teams don't get breaking changes on <code>main</code></li>
+<li>[ ] Wire <code>build_harness_artifacts.py --check</code> as a CI drift gate so stale bundles can't merge</li>
+<li>[ ] After any Spindleloom source update: re-run <code>build_harness_artifacts.py</code> and re-distribute</li>
+<li>[ ] Use <code>run-orchestrator</code> + <code>.spindleloom/run-state.json</code> for any autonomous fleet runs</li>
+<li>[ ] Review <code>knowledge_hub/archive/PILOT-READOUT.md</code> for known adjustment areas before wider rollout</li>
+</ul>
+<h4 id="g-size-your-adoption">Size your adoption</h4>
+<div class="tw"><table>
+<tr><th>Team size</th><th>Suggested profile</th><th>Key agents to start with</th></tr>
+<tr><td>1–3 people</td><td>Lean</td><td><code>prd-writer</code>, <code>frd-writer</code>, <code>backlog-manager</code>, <code>backend-developer</code>, <code>debugger</code></td></tr>
+<tr><td>4–10 people</td><td>Mid</td><td>Add <code>srs-writer</code>, <code>sdd-writer</code>, <code>test-plan-writer</code>, <code>qa-tester</code>, <code>code-reviewer</code>, <code>sprint-planner</code></td></tr>
+<tr><td>10+ people</td><td>Enterprise</td><td>Full funnel + <code>sre</code>, <code>release-manager</code>, <code>incident-responder</code>, <code>ai-orchestrator</code>, <code>run-orchestrator</code></td></tr>
+</table></div>
+<p>Run <code>doc-strategy-advisor</code> — it picks the right subset for your context.</p>
+<hr>
+<h3 id="g-prerequisites">Prerequisites</h3>
+<div class="tw"><table>
+<tr><th>Tool</th><th>Why</th><th>Windows</th><th>macOS</th><th>Linux</th></tr>
+<tr><td><b>Git</b></td><td>clone the repo</td><td><a href="https://git-scm.com">git-scm.com</a></td><td><code>brew install git</code></td><td><code>apt install git</code></td></tr>
+<tr><td><b>Python 3.10+</b></td><td>run hooks (stdlib-only, no venv needed)</td><td><code>py -3 --version</code></td><td><code>python3 --version</code></td><td><code>python3 --version</code></td></tr>
+<tr><td><b>pytest</b></td><td>run the hook test suite (dev only)</td><td><code>py -3 -m pip install pytest</code></td><td><code>pip install pytest</code></td><td><code>pip install pytest</code></td></tr>
+<tr><td><b>uv</b></td><td>MCP server only (auto-provisions SDK)</td><td>`irm https://astral.sh/uv/install.ps1 \</td><td>iex`</td><td>`curl -LsSf https://astral.sh/uv/install.sh \</td><td>sh`</td><td>same as macOS</td></tr>
+<tr><td><b>shellcheck</b></td><td>lint <code>hooks/*.sh</code> in CI / pre-commit</td><td><code>scoop install shellcheck</code> or WSL</td><td><code>brew install shellcheck</code></td><td><code>apt install shellcheck</code></td></tr>
+<tr><td><b>pre-commit</b></td><td>local gate before <code>git commit</code></td><td><code>pip install pre-commit</code></td><td><code>brew install pre-commit</code></td><td><code>pip install pre-commit</code></td></tr>
+</table></div>
+<blockquote><p><b>Minimum to get started:</b> Git + Python 3.10. Everything else is optional (uv for MCP, shellcheck/pre-commit for local gates).</p></blockquote>
+<hr>
+<h3 id="g-step-1-get-the-source">Step 1 — Get the source</h3>
+<pre>git clone &lt;repo-url&gt; spindleloom
+cd spindleloom</pre>
+<hr>
+<h3 id="g-step-2-verify-it-s-healthy">Step 2 — Verify it's healthy</h3>
+<pre># Windows
+py -3 hooks/validate_graph.py
+
+# macOS / Linux
+python3 hooks/validate_graph.py</pre>
+<p>Expected output:</p>
+<pre>agents: 52 | templates: 51 | skills: 28 | commands: 23
+OK — graph symmetric, no dangling refs, declared skills present, INDEX current, claude_code mappings resolve.</pre>
+<p>If this passes, the source is intact and ready to bundle.</p>
+<hr>
+<h3 id="g-step-3-build-harness-bundles-one-time-then-after-source-chan">Step 3 — Build harness bundles (one-time, then after source changes)</h3>
+<p>The harness generator reads the single-source <code>agents/</code>, <code>skills/</code>, <code>commands/</code> and emits each tool's native bundle under <code>targets/</code>:</p>
+<pre># Windows
+py -3 hooks/build_harness_artifacts.py
+
+# macOS / Linux
+python3 hooks/build_harness_artifacts.py</pre>
+<p>Output: <code>targets/</code> with <code>claude-plugin/</code>, <code>claude-code/</code>, <code>cursor/</code>, <code>copilot/</code>, <code>windsurf/</code>, <code>agents-md/</code>.</p>
+<hr>
+<h3 id="g-step-4-install-into-your-ai-coding-tool">Step 4 — Install into your AI coding tool</h3>
+<h4 id="g-claude-code-plugin-recommended">Claude Code — plugin ★ (recommended)</h4>
+<p>One command installs everything: agents + skills + commands + hooks + templates + MCP.</p>
+<pre>/plugin marketplace add &lt;owner/repo&gt;          # GitHub slug, or a local path:
+/plugin marketplace add C:\path\to\Spindleloom
+/plugin install sloom@spindleloom</pre>
+<p>Both the <b>repo root</b> and the built bundle (<code>&lt;repo&gt;/targets/claude-plugin</code>) work as the marketplace path — the root <code>.claude-plugin/marketplace.json</code> points at the bundle. (From a terminal the same commands are <code>claude plugin marketplace add …</code> / <code>claude plugin install …</code>.)</p>
+<p>After install: agents auto-trigger by description, every <code>/spec-new</code> <code>/spec-check</code> etc. works, and the traceability hook fires on spec edits.</p>
+<p><b>Verify:</b></p>
+<pre>/agents          # should list 52 agents
+/help-role       # shows grouped agent prompts by phase</pre>
+<hr>
+<h4 id="g-claude-code-manual-loose-files">Claude Code — manual (loose files)</h4>
+<p>Use when you don't want the plugin install step.</p>
+<p><b>Option A — automated (recommended):</b></p>
+<pre>py -3 spindleloom\hooks\install.py --target claude-code --repo .    # Windows
+python3 spindleloom/hooks/install.py --target claude-code --repo .  # macOS/Linux
+# or add --dry-run to preview first</pre>
+<p><b>Option B — manual copy:</b></p>
+<pre># From your project repo root:
+mkdir -p .claude/agents .claude/skills .claude/commands
+
+# Windows (PowerShell)
+Copy-Item spindleloom\targets\claude-code\agents\* .claude\agents\
+Copy-Item spindleloom\skills\* .claude\skills\ -Recurse
+Copy-Item spindleloom\commands\* .claude\commands\
+Copy-Item spindleloom\targets\claude-code\CLAUDE.md .
+Copy-Item spindleloom\targets\claude-code\mcp .\ -Recurse
+Copy-Item spindleloom\targets\claude-code\.mcp.json .
+
+# macOS / Linux
+cp spindleloom/targets/claude-code/agents/*  .claude/agents/
+cp -r spindleloom/skills/*                   .claude/skills/
+cp spindleloom/commands/*                    .claude/commands/
+cp spindleloom/targets/claude-code/CLAUDE.md .
+cp -r spindleloom/targets/claude-code/mcp    .
+cp spindleloom/targets/claude-code/.mcp.json .</pre>
+<p><b>Global install (all repos):</b> copy into <code>~/.claude/</code> instead of <code>.claude/</code>:</p>
+<pre># macOS / Linux
+cp spindleloom/targets/claude-code/agents/* ~/.claude/agents/
+cp -r spindleloom/targets/claude-code/skills/* ~/.claude/skills/
+cp spindleloom/targets/claude-code/commands/* ~/.claude/commands/</pre>
+<pre># Windows
+Copy-Item spindleloom\targets\claude-code\agents\* &quot;$env:USERPROFILE\.claude\agents\&quot;</pre>
+<hr>
+<h4 id="g-cursor">Cursor</h4>
+<pre>py -3 spindleloom\hooks\install.py --target cursor --repo .    # Windows
+python3 spindleloom/hooks/install.py --target cursor --repo .  # macOS/Linux</pre>
+<p>Or manually:</p>
+<pre># macOS / Linux — copy into your repo root
+cp -r spindleloom/targets/cursor/.cursor .
+cp -r spindleloom/skills/*               .claude/skills/
+cp -r spindleloom/targets/cursor/mcp .
+cp    spindleloom/targets/cursor/.mcp.json .</pre>
+<pre># Windows
+Copy-Item spindleloom\targets\cursor\.cursor .\ -Recurse
+Copy-Item spindleloom\skills\*               .claude\skills\ -Recurse
+Copy-Item spindleloom\targets\cursor\mcp     .\ -Recurse
+Copy-Item spindleloom\targets\cursor\.mcp.json .</pre>
+<p>Each role becomes a description-triggered <code>.mdc</code> rule. <code>000-spindleloom-conventions.mdc</code> is always-on. <code>.cursor/mcp.json</code> uses <code>${workspaceFolder}</code> so it's portable across machines.</p>
+<hr>
+<h4 id="g-github-copilot">GitHub Copilot</h4>
+<pre>py -3 spindleloom\hooks\install.py --target copilot --repo .    # Windows
+python3 spindleloom/hooks/install.py --target copilot --repo .  # macOS/Linux</pre>
+<p>Or manually:</p>
+<pre># macOS / Linux
+cp -r spindleloom/targets/copilot/.github  .
+cp -r spindleloom/targets/copilot/.vscode  .
+cp -r spindleloom/skills/*                 .claude/skills/
+cp -r spindleloom/targets/copilot/mcp      .</pre>
+<pre># Windows
+Copy-Item spindleloom\targets\copilot\.github .\ -Recurse
+Copy-Item spindleloom\targets\copilot\.vscode .\ -Recurse
+Copy-Item spindleloom\skills\*                .claude\skills\ -Recurse
+Copy-Item spindleloom\targets\copilot\mcp     .\ -Recurse</pre>
+<p>Custom chat modes + <code>copilot-instructions.md</code> + <code>.vscode/mcp.json</code> for live traceability.</p>
+<hr>
+<h4 id="g-windsurf">Windsurf</h4>
+<pre>py -3 spindleloom\hooks\install.py --target windsurf --repo .    # Windows
+python3 spindleloom/hooks/install.py --target windsurf --repo .  # macOS/Linux
+# The script also prints the user-global mcp_config.json snippet with absolute paths filled in.</pre>
+<p>Or manually:</p>
+<pre># macOS / Linux
+cp -r spindleloom/targets/windsurf/.windsurf .
+cp -r spindleloom/skills/*                   .claude/skills/
+cp -r spindleloom/targets/windsurf/mcp       .</pre>
+<pre># Windows
+Copy-Item spindleloom\targets\windsurf\.windsurf .\ -Recurse
+Copy-Item spindleloom\skills\*                   .claude\skills\ -Recurse
+Copy-Item spindleloom\targets\windsurf\mcp       .\ -Recurse</pre>
+<blockquote><p><b>Windsurf MCP is user-global.</b> Copy the server entry from <code>targets/windsurf/README.md</code> into <code>~/.codeium/windsurf/mcp_config.json</code> (use absolute paths — <code>${workspaceFolder}</code> is not supported there). The <code>install.py</code> script prints the snippet with paths pre-filled.</p></blockquote>
+<hr>
+<h4 id="g-any-agents-md-tool-gemini-cli-codex">Any AGENTS.md tool (Gemini CLI, Codex, …)</h4>
+<pre>cp spindleloom/targets/agents-md/AGENTS.md .</pre>
+<p>The cross-tool router any <code>AGENTS.md</code>-aware tool reads.</p>
+<hr>
+<h3 id="g-step-5-wire-the-mcp-server-optional-recommended">Step 5 — Wire the MCP server (optional, recommended)</h3>
+<p>The MCP server exposes <b>19 tools</b> in two groups. <b>RTM / catalog / conformance (12):</b> <code>trace_requirement</code>, <code>rtm_coverage</code>, <code>funnel_status</code>, <code>list_requirements</code>, <code>search_specs</code>, <code>scaffold_project</code>, and more. <b>Agent context memory (7):</b> <code>save_context</code>, <code>recall_context</code>, <code>list_contexts</code>, <code>get_context</code>, <code>delete_context</code>, <code>delete_context_entry</code>, <code>sync_contexts</code> — agents store decisions and retrieve them in one call, no re-reading upstream docs.</p>
+<p><b>Prerequisite: uv</b> — provisions the MCP SDK on first run (no manual <code>pip install</code>).</p>
+<pre># Install uv — macOS / Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Windows (PowerShell)
+powershell -c &quot;irm https://astral.sh/uv/install.ps1 | iex&quot;</pre>
+<p>The generated <code>.mcp.json</code> auto-discovers and launches the server. Set <code>SPINDLELOOM_SPEC_ROOT</code> to your <b>project root</b> (the server resolves <code>docs/</code> beneath it — do not point it at <code>docs/</code> directly):</p>
+<pre>// .mcp.json (already generated — just set the env var)
+{
+  &quot;mcpServers&quot;: {
+    &quot;sloom&quot;: {
+      &quot;command&quot;: &quot;uv&quot;,
+      &quot;args&quot;: [&quot;run&quot;, &quot;--with&quot;, &quot;mcp[cli]&quot;, &quot;python&quot;, &quot;mcp/mcp_server.py&quot;],
+      &quot;env&quot;: { &quot;SPINDLELOOM_SPEC_ROOT&quot;: &quot;${CLAUDE_PROJECT_DIR}&quot; }
+    }
+  }
+}</pre>
+<p><b>One-command gate battery</b> (repo-type aware):</p>
+<pre>python hooks/sloom.py check</pre>
+<p><b>Smoke test:</b></p>
+<pre>uv run python hooks/test_mcp_server.py</pre>
+<p><b>Enable the write tool</b> (<code>scaffold_project</code>) — disabled by default:</p>
+<pre>&quot;env&quot;: { &quot;SPINDLELOOM_SPEC_ROOT&quot;: &quot;...&quot;, &quot;SPINDLELOOM_WRITABLE&quot;: &quot;1&quot; }</pre>
+<hr>
+<h3 id="g-step-6-wire-tracker-integration-optional">Step 6 — Wire tracker integration (optional)</h3>
+<h4 id="g-azure-boards">Azure Boards</h4>
+<pre># Set env vars (add to your shell profile or CI secrets)
+export AZURE_DEVOPS_ORG_URL=https://dev.azure.com/your-org
+export AZURE_DEVOPS_PROJECT=your-project
+export AZURE_DEVOPS_PAT=your-pat-token      # Work Items (Read, write &amp; manage) scope</pre>
+<pre># Windows
+$env:AZURE_DEVOPS_ORG_URL = &quot;https://dev.azure.com/your-org&quot;
+$env:AZURE_DEVOPS_PROJECT = &quot;your-project&quot;
+$env:AZURE_DEVOPS_PAT     = &quot;your-pat-token&quot;</pre>
+<p><b>Dry-run (no writes):</b></p>
+<pre>python3 hooks/azure_boards_adapter.py docs/backlog.md</pre>
+<p><b>Apply (creates work items):</b></p>
+<pre>python3 hooks/azure_boards_adapter.py docs/backlog.md --apply --rtm docs/RTM.md</pre>
+<hr>
+<h4 id="g-jira-cloud">Jira Cloud</h4>
+<pre># Required
+export JIRA_BASE_URL=https://your-org.atlassian.net
+export JIRA_PROJECT_KEY=PROJ
+export JIRA_USER_EMAIL=service@your-org.com
+export JIRA_API_TOKEN=your-api-token          # https://id.atlassian.com/manage-profile/security/api-tokens
+
+# Optional — Jira field IDs vary per instance; run --list-fields to discover them
+export JIRA_SP_FIELD=story_points             # Story Points field id (default)
+export JIRA_AC_FIELD=customfield_10040        # Acceptance Criteria field id (if you have one)</pre>
+<pre># Windows
+$env:JIRA_BASE_URL    = &quot;https://your-org.atlassian.net&quot;
+$env:JIRA_PROJECT_KEY = &quot;PROJ&quot;
+$env:JIRA_USER_EMAIL  = &quot;service@your-org.com&quot;
+$env:JIRA_API_TOKEN   = &quot;your-api-token&quot;</pre>
+<p><b>Discover your instance's field IDs:</b></p>
+<pre>python3 hooks/jira_adapter.py --list-fields</pre>
+<p><b>Dry-run:</b></p>
+<pre>python3 hooks/jira_adapter.py docs/backlog.md</pre>
+<p><b>Apply:</b></p>
+<pre>python3 hooks/jira_adapter.py docs/backlog.md --apply --rtm docs/RTM.md</pre>
+<hr>
+<h3 id="g-step-7-wire-quality-gates">Step 7 — Wire quality gates</h3>
+<h4 id="g-option-a-claude-code-hook-live-feedback-on-every-save">Option A — Claude Code hook (live feedback on every save)</h4>
+<p>Add to <code>.claude/settings.local.json</code> (personal, gitignored):</p>
+<pre>{
+  &quot;hooks&quot;: {
+    &quot;PostToolUse&quot;: [{
+      &quot;matcher&quot;: &quot;Write|Edit&quot;,
+      &quot;hooks&quot;: [{
+        &quot;type&quot;: &quot;command&quot;,
+        &quot;shell&quot;: &quot;bash&quot;,
+        &quot;command&quot;: &quot;out=$(py \&quot;$CLAUDE_PROJECT_DIR/hooks/validate_graph.py\&quot; 2&gt;&amp;1); ec=$?; if [ $ec -ne 0 ]; then echo \&quot;$out\&quot; &gt;&amp;2; exit 2; fi&quot;,
+        &quot;timeout&quot;: 30,
+        &quot;statusMessage&quot;: &quot;Validating fleet integrity…&quot;
+      }]
+    }]
+  }
+}</pre>
+<blockquote><p>On macOS/Linux replace <code>py</code> with <code>python3</code>. Put this in <code>settings.local.json</code> (not the committed <code>settings.json</code>) because the launcher is platform-specific.</p></blockquote>
+<h4 id="g-option-b-pre-commit-local-gate-before-every-commit">Option B — pre-commit (local gate before every commit)</h4>
+<pre># Install pre-commit
+pip install pre-commit           # or: brew install pre-commit
+
+# Wire it — run once in the repo root
+pre-commit install
+
+# Test it runs cleanly
+pre-commit run --all-files</pre>
+<p>The <code>.pre-commit-config.yaml</code> at the repo root runs: INDEX refresh → fleet validate → bundle drift check → shellcheck → pytest.</p>
+<h4 id="g-option-c-ci-github-actions-already-wired">Option C — CI (GitHub Actions, already wired)</h4>
+<p><code>.github/workflows/test-plugin-install.yml</code> covers all five jobs on every push/PR:</p>
+<ul>
+<li><code>validate-fleet</code> — graph + bundles</li>
+<li><code>validate-traceability</code> — RTM on changed spec folders</li>
+<li><code>lint-hooks</code> — shellcheck on <code>hooks/*.sh</code></li>
+<li><code>test-hooks</code> — all <code>hooks/test_*.py</code></li>
+<li><code>plugin-install</code> — builds bundles + checks manifest</li>
+</ul>
+<p>No extra setup — commit the workflow file and CI runs automatically.</p>
+<hr>
+<h3 id="g-step-8-verify-end-to-end">Step 8 — Verify end-to-end</h3>
+<pre># 1. Fleet healthy
+py -3 hooks/validate_graph.py           # → OK
+
+# 2. Bundles current
+py -3 hooks/build_harness_artifacts.py --check   # → exit 0
+
+# 3. All tests pass
+py -3 -m pytest hooks/ -q
+
+# 4. MCP server (if wired)
+uv run python hooks/test_mcp_server.py  # → OK
+
+# 5. Claude Code — inside a session
+/agents          # lists 52 agents
+/spec-new hello  # scaffolds a test project</pre>
+<hr>
+<h3 id="g-upgrade">Upgrade</h3>
+<p>After pulling new source:</p>
+<pre>git pull
+
+# Windows
+py -3 hooks/build_harness_artifacts.py
+
+# macOS / Linux
+python3 hooks/build_harness_artifacts.py</pre>
+<p>Then re-copy the updated bundle for your tool (same Step 4 commands). The plugin install auto-updates if you run <code>/plugin install sloom@spindleloom</code> again.</p>
+<hr>
+<h3 id="g-troubleshooting">Troubleshooting</h3>
+<div class="tw"><table>
+<tr><th>Symptom</th><th>Fix</th></tr>
+<tr><td><code>validate_graph.py</code> exits 1</td><td>Read the error — usually a dangling ref or stale INDEX. Run <code>py -3 hooks/build_agent_index.py</code> first, then re-validate.</td></tr>
+<tr><td><code>build_harness_artifacts.py --check</code> exits 1</td><td>Bundles are stale. Run without <code>--check</code> to regenerate.</td></tr>
+<tr><td>Agent not found in Claude Code</td><td>The <code>claude_code.subagent_type</code> in the agent's frontmatter must match its <code>name</code>. The validator catches this (check 7).</td></tr>
+<tr><td>MCP server won't start</td><td>Check <code>uv</code> is on PATH (<code>uv --version</code>). Check <code>SPINDLELOOM_SPEC_ROOT</code> is set and points to a real directory.</td></tr>
+<tr><td>Jira <code>--apply</code> refused</td><td><code>JIRA_BASE_URL</code>, <code>JIRA_PROJECT_KEY</code>, <code>JIRA_USER_EMAIL</code>, <code>JIRA_API_TOKEN</code> must all be set. Run <code>--list-fields</code> to confirm connectivity.</td></tr>
+<tr><td>Azure Boards <code>--apply</code> refused</td><td><code>AZURE_DEVOPS_ORG_URL</code> (or <code>AZURE_DEVOPS_ORG</code>), <code>AZURE_DEVOPS_PROJECT</code>, <code>AZURE_DEVOPS_PAT</code> must all be set. PAT needs Work Items read+write scope.</td></tr>
+<tr><td><code>pre-commit run</code> fails on shellcheck</td><td>Install shellcheck first (<code>brew install shellcheck</code> / <code>apt install shellcheck</code>).</td></tr>
+<tr><td>Hook not firing in Claude Code</td><td>Run <code>/hooks</code> or restart the Claude Code session — hooks are loaded at session start.</td></tr>
+<tr><td>Skill not firing on an agent</td><td>Check the agent's <code>skills:</code> array contains the skill slug, and <code>skills/&lt;slug&gt;/SKILL.md</code> exists (<code>validate_graph.py</code> catches this).</td></tr>
+</table></div>
+<hr>
+<h3 id="g-quick-reference-all-platform-commands">Quick reference — all platform commands</h3>
+<div class="tw"><table>
+<tr><th>Task</th><th>Windows (<code>py -3</code>)</th><th>macOS / Linux (<code>python3</code>)</th></tr>
+<tr><td>Validate fleet</td><td><code>py -3 hooks/validate_graph.py</code></td><td><code>python3 hooks/validate_graph.py</code></td></tr>
+<tr><td>Rebuild INDEX</td><td><code>py -3 hooks/build_agent_index.py</code></td><td><code>python3 hooks/build_agent_index.py</code></td></tr>
+<tr><td>Build bundles</td><td><code>py -3 hooks/build_harness_artifacts.py</code></td><td><code>python3 hooks/build_harness_artifacts.py</code></td></tr>
+<tr><td>Check bundles</td><td><code>py -3 hooks/build_harness_artifacts.py --check</code></td><td><code>python3 hooks/build_harness_artifacts.py --check</code></td></tr>
+<tr><td>Run all tests</td><td><code>py -3 -m pytest hooks/ -q</code></td><td><code>python3 -m pytest hooks/ -q</code></td></tr>
+<tr><td>Azure dry-run</td><td><code>py -3 hooks/azure_boards_adapter.py backlog.md</code></td><td><code>python3 hooks/azure_boards_adapter.py backlog.md</code></td></tr>
+<tr><td>Jira dry-run</td><td><code>py -3 hooks/jira_adapter.py backlog.md</code></td><td><code>python3 hooks/jira_adapter.py backlog.md</code></td></tr>
+<tr><td>Jira list fields</td><td><code>py -3 hooks/jira_adapter.py --list-fields</code></td><td><code>python3 hooks/jira_adapter.py --list-fields</code></td></tr>
+<tr><td>MCP smoke test</td><td><code>uv run python hooks/test_mcp_server.py</code></td><td><code>uv run python hooks/test_mcp_server.py</code></td></tr>
+<tr><td>Scaffold project</td><td><code>/spec-new &lt;feature&gt;</code> in Claude Code</td><td>same</td></tr>
+<tr><td>Pre-commit setup</td><td><code>pip install pre-commit &amp;&amp; pre-commit install</code></td><td><code>brew install pre-commit &amp;&amp; pre-commit install</code></td></tr>
+</table></div></article></main>
+</div>
+<footer><div class="in">
+  Part of the <a href="readme.html">Spindleloom website</a> &middot; front door: the
+  <a href="personas/index.html">Persona Field Handbook</a>.
+</div></footer>
+<script>
+const root=document.documentElement;
+try{const _st=localStorage.getItem("sl-theme");if(_st)root.setAttribute("data-theme",_st);}catch(e){}
+document.getElementById("themeToggle").addEventListener("click",()=>{
+  const dark=matchMedia("(prefers-color-scheme:dark)").matches;
+  const cur=root.getAttribute("data-theme")||(dark?"dark":"light");
+  const next=cur==="dark"?"light":"dark";
+  root.setAttribute("data-theme",next);
+  try{localStorage.setItem("sl-theme",next);}catch(e){}
+});
+const items=[...document.querySelectorAll(".spine li")];
+const map={};items.forEach(li=>{const a=li.querySelector("a");if(a)map[a.getAttribute("href").slice(1)]=li;});
+const spy=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){
+  items.forEach(l=>l.classList.remove("on"));const li=map[e.target.id];if(li)li.classList.add("on");}}),
+  {rootMargin:"-20% 0px -70% 0px"});
+document.querySelectorAll("article h3[id]").forEach(h=>spy.observe(h));
+</script>
+</body>
+</html>

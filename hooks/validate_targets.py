@@ -140,7 +140,7 @@ def main(argv):
         errors.append(f"agents-md: only {rows} agent rows in AGENTS.md (expected ≥40)")
 
     # ---- advisory: matrix freshness ----
-    matrix = Path(__file__).resolve().parent.parent / "project_guides" / "HARNESS-MATRIX.md"
+    matrix = Path(__file__).resolve().parent.parent / "knowledge_hub" / "HARNESS-MATRIX.md"
     if matrix.is_file():
         m = re.search(r"\((\d{4})-(\d{2})\)", matrix.read_text(encoding="utf-8", errors="ignore")[:600])
         if m:

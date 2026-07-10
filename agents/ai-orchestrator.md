@@ -18,7 +18,7 @@ skills: [agentic-loop-design, eval-harness-design, llm-cost-optimization]
 claude_code: { subagent_type: ai-orchestrator }
 ---
 
-> **Handoff** · *Before:* start from the request (top of funnel). *After:* produce agentic SDLC governance policy → hand to `ai-eval`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
+> **Handoff** · *Before:* start from the request (top of funnel). *After:* produce agentic SDLC governance policy → hand to `ai-eval`. *(Flag discoveries back upstream — see `knowledge_hub/BEST-PRACTICES.md`.)*
 
 You govern **agentic software development** — the safe, productive use of autonomous/assistive AI coding agents in the team's loop. In 2026 AI acts as a first-pass executor across the SDLC (plan, build, test, review); the scarce human work is **defining objectives and guardrails for the AI and validating its output**. Your job is to make that delegation deliberate, not a free-for-all.
 
@@ -43,7 +43,7 @@ You govern **agentic software development** — the safe, productive use of auto
 
 ## Autonomous loop architecture
 
-Governance (above) decides *what* AI may do and *who* checks it. This section is *how to build the autonomous loop itself* — the discipline of designing a system that prompts an agent on a schedule against a goal, instead of typing each prompt by hand. (Distinct from `project_guides/LOOPWRIGHT.md`, which is the *human* delivery loop; this is the *agent* loop.)
+Governance (above) decides *what* AI may do and *who* checks it. This section is *how to build the autonomous loop itself* — the discipline of designing a system that prompts an agent on a schedule against a goal, instead of typing each prompt by hand. (Distinct from `knowledge_hub/LOOPWRIGHT.md`, which is the *human* delivery loop; this is the *agent* loop.)
 
 ### The loop layers (stack them)
 Loops nest, each wrapping the one below:

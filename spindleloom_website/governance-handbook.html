@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spindleloom Governance Handbook</title>
+<style>
+:root{
+  --ground:#0E1524; --panel:#141E2E; --panel-2:#18263A;
+  --ink:#DBE5F1; --ink-mid:#93A6BC; --ink-dim:#8497AE; --hair:#1E2E45; --hair-2:#2A3E5C;
+  --gold:#CFA23A; --gold-hi:#E7BE58; --weft:#5C90BE;
+  --shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34);
+  --serif:"Hoefler Text","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:light){:root{
+  --ground:#E9EAE5; --panel:#FFFFFF; --panel-2:#F3F3EF;
+  --ink:#16202E; --ink-mid:#47586B; --ink-dim:#556575; --hair:#DEDFD8; --hair-2:#C9CBC1;
+  --gold:#8A6816; --gold-hi:#7C5D12; --weft:#3C6C93;
+  --shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07);
+}}
+:root[data-theme="light"]{--ground:#E9EAE5;--panel:#FFFFFF;--panel-2:#F3F3EF;--ink:#16202E;--ink-mid:#47586B;--ink-dim:#556575;--hair:#DEDFD8;--hair-2:#C9CBC1;--gold:#8A6816;--gold-hi:#7C5D12;--weft:#3C6C93;--shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07)}
+:root[data-theme="dark"]{--ground:#0E1524;--panel:#141E2E;--panel-2:#18263A;--ink:#DBE5F1;--ink-mid:#93A6BC;--ink-dim:#8497AE;--hair:#1E2E45;--hair-2:#2A3E5C;--gold:#CFA23A;--gold-hi:#E7BE58;--weft:#5C90BE;--shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.66;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+b,strong{color:var(--ink)}
+::selection{background:color-mix(in srgb,var(--gold) 30%,transparent)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:2px}
+.bar{position:sticky;top:0;z-index:80;display:flex;align-items:center;gap:14px;padding:11px 26px;
+  background:color-mix(in srgb,var(--ground) 88%,transparent);backdrop-filter:blur(9px);border-bottom:1px solid var(--hair)}
+.bar .brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--ink-mid);white-space:nowrap}
+.bar .brand b{color:var(--gold)}
+.bar nav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.bar nav a{font-family:var(--mono);font-size:11px;color:var(--ink-mid);padding:6px 10px;border-radius:8px}
+.bar nav a:hover{color:var(--gold);text-decoration:none}
+.toggle{font-family:var(--mono);font-size:11px;color:var(--ink-mid);background:transparent;border:1px solid var(--hair-2);
+  border-radius:20px;padding:6px 13px;cursor:pointer;white-space:nowrap}
+.toggle:hover{border-color:var(--gold);color:var(--gold)}
+.hero{border-bottom:1px solid var(--hair)}
+.hero .in{max-width:1120px;margin:0 auto;padding:52px 30px 40px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-mid)}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(34px,5vw,54px);line-height:1.02;letter-spacing:-.02em;margin:12px 0 0;text-wrap:balance}
+.hero h1 em{font-style:italic;color:var(--gold)}
+.hero .dek{color:var(--ink-mid);max-width:70ch;margin:16px 0 0;font-size:16.5px}
+.hero .note{font-family:var(--mono);font-size:11.5px;color:var(--ink-mid);margin-top:14px}
+.layout{max-width:1120px;margin:0 auto;padding:34px 30px 80px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:44px}
+@media(max-width:960px){.layout{grid-template-columns:1fr}.spine{display:none}}
+.spine{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 90px);overflow:auto;font-size:12.5px}
+.spine .sp-part{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;margin:18px 0 6px}
+.spine .sp-part a{color:var(--gold)}
+.spine ol{list-style:none}
+.spine li a{display:block;color:var(--ink-mid);padding:3px 0 3px 12px;border-left:2px solid var(--hair)}
+.spine li a:hover{color:var(--ink);text-decoration:none}
+.spine li.on a{color:var(--gold);border-left-color:var(--gold)}
+article{margin-bottom:64px}
+.parthead{border-bottom:1px solid var(--hair-2);margin-bottom:26px;padding-bottom:18px}
+.parthead .pn{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}
+.parthead .pt{font-family:var(--serif);font-weight:600;font-size:clamp(26px,3.6vw,38px);letter-spacing:-.015em;margin:8px 0 0}
+.parthead .pd{color:var(--ink-mid);margin-top:10px;max-width:68ch}
+.parthead .src{font-family:var(--mono);font-size:11.5px;color:var(--ink-mid);margin-top:12px}
+article h3{font-family:var(--serif);font-weight:600;font-size:23px;letter-spacing:-.01em;margin:40px 0 12px;scroll-margin-top:72px}
+article h4{font-size:15.5px;margin:26px 0 8px;scroll-margin-top:72px}
+article p{margin:0 0 13px;max-width:76ch;color:var(--ink-mid)}
+article li{margin:0 0 7px;color:var(--ink-mid)}
+article ul,article ol{margin:0 0 14px;padding-left:22px}
+article blockquote{border-left:3px solid var(--gold);background:var(--panel);border-radius:0 10px 10px 0;
+  padding:12px 18px;margin:0 0 16px}
+article blockquote p{margin:0}
+article hr{border:0;height:1px;background:var(--hair);margin:34px 0}
+article code{font-family:var(--mono);font-size:.86em;background:var(--panel-2);border:1px solid var(--hair);border-radius:5px;padding:1px 6px;color:var(--gold-hi)}
+article pre{font-family:var(--mono);font-size:12.5px;line-height:1.55;background:var(--panel);border:1px solid var(--hair);
+  border-radius:12px;padding:16px 18px;overflow-x:auto;margin:0 0 16px;color:var(--ink-mid)}
+.tw{overflow-x:auto;margin:0 0 18px;border:1px solid var(--hair);border-radius:12px;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel)}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mid);
+  text-align:left;padding:10px 14px;border-bottom:1px solid var(--hair-2);background:var(--panel-2)}
+td{padding:10px 14px;border-bottom:1px solid var(--hair);vertical-align:top;color:var(--ink-mid)}
+tr:last-child td{border-bottom:0}
+footer{border-top:1px solid var(--hair)}
+footer .in{max-width:1120px;margin:0 auto;padding:22px 30px;font-size:12.5px;color:var(--ink-mid)}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="brand"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style="flex-shrink:0;vertical-align:-4px"><path d="M10 10 C7.6 6.9 3.1 6.6 3.1 10 C3.1 13.4 7.6 13.1 10 10" fill="none" stroke="var(--weft)" stroke-width="1.7" stroke-linecap="round"/><path d="M10 10 C12.4 6.9 16.9 6.6 16.9 10 C16.9 13.4 12.4 13.1 10 10" fill="none" stroke="var(--gold)" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="10" r="2.9" fill="var(--ground)"/><circle cx="10" cy="10" r="1.7" fill="var(--gold)"/><circle cx="10" cy="10" r="0.7" fill="var(--ground)"/></svg> Spindleloom &middot; <b>Governance Handbook</b></span>
+  <nav aria-label="Parts">
+    <a href="#part-i">I &middot; Standard</a>
+    <a href="#part-ii">II &middot; Story Craft</a>
+    <a href="#part-iii">III &middot; Team &amp; ADO</a>
+  </nav>
+  <button class="toggle" id="themeToggle" aria-label="Toggle light or dark theme">&#9681; theme</button>
+</div>
+<header class="hero"><div class="in">
+  <div class="kicker">Spindleloom &middot; Layer 3 &middot; Govern</div>
+  <h1>The <em>Governance</em> Handbook</h1>
+  <p class="dek">The three standards that govern how work is laid out, written and run -- the layout mandate,
+  the story-craft rulebook, and the team + Azure DevOps operating fit -- on one page.</p>
+  <p class="note">Generated view. Source of truth: <a href="../knowledge_hub/GOVERNANCE.md">knowledge_hub/GOVERNANCE.md</a> --
+  edit the MD, then run <code>python hooks/build_governance_handbook.py</code>.</p>
+</div></header>
+<div class="layout">
+  <nav class="spine" aria-label="Contents"><div class="sp-part"><a href="#part-i">Part I -- The Standard</a></div>
+<ol>
+<li><a href="#pi-1-two-layers-of-knowledge">1. Two layers of knowledge</a></li>
+<li><a href="#pi-2-invariant-vs-variable">2. Invariant vs. variable</a></li>
+<li><a href="#pi-3-the-canonical-tree">3. The canonical tree</a></li>
+<li><a href="#pi-4-the-four-cadence-planes">4. The four cadence planes</a></li>
+<li><a href="#pi-5-naming-traceability">5. Naming &amp; traceability</a></li>
+<li><a href="#pi-6-metadata-so-docs-are-machine-readable">6. Metadata (so docs are machine-readable)</a></li>
+<li><a href="#pi-7-backlog-system-of-record">7. Backlog — system of record</a></li>
+<li><a href="#pi-8-the-sanctioned-exception">8. The sanctioned exception</a></li>
+<li><a href="#pi-9-concurrency-ownership-multiple-teammates-one-repo">9. Concurrency &amp; ownership — multiple teammates, one repo</a></li>
+<li><a href="#pi-10-adoption">10. Adoption</a></li>
+<li><a href="#pi-11-conformance">11. Conformance</a></li>
+<li><a href="#pi-12-the-golden-rule-one-system-of-record-per-kind">12. The golden rule — one system of record per kind</a></li>
+<li><a href="#pi-13-versioning-baselines-lifecycle">13. Versioning, baselines &amp; lifecycle</a></li>
+<li><a href="#pi-14-how-to-find-anything-retrieval">14. How to find anything (retrieval)</a></li>
+<li><a href="#pi-15-the-tools-all-stdlib-only-except-the-mcp-server">15. The tools (all stdlib-only except the MCP server)</a></li>
+</ol>
+<div class="sp-part"><a href="#part-ii">Part II -- Story Craft</a></div>
+<ol>
+<li><a href="#pii-1-the-connextra-format-default-not-dogma">1. The Connextra format (default, not dogma)</a></li>
+<li><a href="#pii-2-invest-the-quality-gate-bill-wake-2003">2. INVEST — the quality gate (Bill Wake, 2003)</a></li>
+<li><a href="#pii-3-acceptance-criteria">3. Acceptance criteria</a></li>
+<li><a href="#pii-4-splitting-always-vertical">4. Splitting — always vertical</a></li>
+<li><a href="#pii-5-right-sizing-the-6-10-rule">5. Right-sizing — the 6–10 rule</a></li>
+<li><a href="#pii-6-hierarchy-tool-agnostic">6. Hierarchy (tool-agnostic)</a></li>
+<li><a href="#pii-7-red-flag-anti-patterns-reject-on-sight">7. Red-flag anti-patterns — reject on sight</a></li>
+<li><a href="#pii-templates">Templates</a></li>
+<li><a href="#pii-sources-primary-adversarially-verified">Sources (primary; adversarially verified)</a></li>
+</ol>
+<div class="sp-part"><a href="#part-iii">Part III -- Team Roles, Epic Decomposition & Azure DevOps Fit</a></div>
+<ol>
+<li><a href="#piii-1-team-of-10-who-runs-what">1. Team of 10 — who runs what</a></li>
+<li><a href="#piii-2-epic-decomposition-sequence-architect-s-path-from-epic-to-">2. Epic decomposition sequence (architect&#x27;s path from epic to PBIs)</a></li>
+<li><a href="#piii-3-azure-devops-boards-fit-check">3. Azure DevOps Boards fit check</a></li>
+</ol></nav>
+  <main><article id="part-i"><div class="parthead"><span class="pn">Part I</span><h2 class="pt">The Standard</h2><p class="pd">The versioned mandate for adopter repos: the tree, profiles, cadence planes, naming, concurrency and conformance.</p><p class="src">Source of truth: <a href="../knowledge_hub/GOVERNANCE.md"><code>knowledge_hub/GOVERNANCE.md</code></a> (this part) -- this page is the generated reading view; edit the source, not this file.</p></div><div class="tw"><table>
+<tr><th>Field</th><th>Value</th></tr>
+<tr><td>Standard version</td><td>1.0</td></tr>
+<tr><td>Status</td><td>Active</td></tr>
+<tr><td>Owner</td><td>Spindleloom (toolkit maintainer)</td></tr>
+<tr><td>Last updated</td><td>2026-06-20</td></tr>
+</table></div>
+<blockquote><p><b>This is the standard, not a default.</b> Spindleloom defines <b>one</b> project-agnostic way to lay out, name, and version SDLC artifacts. Every project that adopts Spindleloom targets this shape: greenfield projects <b>scaffold</b> it; existing projects <b>convert</b> to it (<code>scaffold.py migrate</code>). The layout is not a menu — where a project genuinely cannot use a canonical path, it declares the deviation in <code>.spindleloom/config.json</code> (the sanctioned exception, §8), never by improvising a new tree. Nothing here is specific to any product, domain, or tool.  <b>This repository is exempt.</b> Spindleloom's own source repo <i>ships</i> the standard — it is the toolkit distribution, not a consuming project. The standard governs the repos that <b>adopt</b> Spindleloom.</p></blockquote>
+<h3 id="pi-1-two-layers-of-knowledge">1. Two layers of knowledge</h3>
+<p>Knowledge is owned by exactly one party — never both, never duplicated.</p>
+<div class="tw"><table>
+<tr><th>Layer</th><th>What</th><th>Lives in</th><th>Edited by</th></tr>
+<tr><td><b>Toolkit knowledge</b> (global)</td><td>The standard, conventions, requirement-quality rules, ceremony, and the agents / skills / commands / templates themselves</td><td>The Spindleloom <b>bundle / plugin</b> (referenced, updated centrally)</td><td>The toolkit maintainer — <b>never</b> the adopting team</td></tr>
+<tr><td><b>Project knowledge</b></td><td>The artifacts a team produces — product docs, specs, RTM, ADRs, backlog, sprint docs</td><td>The <b>adopter's repo</b> (<code>docs/</code> + <code>.spindleloom/</code>) + the work tracker</td><td>The adopting team</td></tr>
+</table></div>
+<p><b>The rule that keeps them clean:</b> the toolkit ships the <i>how</i>; the project holds the <i>what</i>. Toolkit knowledge is <b>never copied into a project's <code>docs/</code></b> — it is referenced through the installed bundle and updates centrally. A project never stores its own artifacts inside the toolkit.</p>
+<h3 id="pi-2-invariant-vs-variable">2. Invariant vs. variable</h3>
+<p>The standard is a set of <b>invariant rules</b> plus one chosen <b>profile</b> that varies only <i>which documents are populated</i> — never the tree shape or the names.</p>
+<p><b>Invariant — every profile, always:</b></p>
+<ul>
+<li>the <code>docs/</code> (visible deliverables) + <code>.spindleloom/</code> (hidden machinery) split;</li>
+<li>the four cadence planes (§4);</li>
+<li>the naming + traceability rules (§5);</li>
+<li>the metadata header on every durable / living document (§6);</li>
+<li>one RTM per initiative; one initiative per repo root.</li>
+</ul>
+<p><b>Variable — the profile</b> (declared as <code>profile</code> in config):</p>
+<div class="tw"><table>
+<tr><th>Profile</th><th>Populates</th><th>For</th></tr>
+<tr><td><code>lean</code> (flat)</td><td><code>prd.md</code> + <code>RTM.md</code>; funnel/specs may sit flat at the docs root</td><td>small / solo, fast-moving work</td></tr>
+<tr><td><code>mid</code> (default)</td><td><code>prd</code> + per-feature <code>frd</code>, <code>sdd</code></td><td>most teams</td></tr>
+<tr><td><code>enterprise</code></td><td>full funnel <code>mrd brd prd</code> + per-feature <code>srs sdd</code> + <code>constitution</code></td><td>larger / regulated programs</td></tr>
+</table></div>
+<p>A flat or lean layout is a <b>sanctioned profile</b>, not a violation.</p>
+<p>The funnel (MRD→PRD) is durable and cross-feature (<code>docs/product/</code>); per-feature work stays <b>together</b> in <code>docs/specs/&lt;feature&gt;/</code>. Reserve kind-folders only for the append-only logs (<code>adr/</code>, <code>rfc/</code>). Don't scatter one feature across <code>mrd/</code>, <code>prd/</code>, <code>srs/</code> folders.</p>
+<h3 id="pi-3-the-canonical-tree">3. The canonical tree</h3>
+<pre>repo/
+├── docs/                         # VISIBLE — project deliverables (project knowledge)
+│   ├── constitution.md           #   durable law (enterprise profile)
+│   ├── product/                  #   DURABLE plane — the cross-feature funnel
+│   │   └── mrd.md  brd.md  prd.md
+│   ├── specs/&lt;feature&gt;/          #   LIVING plane — per-feature work
+│   │   └── frd.md  srs.md  sdd.md  tsd.md  recon.md
+│   ├── sprints/&lt;sprint&gt;/         #   CYCLIC plane — one fresh set per sprint
+│   │   └── plan.md  retro.md
+│   ├── adr/  rfc/                #   LIVING — append-only decision logs (one global ADR sequence)
+│   └── RTM.md                    #   LIVING — the one traceability backbone (one per initiative root)
+└── .spindleloom/                  # HIDDEN — tool machinery (project knowledge, generated)
+    ├── config.json               #   profile, standard_version, sanctioned path deviations, approvals map
+    ├── .gitignore                #   the committed-vs-local split below (written by scaffold)
+    ├── artifacts.json            #   generated catalog (the registry) — COMMITTED, regenerate never hand-edit
+    ├── ARTIFACTS.md              #   human-readable catalog — COMMITTED, generated
+    ├── velocity.json             #   durable capacity baseline the planner reads (see §4) — COMMITTED
+    ├── baselines/&lt;tag&gt;.json      #   SNAPSHOT plane — frozen per sprint / release — COMMITTED
+    ├── verifications/&lt;PBI&gt;.md    #   change-verifier PASS/FAIL evidence, one per PBI — COMMITTED
+    ├── signoffs/[&lt;release-id&gt;/]&lt;gate&gt;.md  # release gate tokens (qa, security, …) — COMMITTED
+    ├── approvals/&lt;feature&gt;/&lt;phase&gt;.md     # phase-boundary acceptance tokens (§9) — COMMITTED
+    ├── runs/&lt;run-id&gt;.json (+.md) #   one run-orchestrator ledger PER RUN — COMMITTED
+    ├── context-log.jsonl         #   append-only handoff-context log — COMMITTED (git-mergeable)
+    ├── context.db                #   LOCAL-ONLY SQLite index of the log (gitignored; rebuild:
+    │                             #   `sloom context . --import`)
+    └── chroma/                   #   LOCAL-ONLY semantic vectors (gitignored, optional)</pre>
+<h3 id="pi-4-the-four-cadence-planes">4. The four cadence planes</h3>
+<p>Project knowledge is organized by how often it changes, so recurring work never pollutes durable knowledge.</p>
+<div class="tw"><table>
+<tr><th>Plane</th><th>What</th><th>Cadence</th><th>Home</th></tr>
+<tr><td><b>Durable</b></td><td>constitution, MRD, BRD, PRD, roadmap, velocity baseline</td><td>set once, rarely changes</td><td><code>docs/product/</code> (+ <code>.spindleloom/velocity.json</code>)</td></tr>
+<tr><td><b>Living</b></td><td>FRD, SRS, SDD, TSD, RTM, ADR/RFC logs, recon findings, backlog</td><td>edited continuously in place</td><td><code>docs/specs/&lt;feature&gt;/</code>, <code>docs/RTM.md</code>, <code>docs/adr/</code></td></tr>
+<tr><td><b>Cyclic</b></td><td>sprint plan, retro — a fresh set <b>each sprint</b></td><td>new instance per sprint</td><td><code>docs/sprints/&lt;sprint&gt;/</code></td></tr>
+<tr><td><b>Snapshot</b></td><td>frozen baselines</td><td>immutable, per sprint / release</td><td><code>.spindleloom/baselines/&lt;tag&gt;</code></td></tr>
+</table></div>
+<ul>
+<li><b>Recon findings</b> live with the feature they de-risk — <code>docs/specs/&lt;feature&gt;/recon.md</code> — and are cited by the PBIs/specs they inform.</li>
+<li><b>Recurring sprint docs</b> get their own cyclic home so they never mix with durable knowledge; at sprint close they freeze to a baseline.</li>
+<li>The <b>durable</b> part of planning (roadmap, velocity/capacity baseline) stays in the durable plane so each new sprint reads from a stable source.</li>
+</ul>
+<h3 id="pi-5-naming-traceability">5. Naming &amp; traceability</h3>
+<ul>
+<li><b>Req-IDs:</b> <code>&lt;DOC&gt;-&lt;AREA&gt;-&lt;NUM&gt;</code> (e.g. <code>FRD-AUTH-012</code>, <code>SR-PERF-004</code>, <code>PBI-CHECKOUT-007</code>). <b>Immutable once assigned.</b></li>
+<li><b>One living RTM per initiative</b>, threading business goal → story → requirement → design → test — proving coverage and showing blast radius. <b>One initiative per repo root</b> (a repo hosting multiple initiatives is out of scope for Standard v1).</li>
+<li><b>ADRs use one global numeric sequence</b> going forward. Because IDs are immutable, a pre-existing collision discovered during conversion is resolved by <b>recorded supersession</b> (the superseded ADR records the survivor) — <b>never by silently renumbering</b> an already-assigned ID.</li>
+</ul>
+<h3 id="pi-6-metadata-so-docs-are-machine-readable">6. Metadata (so docs are machine-readable)</h3>
+<p>Every durable / living document carries a metadata header so the registry can catalog it — <code>Owner</code>, <code>Status</code>, <code>Version</code>, <code>Last updated</code>. The canonical form is a Field/Value table just under the H1; the bold-list form (<code>- **Status:** Accepted</code>) and YAML frontmatter are also parsed. Transient / operational docs (PR notes, standups) are exempt — keep them lean (anti documentation-fatigue).</p>
+<p>Worked example (canonical Field/Value form):</p>
+<pre># PRD: &lt;Feature&gt;
+
+| Field | Value |
+|---|---|
+| Owner | &lt;role / name&gt; |
+| Status | Draft · Reviewed · Approved · Baselined · Superseded |
+| Version | &lt;v1.2&gt; |
+| Last updated | &lt;YYYY-MM-DD&gt; |</pre>
+<h3 id="pi-7-backlog-system-of-record">7. Backlog — system of record</h3>
+<p>When a work tracker (Azure Boards / Jira) is connected, <b>the tracker is the system of record</b> for PBIs / backlog / bugs — status, workflow, and capacity live on the item. <code>backlog.md</code> is the <b>source / staging artifact</b> the team authors and syncs to the tracker; it is the system of record only until a tracker is wired. Never maintain the same item's status in two places.</p>
+<h3 id="pi-8-the-sanctioned-exception">8. The sanctioned exception</h3>
+<p>The only legitimate way to deviate from the canonical paths is <code>.spindleloom/config.json</code>. Every knob defaults to the canonical tree, so an <b>absent config means "the standard."</b></p>
+<pre>{
+  &quot;standard_version&quot;: &quot;1.0&quot;,
+  &quot;profile&quot;: &quot;mid&quot;,
+  &quot;docs_root&quot;: &quot;docs&quot;,
+  &quot;product_dir&quot;: &quot;product&quot;,
+  &quot;specs_dir&quot;: &quot;specs&quot;,
+  &quot;adr_dir&quot;: &quot;adr&quot;,
+  &quot;rfc_dir&quot;: &quot;rfc&quot;,
+  &quot;sprints_dir&quot;: &quot;sprints&quot;,
+  &quot;baselines_dir&quot;: &quot;baselines&quot;,
+  &quot;rtm_file&quot;: &quot;RTM.md&quot;
+}</pre>
+<p>A deviation is <b>declared here, reviewed, and version-pinned</b> — never improvised per-folder. <code>standard_version</code> records the edition the project conforms to; <code>profile</code> selects which documents the project populates (§2).</p>
+<h3 id="pi-9-concurrency-ownership-multiple-teammates-one-repo">9. Concurrency &amp; ownership — multiple teammates, one repo</h3>
+<p>The resolution model is <b>branch = local, <code>main</code> = global, PR merge = promotion</b>: a role's artifact is theirs alone on their branch; it becomes something downstream roles may depend on only when the PR merges — and the merge is where the CI gate (<code>templates/ci/sloom-gate.yml</code>, written by scaffold) catches collisions <i>before</i> they land in shared state. No locks, no central allocator.</p>
+<p>Every piece of shared mutable state has one owner, one namespace key, and one enforcing gate:</p>
+<div class="tw"><table>
+<tr><th>Resource</th><th>Owner role</th><th>Namespace key</th><th>Merge strategy</th><th>Enforcing gate</th></tr>
+<tr><td>Req-ID / PBI-ID</td><td>whoever authors the requirement</td><td><code>&lt;DOC&gt;-&lt;AREA&gt;-&lt;NUM&gt;</code></td><td>git text merge</td><td><b>DUP-REQID</b> check (<code>validate_reqs</code> / <code>sloom check</code>)</td></tr>
+<tr><td><code>docs/RTM.md</code></td><td>the feature's spec owner</td><td>one per initiative</td><td>git text merge — append rows, don't reflow the table</td><td><code>build_rtm --check</code></td></tr>
+<tr><td><code>verifications/&lt;PBI&gt;.md</code></td><td>change-verifier</td><td>PBI-ID</td><td>disjoint by construction</td><td><code>validate_gates</code></td></tr>
+<tr><td><code>signoffs/[&lt;release-id&gt;/]&lt;gate&gt;.md</code></td><td>the 6 gate owners</td><td>release-id + gate</td><td>disjoint once namespaced</td><td><code>validate_gates --release [--release-id]</code></td></tr>
+<tr><td><code>approvals/&lt;feature&gt;/&lt;phase&gt;.md</code></td><td>the phase's approver (matrix below)</td><td>feature + phase</td><td>disjoint by construction</td><td><code>validate_gates --accepted</code> + <code>sloom run advance</code></td></tr>
+<tr><td><code>runs/&lt;run-id&gt;.json</code></td><td>run-orchestrator</td><td>run-id</td><td>one file per run</td><td>structural (never shared)</td></tr>
+<tr><td><code>context-log.jsonl</code></td><td>every agent via <code>save_context</code></td><td>append-only</td><td>git text merge (append-at-EOF)</td><td><code>sloom context . --import</code> after pull</td></tr>
+<tr><td><code>context.db</code>, <code>chroma/</code></td><td>local machine</td><td>—</td><td><b>never committed</b> — rebuilt from the log</td><td>gitignored by scaffold</td></tr>
+<tr><td><code>artifacts.json</code> / <code>ARTIFACTS.md</code></td><td>generated</td><td>—</td><td>regenerate before commit, never hand-edit</td><td><code>registry --check</code></td></tr>
+<tr><td>PBI claiming</td><td>the assignee</td><td>tracker <code>AssignedTo</code></td><td>tracker is system of record (§7)</td><td>tracker's own locking</td></tr>
+<tr><td>PBI-ID ↔ tracker-ID map (RTM Azure column)</td><td>backlog-manager — sole pusher, <b>from merged <code>main</code> only</b></td><td>PBI-ID</td><td>write back + commit immediately after push</td><td>idempotent push (skips mapped) + <code>emit_backlog check</code></td></tr>
+</table></div>
+<p><b>The phase acceptance graph.</b> Agents (and teammates) parallelize freely <i>within</i> a phase; crossing a boundary requires the accountable role's acceptance token — <code>&quot;can I start?&quot; is a file check, not a meeting</code>. <code>discovery → requirements → design → planning → build → test → review → release → operate</code>, with <code>process</code> cross-cutting (gates nothing). Build→release boundaries are already mechanical (verifications + sign-offs); the four upstream boundaries take an acceptance token, written via <code>sloom approve &lt;phase&gt; --feature &lt;slug&gt; --role &lt;role&gt; --by &quot;&lt;name&gt;&quot;</code>:</p>
+<div class="tw"><table>
+<tr><th>Phase boundary</th><th>Output accepted</th><th>Default approver (override: config <code>&quot;approvals&quot;</code>)</th></tr>
+<tr><td>discovery → requirements</td><td>doc-strategy tier decision, MRD</td><td>sponsor / product owner</td></tr>
+<tr><td>requirements → design</td><td>BRD/PRD/FRD/SRS/URS set (per tier)</td><td>product owner</td></tr>
+<tr><td>design → planning</td><td>SDD/TSD, API contract, data model, ADRs</td><td>architect / tech lead</td></tr>
+<tr><td>planning → build</td><td>backlog, estimates, sprint plan</td><td>product owner + team lead</td></tr>
+<tr><td>build → test → review → release</td><td>verifications + sign-off tokens</td><td><i>(already mechanical)</i></td></tr>
+<tr><td>operate</td><td>runbooks / SLOs in place</td><td>SRE (advisory)</td></tr>
+</table></div>
+<p>Local token files are canonical (git-tracked, PR-reviewable, offline); <code>sloom approve --notify-tracker</code> optionally mirrors an acceptance as a <b>comment</b> on the mapped work items — comment only, because item <i>state</i> stays owned by the tracker's own workflow (§7). Because these gates are files, an autonomous loop and a human teammate hit the <b>same</b> gates — this is what makes distributed runs and loop engineering safe: <code>sloom run status|advance &lt;run-id&gt;</code> lets a teammate check/advance a run without an LLM, and it refuses the same things the orchestrator refuses. Acceptance is enforced at <b>run time</b> — <code>sloom run advance</code> and the orchestrator refuse a boundary-crossing step whose token isn't <code>ACCEPTED</code>, and anyone can check with <code>validate_gates.py --accepted &lt;phase&gt; --feature &lt;slug&gt;</code>. The default <code>sloom check</code> battery does <b>not</b> run <code>--accepted</code>, so the CI gate (<code>sloom-gate.yml</code>) catches collisions/traceability/unevidenced gates but not phase acceptance — a green PR is not by itself proof a phase was accepted. Teams that want merge-time enforcement add the optional <code>--accepted</code> step shown in <code>templates/ci/sloom-gate.yml</code>.</p>
+<p><b>Open flags &amp; re-dispatch.</b> When a role finds an upstream gap it cannot fix itself (a missing story, an unratified fact, a spec↔code mismatch), it leaves a machine-readable <code>FLAG(&lt;owner-agent&gt;): &lt;what&gt;</code> marker in its artifact — not only prose. <code>sloom flags &lt;root&gt;</code> lists every open flag grouped by owner: the re-work queue the run-orchestrator (or a human) drains by re-dispatching that agent, and <code>sloom flags --strict</code> gates on it. This closes the run2 gap where flags accumulated as annotations with no loop-back.</p>
+<h3 id="pi-10-adoption">10. Adoption</h3>
+<ul>
+<li><b>Greenfield</b> — <code>python scaffold.py &lt;repo&gt; --profile &lt;p&gt;</code> (or <code>/spec-new</code>) lays down the tree.</li>
+<li><b>Brownfield</b> — <code>python scaffold.py &lt;repo&gt; migrate</code> <b>converts</b> an existing repo to the standard: it relocates artifacts into the canonical tree and rewrites cross-links deterministically (dry-run by default). <b>Do not hand-move files</b> — the converter is the supported path; hand-moving is exactly what causes layout thrash.</li>
+</ul>
+<h3 id="pi-11-conformance">11. Conformance</h3>
+<p>A repo is conformant when it matches the standard for its declared <code>profile</code> / <code>standard_version</code>. Enforced by:</p>
+<ul>
+<li><b><code>validate_reqs.py</code></b> — Req-ID format, RTM coverage, ADR-reference integrity, <b>duplicate-ID and multiple-ADR-directory detection</b>, and a <b>layout / version conformance check</b>;</li>
+<li><b><code>build_artifact_registry.py --check</code></b> — fails CI on any conformance violation.</li>
+</ul>
+<p>Conformance is also queryable live via the <code>sloom</code> MCP server.</p>
+<h3 id="pi-12-the-golden-rule-one-system-of-record-per-kind">12. The golden rule — one system of record per kind</h3>
+<p><b>One system of record per kind of thing. Never duplicate; link by RTM ID.</b> If you're updating the same fact in two places, the architecture is wrong.</p>
+<div class="tw"><table>
+<tr><th>Artifact kind</th><th>System of record</th><th>Why</th></tr>
+<tr><td>Durable docs (MRD, BRD, PRD, SRS, SDD, TSD, URS)</td><td><b>repo <code>docs/</code></b> (or a wiki)</td><td>searchable, reviewed in PRs, AI-readable</td></tr>
+<tr><td>ADRs, RFCs, per-feature specs</td><td><b>repo</b> (<code>docs/adr/</code>, <code>docs/rfc/</code>, <code>docs/specs/</code>)</td><td>versioned with the code they govern</td></tr>
+<tr><td>PBIs / backlog / bugs</td><td><b>work tracker</b> (Azure Boards / Jira) when connected; else <code>backlog.md</code></td><td>status/workflow/capacity live on the item; <code>backlog.md</code> is the staging artifact synced to it (§7)</td></tr>
+<tr><td>Solution-recon findings</td><td><b>repo</b> (<code>docs/specs/&lt;feature&gt;/recon.md</code>)</td><td>ground-truth that de-risks a feature; lives with it</td></tr>
+<tr><td>Sprint plans / retros</td><td><b>repo</b> (<code>docs/sprints/&lt;sprint&gt;/</code>)</td><td>per-sprint (cyclic); frozen to a baseline at close</td></tr>
+<tr><td>Code, tests, pipelines</td><td><b>repo</b></td><td>obvious</td></tr>
+<tr><td>Generated catalog, config, baselines</td><td><b><code>.spindleloom/</code></b></td><td>tool machinery, derived — never hand-edited</td></tr>
+</table></div>
+<h4 id="pi-directionality-drift-tracker-backed-kinds">Directionality &amp; drift (tracker-backed kinds)</h4>
+<p>For kinds whose system of record is the <b>work tracker</b> (PBIs / backlog / bugs), the rule also has a <b>direction</b> — otherwise the repo doc and the tracker silently become two sources of truth:</p>
+<ul>
+<li>The repo doc (<code>backlog.md</code>) is a <b>one-way generation source</b> — it seeds the tracker once; thereafter the <b>tracker is authoritative</b> for status and acceptance criteria. Don't re-maintain those in the doc (that <i>is</i> the duplication the golden rule forbids).</li>
+<li><b>Write tracker IDs back into <code>RTM.md</code></b> (the Azure column) so traceability spans the boundary: source → PBI → work-item ID. An empty Azure column is a drift gap, not a finished load.</li>
+<li><b>Tasks live only in the tracker</b> (below-story decomposition); the docs stop at PBI.</li>
+<li>On disagreement, the <b>tracker wins</b> — fix drift by updating the RTM / a doc note, never by syncing the same fact in two places.</li>
+</ul>
+<p>The <code>backlog-manager</code>'s <b>Tracker sync contract</b> gives the full field map (which doc field maps to which work-item field — the seam where "everything dumped into Description" defects start).</p>
+<h3 id="pi-13-versioning-baselines-lifecycle">13. Versioning, baselines &amp; lifecycle</h3>
+<p>Documents are living, but changes are deliberate:</p>
+<ul>
+<li><b>Status</b> moves Draft → Reviewed → Approved → Baselined → Superseded (in the metadata header).</li>
+<li><b>Baseline</b> at decision points (sprint close / phase gate): <code>python build_artifact_registry.py &lt;repo&gt; --baseline &lt;tag&gt;</code> freezes every artifact's id/status/version/updated to <code>.spindleloom/baselines/&lt;tag&gt;.json</code>. Tag with the sprint name to baseline <b>per sprint</b> — diff baselines to see what moved between sprints or releases.</li>
+<li><b>Version explicitly</b> (v1.0, v1.1) and keep a change log of what changed and why. IDs never change.</li>
+<li>Regulated contexts (FDA 21 CFR 820.30) add a formal change board; the URS and downstream fall under it.</li>
+</ul>
+<h3 id="pi-14-how-to-find-anything-retrieval">14. How to find anything (retrieval)</h3>
+<p>Four complementary paths — you should never have to <i>know where a doc lives</i>:</p>
+<ol>
+<li><b>By traceability</b> — follow an <code>&lt;DOC&gt;-&lt;AREA&gt;-&lt;NUM&gt;</code> ID through <code>RTM.md</code> (up to its source, down to its tests). <code>/spec-check</code>.</li>
+<li><b>By catalog</b> — <code>.spindleloom/ARTIFACTS.md</code> (or <code>artifacts.json</code>): every artifact with its id, kind, path, owner, status, version, last-updated. Generated by <code>build_artifact_registry.py</code>.</li>
+<li><b>Live, from any tool</b> — the <code>sloom</code> MCP server (short for Spindleloom): <code>find_artifact(&quot;PRD&quot;)</code>, <code>list_artifacts(status=&quot;draft&quot;)</code>, <code>trace_requirement(&quot;FRD-TRK-001&quot;)</code>, <code>rtm_coverage()</code>.</li>
+<li><b>By navigation</b> — the project wiki (<code>wiki-curator</code>) and the <code>personas/</code> field handbook for role-by-role entry points.</li>
+</ol>
+<h3 id="pi-15-the-tools-all-stdlib-only-except-the-mcp-server">15. The tools (all stdlib-only except the MCP server)</h3>
+<div class="tw"><table>
+<tr><th>Tool</th><th>Role</th></tr>
+<tr><td><code>hooks/scaffold.py</code></td><td>lay down the <code>docs/</code> + <code>.spindleloom/</code> layout (tier-aware, idempotent)</td></tr>
+<tr><td><code>hooks/validate_reqs.py</code></td><td>RTM coverage / Req-ID / ADR-ref gate (CI + hook)</td></tr>
+<tr><td><code>hooks/build_artifact_registry.py</code></td><td>generate the catalog; <code>--baseline &lt;tag&gt;</code> freezes a snapshot</td></tr>
+<tr><td><code>hooks/emit_backlog.py</code></td><td>backlog.md → work-tracker work items (the sync contract of §12, automated): parse · field-map (AC → its own field) · dry-run plan · ID write-back; pluggable tracker adapter</td></tr>
+<tr><td><code>hooks/mcp_server.py</code></td><td>live traceability + artifact queries over MCP (launched via <code>uv run</code>)</td></tr>
+<tr><td><code>hooks/rtm_core.py</code></td><td>the shared stdlib parser behind all of the above</td></tr>
+</table></div>
+<p>See <code>BEST-PRACTICES.md</code> for the requirement-quality standard and feedback loops, and <code>hooks/HOOKS.md</code> for wiring these into CI.</p></article>
+<article id="part-ii"><div class="parthead"><span class="pn">Part II</span><h2 class="pt">Story Craft</h2><p class="pd">How every backlog item is written and judged: cards, INVEST, acceptance criteria, vertical splitting, sizing.</p><p class="src">Source of truth: <a href="../knowledge_hub/GOVERNANCE.md"><code>knowledge_hub/GOVERNANCE.md</code></a> (this part) -- this page is the generated reading view; edit the source, not this file.</p></div><blockquote><p><i>The card is not the story — write the conversation it starts.</i> The Spindleloom reference for agile story craft, grounded in primary sources (Cohn, Wake, Lawrence &amp; Green / Humanizing Work, Agile Alliance, Scrum.org). <code>backlog-manager</code>, <code>frd-writer</code>, <code>test-plan-writer</code>, and the DoR/DoD + epic templates all reference this — don't restate it per item.</p></blockquote>
+<div class="tw"><table>
+<tr><th>Field</th><th>Value</th></tr>
+<tr><td>Owner</td><td>Toolkit maintainer</td></tr>
+<tr><td>Status</td><td>Active reference</td></tr>
+<tr><td>Last updated</td><td>2026-06-21</td></tr>
+</table></div>
+<h3 id="pii-1-the-connextra-format-default-not-dogma">1. The Connextra format (default, not dogma)</h3>
+<p><b>"As a <code>&lt;role&gt;</code>, I want <code>&lt;capability&gt;</code>, so that <code>&lt;benefit&gt;</code>."</b> Originated with Rachel Davies at Connextra; popularized by Mike Cohn. The deeper definition (Ron Jeffries) is the <b>three Cs — Card, Conversation, Confirmation</b>: the template names the parts of the <i>card</i>; the three Cs say what a story <i>is</i>.</p>
+<ul>
+<li><b>The "so that" clause</b> — understanding WHY guides HOW. Strongly recommended, not mandatory (Cohn writes it ~97% of the time). Drop it only when it genuinely adds nothing (e.g. a basic login).</li>
+<li><b>No developer-only stories</b> — every story delivers value a customer can prioritize. <i>"All connections go through a pool"</i> → rewrite as <i>"Up to fifty users can use the app with a five-user DB license."</i></li>
+</ul>
+<h3 id="pii-2-invest-the-quality-gate-bill-wake-2003">2. INVEST — the quality gate (Bill Wake, 2003)</h3>
+<p>Run every story through this <b>before it enters a sprint</b>:</p>
+<ul>
+<li><b>I</b>ndependent — minimize cross-story dependencies (they choke sprint planning).</li>
+<li><b>N</b>egotiable — the card is a placeholder for a conversation, not a contract. If it can't change, it's a spec.</li>
+<li><b>V</b>aluable — visible, prioritizable value; not engineer-only.</li>
+<li><b>E</b>stimable — understood well enough to size; if not, converse or timebox a spike.</li>
+<li><b>S</b>mall — 6–10 similar stories fit a sprint (see §5).</li>
+<li><b>T</b>estable — if you can't write the acceptance test, it isn't ready.</li>
+</ul>
+<h3 id="pii-3-acceptance-criteria">3. Acceptance criteria</h3>
+<p>AC are the agreed pass/fail conditions for <b>one specific story</b>. They are <b>co-authored, never solo</b> — they come from a <b>Three Amigos</b> session that converges on concrete examples <i>before</i> the story enters a sprint:</p>
+<ul>
+<li><b>Business:</b> "What problem are we solving?"</li>
+<li><b>Development:</b> "How might we build it?"</li>
+<li><b>Testing:</b> "What could go wrong?"</li>
+</ul>
+<p><b>AC ≠ DoD.</b> AC is the exit gate from the <b>story</b> (story-specific pass/fail). The <b>Definition of Done</b> is the exit gate from the <b>sprint</b> (team-wide, applied to every Increment). Don't conflate them.</p>
+<p>Two forms — choose per story:</p>
+<ul>
+<li><b>Gherkin / Given–When–Then</b> — for behaviour with user-visible examples (flows, state changes, happy <i>and</i> unhappy paths). One scenario per case.</li>
+<p>``<code> Scenario: Failed login locks account Given a user with 4 failed attempts When they submit wrong credentials again Then the account is locked And a reset email is sent within 30 s </code>``</p>
+<li><b>Rule-based checklist</b> — for independent business rules/constraints with no single flow to narrate.</li>
+<p>``<code> ☐ Password must be ≥ 12 characters ☐ Account locks after 5 failed attempts ☐ Reset link expires after 15 minutes ☐ Rate limit: 10 attempts / IP / hour </code>``</p>
+</ul>
+<blockquote><p><b>Red flag:</b> AC that describe <i>implementation</i> ("the system shall use Redis") instead of <i>observable outcomes</i>.</p></blockquote>
+<h3 id="pii-4-splitting-always-vertical">4. Splitting — always vertical</h3>
+<p>Slice through <b>all layers</b> so each slice delivers visible value. <b>Horizontal splits (a "UI story" + a "DB story") are the single most common anti-pattern</b> — they may satisfy <i>Small</i> but fail <i>Independent</i> and <i>Valuable</i> (the DB layer alone has no customer value). Horizontal is acceptable only for a pure spike.</p>
+<blockquote><p><b>Spindleloom brownfield exception:</b> when a UI needs an endpoint/data that <b>doesn't exist yet</b> (platform extension), a backend enabler PBI <i>is</i> a legitimate split — <code>*-BE</code> blocks <code>*-FE</code>, schedule BE first. See <code>backlog-manager</code> + the DoR backend-readiness gate.</p></blockquote>
+<p><b>The 9 patterns (Humanizing Work — Lawrence &amp; Green):</b></p>
+<ol>
+<li><b>Workflow steps</b> — thin path through the whole flow; if still big, slice the complex step first.</li>
+<li><b>Operations / CRUD</b> — "manage/maintain" hides Create·Read·Update·Delete; each its own story.</li>
+<li><b>Business-rule variations</b> — each decision path (tiers, tax rules, permissions) its own story.</li>
+<li><b>Variations in data</b> — split by data shape/type (one file format vs another).</li>
+<li><b>Data-entry methods</b> — bulk import / manual form / API upload as separate stories.</li>
+<li><b>Simple / complex</b> — ship the 80% simple case first; tackle the edge case separately.</li>
+<li><b>Major effort</b> — no obvious pattern; ship the highest-value thin slice, defer the rest.</li>
+<li><b>Defer performance</b> — split behaviour from speed/scale; optimize in a separate story.</li>
+<li><b>Break out a spike</b> — too uncertain to split/estimate; <b>timebox</b> an investigation, real story follows.</li>
+</ol>
+<p><b>SPIDR (Cohn)</b> — Spike · Paths · Interfaces · Data · Rules — a <i>parallel</i> catalog over the same ground (not derived from the 9; treat as independent).</p>
+<p><b>Two kinds of epic (Cohn):</b> <b>Compound</b> → split by CRUD verb or data boundary. <b>Complex / uncertain</b> → spike first, then write the real stories.</p>
+<h3 id="pii-5-right-sizing-the-6-10-rule">5. Right-sizing — the 6–10 rule</h3>
+<p>By the time a story reaches the <b>top</b> of the backlog, <b>6–10 similar stories should fit one sprint</b>. It scales with team size / sprint length (others cite 5–15 — a rule of thumb, not an SLA). Split <b>just-in-time</b> (1–2 sprints before the top), not months ahead — early splitting is false precision on work that will change. **Right-sizing is the prerequisite for <i>any</i> estimation technique** (points, t-shirt, #NoEstimates), not a substitute for it.</p>
+<h3 id="pii-6-hierarchy-tool-agnostic">6. Hierarchy (tool-agnostic)</h3>
+<p><code>Initiative → Theme → </code><b><code>Epic</code></b><code> → </code><b><code>Story</code></b><code> → Task</code>. The two stable anchors are <b>epic</b> (too big for a sprint; a placeholder, progressively decomposed) and <b>story</b> (fits a sprint, delivers visible value, has AC). Above epic = portfolio planning; below story = task decomposition (sub-day technical units, <b>no standalone user value</b>). "Feature" / "Initiative" are vendor conventions (SAFe / Jira / Azure Boards) — don't let tool vocabulary dictate architecture.</p>
+<h3 id="pii-7-red-flag-anti-patterns-reject-on-sight">7. Red-flag anti-patterns — reject on sight</h3>
+<ul>
+<li>Story won't fit a sprint alone → it's an epic; split it <b>before</b> it enters the backlog.</li>
+<li>Split by architectural layer (UI / DB) → horizontal; wrong for customer-facing work.</li>
+<li>Missing "so that" with no reason → you can't prioritize it against anything.</li>
+<li>Valued only by developers ("use a connection pool") → rewrite for visible customer benefit.</li>
+<li>AC describe implementation ("use Redis") → describe observable outcomes.</li>
+<li>Gold-plating beyond the AC → stop; negotiate scope or write a new story.</li>
+<li>A story you can't write a test for → fails <i>Testable</i>; don't pull it in.</li>
+<li>Card treated as a fixed contract → it's a placeholder; details are negotiated during development.</li>
+</ul>
+<h3 id="pii-templates">Templates</h3>
+<p>In <code>templates/</code>: the user-story row (<code>backlog-template.md</code>), <b><code>epic-template.md</code></b>, <b><code>task-template.md</code></b> (lean — tasks are tracker-only, no AC of their own), the AC forms (§3), the splitting cheat sheet (§4), <code>definition-of-ready-done-template.md</code>, and the red-flag list (§7).</p>
+<h3 id="pii-sources-primary-adversarially-verified">Sources (primary; adversarially verified)</h3>
+<ul>
+<li>Mike Cohn — <i>User Stories Applied</i> (2004) · "Why the Three-Part Template Works So Well" (Mountain Goat Software)</li>
+<li>Bill Wake — <i>INVEST in Good Stories and SMART Tasks</i> (xp123.com, 2003)</li>
+<li>Richard Lawrence &amp; Peter Green — <i>The Humanizing Work Guide to Splitting User Stories</i></li>
+<li>Agile Alliance — <i>Three Amigos</i> glossary</li>
+<li>Scrum.org — <i>Definition of Done vs Definition of Ready</i> (DoR was removed from the 2020 Scrum Guide — use as a team aid, not a mandated gate)</li>
+</ul></article>
+<article id="part-iii"><div class="parthead"><span class="pn">Part III</span><h2 class="pt">Team Roles, Epic Decomposition & Azure DevOps Fit</h2><p class="pd">The 10-person mapping, the architect's epic-decomposition sequence, and the Azure DevOps system-of-record fit.</p><p class="src">Source of truth: <a href="../knowledge_hub/GOVERNANCE.md"><code>knowledge_hub/GOVERNANCE.md</code></a> (this part) -- this page is the generated reading view; edit the source, not this file.</p></div><p><i>Three things for a team adopting this toolkit: how a concrete 10-person team maps onto the fleet (sec 1 -- now mostly superseded by the persona handbook), the architect's epic-decomposition sequence from PRD feature to build-ready PBIs (sec 2 -- the unique content here), and how the artifacts map onto Azure DevOps as the system of record (sec 3).</i></p>
+<hr>
+<h3 id="piii-1-team-of-10-who-runs-what">1. Team of 10 — who runs what</h3>
+<blockquote><p><b>The per-role operating detail now lives in the <a href="personas/index.html">Persona Field Handbook</a></b> -- 15 role playbooks, each with the agents that role drives, copy-ready prompts, the gates it owns, KPIs and hand-offs. This section keeps only what the handbook does not: the concrete 10-person mapping and its one structural gap.</p></blockquote>
+<p>Team: <b>1 Principal Director, 1 Project Manager, 1 Architect, 2 Leads, 5 Software Developers.</b></p>
+<p>One important note up front: there is <b>no dedicated Product Owner / Product Manager</b> in this team. Someone must own the PRD, backlog priority, and acceptance -- by default the <b>Project Manager wears the PO hat</b>, with the <b>Principal Director</b> setting business priorities. Flag this as the single biggest role gap to resolve before kickoff.</p>
+<p>Map the 9 onto personas: Principal Director -&gt; <i>Sponsor</i>; Project Manager -&gt; <i>Product Owner</i> + <i>Delivery Lead</i>; Architect -&gt; <i>Architect</i>; Leads -&gt; <i>Developer</i> (reviewer half) + parts of <i>QA</i>; Developers -&gt; <i>Developer</i>. Unstaffed personas (UX, Security, SRE, Docs, AI/ML, Compliance) are hats the same 9 wear when the work demands it -- the agents carry the method so the hat is cheap to put on.</p>
+<h4 id="piii-how-the-9-complete-a-project-end-to-end">How the 9 complete a project end-to-end</h4>
+<ol>
+<li><b>Inception</b> — Principal Director + PM run <code>mrd-writer</code>/<code>brd-writer</code>; PM runs <code>doc-strategy-advisor</code> to pick the doc set for a 10-person (Mid-tier) team: <b>PRD + FRD-in-tickets + SDD</b>, with TSD for the build.</li>
+<li><b>Definition</b> — PM (PO hat) writes the PRD; Architect + Leads produce SRS/SDD; Architect logs ADRs and sets the constitution/tech-radar.</li>
+<li><b>Breakdown</b> — PM/Leads run <code>backlog-manager</code> (PRD/FRD → epics → PBIs); whole team runs <code>estimation-facilitator</code> (Planning Poker).</li>
+<li><b>Delivery loop</b> — <code>sprint-planner</code> each sprint (goal + capacity-fit backlog); devs build; daily standup; Architect/Leads review (<code>code-reviewer</code>); <code>retrospective-facilitator</code> at sprint end; repeat.</li>
+<li><b>Governance/Release</b> — PM runs <code>raid-keeper</code> + <code>status-reporter</code>; Leads run <code>test-plan-writer</code>/<code>qa-tester</code>; <code>release-manager</code> handles go/no-go with the Director.</li>
+</ol>
+<hr>
+<h3 id="piii-2-epic-decomposition-sequence-architect-s-path-from-epic-to-">2. Epic decomposition sequence (architect's path from epic to PBIs)</h3>
+<p>One epic, from "it's a PRD feature" to "build-ready, traceable tickets." No single agent does the whole thing — it's a chain with the architect signing off at defined gates. The RTM thread (<code>PRD → FRD → SRS → SDD → PBI → task → test</code>) is what makes it a <i>sequence</i>, not a pile; <code>/spec-check</code> proves nothing was dropped.</p>
+<div class="tw"><table>
+<tr><th>#</th><th>Step</th><th>Owner · agent</th><th>Architect's responsibility</th></tr>
+<tr><td>1</td><td>Epic exists as a PRD feature</td><td>PM · <code>prd-writer</code></td><td>Sanity-check feasibility early; flag if it's an architecture-significant epic</td></tr>
+<tr><td>2</td><td>Feature behaviour + edge cases</td><td>Lead/BA · <code>frd-writer</code></td><td>—</td></tr>
+<tr><td>3</td><td>Constraints / NFRs the epic must meet</td><td><b>Architect · <code>srs-writer</code></b></td><td><b>Own</b> — performance, scale, security, accessibility, interfaces</td></tr>
+<tr><td>4</td><td>Architecture for the epic (HLD→LLD, components, interfaces)</td><td><b>Architect · <code>sdd-writer</code></b></td><td><b>Own</b> — the blueprint stories build against (arc42/C4)</td></tr>
+<tr><td>5</td><td>Significant decisions</td><td><b>Architect · <code>rfc-facilitator</code> → <code>adr-writer</code></b></td><td><b>Own</b> — propose before building, record the why</td></tr>
+<tr><td>5b</td><td><i>(brownfield only)</i> ground the epic in real code</td><td>dev · <code>solution-recon</code></td><td>Confirm the design matches what exists; catch spec↔code drift</td></tr>
+<tr><td>6</td><td>Epic → stories (PBIs) → tasks; INVEST, SPIDR splits</td><td><code>backlog-manager</code></td><td><b>Sign off</b> the breakdown — the DoR technical gate (no story enters a sprint until its blueprint is peer-reviewed)</td></tr>
+<tr><td>7</td><td>Sized + scheduled</td><td><code>estimation-facilitator</code> → <code>sprint-planner</code></td><td>Advise on risk and build order (which PBI unblocks which)</td></tr>
+<tr><td>8</td><td>Built; reviewed for architecture fit</td><td>devs → <code>code-reviewer</code> (+ <code>security-reviewer</code>, <code>performance-engineer</code>, <code>accessibility-auditor</code> as the epic warrants)</td><td>Guard the DoD technical bar; review architecturally significant changes</td></tr>
+</table></div>
+<p><b>It's a feedback-looped funnel, not rigid waterfall.</b> You don't fully spec every epic before any code — you spec <i>this</i> epic, decompose it, build, and let discoveries flow back up (an SRS target the design can't meet → revise the SRS; a missing endpoint found in recon → a backend-enabler PBI scheduled first). See the feedback loops in <code>BEST-PRACTICES.md</code>.</p>
+<p><b>The architect's two non-negotiable gates:</b> (4–5) the blueprint + decisions exist <i>before</i> decomposition, and (6) the architect signs off the PBI breakdown's technical feasibility before it enters a sprint. Everything else they advise on; these two they own.</p>
+<blockquote><p><b>Systems engineering note:</b> this covers <i>software</i> systems engineering (architecture, interfaces, NFRs, V&amp;V via <code>test-plan-writer</code>'s IQ/OQ/PQ). True multidisciplinary SE — ICDs, hardware↔software co-design, system-of-systems integration, the full V-model — is <b>not</b> a dedicated role here; add a specialist only if you build beyond software.</p></blockquote>
+<h3 id="piii-3-azure-devops-boards-fit-check">3. Azure DevOps Boards fit check</h3>
+<p>The project's artifacts map cleanly onto Azure DevOps. Recommended setup: <b>Azure Boards (Agile or Scrum process) + Repos + Wiki + Test Plans + Pipelines.</b></p>
+<h4 id="piii-work-item-hierarchy-mapping">Work-item hierarchy mapping</h4>
+<div class="tw"><table>
+<tr><th>Our artifact</th><th>Azure Boards work item (Agile process)</th><th>Notes</th></tr>
+<tr><td>Epic (backlog-manager)</td><td><b>Epic</b></td><td>One per major feature area</td></tr>
+<tr><td>— (optional grouping)</td><td><b>Feature</b></td><td>Use if epics are large; group PBIs under Features</td></tr>
+<tr><td>User story / PBI (backlog-manager)</td><td><b>User Story</b> (Agile) / <b>Product Backlog Item</b> (Scrum)</td><td>Story text → Description; acceptance criteria → the <b>Acceptance Criteria</b> field</td></tr>
+<tr><td>Task under a story</td><td><b>Task</b></td><td>The "first task / note" from the sprint plan</td></tr>
+<tr><td>Bug</td><td><b>Bug</b></td><td>PBI type "Bug" maps directly</td></tr>
+<tr><td>Spike</td><td><b>Task</b> (what <code>emit_backlog.py</code> maps it to today)</td><td>For estimation "?" items; tag it <code>spike</code> by hand if you want the distinction</td></tr>
+</table></div>
+<h4 id="piii-field-feature-mapping">Field &amp; feature mapping</h4>
+<ul>
+<li><b>Story points</b> (estimation-facilitator) → the <b>Story Points</b> (or Effort) field. Velocity, burndown, and CFD are then <b>built-in Azure Analytics charts</b> — this directly covers the DORA/flow-metrics need (see also <code>engineering-metrics-template</code>).</li>
+<li><b>Sprint plan</b> (sprint-planner) → an Azure <b>Iteration</b>; the sprint goal goes in the iteration description; <b>Capacity</b> planning is a native Boards feature.</li>
+<li><b>Definition of Ready / Done</b> → Board column policies / a shared Wiki page; gate columns enforce DoR.</li>
+<li><b>Priority / MoSCoW</b> → backlog <b>order</b> (stack rank) + the Priority field or a <code>MoSCoW</code> tag.</li>
+<li><b>RTM / traceability</b> → Azure <b>work-item links</b>: parent-child (Epic→Story→Task) plus <b>"Tested By"</b> links to <b>Test Plans</b> test cases, and links from commits/PRs (Repos) to work items. This realizes the RTM natively.</li>
+<li><b>Retro action items</b> (retrospective-facilitator) → work items tagged <code>retro-action</code>, assigned and tracked in the next iteration.</li>
+<li><b>RAID / risk</b> (raid-keeper) → a custom <b>Risk/Issue</b> work-item type or a Wiki RAID page; Decisions → link to ADRs in Repos.</li>
+</ul>
+<h4 id="piii-where-the-documents-live">Where the documents live</h4>
+<p>Layout is owned by <b>Part I</b> above -- this section only adds the Azure angle:</p>
+<ul>
+<li><b>Docs (BRD/PRD/FRD/SRS/SDD/TSD/URS)</b> stay in <b>Repos</b> per the standard tree (<code>docs/</code>); mirror or link them from the Wiki, each <b>linked from the Epic/Feature</b> it governs. The repo file is the source of truth.</li>
+<li><b>ADRs / RFCs</b> → <code>docs/adr/NNNN-*.md</code> and <code>docs/rfc/NNNN-*.md</code> in <b>Repos</b>, reviewed in PRs (matches the docs-as-code stance).</li>
+<li><b>Backlog</b> → the tracker owns PBI <b>status</b> once connected (Part I sec 7); <code>docs/backlog.md</code> is the staging artifact you author, then push with <code>sloom backlog</code> -- don't hand-maintain both.</li>
+</ul>
+<h4 id="piii-recommended-flow-on-azure">Recommended flow on Azure</h4>
+<ol>
+<li>Generate docs with the agents → store in Repos (+ Wiki links).</li>
+<li><code>backlog-manager</code> output → push to Boards with <b><code>sloom backlog</code></b> (<code>hooks/emit_backlog.py</code> → <code>hooks/azure_boards_adapter.py</code>): creates Epics/Stories/Tasks/Bugs via JSON-Patch, puts acceptance criteria in the native <b>Acceptance Criteria</b> field, sets Priority/StoryPoints/Tags, links Epic parents (<code>--link-epics</code>), and writes the created IDs back into the RTM. (<code>hooks/jira_adapter.py</code> is the same flow for Jira; CSV import is the fallback when you have no PAT.)</li>
+<li><code>estimation-facilitator</code> → fill Story Points; <code>sprint-planner</code> → assign to an Iteration with capacity (iteration/capacity assignment is manual -- the adapter deliberately doesn't own it).</li>
+<li>Devs work the board; link commits/PRs to stories; Test Plans hold test cases (<code>test-plan-writer</code> feeds these).</li>
+<li>Analytics dashboards give velocity/burndown/CFD/DORA — covering most of the metrics/reporting need natively.</li>
+</ol>
+<h4 id="piii-fit-verdict">Fit verdict</h4>
+<p><b>Strong fit.</b> Azure Boards natively absorbs the backlog, estimation, sprint, metrics, and traceability concepts — and its built-in analytics covers much of the metrics/reporting need. The agents become the <b>authoring/standardization layer</b> (generate well-formed docs, INVEST stories, sprint goals, retro structure) that feeds Azure, while Azure is the <b>system of record</b> for execution. The one thing Azure won't do for you is <i>write good content</i> — which is exactly what these agents are for.</p></article></main>
+</div>
+<footer><div class="in">
+  Part of the <a href="readme.html">guides site</a> &middot; the by-role surface is the
+  <a href="personas/index.html">Persona Field Handbook</a> &middot; the canonical end-to-end page is
+  <a href="project-overview.html">project-overview.html</a>.
+</div></footer>
+<script>
+const root=document.documentElement;
+document.getElementById("themeToggle").addEventListener("click",()=>{
+  const dark=matchMedia("(prefers-color-scheme:dark)").matches;
+  const cur=root.getAttribute("data-theme")||(dark?"dark":"light");
+  root.setAttribute("data-theme",cur==="dark"?"light":"dark");
+});
+const items=[...document.querySelectorAll(".spine li")];
+const map={};items.forEach(li=>{const a=li.querySelector("a");if(a)map[a.getAttribute("href").slice(1)]=li;});
+const spy=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){
+  items.forEach(l=>l.classList.remove("on"));const li=map[e.target.id];if(li)li.classList.add("on");}}),
+  {rootMargin:"-20% 0px -70% 0px"});
+document.querySelectorAll("article h3[id]").forEach(h=>spy.observe(h));
+</script>
+</body>
+</html>

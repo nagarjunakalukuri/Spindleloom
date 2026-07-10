@@ -3,7 +3,7 @@
 build_agent_index.py — generate agents/INDEX.md from each agent's frontmatter.
 
 Reads the machine-readable contract block (phase, outputs, id_prefix, rtm_column,
-upstream, downstream, claude_code) that every agent declares per project_guides/AGENT-AUTHORING.md,
+upstream, downstream, claude_code) that every agent declares per knowledge_hub/AGENT-AUTHORING.md,
 and emits a lifecycle-phase index so the funnel is navigable by *when you run it*
 rather than by reading every agent file. Dependency-free (Python 3 stdlib only); read-only
 except for writing agents/INDEX.md.

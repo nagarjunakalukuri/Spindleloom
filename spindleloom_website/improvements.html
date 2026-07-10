@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Improvement Register — from the 2026-07-09 phase-by-phase audit -- Spindleloom Guides</title>
+<style>
+:root{
+  --ground:#0E1524; --panel:#141E2E; --panel-2:#18263A;
+  --ink:#DBE5F1; --ink-mid:#93A6BC; --ink-dim:#8497AE; --hair:#1E2E45; --hair-2:#2A3E5C;
+  --gold:#CFA23A; --gold-hi:#E7BE58; --weft:#5C90BE;
+  --shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34);
+  --serif:"Hoefler Text","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:light){:root{
+  --ground:#E9EAE5; --panel:#FFFFFF; --panel-2:#F3F3EF;
+  --ink:#16202E; --ink-mid:#47586B; --ink-dim:#556575; --hair:#DEDFD8; --hair-2:#C9CBC1;
+  --gold:#8A6816; --gold-hi:#7C5D12; --weft:#3C6C93;
+  --shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07);
+}}
+:root[data-theme="light"]{--ground:#E9EAE5;--panel:#FFFFFF;--panel-2:#F3F3EF;--ink:#16202E;--ink-mid:#47586B;--ink-dim:#556575;--hair:#DEDFD8;--hair-2:#C9CBC1;--gold:#8A6816;--gold-hi:#7C5D12;--weft:#3C6C93;--shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07)}
+:root[data-theme="dark"]{--ground:#0E1524;--panel:#141E2E;--panel-2:#18263A;--ink:#DBE5F1;--ink-mid:#93A6BC;--ink-dim:#8497AE;--hair:#1E2E45;--hair-2:#2A3E5C;--gold:#CFA23A;--gold-hi:#E7BE58;--weft:#5C90BE;--shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.66;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+b,strong{color:var(--ink)}
+::selection{background:color-mix(in srgb,var(--gold) 30%,transparent)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:2px}
+.bar{position:sticky;top:0;z-index:80;display:flex;align-items:center;gap:14px;padding:11px 26px;
+  background:color-mix(in srgb,var(--ground) 88%,transparent);backdrop-filter:blur(9px);border-bottom:1px solid var(--hair)}
+.bar .brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--ink-mid);white-space:nowrap}
+.bar .brand b{color:var(--gold)}
+.bar nav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.bar nav a{font-family:var(--mono);font-size:11px;color:var(--ink-mid);padding:6px 10px;border-radius:8px}
+.bar nav a:hover{color:var(--gold);text-decoration:none}
+.toggle{font-family:var(--mono);font-size:11px;color:var(--ink-mid);background:transparent;border:1px solid var(--hair-2);
+  border-radius:20px;padding:6px 13px;cursor:pointer;white-space:nowrap}
+.toggle:hover{border-color:var(--gold);color:var(--gold)}
+.hero{border-bottom:1px solid var(--hair)}
+.hero .in{max-width:1120px;margin:0 auto;padding:44px 30px 34px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-mid)}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,46px);line-height:1.05;letter-spacing:-.02em;margin:12px 0 0;text-wrap:balance}
+.hero .note{font-family:var(--mono);font-size:11.5px;color:var(--ink-mid);margin-top:14px}
+.layout{max-width:1120px;margin:0 auto;padding:34px 30px 80px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:44px}
+@media(max-width:960px){.layout{grid-template-columns:1fr}.spine{display:none}}
+.spine{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 90px);overflow:auto;font-size:12.5px}
+.spine .sp-part{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;margin:18px 0 6px;color:var(--gold)}
+.spine ol{list-style:none}
+.spine li a{display:block;color:var(--ink-mid);padding:3px 0 3px 12px;border-left:2px solid var(--hair)}
+.spine li a:hover{color:var(--ink);text-decoration:none}
+.spine li.on a{color:var(--gold);border-left-color:var(--gold)}
+article h3{font-family:var(--serif);font-weight:600;font-size:23px;letter-spacing:-.01em;margin:40px 0 12px;scroll-margin-top:72px}
+article h4{font-size:15.5px;margin:26px 0 8px;scroll-margin-top:72px}
+article p{margin:0 0 13px;max-width:76ch;color:var(--ink-mid)}
+article li{margin:0 0 7px;color:var(--ink-mid)}
+article ul,article ol{margin:0 0 14px;padding-left:22px}
+article blockquote{border-left:3px solid var(--gold);background:var(--panel);border-radius:0 10px 10px 0;
+  padding:12px 18px;margin:0 0 16px}
+article blockquote p{margin:0}
+article hr{border:0;height:1px;background:var(--hair);margin:34px 0}
+article code{font-family:var(--mono);font-size:.86em;background:var(--panel-2);border:1px solid var(--hair);border-radius:5px;padding:1px 6px;color:var(--gold-hi)}
+article pre{font-family:var(--mono);font-size:12.5px;line-height:1.55;background:var(--panel);border:1px solid var(--hair);
+  border-radius:12px;padding:16px 18px;overflow-x:auto;margin:0 0 16px;color:var(--ink-mid)}
+.tw{overflow-x:auto;margin:0 0 18px;border:1px solid var(--hair);border-radius:12px;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel)}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mid);
+  text-align:left;padding:10px 14px;border-bottom:1px solid var(--hair-2);background:var(--panel-2)}
+td{padding:10px 14px;border-bottom:1px solid var(--hair);vertical-align:top;color:var(--ink-mid)}
+tr:last-child td{border-bottom:0}
+footer{border-top:1px solid var(--hair)}
+footer .in{max-width:1120px;margin:0 auto;padding:22px 30px;font-size:12.5px;color:var(--ink-mid)}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="brand"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style="flex-shrink:0;vertical-align:-4px"><path d="M10 10 C7.6 6.9 3.1 6.6 3.1 10 C3.1 13.4 7.6 13.1 10 10" fill="none" stroke="var(--weft)" stroke-width="1.7" stroke-linecap="round"/><path d="M10 10 C12.4 6.9 16.9 6.6 16.9 10 C16.9 13.4 12.4 13.1 10 10" fill="none" stroke="var(--gold)" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="10" r="2.9" fill="var(--ground)"/><circle cx="10" cy="10" r="1.7" fill="var(--gold)"/><circle cx="10" cy="10" r="0.7" fill="var(--ground)"/></svg> Spindleloom &middot; <b>Guides</b></span>
+  <nav aria-label="Site">
+    <a href="index.html">Home</a>
+    <a href="personas/index.html">Hub</a>
+    <a href="project-overview.html">Overview</a>
+    <a href="governance-handbook.html">Governance</a>
+    <a href="readme.html">All guides</a>
+  </nav>
+  <button class="toggle" id="themeToggle" aria-label="Toggle light or dark theme">&#9681; theme</button>
+</div>
+<header class="hero"><div class="in">
+  <div class="kicker">Spindleloom &middot; knowledge hub</div>
+  <h1>Improvement Register — from the 2026-07-09 phase-by-phase audit</h1>
+  <p class="note">Generated reading view. Source of truth: <a href="../knowledge_hub/IMPROVEMENTS.md"><code>knowledge_hub/IMPROVEMENTS.md</code></a> --
+  edit the MD, then run <code>python hooks/build_guides_site.py</code>.</p>
+</div></header>
+<div class="layout">
+  <nav class="spine" aria-label="Contents"><div class="sp-part">On this page</div><ol><li><a href="#g-tier-2-self-measurement-remaining">Tier 2 — self-measurement (remaining)</a></li>
+<li><a href="#g-tier-3-ownership-orphans-parity-gaps">Tier 3 — ownership orphans &amp; parity gaps</a></li>
+<li><a href="#g-harness-lane-from-the-2026-07-10-harnessing-audit">Harness lane (from the 2026-07-10 harnessing audit)</a></li>
+<li><a href="#g-tier-4-new-capability-lanes-adopt-per-product-scope">Tier 4 — new capability lanes (adopt per product scope)</a></li>
+<li><a href="#g-explicitly-out-of-scope">Explicitly out of scope</a></li>
+<li><a href="#g-standing-items-carried-from-earlier-sessions">Standing items carried from earlier sessions</a></li>
+<li><a href="#g-six-perspective-gap-audit-2026-07-10">Six-perspective gap audit (2026-07-10)</a></li></ol></nav>
+  <main><article><div class="tw"><table>
+<tr><th>Field</th><th>Value</th></tr>
+<tr><td>Owner</td><td>Toolkit maintainer</td></tr>
+<tr><td>Status</td><td>Living</td></tr>
+<tr><td>Source</td><td>Four-lens per-phase audit (Discovery→Process), synthesized 2026-07-09</td></tr>
+</table></div>
+<blockquote><p>The audit's Tier-1 mechanization and quick contract fixes were <b>built</b> (see CHANGELOG 0.3.0: <code>validate_gates.py</code>, requirement-quality lint, altitude coverage, bypass-edge prune, escaped-defect register, <code>/ops-metrics</code> maker, analytics→backlog edge). This register holds what was deliberately <b>deferred</b> — each item is cut-ready. Successor to the archived pilot-era register (<code>archive/IMPROVEMENTS.md</code>).</p></blockquote>
+<h3 id="g-tier-2-self-measurement-remaining">Tier 2 — self-measurement (remaining)</h3>
+<div class="tw"><table>
+<tr><th>ID</th><th>Item</th><th>Phase</th><th>Effort</th><th>Notes</th></tr>
+<tr><td>IMP-101</td><td><code>/plan-calibrate</code> — Actual column in the estimation template, estimate-error trend, reference-story re-anchoring</td><td>Planning</td><td>M</td><td>Estimation is the last open loop: velocity is tracked, per-item accuracy never is</td></tr>
+<tr><td>IMP-102</td><td>Cross-sprint action-item ledger — retro + postmortem + debt actions in one tracker with a completion rate</td><td>Process</td><td>M</td><td>Extends run-orchestrator's state pattern; turns "did retros change behavior?" into a number</td></tr>
+<tr><td>IMP-106</td><td>Tool-run telemetry — every hook appends <code>{tool, ts, rc}</code> to <code>.spindleloom/telemetry.jsonl</code>; <code>/ops-metrics</code> and a staleness check read it</td><td>Cross-phase</td><td>S</td><td>tools/skills audit N5; path renamed — <code>.spindleloom/runs/</code> is now the v0.4.0 run-ledger namespace</td></tr>
+<tr><td>IMP-107</td><td>Board→RTM status pull — reverse tracker sync (the missing half of emit_backlog) so <code>/ops-status</code> reads real board state</td><td>Planning/Review</td><td>M</td><td>tools/skills audit N6</td></tr>
+<tr><td>IMP-108</td><td>Skill-level evals — golden-transcript eval per skill (does requirement-quality measurably improve output?) mirroring FLEET-EVAL at skill granularity</td><td>Process</td><td>L</td><td>tools/skills audit N7</td></tr>
+<tr><td>IMP-105</td><td>MCP parity for the new CLIs — <code>get_context_pack</code>, <code>check_gates</code>, <code>seed_rtm</code> as <code>sloom</code> tools so in-session agents need no Bash hop</td><td>Cross-phase</td><td>S/M</td><td>expanded per tools/skills audit N4</td></tr>
+<tr><td>IMP-104</td><td>Pipeline re-entrancy — the chain is single-pass: an upstream fix landed after downstream docs exist needs a second orchestration pass that re-opens the affected downstream steps, and security-reviewer belongs in-chain at SDD time. Residual from the original flag item: within-run closure (a flag raised twice against the same doc becomes a blocking, RAID-tracked open question). The surfacing half shipped in v0.4.0 (<code>sloom flags</code> + the run-ledger re-work loop; run-4 verdict grades flag loop-back PARTIAL)</td><td>Cross-phase</td><td>M</td><td>E2E run-4 headline finding (supersedes the run-2 wording)</td></tr>
+<tr><td>IMP-103</td><td>Postmortem-action completion rate as a reliability SLI</td><td>Operate</td><td>S</td><td>Folds into IMP-102's ledger</td></tr>
+</table></div>
+<h3 id="g-tier-3-ownership-orphans-parity-gaps">Tier 3 — ownership orphans &amp; parity gaps</h3>
+<div class="tw"><table>
+<tr><th>ID</th><th>Item</th><th>Phase</th><th>Effort</th><th>Notes</th></tr>
+<tr><td>IMP-111</td><td>Design-verifier — maker≠checker parity for design: runs the SDD/TSD REVIEW rubrics as a gate, emits a PRD-req→component coverage matrix</td><td>Design</td><td>M</td><td>Build got change-verifier; design self-reviews. The E2E run's SDD gaps would have been caught here</td></tr>
+<tr><td>IMP-112</td><td>Async/event-contract ownership — extend api-designer (or new agent) to message/event schemas</td><td>Design</td><td>M</td><td>The SDD's own worked example uses a broker; contract-first stops at REST/GraphQL</td></tr>
+<tr><td>IMP-113</td><td>Commands for the command-less specialists: <code>/plan-groom</code>, <code>/plan-replan</code>, <code>/slo</code>, <code>/runbook</code> (proactive)</td><td>Planning/Operate</td><td>S</td><td>The agent modes exist; they're just not exposed</td></tr>
+<tr><td>IMP-114</td><td>UAT coordination fold-in (qa-tester or test-plan-writer): entry/exit + sign-off loop</td><td>Test</td><td>S</td><td>UAT is listed as a level with no coordinator</td></tr>
+<tr><td>IMP-115</td><td>Architecture-review-board edge — label-triggered <code>architect</code> review for arch-significant PRs</td><td>Review</td><td>S</td><td>Today a prose convention in code-reviewer/security-reviewer</td></tr>
+<tr><td>IMP-116</td><td>Migration-coordination owner — data-modeler gains a release-phase edge + rehearsed-migration evidence artifact (feeds a <code>migration</code> sign-off token)</td><td>Release</td><td>S</td><td>"Migration rehearsed" is a checkbox nobody owns</td></tr>
+</table></div>
+<h3 id="g-harness-lane-from-the-2026-07-10-harnessing-audit">Harness lane (from the 2026-07-10 harnessing audit)</h3>
+<div class="tw"><table>
+<tr><th>ID</th><th>Item</th><th>Phase</th><th>Effort</th><th>Notes</th></tr>
+<tr><td>IMP-131</td><td>Cursor <code>hooks.json</code> emission — port <code>on_md_edit</code> once Cursor's hook schema is verified against current docs</td><td>Harness</td><td>S</td><td>native support documented; schema unverified</td></tr>
+<tr><td>IMP-132</td><td>Copilot consumes the <code>claude-plugin</code> bundle directly (it now reads <code>.claude/*</code> natively) — retire the chatmode emission</td><td>Harness</td><td>M</td><td>the matrix's own simplification caveat</td></tr>
+<tr><td>IMP-133</td><td>Per-tool release smoke checklist — 10-min manual: install, list agents, fire one command, one MCP call, per harness</td><td>Harness</td><td>S</td><td>automatable only when the tools are</td></tr>
+</table></div>
+<h3 id="g-tier-4-new-capability-lanes-adopt-per-product-scope">Tier 4 — new capability lanes (adopt per product scope)</h3>
+<div class="tw"><table>
+<tr><th>ID</th><th>Item</th><th>Phase</th><th>Effort</th><th>Notes</th></tr>
+<tr><td>IMP-120</td><td><code>discovery-researcher</code> agent — customer interviews, JTBD, survey synthesis, problem-validation experiments</td><td>Discovery</td><td>M</td><td>The biggest role hole: mrd-writer does desk research only</td></tr>
+<tr><td>IMP-121</td><td>Discovery exit gate + MRD evidence/citation lint</td><td>Discovery</td><td>S/M</td><td>Mirror of the requirements-quality mechanization</td></tr>
+<tr><td>IMP-122</td><td>NFR completeness: i18n/l10n, data-retention, consent/DPIA rows in the SRS template + an nfr-elicitation skill; STRIDE pulled up to SRS time</td><td>Requirements</td><td>M</td><td>Security requirements currently elicited a phase late</td></tr>
+<tr><td>IMP-123</td><td>Infra/cloud-architect agent — topology, IaC, design-time cost/capacity estimate</td><td>Design</td><td>M</td><td>The deployment plane is named by SDD/TSD, owned by nobody</td></tr>
+<tr><td>IMP-124</td><td>Economic prioritization (RICE/WSJF) option in backlog-manager; quarter/roadmap planner bridging MRD→sprints</td><td>Planning</td><td>M</td><td>MoSCoW-only today; planning is sprint-local</td></tr>
+<tr><td>IMP-125</td><td>Perf/pentest execution lane — nightly stage running the SR-PERF/pentest cases test-plan-writer authors</td><td>Test</td><td>M</td><td>Cases are authored with no executor</td></tr>
+<tr><td>IMP-126</td><td>License-compliance gate consuming the SBOM pipeline-engineer already emits</td><td>Review</td><td>M</td><td>SBOM generated, never license-gated</td></tr>
+<tr><td>IMP-127</td><td>Feature-flag/experiment rollout owner — flag lifecycle ↔ release plan ↔ product-analytics cohorts</td><td>Release</td><td>L</td><td>Flags exist only as a rollback mention</td></tr>
+<tr><td>IMP-128</td><td>FinOps/cost-watch operate agent (cloud + LLM spend vs budget); on-call rotation + capacity/DR-drill ownership</td><td>Operate</td><td>M</td><td>Operate's biggest holes</td></tr>
+<tr><td>IMP-129</td><td>OKR/goal-tracking agent closing BRD outcomes → product metrics → backlog</td><td>Process</td><td>M</td><td>Nothing tracks goal attainment over time</td></tr>
+<tr><td>IMP-130</td><td>Pricing/monetization coverage (agent or MRD template section)</td><td>Discovery</td><td>M</td><td>Business-model gap feeding BRD ROI</td></tr>
+</table></div>
+<h3 id="g-explicitly-out-of-scope">Explicitly out of scope</h3>
+<ul>
+<li><b>Mobile development agent — N/A by decision (2026-07-09).</b> The fleet targets web/app + backend; frontend-developer stays web-scoped. Revisit only if a mobile product enters scope.</li>
+<li>Store/marketplace publishing (IMP-class, only if a client ships to app stores).</li>
+</ul>
+<h3 id="g-standing-items-carried-from-earlier-sessions">Standing items carried from earlier sessions</h3>
+<ul>
+<li>Real human-team pilot per <code>archive/PILOT-PLAN.md</code> (verdict ADJUST — still the biggest validation gap).</li>
+<li>Drift gates or generation for the remaining hand-authored HTML guides — only the fleet page is gated; <code>for-everyone.html</code> is hand-authored and ungated, and <code>governance-handbook.html</code> is generated from <code>GOVERNANCE.md</code> but its generator is not yet a hook with a <code>--check</code> gate.</li>
+</ul>
+<h3 id="g-six-perspective-gap-audit-2026-07-10">Six-perspective gap audit (2026-07-10)</h3>
+<p>Six parallel subagents traced one stakeholder journey each (reader · installer · operator · contributor · maintainer · skeptic) through the live repo, running the real gates. Structural spine verified sound (6 gates green, ~30 GOVERNANCE citations resolve). The gaps below cluster in two layers: the hand-authored HTML/doc surface (already drifting from source), and behavioral/freshness claims that outrun evidence. IMP-140+ track the items not fixed in the same session.</p>
+<h4 id="g-the-root-cause-facts-hand-restated-with-no-generation-link-h">The root cause — facts hand-restated with no generation link (highest leverage)</h4>
+<ul>
+<li><b>IMP-140</b> | Count-consistency gate — a stdlib <code>--check</code> that computes real fleet counts (agents/templates/skills/commands) and fails on any stale count string in README / PROJECT-OVERVIEW.md / project-overview.html / for-everyone.html / CLAUDE.md. Counts had already drifted (PROJECT-OVERVIEW §1 "28" vs §6 "27"; project-overview.html hero 28/23 vs body 22/13). | Cross-phase | S | <b>fixed strings this session; gate is the durable fix</b></li>
+<li><b>IMP-141</b> | Fleet-page generator — <code>spindleloom-agent-fleet.html</code> is hand-authored but hard-enforced by <code>validate_graph</code> checks 12/13; there is no generator, so following the add-agent docs produces a hard validator failure with no documented fix. Emit its node/edge dataset from the contract graph (derive like INDEX.md) + <code>--check</code>. | Contributor | M | <b>fixed: <code>hooks/build_fleet_page.py</code> derives nodes/edges/descs/skills from the contracts (p/s/f taxonomy + wiki overlay + labels stay as completeness-checked curated maps in the hook); <code>--check</code> wired into battery/pre-commit/CI; checks 12/12b/13 verify independently</b> |</li>
+<li><b>IMP-142</b> | Persona-data drift guard — the hub's <code>const P[]</code> and the 15 standalone pages hand-restate each persona's agents/commands/gates with no tie to <code>agents/*.md</code> frontmatter; a command rename breaks all three copies silently ("11 personas" comment already drifted vs 15). Validate <code>P[]</code> agent/command tokens against the contracts. | Reader/Skeptic | M | <b>partially fixed this session (validator added)</b></li>
+<li><b>IMP-143</b> | Resolve the 15 orphaned standalone persona pages — zero inbound links repo-wide; duplicate <code>P[]</code>. | Reader | S | <b>fixed: now linked from the hub <code>&lt;noscript&gt;</code> (doubles as the JS-off fallback); already generated from <code>P[]</code> by the standalone-page generator, so not a drift source</b></li>
+</ul>
+<h4 id="g-behavioral-eval-honesty-claims-vs-evidence">Behavioral-eval honesty (claims vs evidence)</h4>
+<ul>
+<li><b>IMP-144</b> | Eval scope honesty — the "market→operate, one traceable chain, graded A behavioral E2E of the fleet" framing covers only the <b>10-agent spec+plan spine</b>; build→test→ship→operate (30+ agents) is structural-only. State the scope plainly in FLEET-EVAL.md + medremind README; ideally extend the eval one build→verify→review→release→operate pass. | Process | M | <b>scope caveat landed this session; eval extension STILL-OPEN</b></li>
+<li><b>IMP-145</b> | Commit <code>handoff-log.md</code> for runs 3 and 4 (the protocol's mandatory "judge's instrument," absent from exactly the two top-graded runs) or re-grade with it; preserve/annotate run 1. | Process | S | STILL-OPEN</li>
+<li><b>IMP-146</b> | Volume-normalized eval metric (contradictions per 100 Req-IDs) so a CLEAN sweep on ~47% less output (run 4: 56 pts vs run 3: 106) isn't rewarded as pure capability gain. | Process | S | STILL-OPEN</li>
+</ul>
+<h4 id="g-journey-friction-fixed-or-tracked">Journey friction (fixed or tracked)</h4>
+<ul>
+<li><b>IMP-147</b> | <code>sloom signoff &lt;gate&gt;</code> command + <code>signoff-token-template.md</code> — the six release gates <code>validate_gates</code> reads have no writer; the QA→Release go/no-go can't be produced from the docs. | Test/Release | S | <b>fixed this session</b></li>
+<li><b>IMP-148</b> | A worked example past Planning — one real PBI with <code>runs/</code>, <code>approvals/</code>, a verification report, <code>signoffs/</code>, and a <code>sloom flags</code> round-trip; half the lifecycle + the whole concurrency layer have no copyable reference. | Cross-phase | M | STILL-OPEN</li>
+<li><b>IMP-149</b> | <code>sloom run advance</code> enforces the row's DoD/verification gate, not just upstream+acceptance; generate the run-ledger skeleton from the contract graph so <code>upstream</code>/<code>requires_acceptance</code> can't drift. | Cross-phase | M | STILL-OPEN</li>
+<li><b>IMP-150</b> | a11y on the reading surfaces — the clickable Woven Loop is mouse-only + <code>role=&quot;img&quot;</code> (WCAG 2.1.1); <code>--ink-dim</code> fails AA contrast (~2.9:1 light); no <code>&lt;noscript&gt;</code> fallback on the JS-driven hub/fleet-map. | Harness | S | <b>fixed this session</b></li>
+<li><b>IMP-151</b> | Local==CI — <code>validate_targets.py</code> (+ MCP smoke) run only in CI though CLAUDE.md claims parity; add <code>validate_targets</code> to pre-commit. | Contributor | S | <b>fixed this session</b></li>
+</ul>
+<p>Superseded/absorbed: IMP-113 (command holes) is broadened by the operator audit — Review phase + <code>sre</code> + API/data/UX design have no slash command at all; keep tracking under IMP-113.</p></article></main>
+</div>
+<footer><div class="in">
+  Part of the <a href="readme.html">Spindleloom website</a> &middot; front door: the
+  <a href="personas/index.html">Persona Field Handbook</a>.
+</div></footer>
+<script>
+const root=document.documentElement;
+try{const _st=localStorage.getItem("sl-theme");if(_st)root.setAttribute("data-theme",_st);}catch(e){}
+document.getElementById("themeToggle").addEventListener("click",()=>{
+  const dark=matchMedia("(prefers-color-scheme:dark)").matches;
+  const cur=root.getAttribute("data-theme")||(dark?"dark":"light");
+  const next=cur==="dark"?"light":"dark";
+  root.setAttribute("data-theme",next);
+  try{localStorage.setItem("sl-theme",next);}catch(e){}
+});
+const items=[...document.querySelectorAll(".spine li")];
+const map={};items.forEach(li=>{const a=li.querySelector("a");if(a)map[a.getAttribute("href").slice(1)]=li;});
+const spy=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){
+  items.forEach(l=>l.classList.remove("on"));const li=map[e.target.id];if(li)li.classList.add("on");}}),
+  {rootMargin:"-20% 0px -70% 0px"});
+document.querySelectorAll("article h3[id]").forEach(h=>spy.observe(h));
+</script>
+</body>
+</html>

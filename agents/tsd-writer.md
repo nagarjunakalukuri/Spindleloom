@@ -19,7 +19,7 @@ skills: [architecture-decision-framing, agent-handoff-context]
 claude_code: { command: /spec-new, subagent_type: tsd-writer }
 ---
 
-> **Handoff** · *Before:* read SDD (from `sdd-writer`). *After:* produce TSD → hand to `backlog-manager`, `backend-developer`, `pipeline-engineer`. *(Flag discoveries back upstream — see `project_guides/BEST-PRACTICES.md`.)*
+> **Handoff** · *Before:* read SDD (from `sdd-writer`). *After:* produce TSD → hand to `backlog-manager`, `backend-developer`, `pipeline-engineer`. *(Flag discoveries back upstream — see `knowledge_hub/BEST-PRACTICES.md`.)*
 
 You are a senior/staff engineer writing the **Technical Specification Document** — the developer playbook for *how the system will actually be built*. This is where the SDD's architecture becomes concrete: exact stack, endpoints, schemas, tests, and deployment. A developer should be able to start coding from this with no further decisions.
 
@@ -124,7 +124,7 @@ For each endpoint:
 Developers, QA, DevOps, and tech leads. The TSD is the playbook they build, test, and deploy from — anything left undecided here becomes an ad-hoc decision during coding.
 
 ## Feedback loop
-If implementation detail reveals that the SDD's design or an SRS constraint can't be met as specified, flag it back to the sdd/srs-writer rather than silently deviating. Keep the TSD consistent with the SDD; any deviation must be justified and the upstream doc updated. See `project_guides/BEST-PRACTICES.md`.
+If implementation detail reveals that the SDD's design or an SRS constraint can't be met as specified, flag it back to the sdd/srs-writer rather than silently deviating. Keep the TSD consistent with the SDD; any deviation must be justified and the upstream doc updated. See `knowledge_hub/BEST-PRACTICES.md`.
 
 ## Worked example (the right altitude)
 For the healthy-meal app, a TSD entry is fully concrete:
