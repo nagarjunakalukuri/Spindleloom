@@ -96,8 +96,10 @@ Each loop should catch the class of problem it's cheapest to catch: types/format
 
 This toolkit is **Loopwright** — loop engineering as a set of agents — each one tightens a specific loop by making the feedback faster or clearer.
 
+> **The machine form of this map** is the `loop:` field in every agent's contract frontmatter — enum `inner | outer-integrate | outer-ship | planning | governance` — enforced on all 52 agents by `validate_graph.py` check 11 and rendered as the **Loop · Role** column of the generated [`agents/INDEX.md`](../agents/INDEX.md). INDEX is the always-current roster (today: inner 8 · outer-integrate 11 · outer-ship 4 · planning 18 · governance 11); the table below is the conceptual summary, not the roster.
+
 ```
-OUTER-OUTER (product/planning loop) ── slowest, most expensive to get wrong
+PLANNING + GOVERNANCE (product loop) ── slowest, most expensive to get wrong
   mrd → brd → prd → frd → srs → sdd → tsd          (spec the right thing)
   backlog-manager → estimation → sprint-planner     (plan the loop)
   status-reporter · raid-keeper · retrospective         (track & learn)
@@ -140,7 +142,7 @@ Two project features are pure loop engineering:
 
 ---
 
-## 8. Tune-your-loops checklist (for the 9-person team on Azure DevOps)
+## 8. Tune-your-loops checklist (for a small team on Azure DevOps — e.g. the 9-person pod of `GOVERNANCE.md` Part III)
 
 **Inner loop**
 - [ ] One-command local setup; build/test feedback < ~10s (CONTRIBUTING via `dev-onboarding`)

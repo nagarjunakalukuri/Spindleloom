@@ -5,14 +5,19 @@
 | Owner | Toolkit maintainer |
 | Status | Active protocol (v1, from the 2026-07-07 MedRemind run) |
 | Complements | `validate_graph.py` (structural), this = behavioral |
-| Reference run | `examples/medremind-fleet-eval/` — run 2 (B+), artifacts + handoff log + judge verdict |
+| Reference run | `examples/medremind-fleet-eval/` — run 4 (A); runs 2-4 carry artifacts + judge verdict |
+| Scope | The 10-agent **spec+plan spine** (market->plan). Build->test->ship->operate is validated structurally (the contract graph), not yet behaviorally. |
+| Judge | A fresh AI subagent, same model family — not a human or third-party judge |
 
 The validators prove the contract graph is *well-formed*; this protocol proves the fleet
 *coordinates* — that each agent, given only what the graph routes to it, produces work the
 next agent can build on. Run it after any change to agent contracts, the funnel shape, or
-handoff conventions. The first run (MedRemind, 2026-07-07) graded **C+** and behaviorally
-confirmed two funnel breaks static analysis had only predicted; both are fixed and now
-guarded by validator check 13 — a re-run should grade higher.
+handoff conventions. The first run (MedRemind, 2026-07-07) graded **C+** and behaviorally confirmed two funnel
+breaks static analysis had only predicted; both are fixed and now guarded by validator
+check 13. Subsequent runs graded **B+ (run 2) -> A- (run 3) -> A (run 4)** as coordination
+fixes landed. Note run 4's own verdict: part of the CLEAN sweep rides on a leaner backlog
+(56 pts vs run 3's 106), so compare grades with output volume in mind, and the chain still
+ends at planning — `security-reviewer` and the build->operate half are not yet in the run.
 
 ## Protocol
 

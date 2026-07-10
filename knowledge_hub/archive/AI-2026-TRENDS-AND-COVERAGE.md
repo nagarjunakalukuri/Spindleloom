@@ -26,7 +26,7 @@ The minimum team to build serious software has shrunk sharply ([Anshad Ameenza](
 - The **WEF projects 65% of developers expect their role redefined in 2026** — toward architecture, integration, and AI-enabled decisions.
 - **Junior-role contraction:** AI automates boilerplate, unit tests, and docs, squeezing the economic case for hiring juniors — a real and uncomfortable trend.
 
-> For a 9-person team (1 director, 1 PM, 1 architect, 2 leads, 5 devs), the 2026 lens says: with AI augmentation this pod can deliver what a ~15–18 person team did a few years ago — *if* the humans move up to orchestration, guardrails, and validation. (See `TEAM-ROLES-AND-AZURE-DEVOPS.md` for who runs which agents.)
+> For a 9-person team (1 director, 1 PM, 1 architect, 2 leads, 5 devs), the 2026 lens says: with AI augmentation this pod can deliver what a ~15–18 person team did a few years ago — *if* the humans move up to orchestration, guardrails, and validation. (See `GOVERNANCE.md` Part III for who runs which agents.)
 
 ## 4. Why this toolkit fits 2026
 

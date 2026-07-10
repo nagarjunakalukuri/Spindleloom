@@ -98,7 +98,7 @@ Documents are living, but changes should be deliberate, not silent:
 
 ## Where artifacts live (information architecture)
 
-> **See [`INFORMATION-ARCHITECTURE.md`](INFORMATION-ARCHITECTURE.md)** for the full, consolidated reference — the canonical `docs/` + `.spindleloom/` layout, per-document vs per-feature, the metadata convention, versioning/baselines, and how to find anything. This section is the summary.
+> **See [`GOVERNANCE.md`](GOVERNANCE.md) Part I** for the full, consolidated reference — the canonical `docs/` + `.spindleloom/` layout, the metadata convention, versioning/baselines (sec 13), and how to find anything (sec 14). This section is the summary.
 
 The golden rule: **one system of record per kind of thing.** Don't duplicate; link by ID (the RTM).
 

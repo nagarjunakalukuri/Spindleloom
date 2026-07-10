@@ -50,7 +50,7 @@ PM = pilot owner & report; Architect = artifact-quality scorer; Leads = run revi
 - **Adjust** — mixed results → trim to the agents that paid off, re-pilot.
 - **Stop** — no quality lift and added overhead → shelve; keep only the few high-value agents.
 
-> **Interim readout filed:** [`PILOT-READOUT.md`](PILOT-READOUT.md) — a *proxy* run (4 AEP backlog items, AI-driven, no Wk-0 baseline) against the live IDP project. Verdict **ADJUST → run the real team pilot**, with a Wk-0 environment-readiness baseline + a pre-pickup existence check added. Not a substitute for the full human-team run below.
+> **Interim readout filed:** [`PILOT-READOUT-INTERIM.md`](PILOT-READOUT-INTERIM.md) — a *proxy* run (4 AEP backlog items, AI-driven, no Wk-0 baseline) against the live IDP project. Verdict **ADJUST → run the real team pilot**, with a Wk-0 environment-readiness baseline + a pre-pickup existence check added. Not a substitute for the full human-team run below.
 
 ## The ask
 Approve a **4–6 week pilot** on one named project, a pilot owner (PM), and ~half a day of the Architect's time to score outputs. Cost: marginal (the team's existing capacity). Upside: a data-backed decision on whether to standardize delivery on the toolkit.

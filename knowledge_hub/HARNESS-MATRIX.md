@@ -20,12 +20,17 @@ Where each AI-coding harness exposes each customization surface, and which Spind
 
 | Source | Claude Code | Cursor | Copilot | Windsurf |
 |---|---|---|---|---|
-| `agents/*.md` | `.claude/agents/` (in the plugin) | `.cursor/rules/*.mdc` | `.github/chatmodes/*.chatmode.md` | `.windsurf/rules/*.md` (no subagents → rules) |
+| `agents/*.md` | `.claude/agents/` (in the plugin) | `.cursor/agents/*.md` (native subagents) | `.github/chatmodes/*.chatmode.md` (legacy — `.agent.md` migration tracked as IMP-132) | `.windsurf/rules/*.md` (no subagents → rules) |
 | `skills/` | bundled in plugin | reuse `.claude/skills/` | reuse `.claude/skills/` | reuse `.claude/skills/` |
 | convention docs | `CLAUDE.md` / conventions skill | always-on `.mdc` rule | `copilot-instructions.md` | always-on `.windsurf` rule |
-| `hooks/` | plugin `hooks/hooks.json` | `.cursor/hooks.json` | (Preview) | (Preview) |
+| `hooks/` | plugin `hooks/hooks.json` | `.cursor/hooks.json` (documented; **not yet emitted** — IMP-131) | (Preview) | (Preview) |
 | MCP server | `.mcp.json` (plugin root) | `.cursor/mcp.json` | `.vscode/mcp.json` | user-global `mcp_config.json` (snippet in bundle README) |
+| `commands/*.md` | plugin `commands/` (+ loose `.claude/commands/`) | `.cursor/commands/*.md` | `.github/prompts/*.prompt.md` | `.windsurf/workflows/*.md` |
 | — | `AGENTS.md` is the lowest-common-denominator instruction target that **all four read** |
+
+## Four tools, six bundles
+
+The generator materializes the 4 tools as **6 bundles** under `targets/`: `claude-plugin` (the full installable plugin — agents + commands + skills + hooks + templates + conventions), `claude-code` (the same agents/commands as loose files for hand-wiring), `cursor`, `copilot`, `windsurf`, and `agents-md` (the one-file cross-tool router). Claude Code gets two shapes on purpose — plugin for `/plugin install`, loose for teams that cherry-pick.
 
 ## Two single-output shortcuts
 
