@@ -4,6 +4,8 @@ All notable changes to Spindleloom. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-07-11
+
 Documentation consolidation, a role-based field handbook, the Woven Loop brand, a browsable website, and five new anti-drift gates - layered on 0.4.0's platform. The fleet's contract graph is unchanged; the platform grows `sloom signoff` and a 9-gate `sloom check` battery.
 
 ### Added
