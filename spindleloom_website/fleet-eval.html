@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fleet E2E Evaluation — the behavioral regression test for the agent chain -- Spindleloom Guides</title>
+<style>
+:root{
+  --ground:#0E1524; --panel:#141E2E; --panel-2:#18263A;
+  --ink:#DBE5F1; --ink-mid:#93A6BC; --ink-dim:#8497AE; --hair:#1E2E45; --hair-2:#2A3E5C;
+  --gold:#CFA23A; --gold-hi:#E7BE58; --weft:#5C90BE;
+  --shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34);
+  --serif:"Hoefler Text","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:light){:root{
+  --ground:#E9EAE5; --panel:#FFFFFF; --panel-2:#F3F3EF;
+  --ink:#16202E; --ink-mid:#47586B; --ink-dim:#556575; --hair:#DEDFD8; --hair-2:#C9CBC1;
+  --gold:#8A6816; --gold-hi:#7C5D12; --weft:#3C6C93;
+  --shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07);
+}}
+:root[data-theme="light"]{--ground:#E9EAE5;--panel:#FFFFFF;--panel-2:#F3F3EF;--ink:#16202E;--ink-mid:#47586B;--ink-dim:#556575;--hair:#DEDFD8;--hair-2:#C9CBC1;--gold:#8A6816;--gold-hi:#7C5D12;--weft:#3C6C93;--shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07)}
+:root[data-theme="dark"]{--ground:#0E1524;--panel:#141E2E;--panel-2:#18263A;--ink:#DBE5F1;--ink-mid:#93A6BC;--ink-dim:#8497AE;--hair:#1E2E45;--hair-2:#2A3E5C;--gold:#CFA23A;--gold-hi:#E7BE58;--weft:#5C90BE;--shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.66;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+b,strong{color:var(--ink)}
+::selection{background:color-mix(in srgb,var(--gold) 30%,transparent)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:2px}
+.bar{position:sticky;top:0;z-index:80;display:flex;align-items:center;gap:14px;padding:11px 26px;
+  background:color-mix(in srgb,var(--ground) 88%,transparent);backdrop-filter:blur(9px);border-bottom:1px solid var(--hair)}
+.bar .brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--ink-mid);white-space:nowrap}
+.bar .brand b{color:var(--gold)}
+.bar nav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.bar nav a{font-family:var(--mono);font-size:11px;color:var(--ink-mid);padding:6px 10px;border-radius:8px}
+.bar nav a:hover{color:var(--gold);text-decoration:none}
+.toggle{font-family:var(--mono);font-size:11px;color:var(--ink-mid);background:transparent;border:1px solid var(--hair-2);
+  border-radius:20px;padding:6px 13px;cursor:pointer;white-space:nowrap}
+.toggle:hover{border-color:var(--gold);color:var(--gold)}
+.hero{border-bottom:1px solid var(--hair)}
+.hero .in{max-width:1120px;margin:0 auto;padding:44px 30px 34px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-mid)}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,46px);line-height:1.05;letter-spacing:-.02em;margin:12px 0 0;text-wrap:balance}
+.hero .note{font-family:var(--mono);font-size:11.5px;color:var(--ink-mid);margin-top:14px}
+.layout{max-width:1120px;margin:0 auto;padding:34px 30px 80px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:44px}
+@media(max-width:960px){.layout{grid-template-columns:1fr}.spine{display:none}}
+.spine{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 90px);overflow:auto;font-size:12.5px}
+.spine .sp-part{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;margin:18px 0 6px;color:var(--gold)}
+.spine ol{list-style:none}
+.spine li a{display:block;color:var(--ink-mid);padding:3px 0 3px 12px;border-left:2px solid var(--hair)}
+.spine li a:hover{color:var(--ink);text-decoration:none}
+.spine li.on a{color:var(--gold);border-left-color:var(--gold)}
+article h3{font-family:var(--serif);font-weight:600;font-size:23px;letter-spacing:-.01em;margin:40px 0 12px;scroll-margin-top:72px}
+article h4{font-size:15.5px;margin:26px 0 8px;scroll-margin-top:72px}
+article p{margin:0 0 13px;max-width:76ch;color:var(--ink-mid)}
+article li{margin:0 0 7px;color:var(--ink-mid)}
+article ul,article ol{margin:0 0 14px;padding-left:22px}
+article blockquote{border-left:3px solid var(--gold);background:var(--panel);border-radius:0 10px 10px 0;
+  padding:12px 18px;margin:0 0 16px}
+article blockquote p{margin:0}
+article hr{border:0;height:1px;background:var(--hair);margin:34px 0}
+article code{font-family:var(--mono);font-size:.86em;background:var(--panel-2);border:1px solid var(--hair);border-radius:5px;padding:1px 6px;color:var(--gold-hi)}
+article pre{font-family:var(--mono);font-size:12.5px;line-height:1.55;background:var(--panel);border:1px solid var(--hair);
+  border-radius:12px;padding:16px 18px;overflow-x:auto;margin:0 0 16px;color:var(--ink-mid)}
+.tw{overflow-x:auto;margin:0 0 18px;border:1px solid var(--hair);border-radius:12px;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel)}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mid);
+  text-align:left;padding:10px 14px;border-bottom:1px solid var(--hair-2);background:var(--panel-2)}
+td{padding:10px 14px;border-bottom:1px solid var(--hair);vertical-align:top;color:var(--ink-mid)}
+tr:last-child td{border-bottom:0}
+footer{border-top:1px solid var(--hair)}
+footer .in{max-width:1120px;margin:0 auto;padding:22px 30px;font-size:12.5px;color:var(--ink-mid)}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="brand"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style="flex-shrink:0;vertical-align:-4px"><path d="M10 10 C7.6 6.9 3.1 6.6 3.1 10 C3.1 13.4 7.6 13.1 10 10" fill="none" stroke="var(--weft)" stroke-width="1.7" stroke-linecap="round"/><path d="M10 10 C12.4 6.9 16.9 6.6 16.9 10 C16.9 13.4 12.4 13.1 10 10" fill="none" stroke="var(--gold)" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="10" r="2.9" fill="var(--ground)"/><circle cx="10" cy="10" r="1.7" fill="var(--gold)"/><circle cx="10" cy="10" r="0.7" fill="var(--ground)"/></svg> Spindleloom &middot; <b>Guides</b></span>
+  <nav aria-label="Site">
+    <a href="index.html">Home</a>
+    <a href="personas/index.html">Hub</a>
+    <a href="project-overview.html">Overview</a>
+    <a href="governance-handbook.html">Governance</a>
+    <a href="readme.html">All guides</a>
+  </nav>
+  <button class="toggle" id="themeToggle" aria-label="Toggle light or dark theme">&#9681; theme</button>
+</div>
+<header class="hero"><div class="in">
+  <div class="kicker">Spindleloom &middot; knowledge hub</div>
+  <h1>Fleet E2E Evaluation — the behavioral regression test for the agent chain</h1>
+  <p class="note">Generated reading view. Source of truth: <a href="../knowledge_hub/FLEET-EVAL.md"><code>knowledge_hub/FLEET-EVAL.md</code></a> --
+  edit the MD, then run <code>python hooks/build_guides_site.py</code>.</p>
+</div></header>
+<div class="layout">
+  <nav class="spine" aria-label="Contents"><div class="sp-part">On this page</div><ol><li><a href="#g-protocol">Protocol</a></li>
+<li><a href="#g-judge-rubric">Judge rubric</a></li>
+<li><a href="#g-golden-brief-v1-medremind-keep-stable-so-grades-compare-acro">Golden brief (v1 — &quot;MedRemind&quot;; keep stable so grades compare across runs)</a></li></ol></nav>
+  <main><article><div class="tw"><table>
+<tr><th>Field</th><th>Value</th></tr>
+<tr><td>Owner</td><td>Toolkit maintainer</td></tr>
+<tr><td>Status</td><td>Active protocol (v1, from the 2026-07-07 MedRemind run)</td></tr>
+<tr><td>Complements</td><td><code>validate_graph.py</code> (structural), this = behavioral</td></tr>
+<tr><td>Reference run</td><td><code>examples/medremind-fleet-eval/</code> — run 4 (A); runs 2-4 carry artifacts + judge verdict</td></tr>
+<tr><td>Scope</td><td>The 10-agent <b>spec+plan spine</b> (market-&gt;plan). Build-&gt;test-&gt;ship-&gt;operate is validated structurally (the contract graph), not yet behaviorally.</td></tr>
+<tr><td>Judge</td><td>A fresh AI subagent, same model family — not a human or third-party judge</td></tr>
+</table></div>
+<p>The validators prove the contract graph is <i>well-formed</i>; this protocol proves the fleet <i>coordinates</i> — that each agent, given only what the graph routes to it, produces work the next agent can build on. Run it after any change to agent contracts, the funnel shape, or handoff conventions. The first run (MedRemind, 2026-07-07) graded <b>C+</b> and behaviorally confirmed two funnel breaks static analysis had only predicted; both are fixed and now guarded by validator check 13. Subsequent runs graded <b>B+ (run 2) -&gt; A- (run 3) -&gt; A (run 4)</b> as coordination fixes landed. Note run 4's own verdict: part of the CLEAN sweep rides on a leaner backlog (56 pts vs run 3's 106), so compare grades with output volume in mind, and the chain still ends at planning — <code>security-reviewer</code> and the build-&gt;operate half are not yet in the run.</p>
+<h3 id="g-protocol">Protocol</h3>
+<ol>
+<li><b>Scratch run dir</b> with the golden brief (below) as <code>brief.md</code>.</li>
+<li><b>Chain the agents sequentially</b>, one isolated subagent per step, in funnel order:</li>
+<p><code>doc-strategy-advisor → brd-writer → urs-writer → prd-writer → frd-writer → srs-writer → sdd-writer → backlog-manager → estimation-facilitator → sprint-planner</code>.</p>
+<li><b>Contract-strict inputs</b> — the experimental control. Each subagent receives ONLY the</li>
+<p>files the contract graph routes to it (its upstream edges' artifacts + the brief), is told to follow its <code>agents/&lt;name&gt;.md</code> definition exactly, and must NOT read other artifacts in the run dir even if present. Cap each artifact (~90–120 lines) to keep the run lean.</p>
+<li><b>Context memory</b> — when the <code>sloom</code> MCP server is available, every agent calls <code>recall_context(task_id=&lt;run slug&gt;)</code> at start and <code>save_context(...)</code> before finishing (with <code>source=</code> citing its artifact); the tooling pass runs <code>validate_gates.py &lt;run-dir&gt; --context &lt;run slug&gt;</code>. The handoff log below is the <i>judge's instrument</i>, not the transport.</li>
+<li><b>Handoff report</b> — every agent appends to <code>handoff-log.md</code>:</li>
+<p><code>Inputs received / Inputs my definition expects / Missing at my handoff / Facts I assumed-or-invented (each, specifically) / Quality impact (one line)</code>.</p>
+<li><b>Tooling pass</b> — run <code>hooks/build_rtm.py &lt;run-dir&gt; --check</code> and</li>
+<p><code>hooks/validate_reqs.py &lt;run-dir&gt;</code> against the generated artifacts.</p>
+<li><b>Independent judge</b> — a fresh subagent reads everything and scores per the rubric.</li>
+</ol>
+<h3 id="g-judge-rubric">Judge rubric</h3>
+<ol>
+<li><b>Per-handoff verdict table</b> — CLEAN / DEGRADED / BROKEN per agent, with one-line evidence.</li>
+<p>BROKEN = a declared-or-needed input never arrived and the output shows it.</p>
+<li><b>Cross-artifact contradiction hunt</b> — diff each design/constraint pair the authors never</li>
+<p>saw together (especially SDD↔SRS); spot-check ≥6 backlog trace IDs for existence.</p>
+<li><b>Invented-fact cascade</b> — which flagged assumptions propagated downstream and were</li>
+<p>treated as ratified? (Convergent invention is coincidence, not corroboration.)</p>
+<li><b>Tier compliance</b> — did the run honor doc-strategy-advisor's doc-set decision?</li>
+<li><b>Context fidelity</b> — did downstream recalls match upstream saves (nothing invented that a saved entry already answered; nothing saved that contradicts the artifact it cites)?</li>
+<li><b>Grade A–F</b> with a 3-line justification.</li>
+</ol>
+<p><b>Pass bar:</b> no BROKEN handoffs, no severed RTM links, grade ≥ B. Anything below: file the findings as contract fixes (inputs/edges), validator checks, or convention changes — the 2026-07-07 run produced check 13, the RTM seeder, the binding-tier rule, and the assumption-ledger convention this way.</p>
+<h3 id="g-golden-brief-v1-medremind-keep-stable-so-grades-compare-acro">Golden brief (v1 — "MedRemind"; keep stable so grades compare across runs)</h3>
+<blockquote><p>RxKart is a 40-store pharmacy chain with an existing mobile app (250k monthly active patients) and a pharmacist back-office portal. Build a <b>prescription refill reminder and approval module</b>: patients get refill reminders (push + SMS via Twilio/Firebase) and one-tap refill requests; pharmacists approve/reject from a queue and can propose a generic substitution the patient must accept. <b>Controlled substances (Schedule II–V)</b>: no auto-reminders or one-tap refills — extra identity verification + pharmacist-initiated contact. <b>HIPAA applies</b> — minimize PHI in notifications (no drug names in SMS). Business target: on-time refill rate 41% → 60% in 2 quarters. Stated NFRs: reminder delivered ≤5 min of schedule; queue p95 &lt;2 s at 500 concurrent pharmacists; 99.9% availability during store hours. Team: 1 PM (acting PO), 1 architect, 4 devs, 1 QA; two-week sprints on Azure DevOps; leadership wants a first shippable slice in 3 sprints.</p></blockquote>
+<p>The brief is deliberately "a little complex": two personas, a regulated branch (exercises URS routing), hard NFRs (exercises SRS→SDD), a third-party integration, business rules, and a capacity-vs-mandate conflict the planning tail must surface honestly.</p></article></main>
+</div>
+<footer><div class="in">
+  Part of the <a href="readme.html">Spindleloom website</a> &middot; front door: the
+  <a href="personas/index.html">Persona Field Handbook</a>.
+</div></footer>
+<script>
+const root=document.documentElement;
+try{const _st=localStorage.getItem("sl-theme");if(_st)root.setAttribute("data-theme",_st);}catch(e){}
+document.getElementById("themeToggle").addEventListener("click",()=>{
+  const dark=matchMedia("(prefers-color-scheme:dark)").matches;
+  const cur=root.getAttribute("data-theme")||(dark?"dark":"light");
+  const next=cur==="dark"?"light":"dark";
+  root.setAttribute("data-theme",next);
+  try{localStorage.setItem("sl-theme",next);}catch(e){}
+});
+const items=[...document.querySelectorAll(".spine li")];
+const map={};items.forEach(li=>{const a=li.querySelector("a");if(a)map[a.getAttribute("href").slice(1)]=li;});
+const spy=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){
+  items.forEach(l=>l.classList.remove("on"));const li=map[e.target.id];if(li)li.classList.add("on");}}),
+  {rootMargin:"-20% 0px -70% 0px"});
+document.querySelectorAll("article h3[id]").forEach(h=>spy.observe(h));
+</script>
+</body>
+</html>

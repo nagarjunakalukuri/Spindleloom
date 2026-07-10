@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Welcome to Spindleloom -- Spindleloom Guides</title>
+<style>
+:root{
+  --ground:#0E1524; --panel:#141E2E; --panel-2:#18263A;
+  --ink:#DBE5F1; --ink-mid:#93A6BC; --ink-dim:#8497AE; --hair:#1E2E45; --hair-2:#2A3E5C;
+  --gold:#CFA23A; --gold-hi:#E7BE58; --weft:#5C90BE;
+  --shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34);
+  --serif:"Hoefler Text","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:light){:root{
+  --ground:#E9EAE5; --panel:#FFFFFF; --panel-2:#F3F3EF;
+  --ink:#16202E; --ink-mid:#47586B; --ink-dim:#556575; --hair:#DEDFD8; --hair-2:#C9CBC1;
+  --gold:#8A6816; --gold-hi:#7C5D12; --weft:#3C6C93;
+  --shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07);
+}}
+:root[data-theme="light"]{--ground:#E9EAE5;--panel:#FFFFFF;--panel-2:#F3F3EF;--ink:#16202E;--ink-mid:#47586B;--ink-dim:#556575;--hair:#DEDFD8;--hair-2:#C9CBC1;--gold:#8A6816;--gold-hi:#7C5D12;--weft:#3C6C93;--shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07)}
+:root[data-theme="dark"]{--ground:#0E1524;--panel:#141E2E;--panel-2:#18263A;--ink:#DBE5F1;--ink-mid:#93A6BC;--ink-dim:#8497AE;--hair:#1E2E45;--hair-2:#2A3E5C;--gold:#CFA23A;--gold-hi:#E7BE58;--weft:#5C90BE;--shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.66;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+b,strong{color:var(--ink)}
+::selection{background:color-mix(in srgb,var(--gold) 30%,transparent)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:2px}
+.bar{position:sticky;top:0;z-index:80;display:flex;align-items:center;gap:14px;padding:11px 26px;
+  background:color-mix(in srgb,var(--ground) 88%,transparent);backdrop-filter:blur(9px);border-bottom:1px solid var(--hair)}
+.bar .brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--ink-mid);white-space:nowrap}
+.bar .brand b{color:var(--gold)}
+.bar nav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.bar nav a{font-family:var(--mono);font-size:11px;color:var(--ink-mid);padding:6px 10px;border-radius:8px}
+.bar nav a:hover{color:var(--gold);text-decoration:none}
+.toggle{font-family:var(--mono);font-size:11px;color:var(--ink-mid);background:transparent;border:1px solid var(--hair-2);
+  border-radius:20px;padding:6px 13px;cursor:pointer;white-space:nowrap}
+.toggle:hover{border-color:var(--gold);color:var(--gold)}
+.hero{border-bottom:1px solid var(--hair)}
+.hero .in{max-width:1120px;margin:0 auto;padding:44px 30px 34px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-mid)}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,46px);line-height:1.05;letter-spacing:-.02em;margin:12px 0 0;text-wrap:balance}
+.hero .note{font-family:var(--mono);font-size:11.5px;color:var(--ink-mid);margin-top:14px}
+.layout{max-width:1120px;margin:0 auto;padding:34px 30px 80px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:44px}
+@media(max-width:960px){.layout{grid-template-columns:1fr}.spine{display:none}}
+.spine{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 90px);overflow:auto;font-size:12.5px}
+.spine .sp-part{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;margin:18px 0 6px;color:var(--gold)}
+.spine ol{list-style:none}
+.spine li a{display:block;color:var(--ink-mid);padding:3px 0 3px 12px;border-left:2px solid var(--hair)}
+.spine li a:hover{color:var(--ink);text-decoration:none}
+.spine li.on a{color:var(--gold);border-left-color:var(--gold)}
+article h3{font-family:var(--serif);font-weight:600;font-size:23px;letter-spacing:-.01em;margin:40px 0 12px;scroll-margin-top:72px}
+article h4{font-size:15.5px;margin:26px 0 8px;scroll-margin-top:72px}
+article p{margin:0 0 13px;max-width:76ch;color:var(--ink-mid)}
+article li{margin:0 0 7px;color:var(--ink-mid)}
+article ul,article ol{margin:0 0 14px;padding-left:22px}
+article blockquote{border-left:3px solid var(--gold);background:var(--panel);border-radius:0 10px 10px 0;
+  padding:12px 18px;margin:0 0 16px}
+article blockquote p{margin:0}
+article hr{border:0;height:1px;background:var(--hair);margin:34px 0}
+article code{font-family:var(--mono);font-size:.86em;background:var(--panel-2);border:1px solid var(--hair);border-radius:5px;padding:1px 6px;color:var(--gold-hi)}
+article pre{font-family:var(--mono);font-size:12.5px;line-height:1.55;background:var(--panel);border:1px solid var(--hair);
+  border-radius:12px;padding:16px 18px;overflow-x:auto;margin:0 0 16px;color:var(--ink-mid)}
+.tw{overflow-x:auto;margin:0 0 18px;border:1px solid var(--hair);border-radius:12px;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel)}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mid);
+  text-align:left;padding:10px 14px;border-bottom:1px solid var(--hair-2);background:var(--panel-2)}
+td{padding:10px 14px;border-bottom:1px solid var(--hair);vertical-align:top;color:var(--ink-mid)}
+tr:last-child td{border-bottom:0}
+footer{border-top:1px solid var(--hair)}
+footer .in{max-width:1120px;margin:0 auto;padding:22px 30px;font-size:12.5px;color:var(--ink-mid)}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="brand"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style="flex-shrink:0;vertical-align:-4px"><path d="M10 10 C7.6 6.9 3.1 6.6 3.1 10 C3.1 13.4 7.6 13.1 10 10" fill="none" stroke="var(--weft)" stroke-width="1.7" stroke-linecap="round"/><path d="M10 10 C12.4 6.9 16.9 6.6 16.9 10 C16.9 13.4 12.4 13.1 10 10" fill="none" stroke="var(--gold)" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="10" r="2.9" fill="var(--ground)"/><circle cx="10" cy="10" r="1.7" fill="var(--gold)"/><circle cx="10" cy="10" r="0.7" fill="var(--ground)"/></svg> Spindleloom &middot; <b>Guides</b></span>
+  <nav aria-label="Site">
+    <a href="index.html">Home</a>
+    <a href="personas/index.html">Hub</a>
+    <a href="project-overview.html">Overview</a>
+    <a href="governance-handbook.html">Governance</a>
+    <a href="readme.html">All guides</a>
+  </nav>
+  <button class="toggle" id="themeToggle" aria-label="Toggle light or dark theme">&#9681; theme</button>
+</div>
+<header class="hero"><div class="in">
+  <div class="kicker">Spindleloom &middot; knowledge hub</div>
+  <h1>Welcome to Spindleloom</h1>
+  <p class="note">Generated reading view. Source of truth: <a href="../ONBOARDING.md"><code>ONBOARDING.md</code></a> --
+  edit the MD, then run <code>python hooks/build_guides_site.py</code>.</p>
+</div></header>
+<div class="layout">
+  <nav class="spine" aria-label="Contents"><div class="sp-part">On this page</div><ol><li><a href="#g-how-we-use-claude">How We Use Claude</a></li>
+<li><a href="#g-your-setup-checklist">Your Setup Checklist</a></li>
+<li><a href="#g-team-tips">Team Tips</a></li>
+<li><a href="#g-get-started">Get Started</a></li></ol></nav>
+  <main><article><h3 id="g-how-we-use-claude">How We Use Claude</h3>
+<p>Based on usage over the last 30 days:</p>
+<p>Work Type Breakdown: _The 30-day scan found 4 sessions but no per-session detail to classify, so these aren't measured percentages — they're the kinds of work this repo centers on:_ Build Feature    — new agents, skills, commands, and hooks Improve Quality  — validators, audits, keeping the fleet green Write Docs       — specs &amp; templates (the MRD → TSD funnel) Plan &amp; Design    — the funnel and the agent handoff graph</p>
+<p>Top Skills &amp; Commands: /deep-research  ████████████████████  1x/month</p>
+<p>Top MCP Servers: _None used in the last 30 days._</p>
+<h3 id="g-your-setup-checklist">Your Setup Checklist</h3>
+<h4 id="g-codebases">Codebases</h4>
+<ul>
+<li>[ ] spindleloom — local workspace (the "Spindleloom" SDLC agent fleet; no git remote)</li>
+<li>[ ] IDP-Accelerator / idp-orchestrator — additional working dir (Python/LangGraph document-processing engine)</li>
+<li>[ ] IDP-Accelerator / idp-skills — additional working dir</li>
+</ul>
+<h4 id="g-mcp-servers-to-activate">MCP Servers to Activate</h4>
+<ul>
+<li>[ ] _None required for the current workflow._</li>
+</ul>
+<h4 id="g-skills-to-know-about">Skills to Know About</h4>
+<ul>
+<li>[ ] /deep-research — fan-out web research with adversarial fact-checking and a cited report. Used for multi-source investigation before deciding.</li>
+<li>[ ] /spec-new, /plan-next, /spec-check, /spec-adr — the Spindleloom fleet's own slash commands (in <code>commands/</code>) for scaffolding specs, pulling the next backlog item, auditing the RTM, and recording decisions.</li>
+<li>[ ] The 52-agent fleet auto-delegates by description (e.g. "write a PRD" → <code>prd-writer</code>); model-invoked skills like <code>requirement-elicitation</code> and <code>ubiquitous-language</code> fire automatically.</li>
+</ul>
+<h3 id="g-team-tips">Team Tips</h3>
+<ul>
+<li><b>Know the layers.</b> <b>Spindleloom</b> is the agent fleet that builds the SDLC wheel; <code>hooks/build_harness_artifacts.py</code> ships it to every harness bundle in <code>targets/</code>; <b>Loopwright</b> (<code>knowledge_hub/LOOPWRIGHT.md</code>) is the delivery feedback loop the agents tighten. Build it, ship it, loop it.</li>
+<li><b>Run <code>/hooks</code> once after cloning</b> (or restart Claude Code) to activate the fleet-integrity hook — it validates the agent graph + <code>claude_code</code> mappings on every edit and never blocks you.</li>
+<li><b>Edit source, then resync.</b> After changing anything in <code>agents/</code>, <code>skills/</code>, or <code>commands/</code>, re-run <code>py hooks/build_harness_artifacts.py</code> to regenerate <code>targets/</code>. The hook nudges you when bundles drift; CI gates on it.</li>
+<li><b>On Windows, use <code>py</code></b> — bare <code>python</code>/<code>python3</code> aren't on PATH here.</li>
+<li><b>Keep the fleet green:</b> <code>py hooks/validate_graph.py</code> checks graph symmetry, declared skills, commands, and <code>claude_code</code> mappings in one shot.</li>
+<li><b>Just describe the task.</b> Agents auto-delegate by their description and skills auto-fire — say "write a BRD for X" or "decompose this spec into PBIs" and the right agent picks it up.</li>
+</ul>
+<h3 id="g-get-started">Get Started</h3>
+<ol>
+<li>Read the canonical end-to-end example: <code>examples/healthy-meal-app/</code> — a full run of the chain (MRD → BRD → PRD → FRD → SRS → SDD → TSD + an ADR) tied together by one RTM. It's the fastest way to see how the documents interlock.</li>
+<li>Skim <code>README.md</code> (the fleet overview), <code>knowledge_hub/GOVERNANCE.md</code> Part I (the authoritative layout standard adopters target — greenfield scaffolds it, brownfield converts via <code>scaffold.py migrate</code>), and <code>knowledge_hub/AGENT-AUTHORING.md</code> (how every agent is written) so you can add or edit agents in-convention.</li>
+<li>Try it live: ask Claude to "write a BRD for &lt;a feature you care about&gt;" and watch it hand off down the funnel. Then run <code>py hooks/validate_graph.py</code> to see the integrity checks.</li>
+</ol>
+<p>&lt;!-- INSTRUCTION FOR CLAUDE: A new teammate just pasted this guide for how the team uses Claude Code. You're their onboarding buddy — warm, conversational, not lecture-y.</p>
+<p>Open with a warm welcome — include the team name from the title. Then: "Your teammate uses Claude Code for [list all the work types]. Let's get you started."</p>
+<p>Check what's already in place against everything under Setup Checklist (including skills), using markdown checkboxes — [x] done, [ ] not yet. Lead with what they already have. One sentence per item, all in one message.</p>
+<p>Tell them you'll help with setup, cover the actionable team tips, then the starter task (if there is one). Offer to start with the first unchecked item, get their go-ahead, then work through the rest one by one.</p>
+<p>After setup, walk them through the remaining sections — offer to help where you can (e.g. link to channels), and just surface the purely informational bits.</p>
+<p>Don't invent sections or summaries that aren't in the guide. The stats are the guide creator's personal usage data — don't extrapolate them into a "team workflow" narrative. --&gt;</p></article></main>
+</div>
+<footer><div class="in">
+  Part of the <a href="readme.html">Spindleloom website</a> &middot; front door: the
+  <a href="personas/index.html">Persona Field Handbook</a>.
+</div></footer>
+<script>
+const root=document.documentElement;
+try{const _st=localStorage.getItem("sl-theme");if(_st)root.setAttribute("data-theme",_st);}catch(e){}
+document.getElementById("themeToggle").addEventListener("click",()=>{
+  const dark=matchMedia("(prefers-color-scheme:dark)").matches;
+  const cur=root.getAttribute("data-theme")||(dark?"dark":"light");
+  const next=cur==="dark"?"light":"dark";
+  root.setAttribute("data-theme",next);
+  try{localStorage.setItem("sl-theme",next);}catch(e){}
+});
+const items=[...document.querySelectorAll(".spine li")];
+const map={};items.forEach(li=>{const a=li.querySelector("a");if(a)map[a.getAttribute("href").slice(1)]=li;});
+const spy=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){
+  items.forEach(l=>l.classList.remove("on"));const li=map[e.target.id];if(li)li.classList.add("on");}}),
+  {rootMargin:"-20% 0px -70% 0px"});
+document.querySelectorAll("article h3[id]").forEach(h=>spy.observe(h));
+</script>
+</body>
+</html>

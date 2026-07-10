@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Documentation Best Practices -- Spindleloom Guides</title>
+<style>
+:root{
+  --ground:#0E1524; --panel:#141E2E; --panel-2:#18263A;
+  --ink:#DBE5F1; --ink-mid:#93A6BC; --ink-dim:#8497AE; --hair:#1E2E45; --hair-2:#2A3E5C;
+  --gold:#CFA23A; --gold-hi:#E7BE58; --weft:#5C90BE;
+  --shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34);
+  --serif:"Hoefler Text","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:light){:root{
+  --ground:#E9EAE5; --panel:#FFFFFF; --panel-2:#F3F3EF;
+  --ink:#16202E; --ink-mid:#47586B; --ink-dim:#556575; --hair:#DEDFD8; --hair-2:#C9CBC1;
+  --gold:#8A6816; --gold-hi:#7C5D12; --weft:#3C6C93;
+  --shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07);
+}}
+:root[data-theme="light"]{--ground:#E9EAE5;--panel:#FFFFFF;--panel-2:#F3F3EF;--ink:#16202E;--ink-mid:#47586B;--ink-dim:#556575;--hair:#DEDFD8;--hair-2:#C9CBC1;--gold:#8A6816;--gold-hi:#7C5D12;--weft:#3C6C93;--shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07)}
+:root[data-theme="dark"]{--ground:#0E1524;--panel:#141E2E;--panel-2:#18263A;--ink:#DBE5F1;--ink-mid:#93A6BC;--ink-dim:#8497AE;--hair:#1E2E45;--hair-2:#2A3E5C;--gold:#CFA23A;--gold-hi:#E7BE58;--weft:#5C90BE;--shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.66;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+b,strong{color:var(--ink)}
+::selection{background:color-mix(in srgb,var(--gold) 30%,transparent)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:2px}
+.bar{position:sticky;top:0;z-index:80;display:flex;align-items:center;gap:14px;padding:11px 26px;
+  background:color-mix(in srgb,var(--ground) 88%,transparent);backdrop-filter:blur(9px);border-bottom:1px solid var(--hair)}
+.bar .brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--ink-mid);white-space:nowrap}
+.bar .brand b{color:var(--gold)}
+.bar nav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.bar nav a{font-family:var(--mono);font-size:11px;color:var(--ink-mid);padding:6px 10px;border-radius:8px}
+.bar nav a:hover{color:var(--gold);text-decoration:none}
+.toggle{font-family:var(--mono);font-size:11px;color:var(--ink-mid);background:transparent;border:1px solid var(--hair-2);
+  border-radius:20px;padding:6px 13px;cursor:pointer;white-space:nowrap}
+.toggle:hover{border-color:var(--gold);color:var(--gold)}
+.hero{border-bottom:1px solid var(--hair)}
+.hero .in{max-width:1120px;margin:0 auto;padding:44px 30px 34px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-mid)}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,46px);line-height:1.05;letter-spacing:-.02em;margin:12px 0 0;text-wrap:balance}
+.hero .note{font-family:var(--mono);font-size:11.5px;color:var(--ink-mid);margin-top:14px}
+.layout{max-width:1120px;margin:0 auto;padding:34px 30px 80px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:44px}
+@media(max-width:960px){.layout{grid-template-columns:1fr}.spine{display:none}}
+.spine{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 90px);overflow:auto;font-size:12.5px}
+.spine .sp-part{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;margin:18px 0 6px;color:var(--gold)}
+.spine ol{list-style:none}
+.spine li a{display:block;color:var(--ink-mid);padding:3px 0 3px 12px;border-left:2px solid var(--hair)}
+.spine li a:hover{color:var(--ink);text-decoration:none}
+.spine li.on a{color:var(--gold);border-left-color:var(--gold)}
+article h3{font-family:var(--serif);font-weight:600;font-size:23px;letter-spacing:-.01em;margin:40px 0 12px;scroll-margin-top:72px}
+article h4{font-size:15.5px;margin:26px 0 8px;scroll-margin-top:72px}
+article p{margin:0 0 13px;max-width:76ch;color:var(--ink-mid)}
+article li{margin:0 0 7px;color:var(--ink-mid)}
+article ul,article ol{margin:0 0 14px;padding-left:22px}
+article blockquote{border-left:3px solid var(--gold);background:var(--panel);border-radius:0 10px 10px 0;
+  padding:12px 18px;margin:0 0 16px}
+article blockquote p{margin:0}
+article hr{border:0;height:1px;background:var(--hair);margin:34px 0}
+article code{font-family:var(--mono);font-size:.86em;background:var(--panel-2);border:1px solid var(--hair);border-radius:5px;padding:1px 6px;color:var(--gold-hi)}
+article pre{font-family:var(--mono);font-size:12.5px;line-height:1.55;background:var(--panel);border:1px solid var(--hair);
+  border-radius:12px;padding:16px 18px;overflow-x:auto;margin:0 0 16px;color:var(--ink-mid)}
+.tw{overflow-x:auto;margin:0 0 18px;border:1px solid var(--hair);border-radius:12px;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel)}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mid);
+  text-align:left;padding:10px 14px;border-bottom:1px solid var(--hair-2);background:var(--panel-2)}
+td{padding:10px 14px;border-bottom:1px solid var(--hair);vertical-align:top;color:var(--ink-mid)}
+tr:last-child td{border-bottom:0}
+footer{border-top:1px solid var(--hair)}
+footer .in{max-width:1120px;margin:0 auto;padding:22px 30px;font-size:12.5px;color:var(--ink-mid)}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="brand"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style="flex-shrink:0;vertical-align:-4px"><path d="M10 10 C7.6 6.9 3.1 6.6 3.1 10 C3.1 13.4 7.6 13.1 10 10" fill="none" stroke="var(--weft)" stroke-width="1.7" stroke-linecap="round"/><path d="M10 10 C12.4 6.9 16.9 6.6 16.9 10 C16.9 13.4 12.4 13.1 10 10" fill="none" stroke="var(--gold)" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="10" r="2.9" fill="var(--ground)"/><circle cx="10" cy="10" r="1.7" fill="var(--gold)"/><circle cx="10" cy="10" r="0.7" fill="var(--ground)"/></svg> Spindleloom &middot; <b>Guides</b></span>
+  <nav aria-label="Site">
+    <a href="index.html">Home</a>
+    <a href="personas/index.html">Hub</a>
+    <a href="project-overview.html">Overview</a>
+    <a href="governance-handbook.html">Governance</a>
+    <a href="readme.html">All guides</a>
+  </nav>
+  <button class="toggle" id="themeToggle" aria-label="Toggle light or dark theme">&#9681; theme</button>
+</div>
+<header class="hero"><div class="in">
+  <div class="kicker">Spindleloom &middot; knowledge hub</div>
+  <h1>Documentation Best Practices</h1>
+  <p class="note">Generated reading view. Source of truth: <a href="../knowledge_hub/BEST-PRACTICES.md"><code>knowledge_hub/BEST-PRACTICES.md</code></a> --
+  edit the MD, then run <code>python hooks/build_guides_site.py</code>.</p>
+</div></header>
+<div class="layout">
+  <nav class="spine" aria-label="Contents"><div class="sp-part">On this page</div><ol><li><a href="#g-the-funnel">The funnel</a></li>
+<li><a href="#g-feedback-loops-documentation-is-not-one-way">Feedback loops (documentation is not one-way)</a></li>
+<li><a href="#g-practices-every-agent-follows">Practices every agent follows</a></li>
+<li><a href="#g-requirement-quality-standard-iso-iec-ieee-29148-incose">Requirement quality standard (ISO/IEC/IEEE 29148 + INCOSE)</a></li>
+<li><a href="#g-traceability-backbone">Traceability backbone</a></li>
+<li><a href="#g-change-control-baselines">Change control &amp; baselines</a></li>
+<li><a href="#g-where-artifacts-live-information-architecture">Where artifacts live (information architecture)</a></li>
+<li><a href="#g-validation-quality-gates">Validation &amp; quality gates</a></li>
+<li><a href="#g-frameworks-worth-adopting">Frameworks worth adopting</a></li>
+<li><a href="#g-choosing-your-document-set-by-team-size">Choosing your document set by team size</a></li>
+<li><a href="#g-delivery-patterns-pilot-hardened">Delivery patterns (pilot-hardened)</a></li></ol></nav>
+  <main><article><p>Shared conventions for every agent in this project. The goal is documentation that actually gets read and stays true — not a mountain of stale paperwork ("documentation fatigue").</p>
+<h3 id="g-the-funnel">The funnel</h3>
+<p>Documents form a waterfall from 30,000 feet (business) to the trenches (code). Each refines the one above and hands off to the one below:</p>
+<pre>[MRD] Market problem      → mrd-writer
+  ↓
+[BRD] Business why / ROI    → brd-writer
+  ↓
+[PRD] User-facing features → prd-writer
+  ↓
+[FRD] Feature behavior     → frd-writer   (often merged into tickets)
+  ↓
+[SRS] Constraints / rules  → srs-writer
+  ↓
+[SDD] Architecture blueprint → sdd-writer
+  ↓
+[TSD] Build details        → tsd-writer</pre>
+<p><code>doc-strategy-advisor</code> decides which of these a given team should actually maintain; <code>spec-steward</code> keeps whichever you keep from drifting.</p>
+<p>Above the funnel sits the <b>constitution</b> (<code>templates/constitution-template.md</code>) — the standing, AI-read-first guardrails (principles, boundaries, non-goals) that hold across all features. The funnel describes <i>this release</i>; the constitution describes <i>the system's durable law</i>. Build it once via the <code>/spec-constitution</code> command and keep it versioned.</p>
+<p>Alongside the funnel run the <b>engineering-craft lanes</b> the doc spine only touches generically: <code>ux-ui-designer</code> sits in the design phase doing UX <b>and</b> UI (PRD → flows/wireframes/hi-fi visuals + design system → <code>frontend-developer</code> implements them); <code>security-reviewer</code> is continuous (threat-models at the SDD, gates at review/CI); and <code>sre</code> owns proactive operate-phase reliability (SLOs/runbooks, feeding <code>incident-responder</code>). Four further specialists by need: <code>accessibility-auditor</code> (independent WCAG sign-off gate), <code>performance-engineer</code> (profiles and optimizes against a budget, behavior-preserving), <code>product-analytics</code> (instruments the PRD's success metrics to close the build→learn loop), and <code>ai-eval</code> (golden datasets + regression-eval gates for shipped AI features). Add each by what you're building (see <code>doc-strategy-advisor</code>).</p>
+<h3 id="g-feedback-loops-documentation-is-not-one-way">Feedback loops (documentation is not one-way)</h3>
+<p>The handoff flows down, but discoveries flow back up. Build these loops into how the docs are maintained:</p>
+<ul>
+<li><b>Reality-check loop (SDD → PRD/SRS).</b> While designing, an architect may find a PRD/SRS requirement architecturally impossible or too costly (e.g. "global sync under 10ms"). Push back and force a scope update <i>upstream</i> rather than quietly missing the target.</li>
+<li><b>Scope-adjustment loop (SRS/FRD → PRD).</b> Constraints uncovered during specification can change what's realistic to build this release.</li>
+<li><b>Budget/timeline loop (any stage → BRD).</b> Effort or cost surprises can shift the business case itself.</li>
+<li><b>Parallel-work loop (SRS/FRD → Dev + QA).</b> The moment the SRS/FRD is final, developers build from the SDD while QA writes test scripts from the SRS — same source of truth, so QA is ready the instant code lands.</li>
+</ul>
+<p>Each specialist agent should, when it discovers something that invalidates an upstream document, flag it and route back to that agent rather than silently absorbing the conflict.</p>
+<h3 id="g-practices-every-agent-follows">Practices every agent follows</h3>
+<ol>
+<li><b>Ban the PDF.</b> Keep docs in a searchable, editable workspace (Notion, Confluence, Git). If it isn't searchable or editable, it's dead.</li>
+<li><b>Definition of Ready.</b> A feature cannot enter a sprint until its technical blueprint (SDD/TSD/RFC) has been reviewed and signed off by at least one peer engineer.</li>
+<li><b>Embed logic in tickets.</b> Write a clean, high-level doc for context; put hyper-specific functional logic ("if user clicks X, then Y") in the Jira/Linear ticket, not a fat standalone FRD.</li>
+<li><b>One owner per document.</b> Shared ownership = no ownership.</li>
+<li>**Capture the <i>why</i>, not just the <i>what</i>.<b> Record decisions and rejected alternatives so the next reader (human or AI) doesn't re-litigate or "fix" deliberate choices. For architecturally significant decisions, keep an append-only </b>ADR log** (<code>adr-writer</code>) in the repo — one immutable record per decision, superseded rather than edited. For significant changes that need debate <i>before</i> building, raise an <b>RFC</b> (<code>rfc-facilitator</code>) — the forward-looking proposal opened for comment; an accepted RFC produces the ADR. RFCs live in <code>/docs/rfc</code>, ADRs in <code>/docs/adr</code>, both reviewed in PRs.</li>
+<li><b>Docs-as-Code where it fits.</b> Treat docs like code: Markdown in the repo, reviewed in the same PR as the code, deployed via CI/CD. This is the single biggest lever for keeping technical docs current.</li>
+<li><b>Update upstream before downstream.</b> When something changes, fix the source-of-truth document first, then let it flow down.</li>
+<li><b>Mark invented facts; ratify before they harden.</b> Any value an agent assumes rather than receives (a threshold, a window, a default behavior) is written as a tagged assumption (<code>ASSUMPTION-n:</code> with owner) — never as plain fact. Downstream agents carry the tag forward; an assumption enters a sprint-committed acceptance criterion only after the owner ratifies it. Two documents independently inventing the same value is coincidence, not corroboration — the tag is what keeps a guessed number from silently becoming a requirement three documents later.</li>
+</ol>
+<h3 id="g-requirement-quality-standard-iso-iec-ieee-29148-incose">Requirement quality standard (ISO/IEC/IEEE 29148 + INCOSE)</h3>
+<p>Every requirement any agent writes — in a BRD, PRD, FRD, SRS, or URS — should pass this checklist. It's the industry gold standard for well-formed requirements.</p>
+<p><b>Per requirement, ask:</b></p>
+<ul>
+<li><b>Necessary</b> — does it serve a stated goal/problem? If not, cut it.</li>
+<li><b>Unambiguous</b> — only one reading is possible.</li>
+<li><b>Singular</b> — exactly one obligation. If you wrote "and" or "or", split it into two.</li>
+<li><b>Feasible</b> — achievable within constraints.</li>
+<li><b>Verifiable</b> — you can prove it's met with a test or inspection.</li>
+<li><b>Traceable</b> — links upstream to its source and downstream to design/tests.</li>
+<li><b>Correct</b> — accurately reflects the real need.</li>
+<li><b>Consistent</b> — doesn't contradict another requirement.</li>
+</ul>
+<p><b>Per requirement set, confirm:</b> completeness (no gaps), consistency (no conflicts), and feasibility (achievable as a whole).</p>
+<h4 id="g-writing-rules">Writing rules</h4>
+<ul>
+<li>Use <b>active voice with "the system shall …"</b> for functional/system requirements.</li>
+<li><b>One obligation per statement.</b> The word "and"/"or" is a smell — split it.</li>
+<li><b>Ban vague adjectives</b> ("fast", "user-friendly", "intuitive"). Replace with a measurable target: not "search should be fast" but "for <code>/v1/search</code>, P95 latency &lt; 200 ms at &lt;10 RPS/tenant; error rate &lt; 0.1% over 24h".</li>
+<li><b>Normative text is the source of truth; visuals are informative.</b> Diagrams, wireframes, and sequence charts aid understanding but the written requirement governs.</li>
+</ul>
+<h3 id="g-traceability-backbone">Traceability backbone</h3>
+<p>A well-structured project traces in an unbroken chain, and every artifact carries a stable ID:</p>
+<pre>MRD (market goal) → BRD (scope) → PRD (feature) → FRD (behavior)
+  → SRS (constraints) → SDD/TSD (design &amp; build) → test cases → defects</pre>
+<ul>
+<li><b>Req-ID convention:</b> <code>&lt;DOC&gt;-&lt;AREA&gt;-&lt;NUM&gt;</code>, e.g. <code>FRD-AUTH-012</code>, <code>SR-PERF-004</code>, <code>URS-USE-003</code>, <code>PBI-CHECKOUT-007</code>. IDs never change once assigned. Doc prefixes: the SRS uses <code>SR</code>; the backlog uses <code>PBI</code> with the epic name as the <code>&lt;AREA&gt;</code>.</li>
+<li><b>Link both directions:</b> each requirement names its upstream source and its downstream design/test artifacts (e.g. <code>FRD-AUTH-012</code> → <code>TEST-AUTH-045</code>). This lets you prove coverage and assess the blast radius of any change.</li>
+<li>Keep the traceability tables that each agent's template already includes in sync as the documents evolve.</li>
+</ul>
+<p><b>The Requirements Traceability Matrix (RTM)</b> is the named artifact that holds this chain: a single table mapping each business requirement → product/functional requirement → design → test case → defect. The BRD seeds it (business → PRD), and each downstream agent extends it. Maintain one RTM per project as living evidence of coverage; at audit or release time it proves nothing was dropped and shows the blast radius of any change.</p>
+<h3 id="g-change-control-baselines">Change control &amp; baselines</h3>
+<p>Documents are living, but changes should be deliberate, not silent:</p>
+<ul>
+<li><b>Establish a baseline</b> at each decision point (sprint planning in Agile; a phase gate in waterfall).</li>
+<li><b>Set a review cadence</b> — grooming each sprint, or formal phase-gate reviews.</li>
+<li><b>Version explicitly</b> (v1.0, v1.1) and keep a change log of what changed and why.</li>
+<li><b>Regulated contexts</b> (e.g. FDA 21 CFR 820.30) require a formal change board with reviews and signatures — the URS and its downstream docs fall under this.</li>
+<li><b>Agile contexts</b> can baseline with a lightweight backlog-refinement vote; when a story closes, update the doc to reflect what actually shipped.</li>
+</ul>
+<h3 id="g-where-artifacts-live-information-architecture">Where artifacts live (information architecture)</h3>
+<blockquote><p><b>See <a href="governance-handbook.html"><code>GOVERNANCE.md</code></a> Part I</b> for the full, consolidated reference — the canonical <code>docs/</code> + <code>.spindleloom/</code> layout, the metadata convention, versioning/baselines (sec 13), and how to find anything (sec 14). This section is the summary.</p></blockquote>
+<p>The golden rule: <b>one system of record per kind of thing.</b> Don't duplicate; link by ID (the RTM).</p>
+<div class="tw"><table>
+<tr><th>Artifact kind</th><th>Lives in (system of record)</th><th>Why</th></tr>
+<tr><td>Project-level docs (BRD, PRD, SRS, SDD, TSD, URS, RAID, status, coding-standards, CONTRIBUTING)</td><td><b>Project wiki</b> (Azure DevOps Wiki / Confluence) <b>or</b> repo <code>/docs</code> (docs-as-code)</td><td>durable, searchable, shared; reviewed like content</td></tr>
+<tr><td>ADRs, feature/RFC design docs, spec-driven <code>/specs</code></td><td><b>Repo</b> (<code>/docs/adr</code>, <code>/docs/specs</code>), reviewed in PRs</td><td>versioned with the code they govern; AI agents read them</td></tr>
+<tr><td><b>PBIs / backlog items / tasks / bugs</b></td><td><b>Work tracker</b> (Azure Boards / Jira) — the SoT</td><td>status, workflow, queries, capacity, links all live on the work item</td></tr>
+<tr><td>Code, tests, pipelines</td><td><b>Repo</b></td><td>obvious</td></tr>
+</table></div>
+<h4 id="g-project-level-vs-pbi-level-the-rule">Project-level vs PBI-level — the rule</h4>
+<ul>
+<li><b>Project/feature documents</b> are written <i>once</i> and evolve; they belong in the <b>wiki/repo</b>. <code>doc-strategy-advisor</code> decides which to keep and where.</li>
+<li><b>PBIs</b> are <i>work items</i>; their home is the <b>tracker</b>, not a markdown file. Put the story, acceptance criteria, and links <b>on the work item</b>; embed hyper-specific logic in the ticket (don't write a fat per-PBI doc).</li>
+</ul>
+<h4 id="g-should-i-write-a-file-per-pbi-e-g-pbi-pbi-123-md">"Should I write a file per PBI (e.g. <code>pbi/PBI-123.md</code>)?"</h4>
+<p>Usually <b>no</b> — it duplicates the tracker and drifts (two sources of truth). Write a file only when:</p>
+<ol>
+<li><b>A complex PBI/feature needs a design doc or RFC</b> → <code>/docs/specs/&lt;feature&gt;.md</code> (or per-epic), <i>linked from</i> the work item — one doc covers many PBIs, not one-per-story.</li>
+<li><b>You're git-native</b> (e.g. issues-as-files, no separate tracker) → then the file <i>is</i> the tracker; fine, but pick one.</li>
+<li><b>As a generation/staging step</b> → <code>backlog-manager</code> emits markdown that you <b>import into Azure Boards</b>; the file is scaffolding, the tracker becomes the SoT. Never keep both as parallel truths.</li>
+</ol>
+<p>Rule of thumb: <b>wiki/repo = durable knowledge; tracker = work items; linked by RTM IDs.</b> If you find yourself updating the same fact in two places, the architecture is wrong.</p>
+<h3 id="g-validation-quality-gates">Validation &amp; quality gates</h3>
+<p>Two different questions, often confused — the toolkit handles both, but name them:</p>
+<ul>
+<li><b>Verification</b> — "did we build it <i>right</i>?" (conforms to the spec). Mechanisms: each agent's <b>REVIEW mode</b>, <b>acceptance criteria</b>, the 29148 <b>"verifiable"</b> rule, and the <b>test-plan-writer</b> (cases traced to requirements).</li>
+<li><b>Validation</b> — "did we build the <i>right thing</i>?" (meets the real need). Mechanisms: <b>PO/stakeholder acceptance</b>, <b>UAT</b>, and for regulated systems <b>PQ</b> (Performance Qualification).</li>
+</ul>
+<h4 id="g-gate-at-each-stage">Gate at each stage</h4>
+<div class="tw"><table>
+<tr><th>Stage</th><th>Artifact</th><th>Verified by (right-built)</th><th>Validated by (right-thing)</th></tr>
+<tr><td>Business</td><td>BRD/MRD</td><td>brd/mrd REVIEW vs rubric</td><td>Sponsor sign-off</td></tr>
+<tr><td>Product</td><td>PRD</td><td>prd REVIEW; testable acceptance criteria</td><td>PO + stakeholder review</td></tr>
+<tr><td>Functional</td><td>FRD</td><td>frd REVIEW; 29148 checklist</td><td>maps to a PRD story</td></tr>
+<tr><td>Constraints</td><td>SRS/URS</td><td>measurable + verifiable; REVIEW</td><td>URS → PQ (regulated)</td></tr>
+<tr><td>Design</td><td>SDD/ADR</td><td>reality-check loop; REVIEW</td><td>meets SRS targets</td></tr>
+<tr><td>Build</td><td>TSD</td><td>API/schema specifics; REVIEW</td><td>—</td></tr>
+<tr><td>Backlog item</td><td>PBI</td><td>INVEST + acceptance criteria</td><td>"so that" value link</td></tr>
+<tr><td>Sprint work</td><td>increment</td><td>test-plan-writer cases pass</td><td>PO accepts; UAT</td></tr>
+</table></div>
+<h4 id="g-the-pbi-quality-gates-how-a-story-is-validated-end-to-end">The PBI quality gates (how a story is validated end to end)</h4>
+<pre>INVEST (well-formed)        → backlog-manager
+  → acceptance criteria (testable)
+  → Definition of Ready     → gate to ENTER a sprint (sprint-planner)
+  → built + test cases pass  → test-plan-writer (verification)
+  → Definition of Done       → gate to be ACCEPTED as complete
+  → PO / UAT acceptance       → validation (value delivered)</pre>
+<p>A PBI that fails any gate goes back, not forward. The <b>RTM</b> proves coverage (no requirement without a test); <b>change control</b> keeps the gates honest over time.</p>
+<p>The team's <b>Definition of Ready and Definition of Done</b> are the explicit gate criteria — keep them as one living artifact (<code>templates/definition-of-ready-done-template.md</code>) that the backlog-manager and sprint-planner reference rather than redefining per story.</p>
+<h3 id="g-frameworks-worth-adopting">Frameworks worth adopting</h3>
+<div class="tw"><table>
+<tr><th>Problem</th><th>Framework</th></tr>
+<tr><td>"We don't know how to structure our design notes"</td><td><b>arc42</b> (pare to 4 core sections) + <b>C4 model</b> for diagrams</td></tr>
+<tr><td>"Our wiki is a chaotic mess"</td><td><b>Diátaxis</b> (Tutorials / How-to / Reference / Explanation quadrants)</td></tr>
+<tr><td>"Developers won't update the wiki"</td><td><b>Docs-as-Code</b> (Markdown in Git, reviewed in PRs)</td></tr>
+</table></div>
+<h3 id="g-choosing-your-document-set-by-team-size">Choosing your document set by team size</h3>
+<div class="tw"><table>
+<tr><th>Team</th><th>Keep</th><th>Notes</th></tr>
+<tr><td>Lean (1–15)</td><td>1-pager PRD (BRD+PRD) + RFC/TDD (SRS+SDD)</td><td>Two living docs, nothing more.</td></tr>
+<tr><td>Mid (15–50)</td><td>PRD + FRD-in-tickets + SDD</td><td>Three docs; functional logic lives in Jira/Linear.</td></tr>
+<tr><td>Enterprise (50+)</td><td>BRD → PRD → SRS → SDD (+MRD where needed)</td><td>Full stack, but automate the pipeline (BRD mandates PRD → auto Jira epics → linked SDD).</td></tr>
+</table></div>
+<p>Run <code>doc-strategy-advisor</code> to apply this to a specific team.</p>
+<hr>
+<h3 id="g-delivery-patterns-pilot-hardened">Delivery patterns (pilot-hardened)</h3>
+<p>Patterns distilled from real SDLC funnel runs. Each addresses a recurring failure mode.</p>
+<h4 id="g-small-change-lane-3-well-scoped-tasks">Small-change lane (≤ ~3 well-scoped tasks)</h4>
+<p>Running the full funnel (decompose → recon → SDD → backlog split → sprint-plan) on a tiny, self-contained change is ceremony that wastes tokens and burns context. When the change is ≤ ~3 clearly-scoped tasks:</p>
+<ul>
+<li><b>Collapse decompose into recon.</b> If <code>solution-recon</code> already enumerates an ordered task list, treat it as PBI-grade and skip the separate backlog-manager decompose call. The gate: could a developer start immediately from the recon output? If yes, proceed directly to build.</li>
+<li>Still run: recon → build → test-author → change-verifier → code-reviewer. The quality controls don't shrink; only the ceremony stages do.</li>
+<li>Right-size the funnel to the blast radius; don't right-size the quality gates.</li>
+</ul>
+<h4 id="g-project-operating-manual-avoid-re-discovery-per-agent">Project operating manual (avoid re-discovery per agent)</h4>
+<p>Key project-specific facts — Python interpreter path, test run incantation, repo root layout, per-package test commands — are re-derived by each new agent in a session if they're not persisted. This wastes tokens and causes friction (G8):</p>
+<ul>
+<li><b>Use <code>save_context</code> (MCP tool):</b> at session start, one agent resolves and saves the incantation under <code>task_id=&quot;project-ops&quot;</code>; every subsequent agent calls <code>recall_context(task_id=&quot;project-ops&quot;)</code> first before running commands (dev-onboarding seeds this at its readiness gate).</li>
+<li><b>Use a project <code>CLAUDE.md</code> addendum:</b> add a <code>## Running tests</code> section with the literal, resolved commands for this repo (e.g., <code>uv run pytest oi_atlas_cache/tests/ -x</code>). Every agent reads CLAUDE.md at start.</li>
+<li><b>On Windows with <code>uv</code>:</b> the interpreter is typically <code>.venv/Scripts/python.exe</code> and the test runner is <code>uv run pytest</code>. Write the resolved form once and reference it everywhere rather than re-probing per agent.</li>
+</ul>
+<h4 id="g-increment-by-blast-radius">Increment by blast radius</h4>
+<p>When a planned change includes both net-new/isolated work and a cutover of a hot path (shared infrastructure, heavily-imported module, live API endpoint or store), <b>ship them as separate increments</b> — not one combined change:</p>
+<ol>
+<li>Build and verify the net-new isolated replacement independently.</li>
+<li>Cut over the hot path in its own gated step with its own recon → build → test-author → change-verifier → code-reviewer cycle.</li>
+</ol>
+<p>The cutover increment is the one that can break callers — it deserves its own blast-radius assessment, its own symbol-removal grep (see <code>backend-developer</code>), and its own <code>change-verifier</code> run. "Agent enthusiasm vs blast radius" is the failure mode: don't let the readiness of the isolated piece tempt a combined hot-path cutover in one pass (G11).</p>
+<h4 id="g-maker-checker-split-mandatory-not-optional">Maker/checker split — mandatory, not optional</h4>
+<p>The maker/checker pattern is the pilot's <b>highest-ROI control</b> (G3/G13/G16):</p>
+<ul>
+<li><code>code-reviewer</code> must be a <b>different agent from both the maker and the test-author</b>. The agent that wrote the bug is the worst one to spot it; the agent that wrote the tests can agree with the maker's wrong contract.</li>
+<li>For every cutover (hot-path migration, symbol removal, store replacement), run <code>code-reviewer</code> on the diff it did not write. This is not optional and not a ceremony — it is the control that catches Critical/Major bugs that tests and the verifier both miss.</li>
+<li>The maker builds → <code>change-verifier</code> executes the change → <code>code-reviewer</code> reads the diff statically. All three are distinct agents; collapsing any two collapses the separation that makes the loop work.</li>
+</ul>
+<h4 id="g-recon-before-implement-mandatory-for-brownfield">Recon-before-implement — mandatory for brownfield</h4>
+<p><code>solution-recon</code> must run before any brownfield implementation (G4/G10):</p>
+<ul>
+<li>Recon establishes ground truth: what the code actually does, not what the spec describes. In brownfield codebases, the spec routinely understates the work (broken import placeholders, "5 caches" that are really 3, shells that don't function).</li>
+<li><b>Feed recon drift back into the ADR.</b> When recon finds a mismatch between the spec/ADR and the actual code (e.g., the ADR describes a 5-cache architecture but the code has 3), amend the ADR or write a superseding one — don't silently diverge (G10).</li>
+<li>Recon is per-family / per-epic, not per-task: one recon covers the whole feature; per-story builds cite it as warm context; per-task is a pointer, not a re-run.</li>
+</ul>
+<h4 id="g-brownfield-cache-symbol-cutover-playbook">Brownfield cache / symbol-cutover playbook</h4>
+<p>The canonical template for migrating an existing brownfield store, cache, or shared symbol — proven repeatable across multiple caches in the pilot (G14/G16):</p>
+<pre>1. solution-recon   — establish ground truth; find broken shells, real contracts,
+                      non-functional placeholders; amend the ADR if scope changed.
+
+2. backend-developer (maker)
+   a. Clone-and-re-point the nearest working sibling as a mechanical scaffold pass.
+   b. Hand-edit only spec-driven logic.
+   c. Symbol removal grep: grep -r &quot;&lt;old_symbol&gt;&quot; tests/ **/tests/ and fix every
+      hit IN THE SAME CHANGE before handing off.
+   d. Batch-verify: run the full suite (not per-file) before hand-off.
+
+3. test-author      — write unit + integration tests; add consumed-shape parity
+                      assertions for any fixture against the real consumer shape.
+
+4. change-verifier  — impacted-test discovery first (grep all changed symbols across
+                      ALL test dirs); run every hit suite; report gaps explicitly.
+
+5. code-reviewer    — distinct agent from maker + test-author; all-call-forms grep
+                      for every removed/renamed symbol; check pre-existing test suites
+                      that import the changed package.
+
+6. Repeat for each cutover unit (one increment per hot path, by blast radius).</pre>
+<p>Test-author discoveries (latent bugs surfaced while writing tests) route to <code>tech-debt-keeper</code>, not back to the maker — they are real bugs found during writing, not test failures. Apply cheap hardening (e.g., <code>isinstance</code> guards) in-loop rather than always deferring to a follow-up (G6/G9).</p></article></main>
+</div>
+<footer><div class="in">
+  Part of the <a href="readme.html">Spindleloom website</a> &middot; front door: the
+  <a href="personas/index.html">Persona Field Handbook</a>.
+</div></footer>
+<script>
+const root=document.documentElement;
+try{const _st=localStorage.getItem("sl-theme");if(_st)root.setAttribute("data-theme",_st);}catch(e){}
+document.getElementById("themeToggle").addEventListener("click",()=>{
+  const dark=matchMedia("(prefers-color-scheme:dark)").matches;
+  const cur=root.getAttribute("data-theme")||(dark?"dark":"light");
+  const next=cur==="dark"?"light":"dark";
+  root.setAttribute("data-theme",next);
+  try{localStorage.setItem("sl-theme",next);}catch(e){}
+});
+const items=[...document.querySelectorAll(".spine li")];
+const map={};items.forEach(li=>{const a=li.querySelector("a");if(a)map[a.getAttribute("href").slice(1)]=li;});
+const spy=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){
+  items.forEach(l=>l.classList.remove("on"));const li=map[e.target.id];if(li)li.classList.add("on");}}),
+  {rootMargin:"-20% 0px -70% 0px"});
+document.querySelectorAll("article h3[id]").forEach(h=>spy.observe(h));
+</script>
+</body>
+</html>

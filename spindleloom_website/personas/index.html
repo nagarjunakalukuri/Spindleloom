@@ -8,7 +8,7 @@
 /* ── tokens: indigo dusk (dark, primary) / bleached linen (light) ── */
 :root{
   --ground:#0E1524; --panel:#141E2E; --panel-2:#18263A;
-  --ink:#DBE5F1; --ink-mid:#93A6BC; --ink-dim:#5F7791; --hair:#1E2E45; --hair-2:#2A3E5C;
+  --ink:#DBE5F1; --ink-mid:#93A6BC; --ink-dim:#8497AE; --hair:#1E2E45; --hair-2:#2A3E5C;
   --gold:#CFA23A; --gold-hi:#E7BE58; --weft:#5C90BE; --weft-dim:#3A5E80;
   --good:#4FAE7C; --crit:#CF6B65;
   --shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34);
@@ -18,13 +18,13 @@
 }
 @media (prefers-color-scheme:light){:root{
   --ground:#E9EAE5; --panel:#FFFFFF; --panel-2:#F3F3EF;
-  --ink:#16202E; --ink-mid:#47586B; --ink-dim:#7C8B9B; --hair:#DEDFD8; --hair-2:#C9CBC1;
+  --ink:#16202E; --ink-mid:#47586B; --ink-dim:#556575; --hair:#DEDFD8; --hair-2:#C9CBC1;
   --gold:#96701A; --gold-hi:#7C5D12; --weft:#3C6C93; --weft-dim:#A9B9C7;
   --good:#2E7D57; --crit:#A5423E;
   --shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07);
 }}
-:root[data-theme="light"]{--ground:#E9EAE5;--panel:#FFFFFF;--panel-2:#F3F3EF;--ink:#16202E;--ink-mid:#47586B;--ink-dim:#7C8B9B;--hair:#DEDFD8;--hair-2:#C9CBC1;--gold:#96701A;--gold-hi:#7C5D12;--weft:#3C6C93;--weft-dim:#A9B9C7;--good:#2E7D57;--crit:#A5423E;--shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07)}
-:root[data-theme="dark"]{--ground:#0E1524;--panel:#141E2E;--panel-2:#18263A;--ink:#DBE5F1;--ink-mid:#93A6BC;--ink-dim:#5F7791;--hair:#1E2E45;--hair-2:#2A3E5C;--gold:#CFA23A;--gold-hi:#E7BE58;--weft:#5C90BE;--weft-dim:#3A5E80;--good:#4FAE7C;--crit:#CF6B65;--shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34)}
+:root[data-theme="light"]{--ground:#E9EAE5;--panel:#FFFFFF;--panel-2:#F3F3EF;--ink:#16202E;--ink-mid:#47586B;--ink-dim:#556575;--hair:#DEDFD8;--hair-2:#C9CBC1;--gold:#96701A;--gold-hi:#7C5D12;--weft:#3C6C93;--weft-dim:#A9B9C7;--good:#2E7D57;--crit:#A5423E;--shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07)}
+:root[data-theme="dark"]{--ground:#0E1524;--panel:#141E2E;--panel-2:#18263A;--ink:#DBE5F1;--ink-mid:#93A6BC;--ink-dim:#8497AE;--hair:#1E2E45;--hair-2:#2A3E5C;--gold:#CFA23A;--gold-hi:#E7BE58;--weft:#5C90BE;--weft-dim:#3A5E80;--good:#4FAE7C;--crit:#CF6B65;--shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34)}
 
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -242,6 +242,99 @@ footer{border-top:1px solid var(--hair);margin-top:44px}
   .phero-grid{display:flex;align-items:center;gap:clamp(24px,4vw,56px);min-height:480px}
   .ptext{flex:1;min-width:0}
 }
+
+/* ── hub primer: invoke & prompt anatomy ── */
+.primer{max-width:1120px;margin:0 auto;padding:8px 30px 26px}
+.primer .phead{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin:26px 0 14px}
+.primer-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:900px){.primer-grid{grid-template-columns:1fr}}
+.pcardx{background:var(--panel);border:1px solid var(--hair);border-radius:12px;padding:20px 22px;box-shadow:var(--shadow)}
+.pcardx h3{font-family:var(--serif);font-size:19px;font-weight:600;margin:0 0 10px}
+.pcardx p{font-size:13.5px;color:var(--ink-mid);margin:0 0 12px}
+.pcardx table{width:100%;border-collapse:collapse;font-size:12.5px}
+.pcardx th{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim);text-align:left;padding:5px 8px;border-bottom:1px solid var(--hair-2)}
+.pcardx td{padding:6px 8px;border-bottom:1px solid var(--hair);vertical-align:top;color:var(--ink-mid)}
+.pcardx td:first-child{font-family:var(--mono);font-size:11.5px;color:var(--ink);white-space:nowrap}
+.pcardx code{font-family:var(--mono);font-size:11px;background:var(--panel-2);border:1px solid var(--hair);border-radius:4px;padding:1px 5px;color:var(--gold)}
+.ing{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.ing .i{background:var(--panel-2);border:1px solid var(--hair-2);border-radius:8px;padding:9px 12px;flex:1 1 240px}
+.ing .i b{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:3px}
+.ing .i span{font-size:12.5px;color:var(--ink-mid)}
+
+/* ── prompt tabs ── */
+.ptabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.ptab{font-family:var(--mono);font-size:11.5px;letter-spacing:.03em;color:var(--ink-mid);
+  background:var(--panel);border:1px solid var(--hair-2);border-radius:999px;padding:7px 14px;cursor:pointer}
+.ptab:hover{border-color:var(--gold);color:var(--ink)}
+.ptab.on{background:color-mix(in srgb,var(--gold) 14%,var(--panel));border-color:var(--gold);color:var(--gold);font-weight:600}
+.ptab:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.prompt{display:none}
+.prompt.on{display:block}
+
+/* ── lens tabs ── */
+.lensbar{max-width:1120px;margin:0 auto;padding:20px 30px 0;display:flex;gap:8px;flex-wrap:wrap}
+.lens{font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:var(--ink-mid);
+  background:var(--panel);border:1px solid var(--hair-2);border-radius:999px;padding:8px 18px;cursor:pointer;text-decoration:none}
+.lens:hover{border-color:var(--gold);color:var(--ink);text-decoration:none}
+.lens.on{background:color-mix(in srgb,var(--gold) 14%,var(--panel));border-color:var(--gold);color:var(--gold);font-weight:600}
+/* ── phase rail ── */
+.rail{max-width:1120px;margin:0 auto;padding:26px 30px 60px;display:flex;flex-direction:column;gap:12px}
+.phrow{display:grid;grid-template-columns:110px minmax(0,1fr);gap:18px;background:var(--panel);
+  border:1px solid var(--hair);border-radius:14px;padding:18px 22px;box-shadow:var(--shadow)}
+@media(max-width:700px){.phrow{grid-template-columns:1fr}}
+.phrow.hl{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),var(--shadow)}
+.phcell .phn{font-family:var(--serif);font-weight:600;font-size:19px}
+.phcell .stg{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;border-radius:5px;
+  padding:2px 7px;margin-top:7px;text-transform:uppercase}
+.stg.make{color:var(--weft);border:1px solid color-mix(in srgb,var(--weft) 45%,transparent)}
+.stg.run{color:var(--gold);border:1px solid color-mix(in srgb,var(--gold) 45%,transparent)}
+.phbody .what{font-size:13.5px;color:var(--ink-mid);margin:0 0 10px}
+.phbody .who{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+.phbody .who a{font-family:var(--mono);font-size:11px;color:var(--ink);background:var(--panel-2);
+  border:1px solid var(--hair-2);border-radius:999px;padding:4px 11px}
+.phbody .who a:hover{border-color:var(--gold);color:var(--gold);text-decoration:none}
+.phbody .gate{font-family:var(--mono);font-size:10.5px;letter-spacing:.03em;color:var(--ink-dim)}
+.phbody .gate b{color:var(--gold);font-weight:600}
+/* ── prompt library ── */
+.libwrap{max-width:1120px;margin:0 auto;padding:22px 30px 60px}
+.libbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:18px 0 8px}
+.libbar select,.libbar input[type=search]{font-family:var(--mono);font-size:12px;color:var(--ink);
+  background:var(--panel);border:1px solid var(--hair-2);border-radius:8px;padding:8px 11px}
+.libbar input[type=search]{flex:1;min-width:180px}
+.libbar label{font-family:var(--mono);font-size:11px;color:var(--ink-mid);display:flex;align-items:center;gap:6px;cursor:pointer}
+.libcount{font-family:var(--mono);font-size:11px;color:var(--ink-dim);margin:0 0 14px}
+.liblist .prompt{display:block;margin-bottom:14px}
+.liblist .rolechip{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--weft);text-transform:uppercase;margin-right:8px}
+.libext{margin-top:26px;background:var(--panel);border:1px dashed var(--hair-2);border-radius:12px;padding:16px 20px;font-size:13.5px;color:var(--ink-mid)}
+
+/* ── top-level tabs ── */
+.topnav{position:sticky;top:47px;z-index:70;display:flex;gap:6px;flex-wrap:wrap;padding:9px 26px;
+  background:color-mix(in srgb,var(--ground) 92%,transparent);backdrop-filter:blur(9px);border-bottom:1px solid var(--hair)}
+.topnav a{font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;color:var(--ink-mid);
+  border:1px solid transparent;border-radius:999px;padding:6px 14px;text-decoration:none}
+.topnav a:hover{color:var(--gold);text-decoration:none}
+.topnav a.on{background:color-mix(in srgb,var(--gold) 14%,var(--panel));border-color:var(--gold);color:var(--gold);font-weight:600}
+/* ── guides directory ── */
+.gwrap{max-width:1120px;margin:0 auto;padding:26px 30px 60px}
+.gsec{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin:26px 0 12px}
+.ggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.gcard{display:block;background:var(--panel);border:1px solid var(--hair);border-radius:12px;padding:18px 20px;
+  box-shadow:var(--shadow);color:inherit;text-decoration:none}
+.gcard:hover{border-color:var(--gold);text-decoration:none}
+.gcard h3{font-family:var(--serif);font-size:18px;font-weight:600;margin:0 0 6px;color:var(--ink)}
+.gcard h3 .ext{font-family:var(--mono);font-size:10px;color:var(--ink-dim);letter-spacing:.06em}
+.gcard p{font-size:13px;color:var(--ink-mid);margin:0}
+.startwrap{max-width:1120px;margin:0 auto;padding:6px 0 40px}
+
+/* -- prompt anatomy: table + annotated example -- */
+.anat td:first-child{width:190px}
+.anat .ord{display:inline-block;font-family:var(--mono);font-size:10px;color:var(--ground);
+  background:var(--gold);border-radius:5px;padding:0 6px;margin-right:8px;font-weight:700}
+.anat .snip{display:block;font-family:var(--mono);font-size:11px;color:var(--gold-hi);margin-top:3px}
+.igx{border-bottom:2px solid color-mix(in srgb,var(--gold) 55%,transparent);position:relative}
+.igx::after{content:attr(data-n);position:relative;top:-7px;font-size:8.5px;font-family:var(--mono);
+  color:var(--gold);margin-left:2px;font-weight:700}
+.anote{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--ink-dim);margin-top:8px}
 </style>
 </head>
 <body>
@@ -250,13 +343,22 @@ footer{border-top:1px solid var(--hair);margin-top:44px}
   <select id="jump" aria-label="Jump to a persona"></select>
   <button class="toggle" id="themeToggle" aria-label="Toggle light or dark theme">◐ theme</button>
 </div>
+<nav class="topnav" aria-label="Sections">
+  <a href="../index.html">Home</a>
+  <a href="#/start" data-tab="start">&#9656; Start here</a>
+  <a href="#/" data-tab="roles">Personas</a>
+  <a href="#/phases" data-tab="phases">Phases</a>
+  <a href="#/prompts" data-tab="prompts">Prompt library</a>
+  <a href="#/guides" data-tab="guides">Guides</a>
+</nav>
 <main id="app" tabindex="-1"></main>
+<noscript><div style="max-width:760px;margin:0 auto;padding:40px 30px;font-family:var(--sans);color:var(--ink)"><h1 style="font-family:var(--serif)">Spindleloom Persona Field Handbook</h1><p>This hub needs JavaScript. The same content is available as static pages:</p><ul><li>Per role (builder + business side): <a href="product-owner.html">Product Owner</a>, <a href="architect.html">Architect</a>, <a href="developer.html">Developer</a>, <a href="qa.html">QA</a>, <a href="ux.html">UX</a>, <a href="delivery-lead.html">Delivery Lead</a>, <a href="sre-release.html">SRE / Release</a>, <a href="docs-curator.html">Docs</a>, <a href="ai-ml.html">AI/ML</a>, <a href="security.html">Security</a>, <a href="orchestration-lead.html">Orchestration Lead</a>, <a href="sponsor.html">Sponsor</a>, <a href="gtm.html">GTM</a>, <a href="customer-success.html">Customer Success</a>, <a href="compliance.html">Compliance</a>.</li><li>The guides: <a href="../readme.html">the guides map</a> &middot; <a href="../project-overview.html">project overview</a> &middot; <a href="../governance-handbook.html">governance handbook</a>.</li></ul></div></noscript>
 <footer><div class="foot">
-  Sources of truth: <a href="../BEST-PRACTICES.md">BEST-PRACTICES.md</a> · <a href="../STORY-CRAFT.md">STORY-CRAFT.md</a> · <a href="../STANDARD.md">STANDARD.md §9</a> · the per-agent contracts in <a href="../../agents/">agents/</a> · the interactive <a href="../spindleloom-agent-fleet.html">fleet map</a>. A synthesized human playbook; the agent frontmatter is the machine-authoritative source.
+  Sources of truth: <a href="../../knowledge_hub/BEST-PRACTICES.md">BEST-PRACTICES.md</a> · <a href="../../knowledge_hub/GOVERNANCE.md">GOVERNANCE.md</a> (story craft Part II · concurrency Part I §9) · the per-agent contracts in <a href="../../agents/">agents/</a> · the interactive <a href="../spindleloom-agent-fleet.html">fleet map</a>. A synthesized human playbook; the agent frontmatter is the machine-authoritative source.
 </div></footer>
 
 <script>
-/* ════ DATA — 11 personas. PO carries exemplar full depth; the rest carry the core operating set. ════ */
+/* ════ DATA — 15 personas (11 builder + 4 business). PO carries exemplar full depth; the rest carry the core operating set. ════ */
 const P=[
 {id:"product-owner",no:"01",name:"Product Owner",alt:"/ Business Analyst",
  mission:"You hold the first threads and tie the <b>golden thread of traceability</b> — from a market problem down to a Ready, traceable backlog — and you <b>accept</b> each phase before it flows on.",
@@ -286,7 +388,8 @@ const P=[
   ["Split an oversized story","A story is too big to estimate","backlog-manager",["PBI-«EPIC»-007 is too big to estimate. Split into 2–4 independently valuable stories,","vertically (never UI/DB layers), each still tracing back to FRD-«…»."]],
   ["Pull the next Ready item","The team needs work to start","/plan-next",["What is the next pullable PBI — dependencies done and Definition of Ready met?","Return its acceptance criteria and the upstream Req-ids it traces to."]],
   ["Accept a phase boundary","After you have reviewed the phase output","gate",["sloom approve requirements --feature «slug» --role product-owner --by \"«your name»\"","# only after you have actually read and agree with the requirements set"]],
-  ["Weekly stakeholder status","End of sprint / reporting cadence","/ops-status",["Produce a RAG status for «exec | delivery | customer» from the RAID log and the last","sprint's delivery metrics: health, what shipped, what's at risk, and the ask."]]],
+  ["Weekly stakeholder status","End of sprint / reporting cadence","/ops-status",["Produce a RAG status for «exec | delivery | customer» from the RAID log and the last","sprint's delivery metrics: health, what shipped, what's at risk, and the ask."]],
+  ["Trace a requirement","Before accepting scope changes or at review","MCP · trace_requirement",["Trace «PRD-AUTH-003» through the chain: show every artifact that references it —","FRD elaboration, design, PBIs, tests — and flag any gaps. (Traceability MCP server; see INSTALL.md.)"]]],
  qs:[["01","/spec-new","Pick the doc set for your team size; it names owners. Once per product: /spec-constitution."],
   ["02","draft PRD → FRD","Run prd-writer then frd-writer; then sloom approve requirements … to open the gate."],
   ["03","/plan-next","backlog-manager decomposes to a Ready, ordered, RTM-traced backlog the team can pull."]],
@@ -361,7 +464,7 @@ const P=[
   ["docs-curator","behaviour changes that need user-facing docs"],
   ["delivery-lead","honest status on the run ledger — done means verified"]],
  prompts:[["Recon before building","Starting any brownfield PBI","/build-recon",["Before I start PBI-«ID», recon the codebase: does «endpoint/data» exist, which patterns and","helpers should I reuse, and is this FE-only or backend-first?"]],
-  ["Implement the PBI","The item is Ready and recon is done","developer",["Implement PBI-«ID» per its acceptance criteria. Reuse existing helpers (grep first), keep the","diff minimal, run the changed tests + lint, and exercise the changed path before handing off."]],
+  ["Implement the PBI","The item is Ready and recon is done","backend-developer",["Implement PBI-«ID» per its acceptance criteria. Reuse existing helpers (grep first), keep the","diff minimal, run the changed tests + lint, and exercise the changed path before handing off."]],
   ["Verify the change","Before opening the PR","/build-verify",["Verify my change for PBI-«ID» against its acceptance criteria: build, changed tests, lint,","smoke the path. Return PASS/FAIL with the AC coverage matrix."]],
   ["Root-cause a failure","A test or the app is red","debugger",["Root-cause this failure: «stack trace / failing test». One hypothesis at a time; fix the shared","cause (grep every caller), add a regression test, and re-run to green."]]]},
 
@@ -385,7 +488,8 @@ const P=[
  prompts:[["Write the test plan","Requirements are stable","/test-plan",["Write the test plan for «feature» traced to FRD/SRS ids: strategy, cases (happy + unhappy),","coverage targets, and the QA exit bar."]],
   ["Execute and report","A build passed the maker/checker gate","qa-tester",["Execute the «feature» test cases; report defects with repro steps, severity (S1–S4) and","priority (P1–P4) set independently; log escaped defects against the gate that missed them."]],
   ["Automate the flow","A manual flow is stable and repeated","test-automation-engineer",["Automate the «flow» end-to-end per the test pyramid: stable selectors, no sleeps, runs in CI;","quarantine any flaky case with an issue rather than retrying it green."]],
-  ["Compute the QA verdict","Before a release decision","qa-tester",["Compute the QA go/no-go for «release»: P0/P1 pass rate, open S1/S2 with workarounds,","coverage vs targets. Persist the verdict as the sign-off token with evidence."]]]},
+  ["Compute the QA verdict","Before a release decision","qa-tester",["Compute the QA go/no-go for «release»: P0/P1 pass rate, open S1/S2 with workarounds,","coverage vs targets. Persist the verdict as the sign-off token with evidence."]],
+  ["Find coverage gaps","Sprint start, or before sign-off","MCP · rtm_coverage",["Which requirements have no test coverage yet? Run the RTM coverage report, focus on","«area», and turn each gap into a traced test case or a flagged risk. (Traceability MCP server.)"]]]},
 
 {id:"ux",no:"05",name:"UX Designer",alt:"& Accessibility",
  mission:"You own the <b>experience</b> — flows and components users understand, and an accessibility bar that ships met, not promised.",
@@ -502,7 +606,8 @@ const P=[
   ["developer","dispatch packs — exactly the context each step needs, not folders"]],
  prompts:[["Orchestrate a run","A feature enters the fleet","/run",["Orchestrate «feature» through the fleet from the run-state: propose the next runnable agent","(upstreams done + gate passed), wait for my go before dispatching, record progress."]],
   ["Set the autonomy policy","Adopting agents on a new team","ai-orchestrator",["Define the agentic-SDLC policy: what agents may do autonomously per risk tier, guardrail","thresholds, and the human-in-the-loop points."]],
-  ["Audit spec drift","Cadence, or after heavy changes","spec-steward",["Audit the spec set for drift: do the PRD/FRD/SDD still agree with each other and the code?","Route each mismatch as a FLAG(owner) to its owning agent."]]]},
+  ["Audit spec drift","Cadence, or after heavy changes","spec-steward",["Audit the spec set for drift: do the PRD/FRD/SDD still agree with each other and the code?","Route each mismatch as a FLAG(owner) to its owning agent."]],
+  ["Catch stale artifacts","Weekly cadence, or before a phase gate","MCP · stale_artifacts + funnel_status",["List artifacts whose upstream changed after they were last written (stale_artifacts), and","show the funnel status per requirement. Re-dispatch each stale doc's owner. (Traceability MCP server.)"]]]},
 
 {id:"sponsor",no:"12",name:"Sponsor",alt:"/ Executive",
  mission:"You own the <b>why and the budget</b> — and your acceptance is the first gate the funnel has.",
@@ -538,7 +643,7 @@ const P=[
   ["docs-curator","launch messaging aligned with the user docs"]],
  prompts:[["Refresh the market scan","Quarterly, or before a big bet","/spec-new",["Update the MRD for «product»: market need, target personas, competitive landscape vs","«competitors». Cite what changed since the last revision."]],
   ["Design the launch experiment","Before the feature ships","product-analytics",["Design the launch funnel and A/B experiment for «feature»: activation metric, guardrail","metrics, sample size, and the decision rule."]],
-  ["Draft launch messaging","A release is cut","gtm",["From the «release» notes and the FRD, draft launch messaging: what is genuinely new,","who it serves, and the measurable claim we can stand behind."]]]},
+  ["Draft launch messaging","A release is cut","manual",["From the «release» notes and the FRD, draft launch messaging: what is genuinely new,","who it serves, and the measurable claim we can stand behind."]]]},
 
 {id:"customer-success",no:"14",name:"Customer Success",alt:"/ Support",
  mission:"You are the <b>voice of the user in production</b> — turning confusion and breakage into traced work.",
@@ -555,7 +660,7 @@ const P=[
   ["product-owner","voice-of-customer themes as candidate backlog items"],
   ["docs-curator","the exact questions users ask — doc gaps with receipts"]],
  prompts:[["Escalate a customer bug","A customer reports breakage","bug-triager",["Triage this customer report: «summary + evidence». Set severity (S1–S4) and priority","(P1–P4) independently, check for duplicates, and route fix-now vs backlog."]],
-  ["Turn questions into fixes","Monthly support review","docs",["These are the top «N» questions support answered this month: «list». Which are doc gaps","vs product gaps? Draft the doc fixes; route the rest as candidate PBIs."]]]},
+  ["Turn questions into fixes","Monthly support review","manual",["These are the top «N» questions support answered this month: «list». Which are doc gaps","vs product gaps? Draft the doc fixes; route the rest as candidate PBIs."]]]},
 
 {id:"compliance",no:"15",name:"Compliance Owner",alt:"/ Validation",
  mission:"You make the system <b>provably compliant</b> — requirements, evidence and acceptance that survive an audit.",
@@ -573,7 +678,7 @@ const P=[
   ["sre-release","the compliance sign-off feeding the release AND"]],
  prompts:[["Scope the validation","A regulated product starts","urs-writer",["For «product», determine validation scope: GAMP category, Part 11 applicability, and the","leanest URS + IQ/OQ/PQ set that satisfies it. Tag unknowns as owned assumptions."]],
   ["Write the URS","Business case accepted","/spec-new",["Write the URS for «feature» from the BRD: intended use, operator tasks, safety","requirements — each traced to a BR- id and testable."]],
-  ["Audit the acceptance trail","Before an audit or release","compliance",["Audit the acceptance trail for «feature»: which phase tokens exist, who signed and when;","list any gate crossed without evidence."]]]}
+  ["Audit the acceptance trail","Before an audit or release","manual",["Audit the acceptance trail for «feature»: which phase tokens exist, who signed and when;","list any gate crossed without evidence."]]]}
 ];
 
 const DEEP={
@@ -2092,9 +2197,9 @@ const DEEP={
 
 /* ════ helpers ════ */
 const app=document.getElementById("app");
-const esc=s=>s;
 const mark=l=>l.replace(/«([^»]+)»/g,'<span class="v">«$1»</span>');
 const byId=Object.fromEntries(P.map(p=>[p.id,p]));
+let stageFilter=null;   // loop-click -> phase-lens highlight (module-scoped, not a window global)
 const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 function weaveSVG(h,anim){
@@ -2111,7 +2216,36 @@ function weaveSVG(h,anim){
 }
 
 /* ════ hub view ════ */
-function renderHub(){
+const INVOKE_PRIMER='<div class="primer" style="padding-top:2px">'+
+ '<div class="phead">▸ Before you start — how agents are invoked</div>'+
+ '<div class="primer-grid"><div class="pcardx" style="grid-column:1/-1"><h3>Agents are portable prompts</h3>'+
+ '<p>Each agent is plain Markdown: the <b>body</b> (below the frontmatter) is a portable prompt that works in any AI coding tool. You don’t memorize 52 names — describe the task and the right specialist triggers, or point the tool at the file. Full setup: <code>INSTALL.md</code> at the repo root.</p>'+
+ '<table><thead><tr><th>Tool</th><th>How to run an agent</th></tr></thead><tbody>'+
+ '<tr><td>Claude Code</td><td>Copy <code>agents/</code> → <code>.claude/agents/</code>, <code>commands/</code> → <code>.claude/commands/</code>. Ask in natural language — the matching subagent auto-triggers; or <code>/agents</code>, or a <code>/command</code>.</td></tr>'+
+ '<tr><td>Cursor / Copilot / Windsurf</td><td>Use the generated bundle in <code>targets/</code> for that tool, or drop the agent body into its rules / custom-instructions slot.</td></tr>'+
+ '<tr><td>claude.ai / any LLM chat</td><td>Paste the agent body as instructions and attach the upstream doc — or just say "Follow agents/prd-writer.md and write a PRD for …".</td></tr>'+
+ '<tr><td>Slash commands elsewhere</td><td>Outside Claude Code a command is a plain request — "scaffold the doc set" instead of <code>/spec-new</code>.</td></tr>'+
+ '</tbody></table></div></div></div>';
+
+const PHASES=[
+ {n:"Discovery",stage:"PLAN",side:"make",what:"Is there a market, and why build it? Market case + business goals (MRD, BRD).",gate:"boundary accepted by <b>sponsor / product owner</b>"},
+ {n:"Requirements",stage:"PLAN",side:"make",what:"What must it do? PRD/FRD/SRS (URS when regulated) -- quality-linted, every requirement traced.",gate:"boundary accepted by <b>product owner</b>"},
+ {n:"Design",stage:"PLAN",side:"make",what:"How is it built? SDD/TSD, API + data contracts, decisions on the record (ADR/RFC).",gate:"boundary accepted by <b>architect / tech lead</b>"},
+ {n:"Planning",stage:"PLAN",side:"make",what:"Ready, estimated, capacity-fit backlog and a sprint plan.",gate:"boundary accepted by <b>product owner + team lead</b>"},
+ {n:"Build",stage:"BUILD",side:"make",what:"Implement -- recon first, minimal diff, maker/checker verified.",gate:"mechanical: <b>verification evidence per PBI</b>"},
+ {n:"Test",stage:"TEST",side:"make",what:"Traced test plan, automation in CI, exploratory passes, honest triage.",gate:"mechanical: <b>QA sign-off token</b>"},
+ {n:"Review",stage:"SHIP",side:"run",what:"Code, security, accessibility and performance reviews against the standard.",gate:"mechanical: <b>reviewer sign-off tokens</b>"},
+ {n:"Release",stage:"SHIP",side:"run",what:"Go/no-go computed as the AND over sign-off tokens; ship with notes.",gate:"mechanical: <b>release gate battery</b>"},
+ {n:"Operate",stage:"OPERATE",side:"run",what:"SLOs, alerting on symptoms, incidents to blameless postmortems to backlog.",gate:"<b>SRE</b> -- runbooks/SLOs in place (advisory)"},
+ {n:"Process",stage:"LEARN",side:"run",what:"Retros, delivery metrics, the debt register, docs -- the loop learns and re-enters.",gate:"continuous -- owned actions, not observations"}
+];
+const normPhase=s=>s.replace(/\s*\(.*\)$/,"");
+const personasIn=ph=>P.filter(x=>x.span.some(s=>normPhase(s)===ph));
+const LIB=P.flatMap(x=>x.prompts.map(pr=>({rid:x.id,role:x.name,phases:x.span.map(normPhase),
+  name:pr[0],when:pr[1],tag:pr[2],lines:pr[3],mcp:pr[2].indexOf("MCP")===0})));
+
+function renderHub(lens){
+  lens=lens||"roles";
   document.title="Spindleloom Persona Hub";
   let cards="";
   P.forEach(p=>{
@@ -2128,7 +2262,12 @@ function renderHub(){
    '<div class="searchbox"><span class="ico">⌕</span><input id="q" type="search" placeholder="Search personas, agents, commands, prompts…  ( / )" autocomplete="off" aria-label="Search"><div class="results" id="res" role="listbox"></div></div>'+
    '</div><div class="loopwrap"><canvas class="loopcanvas" width="520" height="520" role="img" aria-label="Woven Loop — the agent walking the six SDLC stages"></canvas>'+
    '<div class="loopread"><span class="pip"></span> working&nbsp;<b id="loopnow">PLAN</b></div></div></div></div>'+
-   '<div class="hubwrap"><div class="cards">'+cards+'</div></div>';
+   (lens==="roles"?'<div class="hubwrap"><div class="cards">'+cards+'</div></div>':"")+
+   (lens==="start"?renderStart():"")+
+   (lens==="guides"?renderGuides():"")+
+   (lens==="phases"?renderRail():"")+
+   (lens==="prompts"?renderLibrary():"")+
+   "";
   // search
   const q=document.getElementById("q"),res=document.getElementById("res");
   const IDX=[];
@@ -2147,7 +2286,127 @@ function renderHub(){
     res.classList.add("show");
   });
   q.addEventListener("keydown",e=>{if(e.key==="Escape"){res.classList.remove("show");q.blur();}});
+  if(lens==="prompts")wireLibrary();
+  if(lens==="start")app.querySelectorAll(".prompt").forEach(card=>{
+    const btn=card.querySelector(".copy"),pre=card.querySelector("pre");if(!btn)return;
+    btn.addEventListener("click",async()=>{const txt=pre.textContent;
+      try{await navigator.clipboard.writeText(txt);}catch(e){
+        const r=document.createRange();r.selectNodeContents(pre);const s=getSelection();
+        s.removeAllRanges();s.addRange(r);try{document.execCommand("copy");}catch(_){}}
+      btn.textContent="Copied";btn.classList.add("done");
+      setTimeout(()=>{btn.textContent="Copy";btn.classList.remove("done");},1400);});
+  });
+  if(lens==="phases"&&stageFilter){
+    const st=stageFilter;stageFilter=null;
+    const rows=[...app.querySelectorAll('.phrow[data-stage="'+st+'"]')];
+    rows.forEach(r=>r.classList.add("hl"));
+    if(rows[0])setTimeout(()=>rows[0].scrollIntoView({behavior:"smooth",block:"center"}),60);
+  }
   startLoop();
+}
+
+function renderStart(){
+  return '<div class="startwrap">'+'<div class="primer"><div class="phead">\u25b8 New here? Two doors</div>'+'<div class="primer-grid">'+'<div class="pcardx"><h3>Deciding whether to adopt</h3><p>If you are a sponsor or exec weighing this: the one-screen case, proof and cost live in the <a href="../project-overview.html">project overview</a> (and the <a href="#/guides">Guides</a> tab). Your operating role is the <a href="#/sponsor">Sponsor</a> persona -- the business case, the acceptance you sign, the budget loop.</p></div>'+'<div class="pcardx"><h3>Here to do the work</h3><p>Open the <a href="#/">Personas</a> tab and pick your role -- each is an end-to-end operating guide. Never invoked an agent before? The two cards below show how.</p></div>'+'</div></div>'+INVOKE_PRIMER+
+  '<div class="primer"><div class="phead">\u25b8 Anatomy of a good prompt</div>'+
+  '<div class="primer-grid"><div class="pcardx anat" style="grid-column:1/-1">'+
+  '<p>The prompts on every persona page (and in the Prompt library tab) are built from six ingredients. The more you supply, the less the agent invents:</p>'+
+  '<table><thead><tr><th>Ingredient</th><th>What to supply</th></tr></thead><tbody>'+
+  '<tr><td><span class="ord">1</span>Specific feature</td><td>Name the exact thing, not the area.<span class="snip">"the OAuth 2.0 SSO login flow" \u2014 not "login stuff"</span></td></tr>'+
+  '<tr><td><span class="ord">2</span>Upstream ref</td><td>The doc or Req-ID it builds on \u2014 the agent reads it instead of guessing.<span class="snip">"from the PRD, ref PRD-AUTH-003"</span></td></tr>'+
+  '<tr><td><span class="ord">3</span>Constraint</td><td>The hard boundary the output must respect.<span class="snip">"GDPR Art. 6 consent; &lt;200ms p95 token exchange"</span></td></tr>'+
+  '<tr><td><span class="ord">4</span>Scope boundary</td><td>What is explicitly OUT, so it does not creep back in.<span class="snip">"exclude the notification service \u2014 separate FRD"</span></td></tr>'+
+  '<tr><td><span class="ord">5</span>Team context</td><td>Capacity and cadence, so sizing is real.<span class="snip">"3 devs, 2-week sprints, 32-pt velocity"</span></td></tr>'+
+  '<tr><td><span class="ord">6</span>Priority signal</td><td>What to do first when everything cannot be first.<span class="snip">"happy path first; edge cases to sprint 2"</span></td></tr>'+
+  '</tbody></table>'+
+  '<p style="margin:18px 0 8px"><b>All six in one prompt</b> \u2014 the numbers mark each ingredient (they are not copied):</p>'+
+  '<div class="prompt on"><div class="bd"><button class="copy" aria-label="Copy prompt">Copy</button>'+
+  '<pre>Write the FRD for <span class="igx" data-n="1">the OAuth 2.0 SSO login flow</span> <span class="igx" data-n="2">from the PRD, ref PRD-AUTH-003</span>.\n'+
+  'Hard constraints: <span class="igx" data-n="3">GDPR Art. 6 consent and &lt;200ms p95 token exchange</span>.\n'+
+  '<span class="igx" data-n="4">Exclude the notification service \u2014 that is a separate FRD</span>.\n'+
+  'Team context: <span class="igx" data-n="5">3 devs, 2-week sprints, 32-pt velocity</span>.\n'+
+  '<span class="igx" data-n="6">Cover the happy path first; defer edge cases and error flows to sprint 2</span>.</pre></div></div>'+
+  '<p class="anote">Copy gives you the clean text \u2014 swap the specifics for your feature and it works for any writer agent.</p>'+
+  '</div></div></div>'+
+  '<div class="primer"><div class="phead">\u25b8 Where to go next</div>'+
+  '<div class="primer-grid">'+
+  '<div class="pcardx"><h3>Pick your role</h3><p>The <a href="#/">Personas</a> tab is your operating guide: the agents you drive, copy-ready prompts, the gates you own.</p></div>'+
+  '<div class="pcardx"><h3>Or start from the work</h3><p>The <a href="#/phases">Phases</a> tab shows who is active at each of the 10 phases and who accepts each gate; the <a href="#/prompts">Prompt library</a> has all 54 prompts, filterable.</p></div>'+
+  '</div></div></div>';
+}
+
+function renderGuides(){
+  const card=(href,name,tag,desc)=>'<a class="gcard" href="'+href+'"><h3>'+name+(tag?' <span class="ext">'+tag+'</span>':"")+'</h3><p>'+desc+'</p></a>';
+  return '<div class="gwrap">'+
+  '<div class="gsec">Understand \u2014 what is this project?</div><div class="ggrid">'+
+  card("../project-overview.html","Project overview","HTML","The canonical end-to-end page: lifecycle, roles, all 52 agents by phase, the PBI journey, traceability, the worked run + artifact chain.")+
+  card("../for-everyone.html","For everyone","HTML","The plain-language story: the wheel, the eight stages, the three moves. Share this with non-technical folks.")+
+  card("../spindleloom-agent-fleet.html","Fleet map","HTML \u00b7 interactive","All 52 agents and every delegation edge, filterable by phase and role.")+
+  '</div>'+
+  '<div class="gsec">Govern \u2014 the standards</div><div class="ggrid">'+
+  card("../governance-handbook.html","Governance Handbook","HTML \u00b7 generated","GOVERNANCE.md as one navigable page: the layout standard (Part I), story craft (Part II), team + Azure DevOps fit (Part III).")+
+  card("../../knowledge_hub/GOVERNANCE.md","GOVERNANCE.md","MD \u00b7 source of truth","The merged governance standard the tools enforce \u2014 edit here, never the HTML.")+
+  card("../best-practices.html","Best practices","MD \u00b7 rendered","The documentation funnel, feedback loops, the requirement-quality standard, gates, delivery patterns.")+
+  card("../agent-authoring.html","Agent authoring","MD \u00b7 rendered","The contract-block schema + prompting conventions. Read before creating or editing any agent.")+
+  card("../loopwright.html","Loopwright","MD \u00b7 rendered","The delivery-loop discipline: inner/outer loops, DORA measurement, the loop: taxonomy on every agent.")+
+  card("../harness-matrix.html","Harness matrix","MD \u00b7 rendered","The 7-surface x 4-tool distribution spec the generator implements \u2014 four tools, six bundles.")+
+  card("../fleet-eval.html","Fleet eval","MD \u00b7 rendered","The behavioral E2E regression protocol: golden brief + independent judge rubric.")+
+  card("../improvements.html","Improvement register","MD \u00b7 living \u00b7 rendered","The toolkit's own deferred backlog, tiered and cut-ready.")+
+  '</div>'+
+  '<div class="gsec">Prompt craft</div><div class="ggrid">'+
+  card("../claude-prompt-library.html","Claude prompt library","MD \u00b7 rendered","The generic power-prompts people share, each mapped to the fleet specialist that does it better; plus model-specific tips.")+
+  card("#/prompts","Fleet prompt library","in-page","All 54 per-role prompts, filterable by role, phase and MCP \u2014 each grounded in an agent contract.")+
+  '</div></div>';
+}
+
+function renderRail(){
+  return '<div class="rail">'+PHASES.map(ph=>{
+    const who=personasIn(ph.n).map(x=>'<a href="#/'+x.id+'">'+x.name+'</a>').join("");
+    return '<div class="phrow" data-stage="'+ph.stage+'"><div class="phcell"><div class="phn">'+ph.n+'</div>'+
+      '<span class="stg '+ph.side+'">'+ph.stage+'</span></div>'+
+      '<div class="phbody"><p class="what">'+ph.what+'</p>'+
+      '<div class="who">'+(who||'<span style="font-family:var(--mono);font-size:11px;color:var(--ink-dim)">whole team</span>')+'</div>'+
+      '<div class="gate">gate: '+ph.gate+'</div></div></div>';
+  }).join("")+'</div>';
+}
+
+function renderLibrary(){
+  const roles='<option value="">all roles</option>'+P.map(x=>'<option value="'+x.id+'">'+x.name+'</option>').join("");
+  const phs='<option value="">all phases</option>'+PHASES.map(ph=>'<option value="'+ph.n+'">'+ph.n+'</option>').join("");
+  return '<div class="libwrap"><div class="libbar">'+
+    '<select id="libRole" aria-label="Filter by role">'+roles+'</select>'+
+    '<select id="libPhase" aria-label="Filter by phase">'+phs+'</select>'+
+    '<label><input type="checkbox" id="libMcp"> MCP only</label>'+
+    '<input type="search" id="libQ" placeholder="Filter prompts..." aria-label="Filter prompts">'+
+    '</div><div class="libcount" id="libCount"></div><div class="liblist" id="libList"></div>'+
+    '<div class="libext">Beyond the fleet: <a href="../claude-prompt-library.html">the Claude prompt library</a> -- the generic Claude power-prompts people share, <b>each mapped to the fleet specialist that does it better</b>, plus model-specific prompting tips and the principles behind good prompts.</div></div>';
+}
+
+function wireLibrary(){
+  const list=document.getElementById("libList"),count=document.getElementById("libCount");
+  const selR=document.getElementById("libRole"),selP=document.getElementById("libPhase"),
+        cbM=document.getElementById("libMcp"),q=document.getElementById("libQ");
+  function draw(){
+    const v=(q.value||"").toLowerCase();
+    const hits=LIB.filter(e=>(!selR.value||e.rid===selR.value)&&
+      (!selP.value||e.phases.indexOf(selP.value)>=0)&&(!cbM.checked||e.mcp)&&
+      (!v||(e.name+" "+e.when+" "+e.tag+" "+e.lines.join(" ")).toLowerCase().indexOf(v)>=0));
+    count.textContent=hits.length+" of "+LIB.length+" prompts";
+    list.innerHTML=hits.map(e=>'<div class="prompt on"><div class="ph"><div><div class="nm"><span class="rolechip">'+e.role+'</span>'+e.name+'</div><div class="wn">'+e.when+'</div></div><span class="tg">'+e.tag+'</span></div>'+
+      '<div class="bd"><button class="copy" aria-label="Copy prompt">Copy</button><pre>'+e.lines.map(mark).join("\n")+'</pre></div></div>').join("")||
+      '<div style="font-family:var(--mono);font-size:12px;color:var(--ink-dim);padding:20px 4px">no matches</div>';
+    list.querySelectorAll(".prompt").forEach(card=>{
+      const b=card.querySelector(".copy"),pre=card.querySelector("pre");if(!b)return;
+      b.addEventListener("click",async()=>{const txt=pre.textContent;
+        try{await navigator.clipboard.writeText(txt);}catch(e2){
+          const r=document.createRange();r.selectNodeContents(pre);const s=getSelection();
+          s.removeAllRanges();s.addRange(r);try{document.execCommand("copy");}catch(_){}}
+        b.textContent="Copied";b.classList.add("done");
+        setTimeout(()=>{b.textContent="Copy";b.classList.remove("done");},1400);});
+    });
+  }
+  [selR,selP,cbM].forEach(el=>el.addEventListener("change",draw));
+  q.addEventListener("input",draw);
+  draw();
 }
 
 /* ════ Woven Loop (hub hero) — the agent walking all six stages ════ */
@@ -2184,8 +2443,9 @@ function startLoop(own){
   const active=headT=>{let best=0,bd=1e9;
     for(let i=0;i<STAGES.length;i++){const d=((headT-STAGES[i].t)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);
       if(d<bd){bd=d;best=i;}}return best;};
+  let PAL=pal();                       // cached; re-read only on theme change, not per frame
   function draw(headT){
-    const P=pal(),ai=active(headT);
+    const P=PAL,ai=active(headT);
     c.clearRect(0,0,S,S);
     c.globalAlpha=.16;seg(0,n,P.off,w);c.globalAlpha=1;
     c.globalAlpha=.5;seg(0,q,P.amber,w);seg(3*q,n,P.amber,w);seg(q,3*q,P.blue,w);c.globalAlpha=1;
@@ -2222,6 +2482,24 @@ function startLoop(own){
   const frame=()=>{if(!cv.isConnected){__loopRaf=null;return;}
     draw(head/n*2*Math.PI);head=(head+1.0)%n;__loopRaf=requestAnimationFrame(frame);};
   if(reduce)draw(1.6);else frame();
+  window.__loopPal=()=>{PAL=pal();if(reduce)draw(1.6);};   // theme toggle refreshes the cached palette
+  if(!own){ // hub loop doubles as navigation: click a stage -> phase lens
+    cv.style.cursor="pointer";
+    cv.setAttribute("role","button");
+    cv.setAttribute("tabindex","0");
+    cv.setAttribute("aria-label","Woven Loop \u2014 activate to open the Phases view; click a stage to jump to it");
+    cv.title="Click a stage to see its phases (or press Enter for all phases)";
+    const goStage=st=>{if(st)stageFilter=st.label;location.hash="#/phases";
+        if(location.hash==="#/phases")route();};
+    cv.addEventListener("click",ev=>{
+      const r=cv.getBoundingClientRect(),sx=S/r.width;
+      const mx=(ev.clientX-r.left)*sx,my=(ev.clientY-r.top)*sx;
+      let best=null,bd=1e9;
+      STAGES.forEach(st=>{const pp=pt(st.t),d=(pp[0]-mx)**2+(pp[1]-my)**2;if(d<bd){bd=d;best=st;}});
+      goStage(best&&bd<Math.pow(w*4,2)?best:null);
+    });
+    cv.addEventListener("keydown",ev=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();goStage(null);}});
+  }
 }
 
 /* ════ persona view ════ */
@@ -2251,7 +2529,8 @@ function renderPersona(p){
     '<div class="calls">'+p.decide.map(d=>'<div class="call"><div class="tag">'+d[0]+'</div><div><div class="q">'+d[1]+'</div><div class="aa">'+d[2]+'</div></div></div>').join("")+'</div>'));
 
   secs.push(section(num(),"Best prompts","copy-ready · swap the «placeholders»",
-    p.prompts.map(pr=>'<div class="prompt"><div class="ph"><div><div class="nm">'+pr[0]+'</div><div class="wn">'+pr[1]+'</div></div><span class="tg">'+pr[2]+'</span></div>'+
+    '<div class="ptabs" role="tablist" aria-label="Prompts">'+p.prompts.map((pr,ix)=>'<button class="ptab'+(ix===0?" on":"")+'" role="tab" aria-selected="'+(ix===0)+'">'+pr[0]+'</button>').join("")+'</div>'+
+    p.prompts.map((pr,ix)=>'<div class="prompt'+(ix===0?" on":"")+'" role="tabpanel"><div class="ph"><div><div class="nm">'+pr[0]+'</div><div class="wn">'+pr[1]+'</div></div><span class="tg">'+pr[2]+'</span></div>'+
       '<div class="bd"><button class="copy" aria-label="Copy prompt">Copy</button><pre>'+pr[3].map(mark).join("\n")+'</pre></div></div>').join("")));
 
   if(p.kpis) secs.push(section(num(),"How you're measured","outcomes, not activity",
@@ -2296,6 +2575,14 @@ function renderPersona(p){
    '</div></div>';
 
   startLoop(own);
+  // prompt tabs
+  const ptabs=[...app.querySelectorAll(".ptab")],ppanes=[...app.querySelectorAll(".prompt")];
+  ptabs.forEach((tb,ix)=>tb.addEventListener("click",()=>{
+    ptabs.forEach(x=>{x.classList.remove("on");x.setAttribute("aria-selected","false");});
+    ppanes.forEach(x=>x.classList.remove("on"));
+    tb.classList.add("on");tb.setAttribute("aria-selected","true");
+    if(ppanes[ix])ppanes[ix].classList.add("on");
+  }));
   // copy buttons
   app.querySelectorAll(".prompt").forEach(card=>{
     const b=card.querySelector(".copy"),pre=card.querySelector("pre");
@@ -2327,7 +2614,10 @@ function route(){
   const p=byId[id];
   window.scrollTo(0,0);
   if(p){renderPersona(p);document.getElementById("jump").value=p.id;}
+  else if(id==="phases"||id==="prompts"||id==="start"||id==="guides"){renderHub(id);document.getElementById("jump").value="";}
   else{renderHub();document.getElementById("jump").value="";}
+  const tab=p?"roles":(id==="phases"||id==="prompts"||id==="start"||id==="guides")?id:"roles";
+  document.querySelectorAll(".topnav a").forEach(a=>a.classList.toggle("on",a.getAttribute("data-tab")===tab));
   app.focus({preventScroll:true});
   if(anchor){const el=document.getElementById(anchor==="agents"?"your-agents":"best-prompts");if(el)el.scrollIntoView();}
 }
@@ -2340,10 +2630,14 @@ jump.addEventListener("change",()=>{location.hash=jump.value?"#/"+jump.value:"#/
 
 /* theme */
 const root=document.documentElement;
+try{const _st=localStorage.getItem("sl-theme");if(_st)root.setAttribute("data-theme",_st);}catch(e){}
 document.getElementById("themeToggle").addEventListener("click",()=>{
   const dark=matchMedia("(prefers-color-scheme:dark)").matches;
   const cur=root.getAttribute("data-theme")||(dark?"dark":"light");
-  root.setAttribute("data-theme",cur==="dark"?"light":"dark");
+  const next=cur==="dark"?"light":"dark";
+  root.setAttribute("data-theme",next);
+  try{localStorage.setItem("sl-theme",next);}catch(e){}
+  if(window.__loopPal)window.__loopPal();
 });
 
 /* close search results on outside click (global — survives re-renders) */

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spindleloom -- the agent fleet for the whole SDLC</title>
+<style>
+:root{
+  --ground:#0E1524; --panel:#141E2E; --panel-2:#18263A;
+  --ink:#DBE5F1; --ink-mid:#93A6BC; --ink-dim:#8497AE; --hair:#1E2E45; --hair-2:#2A3E5C;
+  --gold:#CFA23A; --gold-hi:#E7BE58; --weft:#5C90BE; --weft-dim:#3A5E80;
+  --shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34);
+  --serif:"Hoefler Text","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:light){:root{
+  --ground:#E9EAE5; --panel:#FFFFFF; --panel-2:#F3F3EF;
+  --ink:#16202E; --ink-mid:#47586B; --ink-dim:#556575; --hair:#DEDFD8; --hair-2:#C9CBC1;
+  --gold:#8A6816; --gold-hi:#7C5D12; --weft:#3C6C93; --weft-dim:#A9B9C7;
+  --shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07);
+}}
+:root[data-theme="light"]{--ground:#E9EAE5;--panel:#FFFFFF;--panel-2:#F3F3EF;--ink:#16202E;--ink-mid:#47586B;--ink-dim:#556575;--hair:#DEDFD8;--hair-2:#C9CBC1;--gold:#8A6816;--gold-hi:#7C5D12;--weft:#3C6C93;--weft-dim:#A9B9C7;--shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07)}
+:root[data-theme="dark"]{--ground:#0E1524;--panel:#141E2E;--panel-2:#18263A;--ink:#DBE5F1;--ink-mid:#93A6BC;--ink-dim:#8497AE;--hair:#1E2E45;--hair-2:#2A3E5C;--gold:#CFA23A;--gold-hi:#E7BE58;--weft:#5C90BE;--weft-dim:#3A5E80;--shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.66;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+b,strong{color:var(--ink)}
+::selection{background:color-mix(in srgb,var(--gold) 30%,transparent)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:2px}
+.bar{position:sticky;top:0;z-index:80;display:flex;align-items:center;gap:14px;padding:11px 26px;
+  background:color-mix(in srgb,var(--ground) 88%,transparent);backdrop-filter:blur(9px);border-bottom:1px solid var(--hair)}
+.bar .brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--ink-mid);white-space:nowrap}
+.bar .brand b{color:var(--gold)}
+.bar nav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.bar nav a{font-family:var(--mono);font-size:11px;color:var(--ink-mid);padding:6px 10px;border-radius:8px}
+.bar nav a:hover{color:var(--gold);text-decoration:none}
+.toggle{font-family:var(--mono);font-size:11px;color:var(--ink-mid);background:transparent;border:1px solid var(--hair-2);
+  border-radius:20px;padding:6px 13px;cursor:pointer;white-space:nowrap}
+.toggle:hover{border-color:var(--gold);color:var(--gold)}
+.hero{border-bottom:1px solid var(--hair)}
+.hero .in{max-width:1180px;margin:0 auto;padding:56px 30px 44px;display:block}
+@media(min-width:1024px){.hero .in{display:flex;align-items:center;gap:clamp(24px,4vw,64px)}.hero .htext{flex:1;min-width:0}}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-mid)}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(34px,4.8vw,58px);line-height:1.03;letter-spacing:-.02em;margin:14px 0 0;text-wrap:balance}
+.hero h1 em{font-style:italic;color:var(--gold)}
+.hero .dek{color:var(--ink-mid);max-width:58ch;margin:18px 0 0;font-size:17px}
+.ctas{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+.cta{font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;border-radius:10px;padding:11px 20px;text-decoration:none}
+.cta.primary{background:var(--gold);color:var(--ground);font-weight:700}
+.cta.primary:hover{background:var(--gold-hi);text-decoration:none}
+.cta.ghost{color:var(--ink);border:1px solid var(--hair-2)}
+.cta.ghost:hover{border-color:var(--gold);color:var(--gold);text-decoration:none}
+.loopwrap{display:flex;flex-direction:column;align-items:center;gap:12px;margin:34px auto 6px;width:min(480px,92vw)}
+@media(min-width:1024px){.loopwrap{flex:0 0 auto;margin:0}}
+.loopcanvas{display:block;width:100%;height:auto;max-width:480px;cursor:pointer}
+.loopread{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--ink-mid);display:flex;align-items:center;gap:8px;text-transform:uppercase}
+.loopread b{color:var(--gold);font-weight:600}
+.loopread .pip{width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold)}
+@media (prefers-reduced-motion:reduce){.loopread .pip{box-shadow:none}}
+.sec{max-width:1180px;margin:0 auto;padding:44px 30px 10px}
+.sec .shead{font-family:var(--mono);font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin:0 0 6px}
+.sec h2{font-family:var(--serif);font-weight:600;font-size:clamp(24px,3.2vw,34px);letter-spacing:-.015em;margin:0 0 8px}
+.sec .slede{color:var(--ink-mid);max-width:70ch;margin:0 0 22px;font-size:14.5px}
+.journey{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;padding-bottom:14px}
+.jstage{background:var(--panel);border:1px solid var(--hair);border-radius:14px;padding:20px 22px;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.jstage .jn{display:flex;align-items:baseline;gap:10px}
+.jstage .jn b{font-family:var(--mono);font-size:15px;letter-spacing:.14em}
+.jstage.make .jn b{color:var(--weft)}
+.jstage.run .jn b{color:var(--gold)}
+.jstage .side{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-dim);border:1px solid var(--hair-2);border-radius:5px;padding:1px 7px}
+.jstage .ph{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;color:var(--ink-dim);margin:8px 0 8px}
+.jstage p{font-size:13.5px;color:var(--ink-mid);margin:0 0 12px;flex:1}
+.jstage a{font-family:var(--mono);font-size:11px}
+.gsec{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin:26px 0 4px}
+.gwhy{font-size:13px;color:var(--ink-dim);margin:0 0 12px}
+.ggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.gcard{display:block;background:var(--panel);border:1px solid var(--hair);border-radius:12px;padding:16px 18px;
+  box-shadow:var(--shadow);color:inherit;text-decoration:none}
+.gcard:hover{border-color:var(--gold);text-decoration:none}
+.gcard h3{font-family:var(--serif);font-size:17.5px;font-weight:600;margin:0 0 4px;color:var(--ink)}
+.gcard h3 .ext{font-family:var(--mono);font-size:9.5px;color:var(--ink-dim);letter-spacing:.08em;text-transform:uppercase}
+.gcard p{font-size:12.5px;color:var(--ink-mid);margin:0}
+.mach{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:14px;padding-bottom:8px}
+.mcard{background:var(--panel);border:1px solid var(--hair);border-radius:14px;padding:20px 22px;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.mcard h3{font-family:var(--serif);font-size:19px;font-weight:600;margin:0 0 8px}
+.mcard p{font-size:13.5px;color:var(--ink-mid);margin:0 0 12px;flex:1}
+.mcard .inside{list-style:none;margin:0 0 14px;padding:0;border-top:1px solid var(--hair)}
+.mcard .inside li{display:grid;grid-template-columns:150px minmax(0,1fr);gap:10px;padding:8px 0;border-bottom:1px solid var(--hair);font-size:12.5px}
+.mcard .inside li b{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.mcard .inside li span{color:var(--ink-mid)}
+@media(max-width:480px){.mcard .inside li{grid-template-columns:1fr}}
+.mcard .verbs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.mcard .verbs code{font-family:var(--mono);font-size:10.5px;background:var(--panel-2);border:1px solid var(--hair);border-radius:6px;padding:2px 8px;color:var(--gold-hi)}
+.mcard a{font-family:var(--mono);font-size:11px}
+.harness{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;padding-bottom:8px}
+.hcard{background:var(--panel);border:1px solid var(--hair);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow)}
+.hcard b{font-family:var(--serif);font-size:16.5px;font-weight:600;display:block;margin-bottom:4px}
+.hcard .surf{font-family:var(--mono);font-size:10px;letter-spacing:.04em;color:var(--gold-hi);display:block;margin-bottom:6px}
+.hcard p{font-size:12px;color:var(--ink-mid);margin:0}
+.numbers{display:flex;gap:14px;flex-wrap:wrap;margin:8px 0 30px}
+.num{background:var(--panel);border:1px solid var(--hair);border-radius:12px;padding:16px 24px;box-shadow:var(--shadow);min-width:150px}
+.num b{display:block;font-family:var(--serif);font-size:30px;font-weight:600;color:var(--gold);font-variant-numeric:tabular-nums}
+.num span{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mid)}
+footer{border-top:1px solid var(--hair);margin-top:36px}
+footer .in{max-width:1180px;margin:0 auto;padding:22px 30px;font-size:12.5px;color:var(--ink-mid)}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="brand"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style="flex-shrink:0;vertical-align:-4px"><path d="M10 10 C7.6 6.9 3.1 6.6 3.1 10 C3.1 13.4 7.6 13.1 10 10" fill="none" stroke="var(--weft)" stroke-width="1.7" stroke-linecap="round"/><path d="M10 10 C12.4 6.9 16.9 6.6 16.9 10 C16.9 13.4 12.4 13.1 10 10" fill="none" stroke="var(--gold)" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="10" r="2.9" fill="var(--ground)"/><circle cx="10" cy="10" r="1.7" fill="var(--gold)"/><circle cx="10" cy="10" r="0.7" fill="var(--ground)"/></svg> <b>Spindleloom</b></span>
+  <nav aria-label="Site">
+    <a href="personas/index.html">Personas</a>
+    <a href="project-overview.html">Overview</a>
+    <a href="for-everyone.html">Story</a>
+    <a href="spindleloom-agent-fleet.html">Fleet map</a>
+    <a href="governance-handbook.html">Governance</a>
+  </nav>
+  <button class="toggle" id="themeToggle" aria-label="Toggle light or dark theme">&#9681; theme</button>
+</div>
+<header class="hero"><div class="in">
+  <div class="htext">
+    <div class="kicker">52 role-specialist agents &middot; one traceable chain</div>
+    <h1>From a market problem to a <em>running product</em> -- and around the loop again.</h1>
+    <p class="dek">Spindleloom is an AI agent fleet that carries software across the whole lifecycle --
+    market &rarr; spec &rarr; design &rarr; build &rarr; test &rarr; ship &rarr; operate &rarr; learn --
+    with every hand-off contracted, every requirement traced, and every gate a file a validator can check.</p>
+    <div class="ctas">
+      <a class="cta primary" href="get-started.html">&#9656; Get started</a>
+      <a class="cta ghost" href="personas/index.html#/start">Your role&#39;s playbook</a>
+      <a class="cta ghost" href="project-overview.html">The deep dive</a>
+    </div>
+  </div>
+  <div class="loopwrap">
+    <canvas class="loopcanvas" id="loop" width="520" height="520" role="button" tabindex="0"
+      aria-label="Woven Loop - activate to open the Phases view"></canvas>
+    <div class="loopread"><span class="pip"></span> working&nbsp;<b id="loopnow">PLAN</b></div>
+  </div>
+</div></header>
+
+<section class="sec" aria-labelledby="j-h">
+  <div class="shead">End to end</div>
+  <h2 id="j-h">One loop, six stages</h2>
+  <p class="slede">The left lobe makes, the right lobe runs; the hand-off in the middle is where evidence
+  changes hands. Ten phases fold into six stages -- click any stage on the loop above to see who is active in it.</p>
+  <div class="journey"><div class="jstage make"><div class="jn"><b>PLAN</b><span class="side">make side</span></div><div class="ph">Discovery &middot; Requirements &middot; Design &middot; Planning</div><p>Is it worth building, what must it do, and how -- MRD to sprint plan, every requirement traced, each phase accepted by a named role.</p><a href="project-overview.html">open &rarr;</a></div><div class="jstage make"><div class="jn"><b>BUILD</b><span class="side">make side</span></div><div class="ph">Build</div><p>Recon-first implementation: reuse before rewrite, minimal diffs, maker/checker verified before anything is called done.</p><a href="personas/developer.html">open &rarr;</a></div><div class="jstage make"><div class="jn"><b>TEST</b><span class="side">make side</span></div><div class="ph">Test</div><p>Test plans traced to requirements, automation in CI, exploratory passes, and an evidence-backed QA verdict.</p><a href="personas/qa.html">open &rarr;</a></div><div class="jstage run"><div class="jn"><b>SHIP</b><span class="side">run side</span></div><div class="ph">Review &middot; Release</div><p>Code, security, performance and accessibility reviews; the go/no-go is computed as the AND over sign-off tokens.</p><a href="personas/sre-release.html">open &rarr;</a></div><div class="jstage run"><div class="jn"><b>OPERATE</b><span class="side">run side</span></div><div class="ph">Operate</div><p>SLOs and symptom alerts; incidents end in blameless postmortems whose actions land back in the backlog.</p><a href="personas/sre-release.html">open &rarr;</a></div><div class="jstage run"><div class="jn"><b>LEARN</b><span class="side">run side</span></div><div class="ph">Process</div><p>Retros, delivery metrics, the debt register, living docs -- the loop learns and re-enters PLAN.</p><a href="personas/delivery-lead.html">open &rarr;</a></div></div>
+</section>
+
+<section class="sec" aria-labelledby="m-h">
+  <div class="shead">Under the hood</div>
+  <h2 id="m-h">The machinery</h2>
+  <p class="slede">Four pillars make the loop trustworthy: agents only ever read the right context,
+  every requirement is traceable end to end, every gate is a file a validator can check, and the
+  whole fleet answers to a typed surface. All of it is stdlib Python -- nothing to install, nothing hidden.</p>
+  <div class="mach"><div class="mcard"><h3>Context engineering</h3><p>An agent is only as good as what it reads -- and nothing here reads "the whole repo". Each step receives exactly what the contract graph routes to it, compressed and cited.</p><ul class="inside"><li><b>Context packs</b><span>a per-agent manifest: its phase-bounded transitive upstream chain, digests before full documents</span></li><li><b>Shared memory</b><span>save/recall over MCP; the committed context log crosses machines on a plain git pull</span></li><li><b>Handoff compression</b><span>decisions, outputs, blockers and constraints in five bullets or fewer -- read in one call</span></li><li><b>Stale-context handling</b><span>an upstream edit after a downstream read is surfaced, never silently trusted</span></li></ul><div class="verbs"><code>sloom pack</code><code>sloom context --import</code><code>save_context / recall_context</code></div><a href="governance-handbook.html#pi-14-how-to-find-anything-retrieval">how anything is found &rarr;</a></div><div class="mcard"><h3>The golden thread</h3><p>Every requirement carries an immutable ID from business goal to the test that proves it. Coverage is provable and the blast radius of any change is one query away.</p><ul class="inside"><li><b>Req-IDs</b><span>&lt;DOC&gt;-&lt;AREA&gt;-&lt;NUM&gt; (FRD-AUTH-012) -- immutable once assigned, never renumbered</span></li><li><b>The living RTM</b><span>one traceability matrix per initiative threads goal &rarr; story &rarr; requirement &rarr; design &rarr; test</span></li><li><b>Live queries</b><span>trace_requirement, rtm_coverage and stale_artifacts answer from any MCP-connected tool</span></li><li><b>The CI gate</b><span>validate_reqs fails the build on an untraced requirement or a duplicate ID</span></li></ul><div class="verbs"><code>/spec-check</code><code>sloom reqs</code><code>trace_requirement()</code></div><a href="governance-handbook.html#pi-5-naming-traceability">naming &amp; traceability &rarr;</a></div><div class="mcard"><h3>Gates as files</h3><p>Acceptance, sign-offs, verifications and flags are files in the repo -- a human teammate and an autonomous run hit the same gates, CI proves they ran, and 16 stdlib-only tools enforce them.</p><ul class="inside"><li><b>Phase acceptance</b><span>a named role signs approvals/&lt;phase&gt;.md; a run cannot cross an unaccepted boundary</span></li><li><b>The release AND</b><span>six sign-off tokens (qa, security, perf, a11y, raid, dod); an unevidenced GO is refused</span></li><li><b>Verification</b><span>change-verifier must record a PASS per PBI -- "looks right" is not evidence</span></li><li><b>The re-work queue</b><span>a writer that hits a gap leaves FLAG(owner); flags re-open done steps instead of shipping</span></li></ul><div class="verbs"><code>sloom check</code><code>sloom approve / signoff</code><code>sloom run advance</code><code>sloom flags</code></div><a href="governance-handbook.html#pi-9-concurrency-ownership-multiple-teammates-one-repo">concurrency &amp; ownership &rarr;</a></div><div class="mcard"><h3>The typed surface</h3><p>23 slash commands inside the assistant, one CLI front door outside it -- the same fleet either way, and a whole run is resumable from a ledger on disk.</p><ul class="inside"><li><b>/spec-*</b><span>authors the funnel: constitution, MRD&rarr;TSD, ADR/RFC, the traceability check</span></li><li><b>/plan-* and /build-*</b><span>cadence (estimate, sprint, retro) and the recon &rarr; implement &rarr; verify loop</span></li><li><b>/ship-* and /ops-*</b><span>release go/no-go over the token AND; status, RAID, incidents, metrics</span></li><li><b>/run + sloom</b><span>drives a resumable multi-agent run with a stop contract; sloom forwards to every tool</span></li></ul><div class="verbs"><code>/spec-new</code><code>/plan-sprint</code><code>/build-verify</code><code>/ship-release</code><code>/run</code></div><a href="personas/index.html#/prompts">all 54 prompts, filterable &rarr;</a></div></div>
+</section>
+
+<section class="sec" aria-labelledby="t-h">
+  <div class="shead">Target environments</div>
+  <h2 id="t-h">Runs in your tools</h2>
+  <p class="slede">Authored once as Markdown-with-contracts, generated into <b>6 native bundles</b>
+  by <code>hooks/build_harness_artifacts.py</code> — same agents, same skills, each tool&#39;s own format.
+  The full 7-surface support matrix: <a href="harness-matrix.html">harness-matrix.html</a>.</p>
+  <div class="harness"><div class="hcard"><b>Claude Code</b><span class="surf">.claude/ plugin</span><p>One command: /plugin install sloom@spindleloom — agents, skills, commands, hooks and MCP, wired.</p></div><div class="hcard"><b>Cursor</b><span class="surf">.cursor/agents + commands</span><p>Native subagents and commands, an always-on conventions rule, mcp.json included.</p></div><div class="hcard"><b>GitHub Copilot</b><span class="surf">.github/ chatmodes + prompts</span><p>Chat modes per agent, prompt files per command, copilot-instructions for the conventions.</p></div><div class="hcard"><b>Windsurf</b><span class="surf">.windsurf/ rules + workflows</span><p>Rules with trigger frontmatter (12k-aware) and manual workflows per command.</p></div><div class="hcard"><b>Any tool</b><span class="surf">AGENTS.md router</span><p>The lowest-common-denominator instruction file every assistant reads — one file, whole fleet.</p></div></div>
+</section>
+
+<section class="sec" aria-labelledby="x-h">
+  <div class="shead">The site</div>
+  <h2 id="x-h">Explore</h2>
+  <p class="slede">Everything on this site, by what you came to do. The Markdown sources of truth live in
+  <a href="../knowledge_hub/README.md"><code>knowledge_hub/</code></a>; pages marked <i>generated</i> are derived from them and drift-gated.</p>
+  <div class="gsec">Understand</div><p class="gwhy">what is this project?</p><div class="ggrid"><a class="gcard" href="project-overview.html"><h3>Project overview <span class="ext">the deep dive</span></h3><p>Exec summary, the lifecycle, all 52 agents by phase, the PBI journey, traceability, the worked run.</p></a><a class="gcard" href="for-everyone.html"><h3>For everyone <span class="ext">plain language</span></h3><p>The wheel, the eight stages, the three moves -- share this with non-technical folks.</p></a><a class="gcard" href="spindleloom-agent-fleet.html"><h3>Fleet map <span class="ext">interactive</span></h3><p>Every agent and every delegation edge, filterable by phase and role.</p></a></div><div class="gsec">Operate</div><p class="gwhy">what do I run?</p><div class="ggrid"><a class="gcard" href="personas/index.html"><h3>Persona Field Handbook <span class="ext">the tabbed front door</span></h3><p>15 role playbooks + Start here, the 10-phase rail, and the filterable 54-prompt library.</p></a><a class="gcard" href="get-started.html"><h3>Get started <span class="ext">guided</span></h3><p>One page: install into your tool, verify, scaffold, first run, daily driving.</p></a><a class="gcard" href="install.html"><h3>Install reference <span class="ext">generated</span></h3><p>The long form: per-tool detail, MCP wiring, tracker setup, enterprise rollout.</p></a></div><div class="gsec">Govern</div><p class="gwhy">the standards, readable</p><div class="ggrid"><a class="gcard" href="governance-handbook.html"><h3>Governance Handbook <span class="ext">generated</span></h3><p>The layout standard, story craft, and the team + Azure DevOps fit -- one navigable page.</p></a><a class="gcard" href="best-practices.html"><h3>Best practices <span class="ext">generated</span></h3><p>The documentation funnel, quality standard, gates and delivery patterns.</p></a><a class="gcard" href="agent-authoring.html"><h3>Agent authoring <span class="ext">generated</span></h3><p>The contract-block schema and prompting conventions.</p></a><a class="gcard" href="loopwright.html"><h3>Loopwright <span class="ext">generated</span></h3><p>The delivery-loop discipline and the loop taxonomy on every agent.</p></a><a class="gcard" href="harness-matrix.html"><h3>Harness matrix <span class="ext">generated</span></h3><p>The 7-surface x 4-tool distribution spec -- four tools, six bundles.</p></a><a class="gcard" href="fleet-eval.html"><h3>Fleet eval <span class="ext">generated</span></h3><p>The behavioral E2E regression protocol: golden brief + judge rubric.</p></a><a class="gcard" href="improvements.html"><h3>Improvement register <span class="ext">generated</span></h3><p>The toolkit's own deferred backlog, tiered and cut-ready.</p></a><a class="gcard" href="claude-prompt-library.html"><h3>Claude prompt library <span class="ext">generated</span></h3><p>Generic power-prompts, each mapped to the fleet specialist that does it better.</p></a><a class="gcard" href="readme.html"><h3>The guide map <span class="ext">generated</span></h3><p>What lives where across the knowledge hub and this site.</p></a></div><div class="gsec">Project</div><p class="gwhy">the repo itself</p><div class="ggrid"><a class="gcard" href="changelog.html"><h3>Changelog <span class="ext">generated</span></h3><p>Every release, most recent first -- what shipped and why.</p></a><a class="gcard" href="contributing.html"><h3>Contributing <span class="ext">generated</span></h3><p>How to add an agent/skill/command and keep the graph valid.</p></a><a class="gcard" href="onboarding.html"><h3>Onboarding <span class="ext">generated</span></h3><p>The new-teammate orientation: layers, loops, first commands.</p></a></div><div class="gsec">Brand</div><p class="gwhy">the Woven Loop</p><div class="ggrid"><a class="gcard" href="brand/woven-loop-stages.html"><h3>Woven Loop study <span class="ext">brand</span></h3><p>The lemniscate mark, the stage system, and the logo scales.</p></a><a class="gcard" href="brand/loop-widget.html"><h3>Live run widget <span class="ext">brand</span></h3><p>The loop driven by a real run ledger -- stages fill as a run advances.</p></a></div>
+</section>
+
+<section class="sec" aria-labelledby="n-h">
+  <div class="shead">By the numbers</div>
+  <h2 id="n-h">The fleet, counted from the folders</h2>
+  <div class="numbers"><div class="num"><b>52</b><span>agents</span></div><div class="num"><b>52</b><span>templates</span></div><div class="num"><b>28</b><span>skills</span></div><div class="num"><b>23</b><span>slash commands</span></div></div>
+</section>
+
+<footer><div class="in">
+  Generated by <code>hooks/build_guides_site.py</code> -- edit sources in <a href="../knowledge_hub/README.md"><code>knowledge_hub/</code></a>,
+  never this page &middot; repo <a href="../README.md">README</a> &middot; install via <a href="install.html">the install guide</a>.
+</div></footer>
+<noscript><div style="max-width:760px;margin:0 auto;padding:10px 30px 40px"><p>JavaScript is off -- the loop stays still, everything else works. Jump to:
+<a href="personas/index.html">Personas</a> &middot; <a href="project-overview.html">Overview</a> &middot; <a href="governance-handbook.html">Governance</a>.</p></div></noscript>
+<script>
+const root=document.documentElement;
+try{const _st=localStorage.getItem("sl-theme");if(_st)root.setAttribute("data-theme",_st);}catch(e){}
+document.getElementById("themeToggle").addEventListener("click",()=>{
+  const dark=matchMedia("(prefers-color-scheme:dark)").matches;
+  const cur=root.getAttribute("data-theme")||(dark?"dark":"light");
+  const next=cur==="dark"?"light":"dark";
+  root.setAttribute("data-theme",next);
+  try{localStorage.setItem("sl-theme",next);}catch(e){}
+  if(window.__loopPal)window.__loopPal();
+});
+(function(){
+  const cv=document.getElementById("loop"); if(!cv||!cv.getContext) return;
+  const reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  const dpr=Math.min(window.devicePixelRatio||1,2.5),S=520;
+  cv.width=S*dpr;cv.height=S*dpr;
+  const c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);c.lineJoin="round";
+  const pal=()=>{const g=getComputedStyle(root),v=n=>g.getPropertyValue(n).trim();
+    return {amber:v("--gold"),amberLt:v("--gold-hi"),blue:v("--weft-dim"),blueLt:v("--weft"),
+      ink:v("--ground"),on:v("--ink"),off:v("--ink-dim")};};
+  let PAL=pal();
+  const STAGES=[{d:60,l:"LEARN",s:"run"},{d:120,l:"PLAN",s:"make"},{d:180,l:"BUILD",s:"make"},
+    {d:240,l:"TEST",s:"make"},{d:300,l:"SHIP",s:"run"},{d:360,l:"OPERATE",s:"run"}]
+    .map(x=>({t:x.d*Math.PI/180,l:x.l,s:x.s}));
+  const af=0.22,ys=1.34,cx=S/2,cy=S/2,w=S*0.048,n=600,q=n/4;
+  const PTS=[];for(let i=0;i<=n;i++){const tt=i/n*2*Math.PI,s=Math.sin(tt),cc=Math.cos(tt),d=1+s*s;
+    PTS.push([cx+S*af*cc/d,cy+(S*af*s*cc/d)*ys]);}
+  const pt=tt=>{const s=Math.sin(tt),cc=Math.cos(tt),d=1+s*s;return [cx+S*af*cc/d,cy+(S*af*s*cc/d)*ys];};
+  const seg=(i0,i1,col,ww)=>{c.lineCap="round";c.beginPath();
+    for(let i=i0;i<=i1;i++){const pp=PTS[i];i===i0?c.moveTo(pp[0],pp[1]):c.lineTo(pp[0],pp[1]);}
+    c.strokeStyle=col;c.lineWidth=ww;c.stroke();};
+  const act=hT=>{let b=0,bd=1e9;for(let i=0;i<STAGES.length;i++){
+    const d=((hT-STAGES[i].t)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);if(d<bd){bd=d;b=i;}}return b;};
+  function draw(hT){
+    const P=PAL,ai=act(hT);
+    c.clearRect(0,0,S,S);
+    c.globalAlpha=.16;seg(0,n,P.off,w);c.globalAlpha=1;
+    c.globalAlpha=.5;seg(0,q,P.amber,w);seg(3*q,n,P.amber,w);seg(q,3*q,P.blue,w);c.globalAlpha=1;
+    const hi=Math.round(hT/(2*Math.PI)*n),L=72;
+    for(let k=L;k>=0;k--){const idx=((hi-k)%n+n)%n,p0=PTS[idx],p1=PTS[(idx+1)%n];
+      c.globalAlpha=(1-k/L)*(1-k/L);c.lineCap="round";c.beginPath();
+      c.moveTo(p0[0],p0[1]);c.lineTo(p1[0],p1[1]);
+      c.strokeStyle=(idx<=q||idx>=3*q)?P.amberLt:P.blueLt;c.lineWidth=w*1.15;c.stroke();}
+    c.globalAlpha=1;
+    const hp=PTS[hi%n],rg=c.createRadialGradient(hp[0],hp[1],0,hp[0],hp[1],w*3);
+    rg.addColorStop(0,"rgba(255,247,228,.95)");rg.addColorStop(1,"rgba(255,247,228,0)");
+    c.fillStyle=rg;c.beginPath();c.arc(hp[0],hp[1],w*3,0,7);c.fill();
+    STAGES.forEach((st,i)=>{const pp=pt(st.t),isA=i===ai,col=st.s==="run"?P.amberLt:P.blueLt,rr=isA?w*1.5:w*0.9;
+      if(isA){const gg=c.createRadialGradient(pp[0],pp[1],0,pp[0],pp[1],w*3.4);
+        gg.addColorStop(0,st.s==="run"?"rgba(231,190,88,.55)":"rgba(127,176,230,.5)");
+        gg.addColorStop(1,"rgba(0,0,0,0)");c.fillStyle=gg;c.beginPath();c.arc(pp[0],pp[1],w*3.4,0,7);c.fill();}
+      c.beginPath();c.arc(pp[0],pp[1],rr+w*0.5,0,7);c.fillStyle=P.ink;c.fill();
+      c.beginPath();c.arc(pp[0],pp[1],rr,0,7);c.fillStyle=col;c.fill();
+      const dx=pp[0]-cx,dy=pp[1]-cy,m=Math.sqrt(dx*dx+dy*dy)||1,off=w*2.4;
+      c.textBaseline="middle";c.textAlign=dx<-S*0.04?"right":dx>S*0.04?"left":"center";
+      c.fillStyle=isA?P.on:P.off;c.font=(isA?"700 ":"500 ")+(S*0.03)+"px ui-monospace,Menlo,Consolas,monospace";
+      c.fillText(st.l,pp[0]+dx/m*off,pp[1]+dy/m*off);});
+    c.beginPath();c.arc(cx,cy,w*1.7,0,7);c.fillStyle=P.ink;c.fill();
+    c.beginPath();c.arc(cx,cy,w,0,7);c.fillStyle=P.amber;c.fill();
+    c.beginPath();c.arc(cx,cy,w*0.42,0,7);c.fillStyle=P.ink;c.fill();
+    const el=document.getElementById("loopnow");
+    if(el&&el.textContent!==STAGES[ai].l)el.textContent=STAGES[ai].l;
+  }
+  let head=0;
+  const frame=()=>{draw(head/n*2*Math.PI);head=(head+1.0)%n;requestAnimationFrame(frame);};
+  if(reduce)draw(1.6);else frame();
+  window.__loopPal=()=>{PAL=pal();if(reduce)draw(1.6);};
+  const go=()=>{location.href="personas/index.html#/phases";};
+  cv.addEventListener("click",go);
+  cv.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go();}});
+})();
+</script>
+</body>
+</html>

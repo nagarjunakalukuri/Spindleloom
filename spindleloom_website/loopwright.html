@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Loopwright — the delivery-loop layer -- Spindleloom Guides</title>
+<style>
+:root{
+  --ground:#0E1524; --panel:#141E2E; --panel-2:#18263A;
+  --ink:#DBE5F1; --ink-mid:#93A6BC; --ink-dim:#8497AE; --hair:#1E2E45; --hair-2:#2A3E5C;
+  --gold:#CFA23A; --gold-hi:#E7BE58; --weft:#5C90BE;
+  --shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34);
+  --serif:"Hoefler Text","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:light){:root{
+  --ground:#E9EAE5; --panel:#FFFFFF; --panel-2:#F3F3EF;
+  --ink:#16202E; --ink-mid:#47586B; --ink-dim:#556575; --hair:#DEDFD8; --hair-2:#C9CBC1;
+  --gold:#8A6816; --gold-hi:#7C5D12; --weft:#3C6C93;
+  --shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07);
+}}
+:root[data-theme="light"]{--ground:#E9EAE5;--panel:#FFFFFF;--panel-2:#F3F3EF;--ink:#16202E;--ink-mid:#47586B;--ink-dim:#556575;--hair:#DEDFD8;--hair-2:#C9CBC1;--gold:#8A6816;--gold-hi:#7C5D12;--weft:#3C6C93;--shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07)}
+:root[data-theme="dark"]{--ground:#0E1524;--panel:#141E2E;--panel-2:#18263A;--ink:#DBE5F1;--ink-mid:#93A6BC;--ink-dim:#8497AE;--hair:#1E2E45;--hair-2:#2A3E5C;--gold:#CFA23A;--gold-hi:#E7BE58;--weft:#5C90BE;--shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.66;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+b,strong{color:var(--ink)}
+::selection{background:color-mix(in srgb,var(--gold) 30%,transparent)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:2px}
+.bar{position:sticky;top:0;z-index:80;display:flex;align-items:center;gap:14px;padding:11px 26px;
+  background:color-mix(in srgb,var(--ground) 88%,transparent);backdrop-filter:blur(9px);border-bottom:1px solid var(--hair)}
+.bar .brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--ink-mid);white-space:nowrap}
+.bar .brand b{color:var(--gold)}
+.bar nav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.bar nav a{font-family:var(--mono);font-size:11px;color:var(--ink-mid);padding:6px 10px;border-radius:8px}
+.bar nav a:hover{color:var(--gold);text-decoration:none}
+.toggle{font-family:var(--mono);font-size:11px;color:var(--ink-mid);background:transparent;border:1px solid var(--hair-2);
+  border-radius:20px;padding:6px 13px;cursor:pointer;white-space:nowrap}
+.toggle:hover{border-color:var(--gold);color:var(--gold)}
+.hero{border-bottom:1px solid var(--hair)}
+.hero .in{max-width:1120px;margin:0 auto;padding:44px 30px 34px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-mid)}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,46px);line-height:1.05;letter-spacing:-.02em;margin:12px 0 0;text-wrap:balance}
+.hero .note{font-family:var(--mono);font-size:11.5px;color:var(--ink-mid);margin-top:14px}
+.layout{max-width:1120px;margin:0 auto;padding:34px 30px 80px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:44px}
+@media(max-width:960px){.layout{grid-template-columns:1fr}.spine{display:none}}
+.spine{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 90px);overflow:auto;font-size:12.5px}
+.spine .sp-part{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;margin:18px 0 6px;color:var(--gold)}
+.spine ol{list-style:none}
+.spine li a{display:block;color:var(--ink-mid);padding:3px 0 3px 12px;border-left:2px solid var(--hair)}
+.spine li a:hover{color:var(--ink);text-decoration:none}
+.spine li.on a{color:var(--gold);border-left-color:var(--gold)}
+article h3{font-family:var(--serif);font-weight:600;font-size:23px;letter-spacing:-.01em;margin:40px 0 12px;scroll-margin-top:72px}
+article h4{font-size:15.5px;margin:26px 0 8px;scroll-margin-top:72px}
+article p{margin:0 0 13px;max-width:76ch;color:var(--ink-mid)}
+article li{margin:0 0 7px;color:var(--ink-mid)}
+article ul,article ol{margin:0 0 14px;padding-left:22px}
+article blockquote{border-left:3px solid var(--gold);background:var(--panel);border-radius:0 10px 10px 0;
+  padding:12px 18px;margin:0 0 16px}
+article blockquote p{margin:0}
+article hr{border:0;height:1px;background:var(--hair);margin:34px 0}
+article code{font-family:var(--mono);font-size:.86em;background:var(--panel-2);border:1px solid var(--hair);border-radius:5px;padding:1px 6px;color:var(--gold-hi)}
+article pre{font-family:var(--mono);font-size:12.5px;line-height:1.55;background:var(--panel);border:1px solid var(--hair);
+  border-radius:12px;padding:16px 18px;overflow-x:auto;margin:0 0 16px;color:var(--ink-mid)}
+.tw{overflow-x:auto;margin:0 0 18px;border:1px solid var(--hair);border-radius:12px;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel)}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mid);
+  text-align:left;padding:10px 14px;border-bottom:1px solid var(--hair-2);background:var(--panel-2)}
+td{padding:10px 14px;border-bottom:1px solid var(--hair);vertical-align:top;color:var(--ink-mid)}
+tr:last-child td{border-bottom:0}
+footer{border-top:1px solid var(--hair)}
+footer .in{max-width:1120px;margin:0 auto;padding:22px 30px;font-size:12.5px;color:var(--ink-mid)}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="brand"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style="flex-shrink:0;vertical-align:-4px"><path d="M10 10 C7.6 6.9 3.1 6.6 3.1 10 C3.1 13.4 7.6 13.1 10 10" fill="none" stroke="var(--weft)" stroke-width="1.7" stroke-linecap="round"/><path d="M10 10 C12.4 6.9 16.9 6.6 16.9 10 C16.9 13.4 12.4 13.1 10 10" fill="none" stroke="var(--gold)" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="10" r="2.9" fill="var(--ground)"/><circle cx="10" cy="10" r="1.7" fill="var(--gold)"/><circle cx="10" cy="10" r="0.7" fill="var(--ground)"/></svg> Spindleloom &middot; <b>Guides</b></span>
+  <nav aria-label="Site">
+    <a href="index.html">Home</a>
+    <a href="personas/index.html">Hub</a>
+    <a href="project-overview.html">Overview</a>
+    <a href="governance-handbook.html">Governance</a>
+    <a href="readme.html">All guides</a>
+  </nav>
+  <button class="toggle" id="themeToggle" aria-label="Toggle light or dark theme">&#9681; theme</button>
+</div>
+<header class="hero"><div class="in">
+  <div class="kicker">Spindleloom &middot; knowledge hub</div>
+  <h1>Loopwright — the delivery-loop layer</h1>
+  <p class="note">Generated reading view. Source of truth: <a href="../knowledge_hub/LOOPWRIGHT.md"><code>knowledge_hub/LOOPWRIGHT.md</code></a> --
+  edit the MD, then run <code>python hooks/build_guides_site.py</code>.</p>
+</div></header>
+<div class="layout">
+  <nav class="spine" aria-label="Contents"><div class="sp-part">On this page</div><ol><li><a href="#g-1-what-loop-engineering-actually-means">1. What &quot;loop engineering&quot; actually means</a></li>
+<li><a href="#g-2-the-two-loops-inner-and-outer">2. The two loops: inner and outer</a></li>
+<li><a href="#g-3-the-devex-lens-why-loops-are-about-humans-not-just-pipelin">3. The DevEx lens: why loops are about humans, not just pipelines</a></li>
+<li><a href="#g-4-measuring-loops">4. Measuring loops</a></li>
+<li><a href="#g-5-tightening-each-loop">5. Tightening each loop</a></li>
+<li><a href="#g-6-how-this-project-s-agents-map-onto-the-loops">6. How this project&#x27;s agents map onto the loops</a></li>
+<li><a href="#g-7-anti-patterns-how-loops-break">7. Anti-patterns — how loops break</a></li>
+<li><a href="#g-8-tune-your-loops-checklist-for-a-small-team-on-azure-devops">8. Tune-your-loops checklist (for a small team on Azure DevOps — e.g. the 9-person pod of `GOVERNANCE.md` Part III)</a></li>
+<li><a href="#g-9-the-one-paragraph-takeaway">9. The one-paragraph takeaway</a></li>
+<li><a href="#g-sources">Sources</a></li></ol></nav>
+  <main><article><p><i>Loopwright is the Spindleloom fleet's loop layer — the <b>loop-engineering</b> discipline applied to this project: the feedback loops of software delivery, what they are, why they dominate productivity, how to measure and tighten them, and how the fleet's agents map onto them.</i></p>
+<blockquote><p><b>Spindleloom</b> builds the fleet (market → spec → build → ship → operate); the harness generator (<code>hooks/build_harness_artifacts.py</code> → <code>targets/</code>) ships it to every tool; <b>Loopwright</b> is this layer — the fleet running inside the delivery feedback loop, tightening each loop so feedback arrives fast and clear. <i>Build it, ship it, loop it.</i></p></blockquote>
+<blockquote><p><b>Scope note — two senses of "loop engineering".</b> This document is about the <b>human delivery loop</b>: a developer's inner loop (edit→build→test→debug) and the team's outer loop (PR→CI→review→deploy). The term is also used for a <i>different</i> discipline — engineering <b>autonomous AI-agent loops</b> (scheduling an agent against a goal, with stop conditions, maker/checker verification, and an autonomy ladder). In that sense, "inner loop" is one agent turn and "outer loop" is the orchestration system around it. For the <b>agent</b> loop, see <code>agents/ai-orchestrator.md</code> → "Autonomous loop architecture". This file is the <b>human</b> loop.</p></blockquote>
+<hr>
+<h3 id="g-1-what-loop-engineering-actually-means">1. What "loop engineering" actually means</h3>
+<p>Software delivery is not a line from idea to production — it's a set of <b>nested feedback loops</b>. "Loop engineering" is the deliberate practice of designing those loops so that <i>feedback arrives fast, clear, and early</i>. The core insight: <b>the speed and quality of feedback is the single biggest lever on both developer productivity and software quality.</b> A team isn't slow because people type slowly; it's slow because its loops are slow — a 25-minute CI run, a two-day PR review wait, a bug found in production instead of at the keyboard.</p>
+<p>Every loop has the same anatomy: <b>act → get feedback → correct.</b> Loop engineering asks two questions at every stage: <i>How long is this loop?</i> and <i>How trustworthy is the feedback?</i> Shorten the time and sharpen the signal, and everything else — throughput, quality, morale — follows.</p>
+<p>The defining law of loops is the <b>cost-of-delay curve</b>: the later a loop catches a problem, the more it costs to fix. A typo caught by your editor costs seconds; the same logic error caught in code review costs minutes; in QA, hours; in production, a postmortem and customer trust. Loop engineering is largely about <b>pushing detection leftward</b> into faster, cheaper loops.</p>
+<hr>
+<h3 id="g-2-the-two-loops-inner-and-outer">2. The two loops: inner and outer</h3>
+<p>The canonical framing splits delivery into two loops (<a href="https://docs.speedscale.com/concepts/inner-outer/">Speedscale</a>, <a href="https://www.curiositysoftware.ie/guide-software-delivery-inner-outer-loops">Curiosity</a>):</p>
+<h4 id="g-inner-loop-the-individual-seconds-to-minutes">Inner loop — the individual, seconds to minutes</h4>
+<p>The workflow a single developer repeats dozens of times an hour: <b>edit → build → run → test → debug.</b> It's fast, local, and private. Inner-loop activities include writing code, problem-solving, running unit tests, and debugging. This is where developers want to <i>live</i> — it's where flow state happens.</p>
+<blockquote><p><b>Goal: maximize time in the inner loop, and make each iteration as fast as possible.</b> Sub-10-second build/test feedback keeps a developer in flow; a 3-minute local build breaks it.</p></blockquote>
+<h4 id="g-outer-loop-the-team-organization-minutes-to-days">Outer loop — the team/organization, minutes to days</h4>
+<p>Everything required to turn individual contributions into a reliable product in users' hands: <b>commit → PR → code review → CI → integration/e2e tests → security scans → merge → deploy → monitor.</b> It involves other people and shared systems, so it's slower and full of <i>wait time</i>.</p>
+<blockquote><p><b>Goal: minimize how often and how long the outer loop interrupts the developer.</b> Every outer-loop wait (CI queue, review delay) is a flow-breaking context switch.</p></blockquote>
+<div class="tw"><table>
+<tr><th></th><th>Inner loop</th><th>Outer loop</th></tr>
+<tr><td>Scope</td><td>One developer</td><td>Team / org / systems</td></tr>
+<tr><td>Cadence</td><td>Seconds–minutes</td><td>Minutes–days</td></tr>
+<tr><td>Activities</td><td>edit, build, run unit tests, debug</td><td>PR, review, CI, integration, deploy, operate</td></tr>
+<tr><td>Optimized by</td><td>fast local tooling, hot reload, good tests</td><td>automation, small PRs, fast CI, self-service platforms</td></tr>
+<tr><td>Failure mode</td><td>slow build kills flow</td><td>slow CI/review creates wait + context-switching</td></tr>
+</table></div>
+<p>The art is <b>balance</b>: maximize inner-loop iterations (speed + flexibility), minimize outer-loop friction (without sacrificing the quality and stability the outer loop exists to provide).</p>
+<hr>
+<h3 id="g-3-the-devex-lens-why-loops-are-about-humans-not-just-pipelin">3. The DevEx lens: why loops are about humans, not just pipelines</h3>
+<p>Modern developer-experience research frames productivity around three dimensions (<a href="https://shiftmag.dev/dora-space-gsm-or-devex-how-to-measure-developer-productivity-1304/">DX / DevEx</a>):</p>
+<ol>
+<li><b>Feedback loops</b> — the speed and quality of responses to a developer's actions. (This is loop engineering, named directly.)</li>
+<li><b>Cognitive load</b> — the mental effort a task demands. Slow or noisy loops <i>add</i> cognitive load: while you wait 20 minutes for CI, you've swapped context and must reload it.</li>
+<li><b>Flow state</b> — energized, immersed focus. Flow is fragile; a single outer-loop interruption can cost 20+ minutes to recover. Fast inner loops protect flow; friction-y outer loops destroy it.</li>
+</ol>
+<p>DORA's 2025 research found the platform capability most correlated with positive developer experience is <b>"clear feedback on the outcome of my tasks"</b> — fast <i>and</i> legible feedback (good logs, diagnostics, actionable errors) lets developers self-serve instead of waiting on someone. So loop engineering is two-dimensional: <b>latency</b> (how fast) and <b>clarity</b> (how understandable). A fast loop that returns a cryptic red X is only half-engineered.</p>
+<p>This also reframes the productivity paradox: studies have shown experienced developers can be <i>slower</i> with naive AI assistance while feeling faster — because ungoverned AI lengthens the <i>correction</i> half of the loop (reviewing, debugging, untangling drift) even as it shortens the <i>authoring</i> half. Loop engineering says: optimize the whole loop, not just the keystroke.</p>
+<hr>
+<h3 id="g-4-measuring-loops">4. Measuring loops</h3>
+<p>You tune what you measure. The mature stack layers several frameworks (<a href="https://linearb.io/blog/space-framework">SPACE</a>, <a href="https://dora.dev/capabilities/platform-engineering/">DORA</a>, <a href="https://www.lotharschulz.info/2025/05/04/engineering-metrics-frameworks-dora-devex-space-dx-core-4-essp-comparison/">comparison</a>):</p>
+<ul>
+<li><b>DORA (four keys)</b> — the outer-loop delivery scorecard: <b>deployment frequency</b>, <b>lead time for changes</b>, <b>change-failure rate</b>, <b>MTTR</b> (time to restore). Start here; it's the baseline of how fast and safely the outer loop runs.</li>
+<li><b>Flow metrics</b> — <b>cycle time</b> (work started → done, <i>including wait time</i>) and <b>lead time</b> (created → delivered). Cycle time is the best single number for "how long is our overall loop, and where does it stall?" Break it into coding / review / CI / deploy segments to find the bottleneck.</li>
+<li><b>SPACE</b> — broadens beyond delivery to <b>S</b>atisfaction, <b>P</b>erformance, <b>A</b>ctivity, <b>C</b>ommunication, <b>E</b>fficiency. Prevents optimizing speed at the expense of burnout. Use DORA first, then add SPACE for team health.</li>
+<li><b>DevEx / DX Core 4</b> — measures the three dimensions above (feedback loops, cognitive load, flow) directly via developer perception + system signals.</li>
+</ul>
+<p>Rule of thumb: **DORA tells you the outer loop's speed and safety; cycle-time breakdown tells you <i>where</i> it stalls; SPACE/DevEx tell you whether your "improvements" are quietly burning people out.** Measure the inner loop too — local build/test time, time-to-first-feedback — even if only by periodic survey.</p>
+<hr>
+<h3 id="g-5-tightening-each-loop">5. Tightening each loop</h3>
+<h4 id="g-inner-loop-make-iterations-near-instant">Inner loop — make iterations near-instant</h4>
+<ul>
+<li><b>Fast feedback at the keyboard:</b> sub-second linters/formatters, type-checkers, and test runners in the editor; hot reload; incremental builds.</li>
+<li><b>Fast, reliable unit tests:</b> a test suite that runs in seconds and isn't flaky. Flaky tests <i>destroy</i> the loop because the feedback is no longer trustworthy.</li>
+<li><b>Reproducible local env + a readiness gate:</b> one-command setup so "works on my machine" isn't a coin flip — and <code>dev-onboarding</code> now <i>verifies</i> it (build/test/lint actually run, fast and non-flaky) before work starts, rather than only documenting it.</li>
+<li><b>Clear errors:</b> actionable messages and diagnostics so the developer self-corrects without asking anyone.</li>
+</ul>
+<h4 id="g-outer-loop-reduce-frequency-and-duration-of-interruptions">Outer loop — reduce frequency and duration of interruptions</h4>
+<ul>
+<li><b>Small PRs:</b> the highest-leverage outer-loop move. Small PRs review faster, merge faster, and break less. Big PRs stall the loop and hide defects.</li>
+<li><b>Fast CI, cheap checks first:</b> order pipeline stages so format/lint/unit fail in the first minute; reserve slow e2e/security for later. (This is <code>pipeline-engineer</code>.)</li>
+<li><b>Automate the gates:</b> lint/format/coverage/security as required CI checks, so humans review <i>design and intent</i>, not style. (<code>coding-standards-writer</code> + <code>pipeline-engineer</code> + <code>code-reviewer</code>.)</li>
+<li><b>Cut wait time:</b> review SLAs, async review norms, and a clear "stuck → ask" rule so PRs don't sit. Wait time is usually the biggest chunk of cycle time.</li>
+<li><b>Progressive delivery:</b> canary/blue-green deploys with auto-rollback shrink the deploy loop and its blast radius. (<code>release-manager</code>, <code>pipeline-engineer</code>.)</li>
+<li><b>Platform engineering / self-service:</b> by 2025, ~90% of orgs run an internal developer platform. The point is to let developers self-serve infra/deploys (a fast loop) instead of filing tickets and waiting (a slow loop).</li>
+</ul>
+<h4 id="g-the-unifying-move-shift-detection-left">The unifying move: shift detection left</h4>
+<p>Each loop should catch the class of problem it's cheapest to catch: types/format → editor; logic → unit tests; integration → CI; intent/design → review; value → QA/UAT; resilience → staging/canary. A bug that escapes to a slower loop is a signal to add a check to a faster one (e.g., a production incident should usually spawn a new test).</p>
+<hr>
+<h3 id="g-6-how-this-project-s-agents-map-onto-the-loops">6. How this project's agents map onto the loops</h3>
+<p>This toolkit is <b>Loopwright</b> — loop engineering as a set of agents — each one tightens a specific loop by making the feedback faster or clearer.</p>
+<blockquote><p><b>The machine form of this map</b> is the <code>loop:</code> field in every agent's contract frontmatter — enum <code>inner | outer-integrate | outer-ship | planning | governance</code> — enforced on all 52 agents by <code>validate_graph.py</code> check 11 and rendered as the <b>Loop · Role</b> column of the generated <a href="../agents/INDEX.md"><code>agents/INDEX.md</code></a>. INDEX is the always-current roster (today: inner 8 · outer-integrate 11 · outer-ship 4 · planning 18 · governance 11); the table below is the conceptual summary, not the roster.</p></blockquote>
+<pre>PLANNING + GOVERNANCE (product loop) ── slowest, most expensive to get wrong
+  mrd → brd → prd → frd → srs → sdd → tsd          (spec the right thing)
+  backlog-manager → estimation → sprint-planner     (plan the loop)
+  status-reporter · raid-keeper · retrospective         (track &amp; learn)
+        │
+        ▼
+OUTER (integration/delivery loop) ── minutes to days
+  code-reviewer → pipeline-engineer → qa-tester → release-manager → incident-responder
+        │
+        ▼
+INNER (developer loop) ── seconds to minutes
+  dev-onboarding sets up + GATES the loop (one-command env; build/test/lint verified fast &amp; non-flaky);
+  coding-standards-writer sets the bar; then the cycle:
+  backend/frontend-developer EDIT → build → test-author&#x27;s fast tests RUN → debugger / flaky-test-detective on red
+  (debugger + flaky-test-detective serve both loops — cheapest here, at the keyboard)</pre>
+<div class="tw"><table>
+<tr><th>Loop</th><th>Agents that tighten it</th><th>How</th></tr>
+<tr><td><b>Inner</b></td><td><code>dev-onboarding</code> (setup + <b>readiness gate</b>), <code>coding-standards-writer</code>, <code>backend-developer</code>/<code>frontend-developer</code>, <code>test-author</code>, <code>debugger</code>, <code>flaky-test-detective</code></td><td>One-command env + a <i>verified</i> fast/non-flaky loop (the gate) + a clear bar; then edit→build→test→debug at the keyboard. <code>debugger</code> and <code>flaky-test-detective</code> are <b>dual-loop</b> — invoked here first (cheapest), and from CI/QA when something escapes.</td></tr>
+<tr><td><b>Outer (integrate)</b></td><td><code>code-reviewer</code>, <code>pipeline-engineer</code>, <code>qa-tester</code></td><td>Severity-grouped reviews + automated gates + reproducible bug reports = faster, clearer feedback on a change</td></tr>
+<tr><td><b>Outer (ship/operate)</b></td><td><code>release-manager</code>, <code>incident-responder</code></td><td>Evidence-based go/no-go + blameless postmortems = safe fast deploys and learning that closes the loop</td></tr>
+<tr><td><b>Planning loop</b></td><td><code>backlog-manager</code>, <code>estimation-facilitator</code>, <code>sprint-planner</code>, <code>retrospective-facilitator</code></td><td>Ready, estimated, goal-aligned work = the team iterates on the <i>right</i> things; retro tunes the loop itself</td></tr>
+<tr><td><b>Governance</b></td><td><code>raid-keeper</code>, <code>status-reporter</code></td><td>Fast, honest feedback to stakeholders shortens the <i>decision</i> loop</td></tr>
+</table></div>
+<p>Two project features are pure loop engineering:</p>
+<ul>
+<li><b>The RTM + Req-ID thread</b> makes the <i>correction</i> loop fast: when something changes, traceability shows the blast radius instantly instead of a manual hunt.</li>
+<li><b>The validation gates</b> (DoR → review → CI → DoD → QA sign-off → go/no-go) are deliberately ordered so each catches problems at the cheapest loop — exactly the "shift-left" principle.</li>
+</ul>
+<hr>
+<h3 id="g-7-anti-patterns-how-loops-break">7. Anti-patterns — how loops break</h3>
+<ul>
+<li><b>The 25-minute CI run:</b> the outer loop is so slow developers batch work and context-switch; cycle time balloons. Fix: parallelize, cache, cheap-checks-first.</li>
+<li><b>Flaky tests:</b> feedback becomes untrustworthy, so people ignore red — the loop still runs but no longer <i>means</i> anything. Fix: quarantine and fix flakes ruthlessly.</li>
+<li><b>Giant PRs:</b> review takes days, defects hide, merge conflicts pile up. Fix: small, single-concern PRs (<code>code-reviewer</code> flags oversize).</li>
+<li><b>Bug found in prod that a unit test could've caught:</b> detection happened in the most expensive loop. Fix: postmortem action → add the test (<code>incident-responder</code> → backlog).</li>
+<li><b>Ticket-driven infra:</b> every environment/deploy is a wait-on-another-team loop. Fix: self-service platform.</li>
+<li><b>Reviewing style by hand:</b> humans spending the review loop on formatting tools should enforce. Fix: automate in CI (<code>coding-standards-writer</code> + <code>pipeline-engineer</code>).</li>
+<li><b>"Watermelon" status:</b> the stakeholder feedback loop returns "green" while reality is red, so course-correction comes too late. Fix: honest RAG grounded in metrics (<code>status-reporter</code>).</li>
+</ul>
+<hr>
+<h3 id="g-8-tune-your-loops-checklist-for-a-small-team-on-azure-devops">8. Tune-your-loops checklist (for a small team on Azure DevOps — e.g. the 9-person pod of <code>GOVERNANCE.md</code> Part III)</h3>
+<p><b>Inner loop</b></p>
+<ul>
+<li>[ ] One-command local setup; build/test feedback &lt; ~10s (CONTRIBUTING via <code>dev-onboarding</code>)</li>
+<li>[ ] Linter/formatter/type-checker in the editor; zero hand-reviewing of style</li>
+<li>[ ] Unit suite fast and non-flaky</li>
+</ul>
+<p><b>Outer loop</b></p>
+<ul>
+<li>[ ] PRs small and single-concern; review SLA agreed (<code>code-reviewer</code>)</li>
+<li>[ ] CI: cheap checks first, required to merge; runs in a few minutes (<code>pipeline-engineer</code>, Azure Pipelines + branch policies)</li>
+<li>[ ] Automated deploy to staging + progressive prod rollout with rollback (<code>release-manager</code>)</li>
+<li>[ ] QA handoff + bug reports reproducible; sign-off feeds go/no-go (<code>qa-tester</code>)</li>
+</ul>
+<p><b>Measure</b></p>
+<ul>
+<li>[ ] DORA four keys on the Azure dashboard (deploy freq, lead time, change-fail, MTTR)</li>
+<li>[ ] Cycle time broken into coding / review / CI / deploy to find the stall</li>
+<li>[ ] A periodic DevEx/SPACE pulse so speed gains aren't burning the team</li>
+</ul>
+<p><b>Close the loops</b></p>
+<ul>
+<li>[ ] Every production incident spawns a test or guardrail (<code>incident-responder</code> → backlog)</li>
+<li>[ ] Recurring review nits get automated (<code>coding-standards-writer</code>)</li>
+<li>[ ] Retro picks one loop to shorten each sprint (<code>retrospective-facilitator</code>)</li>
+</ul>
+<hr>
+<h3 id="g-9-the-one-paragraph-takeaway">9. The one-paragraph takeaway</h3>
+<p>Software speed is loop speed. There are two loops — the <b>inner loop</b> (a developer editing, building, testing, debugging in seconds) and the <b>outer loop</b> (the team integrating, reviewing, shipping, operating over minutes to days). Productivity comes from <b>maximizing time in a fast inner loop and minimizing outer-loop interruptions</b>, while keeping feedback not just <i>fast</i> but <i>clear</i>. Measure it with DORA + cycle time, watch the humans with SPACE/DevEx, and relentlessly <b>shift detection left</b> so each problem is caught in the cheapest possible loop. This project's agents are, end to end, an implementation of that idea: each one shortens or sharpens a specific feedback loop.</p>
+<h3 id="g-sources">Sources</h3>
+<ul>
+<li><a href="https://docs.speedscale.com/concepts/inner-outer/">Inner vs Outer Loop — Speedscale</a></li>
+<li><a href="https://www.curiositysoftware.ie/guide-software-delivery-inner-outer-loops">A Guide to Software Delivery's Inner &amp; Outer Loops — Curiosity</a></li>
+<li><a href="https://kashif-mohammed.medium.com/inner-vs-outer-loop-the-secret-to-developer-productivity-f1944af563da">Inner vs Outer Loop: developer productivity — Medium/Kashif Mohammed</a></li>
+<li><a href="https://dev.to/payel_bhattacharya_71206f/understanding-and-reducing-toil-in-the-inner-and-outer-loops-of-software-development-2m55">Reducing toil in inner &amp; outer loops — DEV</a></li>
+<li><a href="https://shiftmag.dev/dora-space-gsm-or-devex-how-to-measure-developer-productivity-1304/">DORA / SPACE / DevEx comparison — shiftmag</a></li>
+<li><a href="https://linearb.io/blog/space-framework">SPACE framework — LinearB</a></li>
+<li><a href="https://dora.dev/capabilities/platform-engineering/">DORA: platform engineering capability</a></li>
+<li><a href="https://www.lotharschulz.info/2025/05/04/engineering-metrics-frameworks-dora-devex-space-dx-core-4-essp-comparison/">Engineering metrics frameworks compared — Lothar Schulz</a></li>
+</ul></article></main>
+</div>
+<footer><div class="in">
+  Part of the <a href="readme.html">Spindleloom website</a> &middot; front door: the
+  <a href="personas/index.html">Persona Field Handbook</a>.
+</div></footer>
+<script>
+const root=document.documentElement;
+try{const _st=localStorage.getItem("sl-theme");if(_st)root.setAttribute("data-theme",_st);}catch(e){}
+document.getElementById("themeToggle").addEventListener("click",()=>{
+  const dark=matchMedia("(prefers-color-scheme:dark)").matches;
+  const cur=root.getAttribute("data-theme")||(dark?"dark":"light");
+  const next=cur==="dark"?"light":"dark";
+  root.setAttribute("data-theme",next);
+  try{localStorage.setItem("sl-theme",next);}catch(e){}
+});
+const items=[...document.querySelectorAll(".spine li")];
+const map={};items.forEach(li=>{const a=li.querySelector("a");if(a)map[a.getAttribute("href").slice(1)]=li;});
+const spy=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){
+  items.forEach(l=>l.classList.remove("on"));const li=map[e.target.id];if(li)li.classList.add("on");}}),
+  {rootMargin:"-20% 0px -70% 0px"});
+document.querySelectorAll("article h3[id]").forEach(h=>spy.observe(h));
+</script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Project Guides — what lives here, and who reads what -- Spindleloom Guides</title>
+<style>
+:root{
+  --ground:#0E1524; --panel:#141E2E; --panel-2:#18263A;
+  --ink:#DBE5F1; --ink-mid:#93A6BC; --ink-dim:#8497AE; --hair:#1E2E45; --hair-2:#2A3E5C;
+  --gold:#CFA23A; --gold-hi:#E7BE58; --weft:#5C90BE;
+  --shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34);
+  --serif:"Hoefler Text","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:light){:root{
+  --ground:#E9EAE5; --panel:#FFFFFF; --panel-2:#F3F3EF;
+  --ink:#16202E; --ink-mid:#47586B; --ink-dim:#556575; --hair:#DEDFD8; --hair-2:#C9CBC1;
+  --gold:#8A6816; --gold-hi:#7C5D12; --weft:#3C6C93;
+  --shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07);
+}}
+:root[data-theme="light"]{--ground:#E9EAE5;--panel:#FFFFFF;--panel-2:#F3F3EF;--ink:#16202E;--ink-mid:#47586B;--ink-dim:#556575;--hair:#DEDFD8;--hair-2:#C9CBC1;--gold:#8A6816;--gold-hi:#7C5D12;--weft:#3C6C93;--shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07)}
+:root[data-theme="dark"]{--ground:#0E1524;--panel:#141E2E;--panel-2:#18263A;--ink:#DBE5F1;--ink-mid:#93A6BC;--ink-dim:#8497AE;--hair:#1E2E45;--hair-2:#2A3E5C;--gold:#CFA23A;--gold-hi:#E7BE58;--weft:#5C90BE;--shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.66;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+b,strong{color:var(--ink)}
+::selection{background:color-mix(in srgb,var(--gold) 30%,transparent)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:2px}
+.bar{position:sticky;top:0;z-index:80;display:flex;align-items:center;gap:14px;padding:11px 26px;
+  background:color-mix(in srgb,var(--ground) 88%,transparent);backdrop-filter:blur(9px);border-bottom:1px solid var(--hair)}
+.bar .brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--ink-mid);white-space:nowrap}
+.bar .brand b{color:var(--gold)}
+.bar nav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.bar nav a{font-family:var(--mono);font-size:11px;color:var(--ink-mid);padding:6px 10px;border-radius:8px}
+.bar nav a:hover{color:var(--gold);text-decoration:none}
+.toggle{font-family:var(--mono);font-size:11px;color:var(--ink-mid);background:transparent;border:1px solid var(--hair-2);
+  border-radius:20px;padding:6px 13px;cursor:pointer;white-space:nowrap}
+.toggle:hover{border-color:var(--gold);color:var(--gold)}
+.hero{border-bottom:1px solid var(--hair)}
+.hero .in{max-width:1120px;margin:0 auto;padding:44px 30px 34px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-mid)}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,46px);line-height:1.05;letter-spacing:-.02em;margin:12px 0 0;text-wrap:balance}
+.hero .note{font-family:var(--mono);font-size:11.5px;color:var(--ink-mid);margin-top:14px}
+.layout{max-width:1120px;margin:0 auto;padding:34px 30px 80px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:44px}
+@media(max-width:960px){.layout{grid-template-columns:1fr}.spine{display:none}}
+.spine{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 90px);overflow:auto;font-size:12.5px}
+.spine .sp-part{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;margin:18px 0 6px;color:var(--gold)}
+.spine ol{list-style:none}
+.spine li a{display:block;color:var(--ink-mid);padding:3px 0 3px 12px;border-left:2px solid var(--hair)}
+.spine li a:hover{color:var(--ink);text-decoration:none}
+.spine li.on a{color:var(--gold);border-left-color:var(--gold)}
+article h3{font-family:var(--serif);font-weight:600;font-size:23px;letter-spacing:-.01em;margin:40px 0 12px;scroll-margin-top:72px}
+article h4{font-size:15.5px;margin:26px 0 8px;scroll-margin-top:72px}
+article p{margin:0 0 13px;max-width:76ch;color:var(--ink-mid)}
+article li{margin:0 0 7px;color:var(--ink-mid)}
+article ul,article ol{margin:0 0 14px;padding-left:22px}
+article blockquote{border-left:3px solid var(--gold);background:var(--panel);border-radius:0 10px 10px 0;
+  padding:12px 18px;margin:0 0 16px}
+article blockquote p{margin:0}
+article hr{border:0;height:1px;background:var(--hair);margin:34px 0}
+article code{font-family:var(--mono);font-size:.86em;background:var(--panel-2);border:1px solid var(--hair);border-radius:5px;padding:1px 6px;color:var(--gold-hi)}
+article pre{font-family:var(--mono);font-size:12.5px;line-height:1.55;background:var(--panel);border:1px solid var(--hair);
+  border-radius:12px;padding:16px 18px;overflow-x:auto;margin:0 0 16px;color:var(--ink-mid)}
+.tw{overflow-x:auto;margin:0 0 18px;border:1px solid var(--hair);border-radius:12px;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel)}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mid);
+  text-align:left;padding:10px 14px;border-bottom:1px solid var(--hair-2);background:var(--panel-2)}
+td{padding:10px 14px;border-bottom:1px solid var(--hair);vertical-align:top;color:var(--ink-mid)}
+tr:last-child td{border-bottom:0}
+footer{border-top:1px solid var(--hair)}
+footer .in{max-width:1120px;margin:0 auto;padding:22px 30px;font-size:12.5px;color:var(--ink-mid)}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="brand"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style="flex-shrink:0;vertical-align:-4px"><path d="M10 10 C7.6 6.9 3.1 6.6 3.1 10 C3.1 13.4 7.6 13.1 10 10" fill="none" stroke="var(--weft)" stroke-width="1.7" stroke-linecap="round"/><path d="M10 10 C12.4 6.9 16.9 6.6 16.9 10 C16.9 13.4 12.4 13.1 10 10" fill="none" stroke="var(--gold)" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="10" r="2.9" fill="var(--ground)"/><circle cx="10" cy="10" r="1.7" fill="var(--gold)"/><circle cx="10" cy="10" r="0.7" fill="var(--ground)"/></svg> Spindleloom &middot; <b>Guides</b></span>
+  <nav aria-label="Site">
+    <a href="index.html">Home</a>
+    <a href="personas/index.html">Hub</a>
+    <a href="project-overview.html">Overview</a>
+    <a href="governance-handbook.html">Governance</a>
+    <a href="readme.html">All guides</a>
+  </nav>
+  <button class="toggle" id="themeToggle" aria-label="Toggle light or dark theme">&#9681; theme</button>
+</div>
+<header class="hero"><div class="in">
+  <div class="kicker">Spindleloom &middot; knowledge hub</div>
+  <h1>Project Guides — what lives here, and who reads what</h1>
+  <p class="note">Generated reading view. Source of truth: <a href="../knowledge_hub/README.md"><code>knowledge_hub/README.md</code></a> --
+  edit the MD, then run <code>python hooks/build_guides_site.py</code>.</p>
+</div></header>
+<div class="layout">
+  <nav class="spine" aria-label="Contents"><div class="sp-part">On this page</div><ol><li><a href="#g-layer-1-understand-what-is-this-project-readers-html">Layer 1 · UNDERSTAND — &quot;what is this project?&quot; (readers, HTML)</a></li>
+<li><a href="#g-layer-2-operate-what-do-i-run-by-role-html">Layer 2 · OPERATE — &quot;what do *I* run?&quot; (by role, HTML)</a></li>
+<li><a href="#g-layer-3-govern-standards-references-maintainers-agents-md">Layer 3 · GOVERN — standards &amp; references (maintainers + agents, MD)</a></li>
+<li><a href="#g-archive">`archive/`</a></li>
+<li><a href="#g-related-outside-this-folder">Related, outside this folder</a></li></ol></nav>
+  <main><article><p><b>This folder is the knowledge hub</b> -- the Markdown sources of truth. <b>The browsable website lives in <a href="index.html"><code>../spindleloom_website/</code></a></b>: every <code>.md</code> here has a generated reading twin there (<code>BEST-PRACTICES.md</code> -&gt; <code>best-practices.html</code>, ...), derived by <code>hooks/build_guides_site.py</code> with a <code>--check</code> drift gate. Edit the MD here, never the twin.</p>
+<p>One owner per fact. Every topic below has exactly <b>one</b> home; every other file links to it instead of restating it. If you find yourself updating the same fact in two files here, the architecture is wrong — fix the ownership, not both copies.</p>
+<h3 id="g-layer-1-understand-what-is-this-project-readers-html">Layer 1 · UNDERSTAND — "what is this project?" (readers, HTML)</h3>
+<div class="tw"><table>
+<tr><th>Open</th><th>It gives you</th></tr>
+<tr><td><a href="project-overview.html"><code>project-overview.html</code></a></td><td><b>The canonical end-to-end page.</b> Exec summary, loop engineering, the lifecycle, roles, all 52 agents by phase, the PBI journey, information architecture, traceability, the worked run + artifact chain, the pilot ask. If a fact about the whole system needs a home, it's here.</td></tr>
+<tr><td><a href="for-everyone.html"><code>for-everyone.html</code></a></td><td>The <b>plain-language story</b> — the wheel, the eight stages, the three moves. Deliberately links out for all detail; share this one with non-technical folks.</td></tr>
+<tr><td><a href="spindleloom-agent-fleet.html"><code>spindleloom-agent-fleet.html</code></a></td><td>The <b>interactive fleet map</b> — all 52 agents and every delegation edge, filterable.</td></tr>
+</table></div>
+<h3 id="g-layer-2-operate-what-do-i-run-by-role-html">Layer 2 · OPERATE — "what do <i>I</i> run?" (by role, HTML)</h3>
+<div class="tw"><table>
+<tr><th>Open</th><th>It gives you</th></tr>
+<tr><td><a href="claude-prompt-library.html"><code>claude-prompt-library.md</code></a></td><td>The generic Claude power-prompts people share, <b>each mapped to the fleet specialist that does it better</b>, plus the official Claude Code prompt library and model-specific prompting tips. The fleet's own 54 per-role prompts live in the personas hub's Prompt-library lens.</td></tr>
+<tr><td><a href="personas/index.html"><code>personas/</code></a></td><td><b>The Persona Field Handbook</b> — 15 role playbooks (builder + business side). Per role: the agents you drive, copy-ready prompts, your I/O contract, the gates you own, KPIs, hand-offs, troubleshooting, glossary. <i>The single by-role surface</i> — the older <code>how-to-use.html</code> is archived; <code>role-playbooks.html</code> was removed after salvage.</td></tr>
+</table></div>
+<h3 id="g-layer-3-govern-standards-references-maintainers-agents-md">Layer 3 · GOVERN — standards &amp; references (maintainers + agents, MD)</h3>
+<blockquote><p>Prefer reading in a browser? <a href="governance-handbook.html"><code>governance-handbook.html</code></a> renders <code>GOVERNANCE.md</code> as one navigable page. It is a <b>generated view</b> -- edit the MD source, never the HTML.</p></blockquote>
+<div class="tw"><table>
+<tr><th>Read</th><th>It owns</th></tr>
+<tr><td><a href="governance-handbook.html"><code>GOVERNANCE.md</code></a></td><td>The merged governance standard. <b>Part I</b> the versioned layout mandate for adopter repos (tree, profiles, cadence planes, ID immutability, conformance, the golden rule, baselines, retrieval, the tools); <b>Part II</b> story craft (cards, INVEST, AC, splitting, sizing); <b>Part III</b> the 9-person mapping, epic decomposition, Azure DevOps fit.</td></tr>
+<tr><td><a href="best-practices.html"><code>BEST-PRACTICES.md</code></a></td><td>The documentation funnel, feedback loops, the requirement-quality standard (29148/INCOSE), traceability backbone, gates, delivery patterns.</td></tr>
+<tr><td><a href="agent-authoring.html"><code>AGENT-AUTHORING.md</code></a></td><td>The contract-block schema + prompting conventions. Read before creating/editing any agent.</td></tr>
+<tr><td><a href="loopwright.html"><code>LOOPWRIGHT.md</code></a></td><td>The delivery-loop layer: inner/outer loops, DevEx, measuring &amp; tightening, agents-to-loops map.</td></tr>
+<tr><td><a href="harness-matrix.html"><code>HARNESS-MATRIX.md</code></a></td><td>The 7-surface × 4-tool matrix the harness generator targets.</td></tr>
+<tr><td><a href="fleet-eval.html"><code>FLEET-EVAL.md</code></a></td><td>The behavioral E2E regression protocol (golden brief + judge rubric).</td></tr>
+<tr><td><a href="improvements.html"><code>IMPROVEMENTS.md</code></a></td><td>The living improvement register (audit-driven backlog for the toolkit itself).</td></tr>
+</table></div>
+<h3 id="g-archive"><code>archive/</code></h3>
+<p>Spent or superseded documents, kept for the record: the 2026 positioning piece (<code>AI-2026-TRENDS-AND-COVERAGE.md</code> -- its gaps were all built, so it read as marketing, not a to-do list), the pilot plan + both readouts, and the pre-personas <code>how-to-use.html</code> (its worked example was folded into <code>project-overview.html</code> §12, its invoke primer into the personas hub). <code>role-playbooks.html</code> was removed outright after its artifact chain, prompt-ingredients model and MCP scenarios were folded in. Nothing in <code>archive/</code> is load-bearing; don't link to it from new work except as history.</p>
+<h3 id="g-related-outside-this-folder">Related, outside this folder</h3>
+<ul>
+<li>Repo root <a href="../README.md"><code>README.md</code></a> — install, quick start, the 23 slash commands.</li>
+<li><a href="../hooks/HOOKS.md"><code>hooks/HOOKS.md</code></a> — every hook/script, and how to wire them.</li>
+<li><a href="../agents/INDEX.md"><code>agents/INDEX.md</code></a> / <a href="../agents/HELP.md"><code>agents/HELP.md</code></a> — generated agent indexes.</li>
+<li><a href="brand/"><code>../spindleloom_website/brand/</code></a> — the Woven Loop identity study + the live run-state widget; the SVG marks stay in <a href="../assets/"><code>../assets/</code></a>.</li>
+</ul></article></main>
+</div>
+<footer><div class="in">
+  Part of the <a href="readme.html">Spindleloom website</a> &middot; front door: the
+  <a href="personas/index.html">Persona Field Handbook</a>.
+</div></footer>
+<script>
+const root=document.documentElement;
+try{const _st=localStorage.getItem("sl-theme");if(_st)root.setAttribute("data-theme",_st);}catch(e){}
+document.getElementById("themeToggle").addEventListener("click",()=>{
+  const dark=matchMedia("(prefers-color-scheme:dark)").matches;
+  const cur=root.getAttribute("data-theme")||(dark?"dark":"light");
+  const next=cur==="dark"?"light":"dark";
+  root.setAttribute("data-theme",next);
+  try{localStorage.setItem("sl-theme",next);}catch(e){}
+});
+const items=[...document.querySelectorAll(".spine li")];
+const map={};items.forEach(li=>{const a=li.querySelector("a");if(a)map[a.getAttribute("href").slice(1)]=li;});
+const spy=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){
+  items.forEach(l=>l.classList.remove("on"));const li=map[e.target.id];if(li)li.classList.add("on");}}),
+  {rootMargin:"-20% 0px -70% 0px"});
+document.querySelectorAll("article h3[id]").forEach(h=>spy.observe(h));
+</script>
+</body>
+</html>

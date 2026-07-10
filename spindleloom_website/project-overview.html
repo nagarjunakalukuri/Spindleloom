@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Project Management Agents -- End-to-End Engineering Toolkit</title>
+<title>Spindleloom -- End-to-End Engineering Toolkit</title>
 <style>
  :root{
  --bg:#0d1117; --panel:#151b23; --panel2:#1c242e; --line:#2a3440;
@@ -238,6 +238,7 @@
  <a href="#ia">Where it lives</a>
  <a href="#plan">Project Plan</a>
  <a href="#trace">Traceability</a>
+ <a href="#worked">Worked run</a>
  <a href="#next">Next step</a>
 </div></nav>
 
@@ -247,11 +248,11 @@
  <p class="lead">A toolkit of <b>52 specialized agents</b> that carry a software project across its whole life: discover the need, write the specs, break work into PBIs, run the sprint, write &amp; review code, test it, ship it, operate it, and learn from it. Every stage hands off cleanly, traces by stable IDs, and is gated for quality -- engineered as a chain of fast feedback loops.</p>
  <div class="chips">
  <span class="chip"><b>52</b> agents</span>
- <span class="chip"><b>50</b> reusable templates</span>
- <span class="chip"><b>22</b> skills</span>
- <span class="chip"><b>13</b> slash commands</span>
+ <span class="chip"><b>51</b> reusable templates</span>
+ <span class="chip"><b>28</b> skills</span>
+ <span class="chip"><b>23</b> slash commands</span>
  <span class="chip"><b>5</b> lifecycle phases</span>
- <span class="chip"><b>11-person</b> team ready</span>
+ <span class="chip"><b>10-person</b> team ready</span>
  <span class="chip">Azure DevOps&nbsp;&amp;&nbsp;Jira&nbsp;fit</span>
  <span class="chip">Claude Code . Cursor . Copilot . Windsurf</span>
  <span class="chip">Loop-engineered</span>
@@ -274,7 +275,7 @@
  <li><b>Audit-ready governance</b> -- traceability + RAID + go/no-go on by default.</li>
  <li><b>AI-leverage</b> -- the specs &amp; gates are exactly the guardrails autonomous AI coding needs.</li></ul></div>
  <div class="card"><h3>What it is (engineer's view)</h3><ul>
- <li>52 role-specialist agents + 50 templates + 22 skills + 13 slash commands across the full SDLC.</li>
+ <li>52 role-specialist agents + 52 templates + 28 skills + 23 slash commands across the full SDLC.</li>
  <li>An automation layer that auto-builds the agent index and enforces RTM, PBI-orphan &amp; ADR-reference integrity (Python hooks).</li>
  <li><b>Portable</b> -- one source emits native bundles for Claude Code, Cursor, Copilot &amp; Windsurf (no lock-in).</li>
  <li>Stack-agnostic core + FE/BE/API/data depth.</li>
@@ -283,7 +284,7 @@
  <div class="card"><h3>Honest status</h3><ul>
  <li>Coverage &amp; consistency: <b>strong</b> (audited, no orphans).</li>
  <li>Prompt-engineering quality: <b>clean</b> (no over-triggering).</li>
- <li>Validation: <b>early signal, full pilot pending</b> -- an interim proxy run on live code (<code>PILOT-READOUT.md</code>) showed the gates catch real defects; the human-team pilot is the next proof.</li>
+ <li>Validation: <b>early signal, full pilot pending</b> -- an interim proxy run on live code (<code>archive/PILOT-READOUT.md</code>) showed the gates catch real defects; the human-team pilot is the next proof.</li>
  <li>Critic's rating: <b>~7.8 / 10</b> -- excellent blueprint, prove it with one full pilot.</li></ul></div>
  </div>
  <div class="callout"><b>The ask / next step:</b> approve a <b>4-6 week pilot</b> on one real project (or the lean AI-native pod) to validate output quality and measure cycle-time and defect-escape impact -- that's what moves this from "excellent design" to "proven practice."</div>
@@ -414,7 +415,7 @@
  <p class="lead2">Loop engineering's rule -- <b>fewer hands per change = tighter loops</b> -- points to a small, cross-functional <b>pod</b> that owns a slice end to end and runs its own inner + outer loop. Scale a product by adding pods, not by enlarging one team.</p>
  <div class="grid g2">
  <div class="card"><h3>The AI-native pod (4-5 people)</h3>
- <p class="muted" style="font-size:.88rem">The 2026 minimal viable team -- delivers what a 10-person team did a few years ago, with AI agents handling most implementation under human guardrails.</p>
+ <p class="muted" style="font-size:.88rem">The 2026 minimal viable team -- delivers what a much larger team did a few years ago, with AI agents handling most implementation under human guardrails.</p>
  <ul>
  <li><b>AI Orchestrator</b> (senior eng) -- sets guardrails, delegates to AI agents, validates output</li>
  <li><b>Product Lead</b> (AI-literate) -- PRD, backlog priority, acceptance</li>
@@ -431,7 +432,7 @@
  </ul></div>
  </div>
  <h3 style="margin-top:24px">A pod's sprint -- the delivery loop in practice</h3>
- <p class="lead2" style="font-size:.95rem">Each sprint, the pod runs the <b>whole outer loop on its own slice and ships</b> -- no waiting on other teams. Same cadence as the 11-person team, just fewer hands per lap.</p>
+ <p class="lead2" style="font-size:.95rem">Each sprint, the pod runs the <b>whole outer loop on its own slice and ships</b> -- no waiting on other teams. Same cadence as the 10-person team, just fewer hands per lap.</p>
  <div class="oflow">
  <div class="orow"><span class="ostage" style="color:var(--accent2)">Plan</span><span class="oseq">Product Lead sets the sprint goal &amp; pulls Ready PBIs <span class="omuted">(sprint-planner . estimation-facilitator)</span></span></div>
  <div class="orow"><span class="ostage" style="color:var(--teal)">Build</span><span class="oseq">AI Orchestrator delegates to AI agents; the pod codes &amp; unit-tests <span class="omuted">(inner loop . ai-orchestrator . coding-standards-writer)</span></span></div>
@@ -755,12 +756,12 @@
  <p class="muted" style="margin-top:14px;font-size:.86rem"><code>doc-strategy-advisor</code> recommends this storage model (it's <b>project-level</b>, not per-PBI); <code>backlog-manager</code> treats any PBI markdown as staging for the tracker. Full detail in <code>BEST-PRACTICES.md -> "Where artifacts live"</code>.</p>
 
  <h3 style="margin-top:30px">Where it <em>runs</em> -- one source, every harness</h3>
- <p class="lead2" style="font-size:.95rem">The toolkit isn't tied to one AI coding tool. <b>Spindleloom</b> keeps a single source; the harness generator (<code>hooks/build_harness_artifacts.py</code>) emits <b>native artifacts per tool</b> -- so the same 52 agents, 22 skills and 13 commands work in whatever your developers already use. No per-tool rewrite, no lock-in.</p>
+ <p class="lead2" style="font-size:.95rem">The toolkit isn't tied to one AI coding tool. <b>Spindleloom</b> keeps a single source; the harness generator (<code>hooks/build_harness_artifacts.py</code>) emits <b>native artifacts per tool</b> -- so the same 52 agents, 28 skills and 23 commands work in whatever your developers already use. No per-tool rewrite, no lock-in.</p>
  <div class="gwrap"><table>
  <tr><th>Surface</th><th>Claude Code</th><th>Cursor</th><th>GitHub Copilot</th><th>Windsurf</th></tr>
  <tr><td>Agents (52)</td><td>... native</td><td>... rules / agents</td><td>... chatmodes / agents</td><td> rules</td></tr>
- <tr><td>Skills (22)</td><td>... native</td><td>... native</td><td>... native</td><td>... native</td></tr>
- <tr><td>Slash commands (12)</td><td>... native</td><td>... native</td><td>... prompts</td><td>... workflows</td></tr>
+ <tr><td>Skills (28)</td><td>... native</td><td>... native</td><td>... native</td><td>... native</td></tr>
+ <tr><td>Slash commands (23)</td><td>... native</td><td>... native</td><td>... prompts</td><td>... workflows</td></tr>
  <tr><td>Hooks / validation</td><td>... native</td><td>... native</td><td> preview</td><td> preview</td></tr>
  <tr><td>MCP server</td><td>... native</td><td>... native</td><td>... native</td><td> user-global</td></tr>
  </table></div>
@@ -771,7 +772,7 @@
 <section id="plan"><div class="wrap">
  <span class="sec-tag">How it runs</span>
  <h2>10 . The project plan, in motion</h2>
- <p class="lead2">For an 11-person team on Azure DevOps, the toolkit is the <b>authoring &amp; standardisation layer</b>; Azure Boards is the <b>system of record</b>.</p>
+ <p class="lead2">For a 10-person team on Azure DevOps, the toolkit is the <b>authoring &amp; standardisation layer</b>; Azure Boards is the <b>system of record</b>.</p>
 
  <div class="roadmap">
  <div class="rmrow">
@@ -865,7 +866,7 @@
  <ul>
  <li><b>Metric gaming (Goodhart's law).</b> Optimise velocity or DORA numbers and teams inflate points or ship trivial PRs to juice deploy frequency. The dashboard goes green; value doesn't.</li>
  <li><b>Local-optimisation trap.</b> Teams shave 5 min off CI while the real delay is two-day decision latency or vague requirements. The cheap-to-measure loop gets tuned; the expensive one is ignored.</li>
- <li><b>Tooling &amp; platform overhead.</b> An IDP is itself a system to build and maintain -- a new loop. For an 11-person team, heavy platform investment can cost more than it saves.</li>
+ <li><b>Tooling &amp; platform overhead.</b> An IDP is itself a system to build and maintain -- a new loop. For a 10-person team, heavy platform investment can cost more than it saves.</li>
  <li><b>Speed without clarity = churn.</b> Faster loops that return cryptic failures just let you make mistakes faster. The clarity half is harder and often skipped.</li>
  <li><b>AI's new bottleneck.</b> Naive "ship faster-- with AI can <i>increase</i> rework -- the verification loop, not the keystroke, is now the constraint.</li>
  </ul>
@@ -911,11 +912,54 @@
  <div class="callout" style="margin-top:22px"><b>See it end to end -- the committed worked example.</b> The repo ships a full worked example -- <b>FreshDesk</b>, a meal-planning app (<code>examples/healthy-meal-app/</code>) -- with the whole chain produced and committed: a project <b>constitution</b> -> <b>MRD -> BRD -> PRD -> FRD -> SRS -> SDD -> TSD</b>, plus <code>ADR-0001</code> and <code>RFC-0001</code>. It's the document spine of section 03 and the traceability of this section instantiated on one real feature -- evidence the handoffs and IDs actually connect, not just on paper.</div>
 </div></section>
 
+
+<!-- WORKED EXAMPLE + ARTIFACT CHAIN (folded in from how-to-use.html / role-playbooks.html) -->
+<section id="worked"><div class="wrap">
+ <span class="sec-tag">Proof by construction</span>
+ <h2>12 . The worked run -- who runs what, in order</h2>
+ <p class="lead2">The repo ships a full run in <code>examples/healthy-meal-app/</code> (MRD &rarr; tech-debt register, tied by one RTM) and an honest behavioral one in <code>examples/medremind-fleet-eval/</code>. This is the order of operations any project follows:</p>
+ <table>
+ <tr><th>Step</th><th>Role</th><th>Runs</th><th>Produces</th></tr>
+ <tr><td>1</td><td>Sponsor / PM</td><td><code>mrd-writer</code> &rarr; <code>brd-writer</code></td><td>market case, business goals</td></tr>
+ <tr><td>2</td><td>Architect</td><td><code>/spec-constitution</code></td><td>standing guardrails</td></tr>
+ <tr><td>3</td><td>PM</td><td><code>prd-writer</code></td><td>product behavior + metrics</td></tr>
+ <tr><td>4</td><td>Designer</td><td><code>ux-ui-designer</code></td><td>flows, wireframes, hi-fi UI</td></tr>
+ <tr><td>5</td><td>Lead / BA</td><td><code>frd-writer</code></td><td>feature behavior + edge cases</td></tr>
+ <tr><td>6</td><td>Architect</td><td><code>srs-writer</code> &rarr; <code>sdd-writer</code> &rarr; <code>rfc-facilitator</code> &rarr; <code>adr-writer</code></td><td>constraints, blueprint, decisions</td></tr>
+ <tr><td>7</td><td>Lead</td><td><code>tsd-writer</code> . <code>api-designer</code> . <code>data-modeler</code></td><td>build spec + contracts</td></tr>
+ <tr><td>8</td><td>PM</td><td><code>backlog-manager</code> &rarr; <code>estimation-facilitator</code> &rarr; <code>sprint-planner</code></td><td>sprint-ready backlog</td></tr>
+ <tr><td>9</td><td>Dev</td><td>build &rarr; <code>test-author</code> &rarr; <code>pr-author</code></td><td>code + tests + PR</td></tr>
+ <tr><td>10</td><td>Reviewers</td><td><code>code-reviewer</code> + <code>security-reviewer</code> + <code>accessibility-auditor</code></td><td>verified change</td></tr>
+ <tr><td>11</td><td>SRE / Release</td><td><code>pipeline-engineer</code> &rarr; <code>sre</code> &rarr; <code>release-manager</code></td><td>shipped &amp; monitored</td></tr>
+ <tr><td>12</td><td>PM / Team</td><td><code>product-analytics</code> . <code>retrospective-facilitator</code> . <code>tech-debt-keeper</code></td><td>learnings &rarr; next backlog</td></tr>
+ </table>
+ <h3 style="margin-top:34px;font-size:1.05rem">The artifact chain -- each document, its producer, its consumers</h3>
+ <p class="muted" style="font-size:.88rem;margin-top:6px">Shared artifacts (consumed by several agents downstream) are where a wrong sentence costs the most -- they carry the strongest quality gates.</p>
+ <table>
+ <tr><th>Phase</th><th>Artifact</th><th>Produced by</th><th>Consumed by</th></tr>
+ <tr><td>Discover</td><td><code>docs/MRD.md</code></td><td>mrd-writer</td><td>brd-writer</td></tr>
+ <tr><td>Discover</td><td><code>docs/BRD.md</code></td><td>brd-writer</td><td>prd-writer, urs-writer</td></tr>
+ <tr><td>Define</td><td><code>docs/PRD.md</code> <b style="color:var(--amber)">shared</b></td><td>prd-writer</td><td>frd-writer, srs-writer, backlog-manager</td></tr>
+ <tr><td>Define</td><td><code>docs/URS.md</code></td><td>urs-writer</td><td>compliance-checker, srs-writer</td></tr>
+ <tr><td>Specify</td><td><code>docs/FRD.md</code> <b style="color:var(--amber)">shared</b></td><td>frd-writer</td><td>srs-writer, test-plan-writer, developers</td></tr>
+ <tr><td>Specify</td><td><code>docs/SRS.md</code> <b style="color:var(--amber)">shared</b></td><td>srs-writer</td><td>sdd-writer, test-plan-writer</td></tr>
+ <tr><td>Specify</td><td><code>docs/backlog.md</code></td><td>backlog-manager</td><td>sprint-planner</td></tr>
+ <tr><td>Design</td><td><code>docs/SDD.md</code> <b style="color:var(--amber)">shared</b></td><td>architect, sdd-writer</td><td>tsd-writer, developers</td></tr>
+ <tr><td>Design</td><td><code>ADR-NNN.md</code></td><td>adr-writer</td><td>code-reviewer, architect</td></tr>
+ <tr><td>Design</td><td><code>docs/TSD.md</code> <b style="color:var(--amber)">shared</b></td><td>tsd-writer</td><td>backend + frontend developers</td></tr>
+ <tr><td>Build &amp; Test</td><td>code + tests</td><td>developers</td><td>pr-author, code-reviewer, change-verifier</td></tr>
+ <tr><td>Build &amp; Test</td><td><code>TEST-PLAN.md</code></td><td>test-plan-writer</td><td>test-author, qa-tester</td></tr>
+ <tr><td>Ship</td><td>QA results</td><td>qa-tester, change-verifier</td><td>release-manager</td></tr>
+ <tr><td>Ship</td><td>release checklist</td><td>release-manager</td><td>sre</td></tr>
+ </table>
+ <p class="muted" style="font-size:.84rem;margin-top:10px">By-role operating detail -- the agents each role drives, copy-ready prompts, gates and hand-offs -- lives in the <a href="personas/index.html">Persona Field Handbook</a>; the full delegation graph is the <a href="spindleloom-agent-fleet.html">interactive fleet map</a>.</p>
+</div></section>
+
 <!-- NEXT STEP / PILOT -->
 <section id="next"><div class="wrap">
  <span class="sec-tag">The ask</span>
- <h2>12 . Next step -- a 4-6 week pilot to prove it</h2>
- <p class="lead2">The design is strong and complete. An <b>interim proxy run</b> on live code (a single AI-driven session -- <code>PILOT-READOUT.md</code>) already showed the framework's gates catch real defects, but it is <b>not yet proven by a full human-team pilot</b>. The right next move isn't more agents -- it's one focused pilot that turns "excellent blueprint-- into measured fact.</p>
+ <h2>13 . Next step -- a 4-6 week pilot to prove it</h2>
+ <p class="lead2">The design is strong and complete. An <b>interim proxy run</b> on live code (a single AI-driven session -- <code>archive/PILOT-READOUT.md</code>) already showed the framework's gates catch real defects, but it is <b>not yet proven by a full human-team pilot</b>. The right next move isn't more agents -- it's one focused pilot that turns "excellent blueprint-- into measured fact.</p>
  <div class="note good" style="margin-top:16px"><h4>Early signal from the interim run (proxy, not the full pilot)</h4><ul>
  <li>The <b>security gate caught a real injection-shaped bug</b> the build missed (an unsanitized value flowing into a search doc-key).</li>
  <li>The <b>traceability check found 3 untraced PBIs</b> the moment it ran -- genuine RTM gaps, not noise.</li>
@@ -939,13 +983,13 @@
  <li><b>Adjust</b> -- mixed -> keep what paid off, re-pilot.</li>
  <li><b>Stop</b> -- no lift + added overhead -> shelve.</li></ul></div>
  </div>
- <div class="callout"><b>Timeline:</b> Wk 0 baseline -> Wk 1 inception/specs/backlog -> Wk 2-4 build.review.CI.QA -> Wk 5 release/operate/retro -> Wk 6 measure &amp; readout. &nbsp; <b>Cost:</b> marginal (existing team capacity). &nbsp; <b>Upside:</b> a data-backed decision to standardize delivery. Full plan in <code>PILOT-PLAN.md</code>; interim evidence in <code>PILOT-READOUT.md</code>.</div>
+ <div class="callout"><b>Timeline:</b> Wk 0 baseline -> Wk 1 inception/specs/backlog -> Wk 2-4 build.review.CI.QA -> Wk 5 release/operate/retro -> Wk 6 measure &amp; readout. &nbsp; <b>Cost:</b> marginal (existing team capacity). &nbsp; <b>Upside:</b> a data-backed decision to standardize delivery. Full plan in <code>archive/PILOT-PLAN.md</code>; interim evidence in <code>archive/PILOT-READOUT.md</code>.</div>
 </div></section>
 
 <footer><div class="wrap">
- <p><b>Project Management Agents</b> -- 52 agents . 50 templates . 22 skills . 13 commands . a full worked example (FreshDesk).
- Covers the lifecycle end to end for an 11-person team (or a 4-5 AI-native pod), runs natively in Claude Code . Cursor . Copilot . Windsurf, and fits Azure DevOps -- engineered as a chain of fast, clear feedback loops. Comprehensive design, with an honest interim signal; full real-world proof pending.</p>
- <p class="muted">Reference docs: README . INSTALL . CONTRIBUTING . BEST-PRACTICES . AGENT-AUTHORING . HOOKS . TEAM-ROLES-AND-AZURE-DEVOPS . HARNESS-MATRIX . LOOPWRIGHT . AI-2026-TRENDS-AND-COVERAGE . SPEC-KIT-CROSSWALK . PILOT-PLAN . PILOT-READOUT.</p>
+ <p><b>Spindleloom</b> -- 52 agents . 52 templates . 28 skills . 23 commands . two full worked examples (healthy-meal-app + medremind-fleet-eval).
+ Covers the lifecycle end to end for a 10-person team (or a 4-5 AI-native pod), runs natively in Claude Code . Cursor . Copilot . Windsurf, and fits Azure DevOps -- engineered as a chain of fast, clear feedback loops. Comprehensive design with two shipped worked examples; the MedRemind behavioral eval graded A on its latest run. A full human-team pilot remains the open validation step.</p>
+ <p class="muted">Reference docs: <a href="../README.md">README</a> . <a href="../INSTALL.md">INSTALL</a> . <a href="../CONTRIBUTING.md">CONTRIBUTING</a> . <a href="../knowledge_hub/GOVERNANCE.md">GOVERNANCE (source)</a> . <a href="governance-handbook.html">Governance Handbook</a> . <a href="best-practices.html">BEST-PRACTICES</a> . <a href="agent-authoring.html">AGENT-AUTHORING</a> . <a href="../hooks/HOOKS.md">HOOKS</a> . <a href="harness-matrix.html">HARNESS-MATRIX</a> . <a href="loopwright.html">LOOPWRIGHT</a> . <a href="personas/index.html">Persona Handbook</a> . <a href="../knowledge_hub/archive/PILOT-PLAN.md">archive/PILOT-PLAN</a> . <a href="../knowledge_hub/archive/PILOT-READOUT-INTERIM.md">archive/PILOT-READOUT-INTERIM</a>.</p>
 </div></footer>
 
 <script>

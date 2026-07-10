@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Changelog -- Spindleloom Guides</title>
+<style>
+:root{
+  --ground:#0E1524; --panel:#141E2E; --panel-2:#18263A;
+  --ink:#DBE5F1; --ink-mid:#93A6BC; --ink-dim:#8497AE; --hair:#1E2E45; --hair-2:#2A3E5C;
+  --gold:#CFA23A; --gold-hi:#E7BE58; --weft:#5C90BE;
+  --shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34);
+  --serif:"Hoefler Text","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:light){:root{
+  --ground:#E9EAE5; --panel:#FFFFFF; --panel-2:#F3F3EF;
+  --ink:#16202E; --ink-mid:#47586B; --ink-dim:#556575; --hair:#DEDFD8; --hair-2:#C9CBC1;
+  --gold:#8A6816; --gold-hi:#7C5D12; --weft:#3C6C93;
+  --shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07);
+}}
+:root[data-theme="light"]{--ground:#E9EAE5;--panel:#FFFFFF;--panel-2:#F3F3EF;--ink:#16202E;--ink-mid:#47586B;--ink-dim:#556575;--hair:#DEDFD8;--hair-2:#C9CBC1;--gold:#8A6816;--gold-hi:#7C5D12;--weft:#3C6C93;--shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07)}
+:root[data-theme="dark"]{--ground:#0E1524;--panel:#141E2E;--panel-2:#18263A;--ink:#DBE5F1;--ink-mid:#93A6BC;--ink-dim:#8497AE;--hair:#1E2E45;--hair-2:#2A3E5C;--gold:#CFA23A;--gold-hi:#E7BE58;--weft:#5C90BE;--shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.66;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+b,strong{color:var(--ink)}
+::selection{background:color-mix(in srgb,var(--gold) 30%,transparent)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:2px}
+.bar{position:sticky;top:0;z-index:80;display:flex;align-items:center;gap:14px;padding:11px 26px;
+  background:color-mix(in srgb,var(--ground) 88%,transparent);backdrop-filter:blur(9px);border-bottom:1px solid var(--hair)}
+.bar .brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--ink-mid);white-space:nowrap}
+.bar .brand b{color:var(--gold)}
+.bar nav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.bar nav a{font-family:var(--mono);font-size:11px;color:var(--ink-mid);padding:6px 10px;border-radius:8px}
+.bar nav a:hover{color:var(--gold);text-decoration:none}
+.toggle{font-family:var(--mono);font-size:11px;color:var(--ink-mid);background:transparent;border:1px solid var(--hair-2);
+  border-radius:20px;padding:6px 13px;cursor:pointer;white-space:nowrap}
+.toggle:hover{border-color:var(--gold);color:var(--gold)}
+.hero{border-bottom:1px solid var(--hair)}
+.hero .in{max-width:1120px;margin:0 auto;padding:44px 30px 34px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-mid)}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,46px);line-height:1.05;letter-spacing:-.02em;margin:12px 0 0;text-wrap:balance}
+.hero .note{font-family:var(--mono);font-size:11.5px;color:var(--ink-mid);margin-top:14px}
+.layout{max-width:1120px;margin:0 auto;padding:34px 30px 80px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:44px}
+@media(max-width:960px){.layout{grid-template-columns:1fr}.spine{display:none}}
+.spine{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 90px);overflow:auto;font-size:12.5px}
+.spine .sp-part{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;margin:18px 0 6px;color:var(--gold)}
+.spine ol{list-style:none}
+.spine li a{display:block;color:var(--ink-mid);padding:3px 0 3px 12px;border-left:2px solid var(--hair)}
+.spine li a:hover{color:var(--ink);text-decoration:none}
+.spine li.on a{color:var(--gold);border-left-color:var(--gold)}
+article h3{font-family:var(--serif);font-weight:600;font-size:23px;letter-spacing:-.01em;margin:40px 0 12px;scroll-margin-top:72px}
+article h4{font-size:15.5px;margin:26px 0 8px;scroll-margin-top:72px}
+article p{margin:0 0 13px;max-width:76ch;color:var(--ink-mid)}
+article li{margin:0 0 7px;color:var(--ink-mid)}
+article ul,article ol{margin:0 0 14px;padding-left:22px}
+article blockquote{border-left:3px solid var(--gold);background:var(--panel);border-radius:0 10px 10px 0;
+  padding:12px 18px;margin:0 0 16px}
+article blockquote p{margin:0}
+article hr{border:0;height:1px;background:var(--hair);margin:34px 0}
+article code{font-family:var(--mono);font-size:.86em;background:var(--panel-2);border:1px solid var(--hair);border-radius:5px;padding:1px 6px;color:var(--gold-hi)}
+article pre{font-family:var(--mono);font-size:12.5px;line-height:1.55;background:var(--panel);border:1px solid var(--hair);
+  border-radius:12px;padding:16px 18px;overflow-x:auto;margin:0 0 16px;color:var(--ink-mid)}
+.tw{overflow-x:auto;margin:0 0 18px;border:1px solid var(--hair);border-radius:12px;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel)}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mid);
+  text-align:left;padding:10px 14px;border-bottom:1px solid var(--hair-2);background:var(--panel-2)}
+td{padding:10px 14px;border-bottom:1px solid var(--hair);vertical-align:top;color:var(--ink-mid)}
+tr:last-child td{border-bottom:0}
+footer{border-top:1px solid var(--hair)}
+footer .in{max-width:1120px;margin:0 auto;padding:22px 30px;font-size:12.5px;color:var(--ink-mid)}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="brand"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style="flex-shrink:0;vertical-align:-4px"><path d="M10 10 C7.6 6.9 3.1 6.6 3.1 10 C3.1 13.4 7.6 13.1 10 10" fill="none" stroke="var(--weft)" stroke-width="1.7" stroke-linecap="round"/><path d="M10 10 C12.4 6.9 16.9 6.6 16.9 10 C16.9 13.4 12.4 13.1 10 10" fill="none" stroke="var(--gold)" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="10" r="2.9" fill="var(--ground)"/><circle cx="10" cy="10" r="1.7" fill="var(--gold)"/><circle cx="10" cy="10" r="0.7" fill="var(--ground)"/></svg> Spindleloom &middot; <b>Guides</b></span>
+  <nav aria-label="Site">
+    <a href="index.html">Home</a>
+    <a href="personas/index.html">Hub</a>
+    <a href="project-overview.html">Overview</a>
+    <a href="governance-handbook.html">Governance</a>
+    <a href="readme.html">All guides</a>
+  </nav>
+  <button class="toggle" id="themeToggle" aria-label="Toggle light or dark theme">&#9681; theme</button>
+</div>
+<header class="hero"><div class="in">
+  <div class="kicker">Spindleloom &middot; knowledge hub</div>
+  <h1>Changelog</h1>
+  <p class="note">Generated reading view. Source of truth: <a href="../CHANGELOG.md"><code>CHANGELOG.md</code></a> --
+  edit the MD, then run <code>python hooks/build_guides_site.py</code>.</p>
+</div></header>
+<div class="layout">
+  <nav class="spine" aria-label="Contents"><div class="sp-part">On this page</div><ol><li><a href="#g-unreleased">[Unreleased]</a></li>
+<li><a href="#g-0-4-0-2026-07-10">[0.4.0] — 2026-07-10</a></li>
+<li><a href="#g-0-3-0-2026-07-09">[0.3.0] — 2026-07-09</a></li>
+<li><a href="#g-0-2-0-2026-07-07">[0.2.0] — 2026-07-07</a></li></ol></nav>
+  <main><article><p>All notable changes to Spindleloom. Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>; versions follow SemVer (pre-1.0: minor bumps may break).</p>
+<h3 id="g-unreleased">[Unreleased]</h3>
+<p>Documentation consolidation, a role-based field handbook, and the Woven Loop brand — layered on 0.4.0's platform. No behavioral change to the fleet's contracts; this is the human-facing surface.</p>
+<h4 id="g-added">Added</h4>
+<ul>
+<li><b>Persona Field Handbook</b> (<code>spindleloom_website/personas/</code>): a single-file hub plus 15 standalone role pages (builder side + business side), each with the agents that role drives, copy-ready prompts, its I/O contract, the gates it owns, KPIs, hand-offs, troubleshooting and a glossary. The hub is a five-tab front door for all of <code>project_guides</code> — Start here, Personas, Phases (a 10-phase rail with gate owners), Prompt library (54 filterable prompts + the invoke primer), and a Guides directory.</li>
+<li><b>Woven Loop identity</b> (<code>spindleloom_website/brand/</code>): the lemniscate SDLC mark, a run-ledger-driven live widget, and an animated loop hero on every persona/guide page (theme-aware canvas, <code>prefers-reduced-motion</code> respected). The mark is inlined in the fleet map and personas hub.</li>
+<li><b><code>knowledge_hub/GOVERNANCE.md</code></b> — the merged governance standard: <b>STANDARD.md + STORY-CRAFT.md + TEAM-ROLES-AND-AZURE-DEVOPS.md + INFORMATION-ARCHITECTURE.md</b> consolidated into one file (Part I the layout standard, Part II story craft, Part III team + Azure DevOps), with the IA detail folded into Part I §§12-15. Old <code>STANDARD.md §N</code> maps 1:1 to <code>Part I §N</code>. A generated reading view ships as <code>governance-handbook.html</code>.</li>
+<li><b><code>knowledge_hub/claude-prompt-library.md</code></b> (moved from repo root) — the generic Claude power-prompts, each mapped to the fleet specialist that does it better, plus the official prompt library and model-specific tips.</li>
+</ul>
+<h4 id="g-changed">Changed</h4>
+<ul>
+<li><b>Repo restructure: <code>project_guides/</code> split into <code>knowledge_hub/</code> (the Markdown sources of truth) and <code>spindleloom_website/</code> (the browsable site: all HTML pages, personas, brand studies, and the generated reading twins).</b> Every citation, generator, validator, gate pattern and shipped-bundle path rewired; legacy <code>project_guides/*</code> markers kept in <code>scaffold.py</code> for pre-rename distributions.</li>
+</ul>
+<ul>
+<li><b><code>knowledge_hub/</code> segregated to one owner per fact</b> with a front-door <code>README.md</code> (Understand / Operate / Govern). The role-by-role surface is now the persona handbook; the fleet map gained a skills band, corrected index-edge counts, and a11y fixes.</li>
+<li>Fleet-map, overview, and guide pages carry the animated loop; guide pages link out rather than restating detail.</li>
+</ul>
+<h4 id="g-removed-archived">Removed / archived</h4>
+<ul>
+<li><code>STANDARD.md</code>, <code>STORY-CRAFT.md</code>, <code>TEAM-ROLES-AND-AZURE-DEVOPS.md</code>, <code>INFORMATION-ARCHITECTURE.md</code> — merged into <code>GOVERNANCE.md</code>.</li>
+<li><code>AI-2026-TRENDS-AND-COVERAGE.md</code> and the pre-personas <code>how-to-use.html</code> moved to <code>knowledge_hub/archive/</code>; <code>role-playbooks.html</code> removed after its unique content (artifact chain, prompt-ingredient model, MCP scenarios) was folded into the overview and the handbook.</li>
+</ul>
+<h3 id="g-0-4-0-2026-07-10">[0.4.0] — 2026-07-10</h3>
+<p>Platform hardening and context-engineering fidelity on top of the multi-user concurrency layer. Validated end-to-end: the MedRemind fleet-eval moved <b>B+ → A</b> across two behavioral runs (RUN 3 = A−, RUN 4 = A), every fix below confirmed by an independent judge rather than asserted.</p>
+<h4 id="g-added-multi-user-concurrency-the-phase-acceptance-layer">Added — multi-user concurrency + the phase-acceptance layer</h4>
+<ul>
+<li><b>Phase-boundary acceptance, mechanized</b> (the centerpiece): the four upstream phases (discovery, requirements, design, planning) had no gate but prose — now the accountable role records acceptance via <b><code>sloom approve &lt;phase&gt; --feature &lt;slug&gt; --role &lt;role&gt; --by &quot;&lt;name&gt;&quot;</code></b> → <code>.spindleloom/approvals/&lt;feature&gt;/&lt;phase&gt;.md</code>, enforced identically by <code>validate_gates --accepted &lt;phase&gt;</code>, <code>sloom run advance</code> (refuses to cross an unaccepted boundary), and run-orchestrator's runnable computation. Default phase→approver matrix overridable via config <code>&quot;approvals&quot;</code>; <code>--notify-tracker</code> mirrors the acceptance as a <b>comment</b> on the mapped Azure/Jira items (<code>add_comment()</code> in both adapters — comment-only; item state stays the tracker's). "Can I start?" becomes a file check, not a meeting — and because gates are files, an autonomous loop and a human teammate hit the same gates.</li>
+<li><b>DUP-REQID collision gate</b>: two teammates on two branches independently minting the same Req-ID merged clean and silently collided — <code>audit()</code> now flags a same-kind double-mint (<code>rtm_core._DEFINING_KIND</code>); downstream citations (SDD citing an FRD id) are never false positives.</li>
+<li><b>Shared context that actually crosses machines</b>: every <code>save_context</code> also appends to the committed, git-mergeable <b><code>.spindleloom/context-log.jsonl</code></b> (the cross-machine source of truth); <code>context.db</code> + <code>chroma/</code> become local rebuildable indexes (gitignored by scaffold). New <b><code>sloom context &lt;root&gt; --import</code></b> (<code>hooks/sync_context_log.py</code>) replays teammates' entries after a pull; <code>--export</code> backfills a pre-log DB; merge-mangled lines are skipped, not fatal.</li>
+<li><b>Per-run + per-release namespacing</b>: run-state moves to <b><code>.spindleloom/runs/&lt;run-id&gt;.json</code></b> (one file pair per run — concurrent runs never clobber); release sign-offs gain <b><code>--release-id</code></b> (<code>signoffs/&lt;release-id&gt;/&lt;gate&gt;.md</code>) so two release trains never overwrite each other's tokens.</li>
+<li><b><code>sloom run status|advance &lt;run-id&gt;</code></b> — a teammate checks/advances a distributed run without an LLM; <code>advance</code> refuses when a required upstream isn't done or a crossed phase boundary lacks acceptance (the graph is the gate, hand-editing can't skip it).</li>
+<li><b>Idempotent tracker push + drift check</b>: both adapters now consult the RTM's committed mapping before creating (<code>skip PBI-X → #1234</code>; <code>--force-repush</code> overrides) — re-running <code>--apply</code> or a second teammate pushing no longer duplicates work items. New <b><code>emit_backlog.py check</code></b> reports NEW (unpushed) / GONE (orphaned) drift; wired into <code>sloom check</code>. Role rule: backlog-manager is the sole pusher, from merged <code>main</code> only.</li>
+<li><b>The adopter CI gate</b> (<code>templates/ci/sloom-gate.yml</code>, written by scaffold/migrate to <code>.github/workflows/</code>): merging to <code>main</code> now <i>proves</i> the spec battery ran — incl. DUP-REQID and the per-PBI verification requirement when the branch names one. Previously no adopter repo got any gate workflow; "merged = gates passed" was a convention.</li>
+<li><b>STANDARD.md §9 "Concurrency &amp; ownership"</b> (now <code>GOVERNANCE.md</code> Part I §9): the resource-ownership table (owner role, namespace key, merge strategy, enforcing gate per shared resource), the 10-phase acceptance graph + approver matrix, and the branch=local / main=global / PR-merge=promotion model; §3's tree now annotates every <code>.spindleloom/</code> path committed-vs-local.</li>
+</ul>
+<h4 id="g-added-context-engineering-fleet-integrity">Added — context engineering &amp; fleet integrity</h4>
+<ul>
+<li><b>Transitive upstream routing</b> in <code>build_context_pack.py</code>: each agent's pack now includes its <i>phase-bounded transitive ancestor chain</i> (digest-first, deduped), so an agent sees the whole spec funnel above it — SDD sees the FRD, estimation sees the FRD/SRS — without adding N² contract edges. Fixed the run-2/3 class where a downstream agent silently drifted from an unrouted ancestor.</li>
+<li><b><code>sloom flags</code></b> — an open-flags re-work register: a writer that hits a gap it can't fix leaves <code>FLAG(&lt;owner-agent&gt;): &lt;what&gt;</code>; <code>sloom flags</code> surfaces them grouped by owner (<code>--strict</code> gates), and <code>sloom run status</code> re-surfaces a flag whose owner is an already-<code>done</code> step as re-dispatchable re-work.</li>
+<li><b>Backlog-completeness / phantom-PBI check</b> (<code>validate_reqs</code>): flags <code>PBI-UNDEFINED</code> for a PBI referenced (deps/RTM/sprint) but never <i>defined</i> by an acceptance-criteria-bearing backlog row — a class no ID/RTM check previously caught.</li>
+<li><b>Machine-checkable quality gate</b>: a deliberate compound-shall must now carry a <code>&lt;!-- quality-ok: &lt;Req-ID&gt; &lt;reason&gt; --&gt;</code> marker to pass <code>--strict</code>; free-text justification no longer suppresses the lint. Range-shorthand lint extended to <code>…</code>/<code>...</code> ellipsis forms.</li>
+<li><b><code>code-minimalism</code> skill</b> (28th skill): the reuse→stdlib→native→one-line ladder + a <code>delete/stdlib/native/yagni/shrink</code> over-engineering review taxonomy, armed to code-reviewer and both developers.</li>
+<li><b><code>examples/medremind-fleet-eval/run3</code> + <code>run4</code></b> — two more worked end-to-end runs (isolated 10-agent pipeline + independent judge verdict each), recording the B+ → A− → A progression and the fixes that drove it.</li>
+</ul>
+<h4 id="g-fixed">Fixed</h4>
+<ul>
+<li><b>CI ran ~13 of 73 tests silently</b>: <code>pytest</code> was never installed in CI, so it fell through (<code>2&gt;/dev/null ||</code>) to <code>unittest discover</code>, which collects only <code>TestCase</code>-based tests — a broken test passed green. CI now installs pytest and runs the full suite with no fallback; a dedicated MCP-server smoke-test job; HELP + handoff freshness gates; a full checkout for spec-traceability. Pre-commit mirrors the same gates.</li>
+<li><b>Cross-platform UTF-8 mojibake</b>: printing hooks that lacked the <code>stdout.reconfigure(utf-8)</code> block rendered em-dashes as <code>?</code> on Windows (visible in the <code>sloom check</code> front door); added everywhere and repaired doubled-CR line endings.</li>
+<li><b>Req-ID grammar unified</b>: <code>build_rtm</code> and <code>validate_reqs</code> shared <code>rtm_core.REQ_ID</code>, so they can no longer disagree about what counts as an ID.</li>
+<li><b>Tracker push duplicated work items on retry / silent handoff drops</b>: partial-safe writeback (<code>try/finally</code> + atomic <code>os.replace</code>), tracker-agnostic mapping column, and stem-aware input resolution (<code>estimates</code> → <code>estimation.md</code>) that closes the last silent context-pack edge drop.</li>
+<li><b><code>PBI-ORPHAN</code> / <code>NO-RTM</code> false positives on commentary</b>: <code>rtm_core.markdown_files</code> excludes <code>verdict.md</code> / <code>README.md</code>, so a judge verdict quoting a prior run's id is never mistaken for a spec artifact.</li>
+<li><b><code>.shipwright</code> legacy-dir filter</b> restored in <code>validate_gates</code>; <b>stale counts</b> (skills/commands/templates) corrected across README/CONTRIBUTING/CLAUDE/PROJECT-OVERVIEW.</li>
+</ul>
+<h4 id="g-changed">Changed</h4>
+<ul>
+<li>Scrubbed private pilot-log and internal package references out of shipped agents and <code>solution-recon</code> examples (they surfaced in generated user-facing prompts).</li>
+<li>Hoisted the duplicated Python-interpreter-detection block out of <code>change-verifier</code>/<code>test-author</code> into the <code>verification-run-and-observe</code> skill, generalized to "resolve the toolchain first"; armed <code>defect-triage</code> on <code>qa-tester</code> + <code>incident-responder</code>.</li>
+</ul>
+<h3 id="g-0-3-0-2026-07-09">[0.3.0] — 2026-07-09</h3>
+<h4 id="g-breaking">⚠ Breaking</h4>
+<ul>
+<li><b>Tool-state dir consolidated: <code>.shipwright/</code> → <code>.spindleloom/</code></b> — one home for config, catalog, baselines, verifications, sign-offs, and the context DB. Legacy <code>.shipwright/</code> trees remain readable (config resolution and the registry follow whichever exists) and <code>scaffold.py migrate</code> renames them; new scaffolds create <code>.spindleloom/</code> only.</li>
+<li><b>The Shipwright brand is retired</b> — <code>build_harness_artifacts.py</code> is now referred to plainly as the harness generator; the project brands as Spindleloom (with the <code>sloom</code> short form) plus the Loopwright loop layer.</li>
+<li><b>MCP server renamed <code>spindleloom</code> → <code>sloom</code></b> (short for Spindleloom): tools are now <code>mcp__sloom__&lt;tool&gt;</code>, resources <code>sloom://…</code>. Re-add the server under the new key (env vars <code>SPINDLELOOM_*</code> unchanged).</li>
+<li><b>Plugin id renamed <code>spindleloom</code> → <code>sloom</code></b>: install is now <code>/plugin install sloom@spindleloom</code>; commands surface as <code>/sloom:&lt;command&gt;</code>. The marketplace name stays <code>spindleloom</code>.</li>
+<li><b>Commands reorganized into a phase taxonomy</b> (typeahead groups by funnel phase): <code>rtm-check→spec-check</code>, <code>adr-new→spec-adr</code>, <code>rfc→spec-rfc</code>, <code>constitution→spec-constitution</code>, <code>pbi-next→plan-next</code>.</li>
+</ul>
+<h4 id="g-added">Added</h4>
+<ul>
+<li><b>Harness parity + conformance</b>: every tool now gets every surface it supports — Cursor gains native agents (<code>.cursor/agents/</code>, replacing 52 pseudo-agent rules), commands, and skills; Copilot gains prompt files (the 23 commands) and skills; Windsurf gains workflows, skills, and <b>auto-condensed rules</b> (3 agents previously shipped over the 12k truncation cap and were silently cut off); the loose claude-code target is complete (commands/skills/hooks). New <code>validate_targets.py</code> gate enforces per-tool format rules incl. bundled-hook import resolution, wired into <code>sloom check</code> and CI.</li>
+<li><b><code>sloom</code> unified CLI</b> (<code>hooks/sloom.py</code>): one front door — <code>sloom check</code> auto-detects toolkit vs adopter repo and runs the right gate battery; all tools reachable as subcommands.</li>
+<li><b>The shipped plugin hook actually works now</b>: the old wiring crashed on a missing <code>rtm_core</code> import and <code>2&gt;/dev/null || true</code> swallowed it — the plugin has never validated anything for adopters. v2 ships <code>on_md_edit.py</code> + its dependencies, filters to spec <code>.md</code> edits, runs traceability + RTM checks, and surfaces failures to the model (exit 2) instead of hiding them.</li>
+<li><b>Four method skills</b> closing the methodless-agent gap: <code>test-data</code> (closes IMP-110's dangling pointer), <code>ux-design-method</code>, <code>defect-triage</code>, <code>analytics-instrumentation</code>; the register-keeper agents arm <code>agent-handoff-context</code>. Skill hygiene: stray auto-fire lines removed; the runbook structure now has one home (<code>reliability-template</code>).</li>
+<li><b><code>delete_context_entry(entry_id)</code></b> — surgical single-entry deletion (ids now surfaced by <code>list_contexts</code>/<code>get_context</code>); the context store's 19th tool.</li>
+<li><b>Context engineering, mechanized</b>: <code>hooks/build_context_pack.py</code> assembles a per-agent/task manifest (stamped contract inputs + digests, RTM slice, stale-flagged recalls, open assumptions, budget verdict); a <code>context-engineering</code> skill encodes the budget-first reading order and the <code>## Digest</code> producer convention; run-orchestrator dispatches packs, not folders; the emitted harness instructions teach recall-first reading.</li>
+<li><b>Context maintenance mechanized</b>: <code>save_context</code> entries can cite a <code>source</code> artifact and <code>recall_context</code> flags them <b>stale</b> when the registry shows the artifact changed after the save; <code>validate_gates --context &lt;task_id&gt;</code> fails a run that passed work between agents without persisting handoff context; the run-state ledger records each step's saved entry; a context-layer boundary rule (docs = facts, context.db = working notes, run-state = orchestration) lands in AGENT-AUTHORING and the handoff skill; dev-onboarding seeds the <code>project-ops</code> operating manual; FLEET-EVAL now exercises and judges the context layer.</li>
+<li><b><code>examples/medremind-fleet-eval/</code></b> — the eval's run-2 artifacts saved as the second worked example: chained agent output with handoff reports, judge verdict, living matrix RTM, and the assumption ledger in action.</li>
+<li><b>E2E eval run 2: C+ → B+</b> — all four coordination fixes verified behaviorally (0 BROKEN handoffs, DoR blocked 10 unratified-assumption items). Follow-ups applied from the judge's findings: <code>frd-writer→sdd-writer</code> and <code>urs-writer→prd-writer</code> edges, matrix-tolerant <code>build_rtm</code> presence semantics, a full-ID (no range shorthand) rule, and a quality-lint exit bar on the five requirement writers.</li>
+<li><b>Execution-quality gates mechanized</b> (<code>hooks/validate_gates.py</code> + tests): change-verifier verdicts persist to <code>.spindleloom/verifications/&lt;PBI&gt;.md</code> and are machine-checked (a PASS contradicting its own AC matrix fails); release go/no-go is a <b>computed AND</b> over <code>.spindleloom/signoffs/*.md</code> tokens written by the gate owners. The builder→pr-author bypass edges are pruned — the only path to PR now runs through the checker.</li>
+<li><b>Requirement-quality lint</b> in <code>validate_reqs.py</code> (advisory; <code>--strict</code> blocks): the 29148 vague-adjective ban-list and compound-shall smell, applied at requirement-defining lines. RTM coverage now enforced at <b>every</b> altitude (<code>COVERED_DOCS</code> + BR/PRD/URS).</li>
+<li><b>Escaped-defect register</b> (<code>templates/escaped-defect-register-template.md</code>) — every QA/prod escape names the gate that should have caught it; wired into qa-tester, incident-responder, and the retro. The test phase becomes self-measuring.</li>
+<li><b>Engineering-metrics gets a maker</b>: <code>/ops-metrics</code> (pipeline-engineer) produces the DORA/cycle-time snapshot the status-reporter consumes; new contract edges <code>pipeline-engineer→status-reporter</code> and <code>product-analytics→backlog-manager</code> (a missed PRD metric can now spawn work).</li>
+<li><b>Phase-audit improvement register</b> (<code>project_guides/IMPROVEMENTS.md</code>) — Tier 2-4 deferred items, cut-ready; mobile explicitly N/A.</li>
+<li><b>Nine new commands</b> closing the funnel's command gap: <code>/build-recon</code>, <code>/build-verify</code>, <code>/plan-estimate</code>, <code>/plan-sprint</code>, <code>/plan-retro</code>, <code>/ops-status</code>, <code>/ops-raid</code>, <code>/ops-incident</code>, <code>/ship-release</code> — the weekly ceremonies and inner-loop gates now have first-class entry points (23 commands total).</li>
+</ul>
+<h3 id="g-0-2-0-2026-07-07">[0.2.0] — 2026-07-07</h3>
+<h4 id="g-breaking">⚠ Breaking</h4>
+<ul>
+<li><b>Ten agents renamed</b> to fit the role-suffix taxonomy (<code>&lt;artifact&gt;-&lt;role&gt;</code>). Existing installs must re-run <code>install.py</code> / re-pull the plugin; old <code>subagent_type</code> names no longer resolve.</li>
+</ul>
+<p>| Old | New | |---|---| | <code>rfc</code> | <code>rfc-facilitator</code> | | <code>ci-cd-pipeline</code> | <code>pipeline-engineer</code> | | <code>coding-standards</code> | <code>coding-standards-writer</code> | | <code>raid-log</code> | <code>raid-keeper</code> | | <code>tech-debt-register</code> | <code>tech-debt-keeper</code> | | <code>tech-radar</code> | <code>tech-radar-curator</code> | | <code>incident-postmortem</code> | <code>incident-responder</code> | | <code>ai-orchestration</code> | <code>ai-orchestrator</code> | | <code>spec-driven-dev</code> | <code>spec-steward</code> |</p>
+<p>Artifact, template, and command names are unchanged (<code>coding-standards.md</code>, <code>/tech-radar</code>, <code>docs/rfc/</code>, …).</p>
+<ul>
+<li><b><code>chromadb</code> moved to the optional <code>semantic</code> extra</b> (<code>pip install spindleloom[semantic]</code> / <code>SPINDLELOOM_SEMANTIC=1</code>); the base install is stdlib-only again.</li>
+</ul>
+<h4 id="g-added">Added</h4>
+<ul>
+<li><b>Contract fields <code>loop:</code> and <code>agentic_role:</code></b> on all 52 agents — which delivery loop each agent tightens (LOOPWRIGHT §6) and its maker/checker-loop role. Surfaced as a "Loop · Role" column in the generated <code>agents/INDEX.md</code>.</li>
+<li><b>Three new validator checks</b> in <code>validate_graph.py</code> (now 13): (11) loop-classification fields present with valid values; (12) <code>spindleloom-agent-fleet.html</code> node/edge data in sync with the contract graph; (13) <b>artifact-chain</b> — every handoff edge must carry a declared artifact (the check that would have caught the SRS→SDD and URS funnel breaks).</li>
+<li><b>Coordination rules from the fleet E2E evaluation</b>: brd-writer materializes <code>docs/RTM.md</code> and every funnel writer appends its rows; the doc-strategy tier decision is binding routing for <code>run-orchestrator</code>; invented facts carry <code>ASSUMPTION-n</code> tags and a new DoR checkbox blocks unratified assumptions from sprint-committed AC.</li>
+<li>Local pre-commit gains the example-traceability gate (<code>validate_reqs</code> on <code>examples/</code>); drift-gate triggers broadened to <code>templates/</code> and <code>project_guides/</code>.</li>
+</ul>
+<h4 id="g-fixed">Fixed</h4>
+<ul>
+<li><b>Shipwright now sweeps orphaned target files.</b> Renaming/removing a source agent left its old generated file in every <code>targets/&lt;harness&gt;/</code> bundle (this release's renames stranded 51 stale files — installs would have loaded both old and new agents). The generator now deletes files it no longer emits, and <code>--check</code> fails on orphans.</li>
+<li><b>Contract-graph funnel breaks</b>: <code>sdd-writer</code> now declares SRS + recon inputs; the URS regulated branch is wired at both ends (<code>brd-writer → urs-writer</code>, URS consumed by frd/srs-writer); <code>tsd-writer</code> hands off to <code>backend-developer</code>/<code>pipeline-engineer</code>; the <code>backlog-manager</code>, <code>adr-writer</code>, <code>rfc-facilitator</code>, and 14 other agents now declare the artifacts their edges actually deliver.</li>
+<li>SEC/UX/A11Y IDs now have RTM columns; <code>qa-tester</code>/<code>accessibility-auditor</code> declare their <code>gate:</code>; role labels corrected (<code>performance-engineer</code>, <code>dev-onboarding</code> → maker).</li>
+<li>Four broken skill↔agent pairings re-armed; two orphan templates re-linked from their producing agents.</li>
+<li>Docs drift: <code>HOOKS.md</code> now documents the real 18-tool/4-resource MCP surface and all validator checks; ONBOARDING agent count; README guide paths; dangling SPEC-KIT-CROSSWALK references removed; ~70 legacy <code>project_managment_agents</code> paths corrected; orphaned <code>.wheelwright/</code> removed.</li>
+<li>Agent-definition hardening from the AEP gap register (evidence-standard, gate-integrity, ghost-blocker, autospec, executed-vs-inferred rules across 8 agents + the DoR/DoD template), generalized to be project-agnostic.</li>
+</ul>
+<h4 id="g-removed">Removed</h4>
+<ul>
+<li><code>.wheelwright/</code> (pre-rename tool state; superseded by <code>.shipwright/</code> + <code>.spindleloom/</code>).</li>
+</ul></article></main>
+</div>
+<footer><div class="in">
+  Part of the <a href="readme.html">Spindleloom website</a> &middot; front door: the
+  <a href="personas/index.html">Persona Field Handbook</a>.
+</div></footer>
+<script>
+const root=document.documentElement;
+try{const _st=localStorage.getItem("sl-theme");if(_st)root.setAttribute("data-theme",_st);}catch(e){}
+document.getElementById("themeToggle").addEventListener("click",()=>{
+  const dark=matchMedia("(prefers-color-scheme:dark)").matches;
+  const cur=root.getAttribute("data-theme")||(dark?"dark":"light");
+  const next=cur==="dark"?"light":"dark";
+  root.setAttribute("data-theme",next);
+  try{localStorage.setItem("sl-theme",next);}catch(e){}
+});
+const items=[...document.querySelectorAll(".spine li")];
+const map={};items.forEach(li=>{const a=li.querySelector("a");if(a)map[a.getAttribute("href").slice(1)]=li;});
+const spy=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){
+  items.forEach(l=>l.classList.remove("on"));const li=map[e.target.id];if(li)li.classList.add("on");}}),
+  {rootMargin:"-20% 0px -70% 0px"});
+document.querySelectorAll("article h3[id]").forEach(h=>spy.observe(h));
+</script>
+</body>
+</html>
