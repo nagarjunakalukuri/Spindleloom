@@ -4,6 +4,39 @@ All notable changes to Spindleloom. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+Documentation consolidation, a role-based field handbook, the Woven Loop brand, a browsable website, and five new anti-drift gates - layered on 0.4.0's platform. The fleet's contract graph is unchanged; the platform grows `sloom signoff` and a 9-gate `sloom check` battery.
+
+### Added
+
+- **Persona Field Handbook** (`spindleloom_website/personas/`): a single-file hub plus 15 standalone role pages (builder side + business side), each with the agents that role drives, copy-ready prompts, its I/O contract, the gates it owns, KPIs, hand-offs, troubleshooting and a glossary. The hub is a five-tab front door for all of `project_guides` — Start here, Personas, Phases (a 10-phase rail with gate owners), Prompt library (54 filterable prompts + the invoke primer), and a Guides directory.
+- **Woven Loop identity** (`spindleloom_website/brand/`): the lemniscate SDLC mark, a run-ledger-driven live widget, and an animated loop hero on every persona/guide page (theme-aware canvas, `prefers-reduced-motion` respected). The mark is inlined in the fleet map and personas hub.
+- **`knowledge_hub/GOVERNANCE.md`** — the merged governance standard: **STANDARD.md + STORY-CRAFT.md + TEAM-ROLES-AND-AZURE-DEVOPS.md + INFORMATION-ARCHITECTURE.md** consolidated into one file (Part I the layout standard, Part II story craft, Part III team + Azure DevOps), with the IA detail folded into Part I §§12-15. Old `STANDARD.md §N` maps 1:1 to `Part I §N`. A generated reading view ships as `governance-handbook.html`.
+- **`knowledge_hub/claude-prompt-library.md`** (moved from repo root) — the generic Claude power-prompts, each mapped to the fleet specialist that does it better, plus the official prompt library and model-specific tips.
+- **The website proper** (`spindleloom_website/`): a generated end-to-end homepage (`index.html` - woven-loop hero, six-stage journey, four machinery pillars, harness-target cards, full page map, live fleet counts), a single install-to-first-run **`get-started.html`** walkthrough, and generated **reading twins** for every knowledge_hub doc plus the root docs (README/INSTALL/CHANGELOG/CONTRIBUTING/ONBOARDING).
+- **Five new anti-drift gates**, all `--check`-able and wired into `sloom check` (now 9 gates), pre-commit, and CI: `build_governance_handbook.py` (handbook view vs GOVERNANCE.md), `build_guides_site.py` (twins + homepage vs sources), `build_fleet_page.py` (**the fleet map's nodes/edges/descriptions/skills are now generated from the agent contracts** - closes IMP-141), `validate_counts.py` (no stale fleet numbers anywhere in the docs or site), `validate_personas.py` (the persona hub's agent/command refs resolve against the contracts). Plus `validate_graph` check 12b: the fleet page's skills map and lane phases are cross-checked against the contracts.
+- **`sloom signoff <gate>`** - the release sign-off writer the approve/verify loop was missing: an evidence-required GO token (`--by` and `--evidence` mandatory for GO; `--release-id` namespacing) written to `.spindleloom/signoffs/`, round-tripping with `validate_gates --release`. Ships with `templates/signoff-token-template.md`.
+
+### Changed
+
+- **Repo restructure: `project_guides/` split into `knowledge_hub/` (the Markdown sources of truth) and `spindleloom_website/` (the browsable site: all HTML pages, personas, brand studies, and the generated reading twins).** Every citation, generator, validator, gate pattern and shipped-bundle path rewired; legacy `project_guides/*` markers kept in `scaffold.py` for pre-rename distributions.
+
+- **`knowledge_hub/` segregated to one owner per fact** with a front-door `README.md` (Understand / Operate / Govern). The role-by-role surface is now the persona handbook; the fleet map gained a skills band, corrected index-edge counts, and a11y fixes.
+- Fleet-map, overview, and guide pages carry the animated loop; guide pages link out rather than restating detail.
+- **Fleet map UX**: site navigation, `/` search with #hash deep links, per-agent contract links, and a noscript fallback on `spindleloom-agent-fleet.html`.
+
+### Fixed (six-perspective audit remediation)
+
+- **Windows install actually works as documented**: INSTALL.md's POSIX-only steps replaced with `py -3` equivalents (`New-Item` over `touch`, `py -3 hooks/install.py`, pytest install), plus the missing scaffold step and corrected artifact counts.
+- **Eval claims made honest**: FLEET-EVAL and the medremind example README now scope the B+ -> A progression to the 10-agent market-to-plan spine with an AI-judge qualifier, instead of implying a full-fleet evaluation.
+- **Doc counts were drifting** (stale "50 templates", "52 commands" class of errors) - now impossible to merge, enforced by `validate_counts`.
+- **Accessibility**: AA-contrast ink tokens on both themes, keyboard-operable loop hero (`role=button`), `prefers-reduced-motion` respected across all animated pages.
+- Persona-hub prompt tags pointed at a nonexistent `developer` agent (now `backend-developer`); conceptual tags no longer masquerade as slash commands.
+
+### Removed / archived
+
+- `STANDARD.md`, `STORY-CRAFT.md`, `TEAM-ROLES-AND-AZURE-DEVOPS.md`, `INFORMATION-ARCHITECTURE.md` — merged into `GOVERNANCE.md`.
+- `AI-2026-TRENDS-AND-COVERAGE.md` and the pre-personas `how-to-use.html` moved to `knowledge_hub/archive/`; `role-playbooks.html` removed after its unique content (artifact chain, prompt-ingredient model, MCP scenarios) was folded into the overview and the handbook.
+
 ## [0.4.0] — 2026-07-10
 
 Platform hardening and context-engineering fidelity on top of the multi-user concurrency layer. Validated end-to-end: the MedRemind fleet-eval moved **B+ → A** across two behavioral runs (RUN 3 = A−, RUN 4 = A), every fix below confirmed by an independent judge rather than asserted.
@@ -17,7 +50,7 @@ Platform hardening and context-engineering fidelity on top of the multi-user con
 - **`sloom run status|advance <run-id>`** — a teammate checks/advances a distributed run without an LLM; `advance` refuses when a required upstream isn't done or a crossed phase boundary lacks acceptance (the graph is the gate, hand-editing can't skip it).
 - **Idempotent tracker push + drift check**: both adapters now consult the RTM's committed mapping before creating (`skip PBI-X → #1234`; `--force-repush` overrides) — re-running `--apply` or a second teammate pushing no longer duplicates work items. New **`emit_backlog.py check`** reports NEW (unpushed) / GONE (orphaned) drift; wired into `sloom check`. Role rule: backlog-manager is the sole pusher, from merged `main` only.
 - **The adopter CI gate** (`templates/ci/sloom-gate.yml`, written by scaffold/migrate to `.github/workflows/`): merging to `main` now *proves* the spec battery ran — incl. DUP-REQID and the per-PBI verification requirement when the branch names one. Previously no adopter repo got any gate workflow; "merged = gates passed" was a convention.
-- **STANDARD.md §9 "Concurrency & ownership"**: the resource-ownership table (owner role, namespace key, merge strategy, enforcing gate per shared resource), the 10-phase acceptance graph + approver matrix, and the branch=local / main=global / PR-merge=promotion model; §3's tree now annotates every `.spindleloom/` path committed-vs-local.
+- **STANDARD.md §9 "Concurrency & ownership"** (now `GOVERNANCE.md` Part I §9): the resource-ownership table (owner role, namespace key, merge strategy, enforcing gate per shared resource), the 10-phase acceptance graph + approver matrix, and the branch=local / main=global / PR-merge=promotion model; §3's tree now annotates every `.spindleloom/` path committed-vs-local.
 
 ### Added — context engineering & fleet integrity
 

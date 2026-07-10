@@ -32,7 +32,7 @@ pip install "mcp[cli]"
 |---|---|
 | `agents/` | 52 agent definitions (one `.md` per agent; frontmatter is the contract) |
 | `skills/` | 28 reusable methodology skills (one `<name>/SKILL.md` each) |
-| `templates/` | 51 document templates (filled by agents, checked into project repos) |
+| `templates/` | 52 document templates (filled by agents, checked into project repos) |
 | `commands/` | 23 slash commands wired into Claude Code |
 | `hooks/` | Python automation (validators, generators, MCP server, Azure adapter) |
 | `hooks/*.sh` | Shell hooks (SSRF-safe URL caching for remote spec fetches) |
@@ -41,7 +41,7 @@ pip install "mcp[cli]"
 | `docs/` | Spindleloom-level docs (per-agent config, onboarding, etc.) |
 | `.github/workflows/` | CI (fleet integrity, harness bundles, shellcheck, plugin install) |
 
-Key single-source files: `project_guides/STANDARD.md` (information-architecture contract), `project_guides/BEST-PRACTICES.md` (fleet conventions), `project_guides/HARNESS-MATRIX.md` (per-tool feature surface), `hooks/HOOKS.md` (hook reference).
+Key single-source files: `knowledge_hub/GOVERNANCE.md` (governance: layout standard Part I, story craft Part II, team/ADO Part III), `knowledge_hub/BEST-PRACTICES.md` (fleet conventions), `knowledge_hub/HARNESS-MATRIX.md` (per-tool feature surface), `hooks/HOOKS.md` (hook reference).
 
 ---
 
@@ -51,7 +51,7 @@ Key single-source files: `project_guides/STANDARD.md` (information-architecture 
 - **Commit:** Conventional Commits (`feat:`, `fix:`, `docs:`, `chore:`); small and logical; one concern per commit
 - **PR:** use `templates/pr-template.md`; keep it reviewable; CI must be green
 - **Ready / Done:** see `templates/definition-of-ready-done-template.md`
-- **Review bar:** see `project_guides/AGENT-AUTHORING.md` for agent quality bar; `project_guides/BEST-PRACTICES.md` for general conventions
+- **Review bar:** see `knowledge_hub/AGENT-AUTHORING.md` for agent quality bar; `knowledge_hub/BEST-PRACTICES.md` for general conventions
 
 ---
 
@@ -86,17 +86,19 @@ If you find a near-duplicate, consider whether your change belongs as:
 ## Adding an agent
 
 1. Copy the structure from any existing agent as a starting point.
-2. Fill in the full frontmatter contract block (`name`, `description`, `tools`, `model`, `examples`, `phase`, `inputs`, `outputs`, `upstream`, `downstream`, `skills`, `claude_code`).
+2. Fill in the full frontmatter contract block: `name`, `description`, `tools`, `model`, `examples`, `phase`, `inputs`, `outputs`, `upstream`, `downstream`, `skills`, `claude_code`, **`loop`**, **`agentic_role`** (both enum-validated by `validate_graph.py` check 11 -- see `AGENT-AUTHORING.md` for the allowed values), plus `rtm_column`/`id_prefix`/`gate` where they apply.
 3. Add reciprocal edges: every agent you list in `downstream` must list you in their `upstream`, and vice versa. The validator will catch this, but fix it before committing.
 4. Run the generators and validator:
    ```bash
    py -3 hooks/build_agent_index.py    # refreshes agents/INDEX.md
    py -3 hooks/build_handoffs.py       # injects/refreshes the Handoff blockquote
-   py -3 hooks/validate_graph.py       # symmetry + dangling refs + skills + INDEX
+   py -3 hooks/build_help.py           # refreshes agents/HELP.md (pre-commit gates this)
+   py -3 hooks/validate_graph.py       # symmetry + dangling refs + skills + INDEX + fleet-HTML
    py -3 hooks/build_harness_artifacts.py   # rebuild bundles
    ```
-5. Add the new agent to the fleet count table in `README.md`.
-6. See `project_guides/AGENT-AUTHORING.md` for the full quality bar (examples block, handoff line, style rules).
+5. **Regenerate the fleet map data**: `py -3 hooks/build_fleet_page.py` derives the page's nodes, edges, descriptions and skills from the contracts (edge p/s/f styling defaults to backward=feedback; add an `EDGE_TYPE_OVERRIDES` entry in the hook only if you want a secondary/parallel edge). `validate_graph.py` checks 12/12b/13 then verify the result independently. The artifact-chain check (13) requires each edge's endpoints to share an output<->input token; see `AGENT-AUTHORING.md` "Edge semantics".
+6. Add the new agent to the fleet count table in `README.md`.
+7. See `knowledge_hub/AGENT-AUTHORING.md` for the full quality bar (examples block, handoff line, style rules).
 
 ---
 
@@ -133,6 +135,6 @@ If you find a near-duplicate, consider whether your change belongs as:
 
 ## Getting help
 
-- Read `project_guides/BEST-PRACTICES.md` and `project_guides/AGENT-AUTHORING.md` before authoring new agents.
+- Read `knowledge_hub/BEST-PRACTICES.md` and `knowledge_hub/AGENT-AUTHORING.md` before authoring new agents.
 - Run `py -3 hooks/validate_graph.py` — it tells you exactly what's wrong.
 - Stuck? Open a discussion issue with the `question` label.

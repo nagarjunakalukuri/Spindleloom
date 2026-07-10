@@ -100,13 +100,16 @@ footer .in{max-width:1120px;margin:0 auto;padding:22px 30px;font-size:12.5px;col
 <li><a href="#g-0-2-0-2026-07-07">[0.2.0] — 2026-07-07</a></li></ol></nav>
   <main><article><p>All notable changes to Spindleloom. Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>; versions follow SemVer (pre-1.0: minor bumps may break).</p>
 <h3 id="g-unreleased">[Unreleased]</h3>
-<p>Documentation consolidation, a role-based field handbook, and the Woven Loop brand — layered on 0.4.0's platform. No behavioral change to the fleet's contracts; this is the human-facing surface.</p>
+<p>Documentation consolidation, a role-based field handbook, the Woven Loop brand, a browsable website, and five new anti-drift gates - layered on 0.4.0's platform. The fleet's contract graph is unchanged; the platform grows <code>sloom signoff</code> and a 9-gate <code>sloom check</code> battery.</p>
 <h4 id="g-added">Added</h4>
 <ul>
 <li><b>Persona Field Handbook</b> (<code>spindleloom_website/personas/</code>): a single-file hub plus 15 standalone role pages (builder side + business side), each with the agents that role drives, copy-ready prompts, its I/O contract, the gates it owns, KPIs, hand-offs, troubleshooting and a glossary. The hub is a five-tab front door for all of <code>project_guides</code> — Start here, Personas, Phases (a 10-phase rail with gate owners), Prompt library (54 filterable prompts + the invoke primer), and a Guides directory.</li>
 <li><b>Woven Loop identity</b> (<code>spindleloom_website/brand/</code>): the lemniscate SDLC mark, a run-ledger-driven live widget, and an animated loop hero on every persona/guide page (theme-aware canvas, <code>prefers-reduced-motion</code> respected). The mark is inlined in the fleet map and personas hub.</li>
 <li><b><code>knowledge_hub/GOVERNANCE.md</code></b> — the merged governance standard: <b>STANDARD.md + STORY-CRAFT.md + TEAM-ROLES-AND-AZURE-DEVOPS.md + INFORMATION-ARCHITECTURE.md</b> consolidated into one file (Part I the layout standard, Part II story craft, Part III team + Azure DevOps), with the IA detail folded into Part I §§12-15. Old <code>STANDARD.md §N</code> maps 1:1 to <code>Part I §N</code>. A generated reading view ships as <code>governance-handbook.html</code>.</li>
 <li><b><code>knowledge_hub/claude-prompt-library.md</code></b> (moved from repo root) — the generic Claude power-prompts, each mapped to the fleet specialist that does it better, plus the official prompt library and model-specific tips.</li>
+<li><b>The website proper</b> (<code>spindleloom_website/</code>): a generated end-to-end homepage (<code>index.html</code> - woven-loop hero, six-stage journey, four machinery pillars, harness-target cards, full page map, live fleet counts), a single install-to-first-run <b><code>get-started.html</code></b> walkthrough, and generated <b>reading twins</b> for every knowledge_hub doc plus the root docs (README/INSTALL/CHANGELOG/CONTRIBUTING/ONBOARDING).</li>
+<li><b>Five new anti-drift gates</b>, all <code>--check</code>-able and wired into <code>sloom check</code> (now 9 gates), pre-commit, and CI: <code>build_governance_handbook.py</code> (handbook view vs GOVERNANCE.md), <code>build_guides_site.py</code> (twins + homepage vs sources), <code>build_fleet_page.py</code> (<b>the fleet map's nodes/edges/descriptions/skills are now generated from the agent contracts</b> - closes IMP-141), <code>validate_counts.py</code> (no stale fleet numbers anywhere in the docs or site), <code>validate_personas.py</code> (the persona hub's agent/command refs resolve against the contracts). Plus <code>validate_graph</code> check 12b: the fleet page's skills map and lane phases are cross-checked against the contracts.</li>
+<li><b><code>sloom signoff &lt;gate&gt;</code></b> - the release sign-off writer the approve/verify loop was missing: an evidence-required GO token (<code>--by</code> and <code>--evidence</code> mandatory for GO; <code>--release-id</code> namespacing) written to <code>.spindleloom/signoffs/</code>, round-tripping with <code>validate_gates --release</code>. Ships with <code>templates/signoff-token-template.md</code>.</li>
 </ul>
 <h4 id="g-changed">Changed</h4>
 <ul>
@@ -115,6 +118,15 @@ footer .in{max-width:1120px;margin:0 auto;padding:22px 30px;font-size:12.5px;col
 <ul>
 <li><b><code>knowledge_hub/</code> segregated to one owner per fact</b> with a front-door <code>README.md</code> (Understand / Operate / Govern). The role-by-role surface is now the persona handbook; the fleet map gained a skills band, corrected index-edge counts, and a11y fixes.</li>
 <li>Fleet-map, overview, and guide pages carry the animated loop; guide pages link out rather than restating detail.</li>
+<li><b>Fleet map UX</b>: site navigation, <code>/</code> search with #hash deep links, per-agent contract links, and a noscript fallback on <code>spindleloom-agent-fleet.html</code>.</li>
+</ul>
+<h4 id="g-fixed-six-perspective-audit-remediation">Fixed (six-perspective audit remediation)</h4>
+<ul>
+<li><b>Windows install actually works as documented</b>: INSTALL.md's POSIX-only steps replaced with <code>py -3</code> equivalents (<code>New-Item</code> over <code>touch</code>, <code>py -3 hooks/install.py</code>, pytest install), plus the missing scaffold step and corrected artifact counts.</li>
+<li><b>Eval claims made honest</b>: FLEET-EVAL and the medremind example README now scope the B+ -&gt; A progression to the 10-agent market-to-plan spine with an AI-judge qualifier, instead of implying a full-fleet evaluation.</li>
+<li><b>Doc counts were drifting</b> (stale "50 templates", "52 commands" class of errors) - now impossible to merge, enforced by <code>validate_counts</code>.</li>
+<li><b>Accessibility</b>: AA-contrast ink tokens on both themes, keyboard-operable loop hero (<code>role=button</code>), <code>prefers-reduced-motion</code> respected across all animated pages.</li>
+<li>Persona-hub prompt tags pointed at a nonexistent <code>developer</code> agent (now <code>backend-developer</code>); conceptual tags no longer masquerade as slash commands.</li>
 </ul>
 <h4 id="g-removed-archived">Removed / archived</h4>
 <ul>

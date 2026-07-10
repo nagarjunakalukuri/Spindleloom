@@ -32,6 +32,16 @@ jobs:
         run: python hooks/build_help.py --check
       - name: Harness conformance (per-tool format rules)
         run: python hooks/validate_targets.py
+      - name: Governance handbook not stale (vs GOVERNANCE.md)
+        run: python hooks/build_governance_handbook.py --check
+      - name: Doc fleet-counts not stale
+        run: python hooks/validate_counts.py --check
+      - name: Persona hub in sync with contracts
+        run: python hooks/validate_personas.py --check
+      - name: Guides site (reading twins + index) not stale
+        run: python hooks/build_guides_site.py --check
+      - name: Fleet map data derived from contracts
+        run: python hooks/build_fleet_page.py --check
 
   # ── Spec traceability ────────────────────────────────────────────────────────
   validate-traceability:
