@@ -29,7 +29,9 @@ import scaffold  # noqa: E402
 try:
     from mcp.server.fastmcp import FastMCP
 except ImportError:
-    sys.exit('mcp_server: the MCP SDK is not installed. Run:  pip install "mcp[cli]"')
+    sys.exit('mcp_server: the MCP SDK is missing or incompatible. This server needs\n'
+             '  the 1.x SDK -- mcp 2.0.0 removed mcp.server.fastmcp (migration tracked\n'
+             '  as IMP-175). Run:  pip install "mcp[cli]>=1.2,<2"')
 
 mcp = FastMCP("sloom")
 

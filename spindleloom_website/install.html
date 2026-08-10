@@ -211,7 +211,7 @@ py -3 hooks/validate_graph.py
 # macOS / Linux
 python3 hooks/validate_graph.py</pre>
 <p>Expected output:</p>
-<pre>agents: 52 | templates: 51 | skills: 28 | commands: 23
+<pre>agents: 52 | templates: 53 | skills: 28 | commands: 23
 OK — graph symmetric, no dangling refs, declared skills present, INDEX current, claude_code mappings resolve.</pre>
 <p>If this passes, the source is intact and ready to bundle.</p>
 <hr>
@@ -334,7 +334,7 @@ powershell -c &quot;irm https://astral.sh/uv/install.ps1 | iex&quot;</pre>
   &quot;mcpServers&quot;: {
     &quot;sloom&quot;: {
       &quot;command&quot;: &quot;uv&quot;,
-      &quot;args&quot;: [&quot;run&quot;, &quot;--with&quot;, &quot;mcp[cli]&quot;, &quot;python&quot;, &quot;mcp/mcp_server.py&quot;],
+      &quot;args&quot;: [&quot;run&quot;, &quot;--with&quot;, &quot;mcp[cli]&gt;=1.2,&lt;2&quot;, &quot;python&quot;, &quot;mcp/mcp_server.py&quot;],
       &quot;env&quot;: { &quot;SPINDLELOOM_SPEC_ROOT&quot;: &quot;${CLAUDE_PROJECT_DIR}&quot; }
     }
   }

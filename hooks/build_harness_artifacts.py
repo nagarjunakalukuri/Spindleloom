@@ -167,14 +167,14 @@ def mcp_config(style, server_arg, spec_root):
     """A harness-native MCP config pointing at the bundled `sloom` server (short for Spindleloom).
     style 'vscode' uses the `servers` key + explicit stdio type; others use `mcpServers`.
 
-    Launches via `uv run --with "mcp[cli]"`: uv provisions the one dependency in a
+    Launches via `uv run --with "mcp[cli]>=1.2,<2"`: uv provisions the one dependency in a
     cached ephemeral env on first run (no global `pip install` step) and resolves an
     interpreter itself — sidestepping the `python` vs `py` launcher problem that bites
     bare `"command": "python"` on machines where `python` is a stub/missing. The one
     prerequisite becomes `uv` (https://docs.astral.sh/uv/), which also bootstraps Python."""
     entry = {
         "command": "uv",
-        "args": ["run", "--with", "mcp[cli]", "python", server_arg],
+        "args": ["run", "--with", "mcp[cli]>=1.2,<2", "python", server_arg],
         "env": {"SPINDLELOOM_SPEC_ROOT": spec_root},
     }
     if style == "vscode":
@@ -389,7 +389,7 @@ def emit_claude_plugin(agents, src):
         "`delete_context` / `sync_contexts` — token-efficient handoff layer so agents retrieve prior decisions "
         "in one call instead of re-reading upstream docs. Enable semantic search with "
         "`\"SPINDLELOOM_SEMANTIC\":\"1\"` (local ONNX embeddings, no API calls). "
-        "`.mcp.json` launches it via `uv run --with \"mcp[cli]\"`, so the only prerequisite is "
+        "`.mcp.json` launches it via `uv run --with \"mcp[cli]>=1.2,<2\"`, so the only prerequisite is "
         "[uv](https://docs.astral.sh/uv/) — uv provisions the MCP SDK (and a Python interpreter) "
         "on first run, no manual `pip install`.\n\n"
         "`.mcp.json` is auto-discovered; it points the server at your project root. `scaffold_project` "

@@ -130,7 +130,7 @@ python3 hooks/validate_graph.py
 
 Expected output:
 ```
-agents: 52 | templates: 51 | skills: 28 | commands: 23
+agents: 52 | templates: 53 | skills: 28 | commands: 23
 OK — graph symmetric, no dangling refs, declared skills present, INDEX current, claude_code mappings resolve.
 ```
 
@@ -349,7 +349,7 @@ The generated `.mcp.json` auto-discovers and launches the server. Set `SPINDLELO
   "mcpServers": {
     "sloom": {
       "command": "uv",
-      "args": ["run", "--with", "mcp[cli]", "python", "mcp/mcp_server.py"],
+      "args": ["run", "--with", "mcp[cli]>=1.2,<2", "python", "mcp/mcp_server.py"],
       "env": { "SPINDLELOOM_SPEC_ROOT": "${CLAUDE_PROJECT_DIR}" }
     }
   }

@@ -21,7 +21,7 @@ py -3 hooks/build_harness_artifacts.py
 
 No `pip install` required for the core hooks (stdlib-only). The MCP server needs:
 ```bash
-pip install "mcp[cli]"
+pip install "mcp[cli]>=1.2,<2"
 ```
 
 ---

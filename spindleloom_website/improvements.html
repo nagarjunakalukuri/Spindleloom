@@ -202,6 +202,9 @@ footer .in{max-width:1120px;margin:0 auto;padding:22px 30px;font-size:12.5px;col
 <tr><td><b>IMP-167</b></td><td>Prior-art position on new abstractions — when a proposal introduces a config-object/manifest/profile, force a stated reuse / extend / justify-new before the ADR</td><td>14</td><td>S</td><td>Two competing manifest patterns nearly shipped</td></tr>
 <tr><td><b>IMP-168</b></td><td><code>scope:</code> field on the backlog row (net-new-vertical / extend-vertical / cross-cutting) so estimation and the ready gate can scrutinize a greenfield vertical differently from a thin extension</td><td>15</td><td>S</td><td></td></tr>
 </table></div>
+<div class="tw"><table>
+<tr><th><b>IMP-175</b></th><th><b>Migrate <code>mcp_server.py</code> to the MCP SDK 2.x.</b> 2.0.0 removed <code>mcp.server.fastmcp</code> outright (verified: <code>ModuleNotFoundError</code>, and <code>FastMCP</code> is at no fallback path in the <code>mcp</code> package), so the server cannot start on it. Everything is pinned <code>&gt;=1.2,&lt;2</code> as the stopgap; the migration is real work — the server surface is 19 tools + 4 resources — and until it lands, adopters are held on 1.x</th><th>M</th><th>Found when CI's unbounded install picked up 2.0.0 the day it published</th></tr>
+</table></div>
 <p>Also open from the pilot and not yet cut as items: multi-initiative audit scope (gap 1), doc-vs-code reconciliation (gap 7, the tracker half is IMP-107), evidence-typed verification cells (gap 8), cross-agent finding dedup (gap 9), a "gated/conditional" work-item state, and a shared "gates landed so far" view for parallel reviewers.</p>
 <h3 id="g-tier-6-from-the-imp-160-review-and-the-artifact-readiness-au">Tier 6 — from the IMP-160 review and the artifact/readiness audit</h3>
 <p>Found by adversarially reviewing the IMP-160 fix and by auditing artifact production and start-readiness across all 52 contracts. <b>IMP-169 is a correctness bug in shipped behavior.</b></p>

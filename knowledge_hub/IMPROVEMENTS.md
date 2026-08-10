@@ -116,6 +116,8 @@ and the current status of all 21 gaps. **IMP-160 is the one an adopter feels fir
 | **IMP-167** | Prior-art position on new abstractions — when a proposal introduces a config-object/manifest/profile, force a stated reuse / extend / justify-new before the ADR | 14 | S | Two competing manifest patterns nearly shipped |
 | **IMP-168** | `scope:` field on the backlog row (net-new-vertical / extend-vertical / cross-cutting) so estimation and the ready gate can scrutinize a greenfield vertical differently from a thin extension | 15 | S | |
 
+| **IMP-175** | **Migrate `mcp_server.py` to the MCP SDK 2.x.** 2.0.0 removed `mcp.server.fastmcp` outright (verified: `ModuleNotFoundError`, and `FastMCP` is at no fallback path in the `mcp` package), so the server cannot start on it. Everything is pinned `>=1.2,<2` as the stopgap; the migration is real work — the server surface is 19 tools + 4 resources — and until it lands, adopters are held on 1.x | M | Found when CI's unbounded install picked up 2.0.0 the day it published |
+
 Also open from the pilot and not yet cut as items: multi-initiative audit scope (gap 1), doc-vs-code
 reconciliation (gap 7, the tracker half is IMP-107), evidence-typed verification cells (gap 8),
 cross-agent finding dedup (gap 9), a "gated/conditional" work-item state, and a shared

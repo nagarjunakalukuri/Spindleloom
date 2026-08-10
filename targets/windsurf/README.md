@@ -14,7 +14,7 @@ Windsurf's MCP config is **user-global**, so add this to `~/.codeium/windsurf/mc
       "args": [
         "run",
         "--with",
-        "mcp[cli]",
+        "mcp[cli]>=1.2,<2",
         "python",
         "/abs/path/to/your/repo/mcp/mcp_server.py"
       ],

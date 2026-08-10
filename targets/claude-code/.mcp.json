@@ -5,7 +5,7 @@
       "args": [
         "run",
         "--with",
-        "mcp[cli]",
+        "mcp[cli]>=1.2,<2",
         "python",
         "${CLAUDE_PROJECT_DIR}/mcp/mcp_server.py"
       ],

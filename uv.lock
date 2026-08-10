@@ -2938,7 +2938,7 @@ provides-extras = ["semantic"]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "mcp", extras = ["cli"], specifier = ">=1.2" },
+    { name = "mcp", extras = ["cli"], specifier = ">=1.2,<2" },
     { name = "pytest", specifier = ">=7" },
 ]
 

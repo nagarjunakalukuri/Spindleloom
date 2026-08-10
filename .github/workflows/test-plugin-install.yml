@@ -129,11 +129,17 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install MCP SDK
-        run: python -m pip install --upgrade pip "mcp[cli]>=1.2"
+      # Install from the LOCKFILE, not a fresh resolve. An unbounded
+      # `pip install "mcp[cli]>=1.2"` let mcp 2.0.0 in, which removed
+      # mcp.server.fastmcp and broke the server at import - with no change
+      # on our side. The lock is the contract.
+      - name: Install uv + locked dev deps
+        run: |
+          python -m pip install --upgrade pip uv
+          uv sync --group dev
 
       - name: Smoke-test the MCP server (stdio, read-only)
-        run: python hooks/test_mcp_server.py
+        run: uv run python hooks/test_mcp_server.py
 
   # ── Plugin install smoke test ─────────────────────────────────────────────────
   plugin-install:

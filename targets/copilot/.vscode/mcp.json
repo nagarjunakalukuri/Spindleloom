@@ -6,7 +6,7 @@
       "args": [
         "run",
         "--with",
-        "mcp[cli]",
+        "mcp[cli]>=1.2,<2",
         "python",
         "${workspaceFolder}/mcp/mcp_server.py"
       ],
