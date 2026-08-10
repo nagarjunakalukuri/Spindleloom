@@ -22,8 +22,7 @@ Top MCP Servers:
 
 ### Codebases
 - [ ] spindleloom — local workspace (the "Spindleloom" SDLC agent fleet; no git remote)
-- [ ] IDP-Accelerator / idp-orchestrator — additional working dir (Python/LangGraph document-processing engine)
-- [ ] IDP-Accelerator / idp-skills — additional working dir
+- [ ] Your adopter repo(s) — add each as an additional working dir (the codebase the fleet will drive)
 
 ### MCP Servers to Activate
 - [ ] _None required for the current workflow._

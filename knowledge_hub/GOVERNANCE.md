@@ -387,14 +387,14 @@ In `templates/`: the user-story row (`backlog-template.md`), **`epic-template.md
 
 > **The per-role operating detail now lives in the [Persona Field Handbook](personas/index.html)** -- 15 role playbooks, each with the agents that role drives, copy-ready prompts, the gates it owns, KPIs and hand-offs. This section keeps only what the handbook does not: the concrete 10-person mapping and its one structural gap.
 
-Team: **1 Principal Director, 1 Project Manager, 1 Architect, 2 Leads, 5 Software Developers.**
+A common mid-size shape: **1 executive sponsor, 1 project manager, 1 architect, 2 leads, 5 software developers** (add QA and the fleet covers the rest as hats).
 
-One important note up front: there is **no dedicated Product Owner / Product Manager** in this team. Someone must own the PRD, backlog priority, and acceptance -- by default the **Project Manager wears the PO hat**, with the **Principal Director** setting business priorities. Flag this as the single biggest role gap to resolve before kickoff.
+One important note up front: this shape has **no dedicated Product Owner / Product Manager**. Someone must own the PRD, backlog priority, and acceptance -- by default the **project manager wears the PO hat**, with the **executive sponsor** setting business priorities. Flag it as the single biggest role gap to resolve before kickoff.
 
-Map the 9 onto personas: Principal Director -> *Sponsor*; Project Manager -> *Product Owner* + *Delivery Lead*; Architect -> *Architect*; Leads -> *Developer* (reviewer half) + parts of *QA*; Developers -> *Developer*. Unstaffed personas (UX, Security, SRE, Docs, AI/ML, Compliance) are hats the same 9 wear when the work demands it -- the agents carry the method so the hat is cheap to put on.
+Map the 9 onto personas: executive sponsor -> *Sponsor*; Project Manager -> *Product Owner* + *Delivery Lead*; Architect -> *Architect*; Leads -> *Developer* (reviewer half) + parts of *QA*; Developers -> *Developer*. Unstaffed personas (UX, Security, SRE, Docs, AI/ML, Compliance) are hats the same 9 wear when the work demands it -- the agents carry the method so the hat is cheap to put on.
 
 ### How the 9 complete a project end-to-end
-1. **Inception** — Principal Director + PM run `mrd-writer`/`brd-writer`; PM runs `doc-strategy-advisor` to pick the doc set for a 10-person (Mid-tier) team: **PRD + FRD-in-tickets + SDD**, with TSD for the build.
+1. **Inception** — Executive Sponsor + PM run `mrd-writer`/`brd-writer`; PM runs `doc-strategy-advisor` to pick the doc set for a 10-person (Mid-tier) team: **PRD + FRD-in-tickets + SDD**, with TSD for the build.
 2. **Definition** — PM (PO hat) writes the PRD; Architect + Leads produce SRS/SDD; Architect logs ADRs and sets the constitution/tech-radar.
 3. **Breakdown** — PM/Leads run `backlog-manager` (PRD/FRD → epics → PBIs); whole team runs `estimation-facilitator` (Planning Poker).
 4. **Delivery loop** — `sprint-planner` each sprint (goal + capacity-fit backlog); devs build; daily standup; Architect/Leads review (`code-reviewer`); `retrospective-facilitator` at sprint end; repeat.

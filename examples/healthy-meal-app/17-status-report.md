@@ -6,7 +6,7 @@
 | Status | Issued |
 | Last updated | 2026-06-25 |
 
-> Worked example — produced by `status-reporter`, grounded in sprint metrics (`14-sprint-plan.md`) and the RAID log (`16-raid-log.md`). Audience: Principal Director + stakeholders. Overview depth.
+> Worked example — produced by `status-reporter`, grounded in sprint metrics (`14-sprint-plan.md`) and the RAID log (`16-raid-log.md`). Audience: Executive Sponsor + stakeholders. Overview depth.
 
 ## Health: 🟡 Amber
 

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 azure_boards_adapter.py — Spindleloom: the live Azure Boards push() for emit_backlog.py
-(IMP-007 in knowledge_hub/archive/IMPROVEMENTS.md — the retired pilot-era register).
+(IMP-007 in the retired pilot-era register; field evidence in
+knowledge_hub/FIELD-PILOT.md).
 
 emit_backlog.py field-maps backlog.md -> tracker-agnostic work-item payloads and leaves the
 network push to "YOUR adapter". This IS that adapter for Azure DevOps Boards — the last mile,

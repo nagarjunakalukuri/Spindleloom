@@ -11,7 +11,7 @@ Move the toolkit from "excellent design" to "proven practice" by running one rea
 - **On Azure DevOps** as the system of record (Boards, Repos, Pipelines, Wiki) — toolkit is the authoring/standardization layer.
 
 ## Team
-The existing pod: Principal Director (sponsor), PM (+PO hat), Architect, 2 Leads, 5 Developers, QA. Name a **pilot owner** (the PM) accountable for running it and reporting.
+A typical pod: an executive sponsor, PM (+PO hat), Architect, 2 Leads, 5 Developers, QA. Name a **pilot owner** (the PM) accountable for running it and reporting.
 
 ## Timeline (4–6 weeks)
 | Week | Focus |
@@ -50,7 +50,7 @@ PM = pilot owner & report; Architect = artifact-quality scorer; Leads = run revi
 - **Adjust** — mixed results → trim to the agents that paid off, re-pilot.
 - **Stop** — no quality lift and added overhead → shelve; keep only the few high-value agents.
 
-> **Interim readout filed:** [`PILOT-READOUT-INTERIM.md`](PILOT-READOUT-INTERIM.md) — a *proxy* run (4 AEP backlog items, AI-driven, no Wk-0 baseline) against the live IDP project. Verdict **ADJUST → run the real team pilot**, with a Wk-0 environment-readiness baseline + a pre-pickup existence check added. Not a substitute for the full human-team run below.
+> **Field evidence filed:** [`../FIELD-PILOT.md`](../FIELD-PILOT.md) — eight AI-driven runs inside a live enterprise codebase (no Wk-0 baseline, no human-team comparison). Verdict **ADJUST → run the real team pilot**, with a Wk-0 environment-readiness baseline + a pre-pickup existence check added. Not a substitute for the full human-team run below.
 
 ## The ask
 Approve a **4–6 week pilot** on one named project, a pilot owner (PM), and ~half a day of the Architect's time to score outputs. Cost: marginal (the team's existing capacity). Upside: a data-backed decision on whether to standardize delivery on the toolkit.

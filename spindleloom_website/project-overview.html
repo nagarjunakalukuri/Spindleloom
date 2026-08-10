@@ -284,7 +284,7 @@
  <div class="card"><h3>Honest status</h3><ul>
  <li>Coverage &amp; consistency: <b>strong</b> (audited, no orphans).</li>
  <li>Prompt-engineering quality: <b>clean</b> (no over-triggering).</li>
- <li>Validation: <b>early signal, full pilot pending</b> -- an interim proxy run on live code (<code>archive/PILOT-READOUT.md</code>) showed the gates catch real defects; the human-team pilot is the next proof.</li>
+ <li>Validation: <b>field evidence, human-team pilot pending</b> -- eight AI-driven runs inside a live enterprise codebase (<a href="field-pilot.html">the field record</a>) showed the gates catch real defects; the human-team pilot is the next proof.</li>
  <li>Critic's rating: <b>~7.8 / 10</b> -- excellent blueprint, prove it with one full pilot.</li></ul></div>
  </div>
  <div class="callout"><b>The ask / next step:</b> approve a <b>4-6 week pilot</b> on one real project (or the lean AI-native pod) to validate output quality and measure cycle-time and defect-escape impact -- that's what moves this from "excellent design" to "proven practice."</div>
@@ -344,9 +344,9 @@
 <section id="roles"><div class="wrap">
  <span class="sec-tag">Who does what</span>
  <h2>04 . Roles &amp; responsibilities -- who runs the work</h2>
- <p class="lead2">1 Principal Director . 1 Product Owner . 1 Project Manager . 1 Architect . 2 Leads . 5 Developers -- plus the QA/tester hat. Each person drives a set of agents and owns part of the loop.</p>
+ <p class="lead2">1 Executive Sponsor . 1 Product Owner . 1 Project Manager . 1 Architect . 2 Leads . 5 Developers -- plus the QA/tester hat. Each person drives a set of agents and owns part of the loop.</p>
  <div class="grid g3">
- <div class="card"><span class="role">Accountable . Business</span><h3>Principal Director</h3>
+ <div class="card"><span class="role">Accountable . Business</span><h3>Executive Sponsor</h3>
  <p class="muted" style="font-size:.88rem">Sets goals &amp; funding, approves the business case, owns the final go/no-go.</p>
  <ul><li>mrd-writer . brd-writer (approves)</li><li>release go/no-go approver</li><li>consumes status reports</li></ul>
  <div class="io"><b>In:</b> MRD, status reports &nbsp;.&nbsp; <b>Reviews / approves:</b> BRD, release go/no-go &nbsp;.&nbsp; <b>Out:</b> business goals &amp; funding, the go/no-go decision</div></div>
@@ -959,7 +959,7 @@
 <section id="next"><div class="wrap">
  <span class="sec-tag">The ask</span>
  <h2>13 . Next step -- a 4-6 week pilot to prove it</h2>
- <p class="lead2">The design is strong and complete. An <b>interim proxy run</b> on live code (a single AI-driven session -- <code>archive/PILOT-READOUT.md</code>) already showed the framework's gates catch real defects, but it is <b>not yet proven by a full human-team pilot</b>. The right next move isn't more agents -- it's one focused pilot that turns "excellent blueprint-- into measured fact.</p>
+ <p class="lead2">The design is strong and complete. <b>Field evidence</b> from live enterprise code (eight AI-driven runs -- <a href="field-pilot.html">the field record</a>) already showed the framework's gates catch real defects, but it is <b>not yet proven by a full human-team pilot</b>. The right next move isn't more agents -- it's one focused pilot that turns "excellent blueprint-- into measured fact.</p>
  <div class="note good" style="margin-top:16px"><h4>Early signal from the interim run (proxy, not the full pilot)</h4><ul>
  <li>The <b>security gate caught a real injection-shaped bug</b> the build missed (an unsanitized value flowing into a search doc-key).</li>
  <li>The <b>traceability check found 3 untraced PBIs</b> the moment it ran -- genuine RTM gaps, not noise.</li>
@@ -983,13 +983,13 @@
  <li><b>Adjust</b> -- mixed -> keep what paid off, re-pilot.</li>
  <li><b>Stop</b> -- no lift + added overhead -> shelve.</li></ul></div>
  </div>
- <div class="callout"><b>Timeline:</b> Wk 0 baseline -> Wk 1 inception/specs/backlog -> Wk 2-4 build.review.CI.QA -> Wk 5 release/operate/retro -> Wk 6 measure &amp; readout. &nbsp; <b>Cost:</b> marginal (existing team capacity). &nbsp; <b>Upside:</b> a data-backed decision to standardize delivery. Full plan in <code>archive/PILOT-PLAN.md</code>; interim evidence in <code>archive/PILOT-READOUT.md</code>.</div>
+ <div class="callout"><b>Timeline:</b> Wk 0 baseline -> Wk 1 inception/specs/backlog -> Wk 2-4 build.review.CI.QA -> Wk 5 release/operate/retro -> Wk 6 measure &amp; readout. &nbsp; <b>Cost:</b> marginal (existing team capacity). &nbsp; <b>Upside:</b> a data-backed decision to standardize delivery. Full plan in <code>knowledge_hub/archive/PILOT-PLAN.md</code>; field evidence in <a href="field-pilot.html">field-pilot.html</a>.</div>
 </div></section>
 
 <footer><div class="wrap">
  <p><b>Spindleloom</b> -- 52 agents . 52 templates . 28 skills . 23 commands . two full worked examples (healthy-meal-app + medremind-fleet-eval).
  Covers the lifecycle end to end for a 10-person team (or a 4-5 AI-native pod), runs natively in Claude Code . Cursor . Copilot . Windsurf, and fits Azure DevOps -- engineered as a chain of fast, clear feedback loops. Comprehensive design with two shipped worked examples; the MedRemind behavioral eval graded A on its latest run. A full human-team pilot remains the open validation step.</p>
- <p class="muted">Reference docs: <a href="../README.md">README</a> . <a href="../INSTALL.md">INSTALL</a> . <a href="../CONTRIBUTING.md">CONTRIBUTING</a> . <a href="../knowledge_hub/GOVERNANCE.md">GOVERNANCE (source)</a> . <a href="governance-handbook.html">Governance Handbook</a> . <a href="best-practices.html">BEST-PRACTICES</a> . <a href="agent-authoring.html">AGENT-AUTHORING</a> . <a href="../hooks/HOOKS.md">HOOKS</a> . <a href="harness-matrix.html">HARNESS-MATRIX</a> . <a href="loopwright.html">LOOPWRIGHT</a> . <a href="personas/index.html">Persona Handbook</a> . <a href="../knowledge_hub/archive/PILOT-PLAN.md">archive/PILOT-PLAN</a> . <a href="../knowledge_hub/archive/PILOT-READOUT-INTERIM.md">archive/PILOT-READOUT-INTERIM</a>.</p>
+ <p class="muted">Reference docs: <a href="../README.md">README</a> . <a href="../INSTALL.md">INSTALL</a> . <a href="../CONTRIBUTING.md">CONTRIBUTING</a> . <a href="../knowledge_hub/GOVERNANCE.md">GOVERNANCE (source)</a> . <a href="governance-handbook.html">Governance Handbook</a> . <a href="best-practices.html">BEST-PRACTICES</a> . <a href="agent-authoring.html">AGENT-AUTHORING</a> . <a href="../hooks/HOOKS.md">HOOKS</a> . <a href="harness-matrix.html">HARNESS-MATRIX</a> . <a href="loopwright.html">LOOPWRIGHT</a> . <a href="personas/index.html">Persona Handbook</a> . <a href="field-pilot.html">Field pilot</a> . <a href="../knowledge_hub/archive/PILOT-PLAN.md">archive/PILOT-PLAN</a>.</p>
 </div></footer>
 
 <script>

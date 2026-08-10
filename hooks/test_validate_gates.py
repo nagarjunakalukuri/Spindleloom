@@ -115,7 +115,7 @@ def test_release_id_scopes_tokens():
 
 ACCEPT_TOKEN = """# Acceptance — requirements (user-auth)
 Verdict: ACCEPTED
-By: N. Kalukuri
+By: A. Reviewer
 Role: product-owner
 Date: 2026-07-09
 """

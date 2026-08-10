@@ -187,10 +187,10 @@ Running the full funnel (decompose → recon → SDD → backlog split → sprin
 
 ### Project operating manual (avoid re-discovery per agent)
 
-Key project-specific facts — Python interpreter path, test run incantation, repo root layout, per-package test commands — are re-derived by each new agent in a session if they're not persisted. This wastes tokens and causes friction (G8):
+Key project-specific facts — Python interpreter path, test run incantation, repo root layout, per-package test commands — are re-derived by each new agent in a session if they're not persisted. This wastes tokens and causes friction:
 
 - **Use `save_context` (MCP tool):** at session start, one agent resolves and saves the incantation under `task_id="project-ops"`; every subsequent agent calls `recall_context(task_id="project-ops")` first before running commands (dev-onboarding seeds this at its readiness gate).
-- **Use a project `CLAUDE.md` addendum:** add a `## Running tests` section with the literal, resolved commands for this repo (e.g., `uv run pytest oi_atlas_cache/tests/ -x`). Every agent reads CLAUDE.md at start.
+- **Use a project `CLAUDE.md` addendum:** add a `## Running tests` section with the literal, resolved commands for this repo (e.g., `uv run pytest src/tests/ -x`). Every agent reads CLAUDE.md at start.
 - **On Windows with `uv`:** the interpreter is typically `.venv/Scripts/python.exe` and the test runner is `uv run pytest`. Write the resolved form once and reference it everywhere rather than re-probing per agent.
 
 ### Increment by blast radius
@@ -200,11 +200,11 @@ When a planned change includes both net-new/isolated work and a cutover of a hot
 1. Build and verify the net-new isolated replacement independently.
 2. Cut over the hot path in its own gated step with its own recon → build → test-author → change-verifier → code-reviewer cycle.
 
-The cutover increment is the one that can break callers — it deserves its own blast-radius assessment, its own symbol-removal grep (see `backend-developer`), and its own `change-verifier` run. "Agent enthusiasm vs blast radius" is the failure mode: don't let the readiness of the isolated piece tempt a combined hot-path cutover in one pass (G11).
+The cutover increment is the one that can break callers — it deserves its own blast-radius assessment, its own symbol-removal grep (see `backend-developer`), and its own `change-verifier` run. "Agent enthusiasm vs blast radius" is the failure mode: don't let the readiness of the isolated piece tempt a combined hot-path cutover in one pass.
 
 ### Maker/checker split — mandatory, not optional
 
-The maker/checker pattern is the pilot's **highest-ROI control** (G3/G13/G16):
+The maker/checker pattern is the fleet's **highest-ROI control**:
 
 - `code-reviewer` must be a **different agent from both the maker and the test-author**. The agent that wrote the bug is the worst one to spot it; the agent that wrote the tests can agree with the maker's wrong contract.
 - For every cutover (hot-path migration, symbol removal, store replacement), run `code-reviewer` on the diff it did not write. This is not optional and not a ceremony — it is the control that catches Critical/Major bugs that tests and the verifier both miss.
@@ -212,15 +212,15 @@ The maker/checker pattern is the pilot's **highest-ROI control** (G3/G13/G16):
 
 ### Recon-before-implement — mandatory for brownfield
 
-`solution-recon` must run before any brownfield implementation (G4/G10):
+`solution-recon` must run before any brownfield implementation:
 
-- Recon establishes ground truth: what the code actually does, not what the spec describes. In brownfield codebases, the spec routinely understates the work (broken import placeholders, "5 caches" that are really 3, shells that don't function).
-- **Feed recon drift back into the ADR.** When recon finds a mismatch between the spec/ADR and the actual code (e.g., the ADR describes a 5-cache architecture but the code has 3), amend the ADR or write a superseding one — don't silently diverge (G10).
+- Recon establishes ground truth: what the code actually does, not what the spec describes. In brownfield codebases, the spec routinely understates the work (broken import placeholders, "five adapters" that are really three, shells that don't function).
+- **Feed recon drift back into the ADR.** When recon finds a mismatch between the spec/ADR and the actual code (e.g., the ADR describes five adapters but the code has three), amend the ADR or write a superseding one — don't silently diverge.
 - Recon is per-family / per-epic, not per-task: one recon covers the whole feature; per-story builds cite it as warm context; per-task is a pointer, not a re-run.
 
 ### Brownfield cache / symbol-cutover playbook
 
-The canonical template for migrating an existing brownfield store, cache, or shared symbol — proven repeatable across multiple caches in the pilot (G14/G16):
+The canonical template for migrating an existing brownfield store, cache, or shared symbol — proven repeatable across several cutovers in field use:
 
 ```
 1. solution-recon   — establish ground truth; find broken shells, real contracts,
@@ -246,4 +246,4 @@ The canonical template for migrating an existing brownfield store, cache, or sha
 6. Repeat for each cutover unit (one increment per hot path, by blast radius).
 ```
 
-Test-author discoveries (latent bugs surfaced while writing tests) route to `tech-debt-keeper`, not back to the maker — they are real bugs found during writing, not test failures. Apply cheap hardening (e.g., `isinstance` guards) in-loop rather than always deferring to a follow-up (G6/G9).
+Test-author discoveries (latent bugs surfaced while writing tests) route to `tech-debt-keeper`, not back to the maker — they are real bugs found during writing, not test failures. Apply cheap hardening (e.g., `isinstance` guards) in-loop rather than always deferring to a follow-up.

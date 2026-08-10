@@ -186,9 +186,9 @@ def test_migrate_refuses_on_existing_dest():
 def test_migrate_routes_sprint_plan():
     with tempfile.TemporaryDirectory() as d:
         root = Path(d)
-        _w(root / "docs/specs/orion/sprint-01-plan.md", "# Sprint 1 plan\n")   # in the wrong (living) plane
+        _w(root / "docs/specs/checkout/sprint-01-plan.md", "# Sprint 1 plan\n")   # in the wrong (living) plane
         m = {e["from"]: e["to"] for e in scaffold.migrate(root)["moves"]}
-        check(m.get("docs/specs/orion/sprint-01-plan.md") == "docs/sprints/sprint-01-plan.md",
+        check(m.get("docs/specs/checkout/sprint-01-plan.md") == "docs/sprints/sprint-01-plan.md",
               "sprint-plan relocated out of specs/ into the cyclic sprints/ plane (§4)")
 
 
@@ -196,13 +196,13 @@ def test_migrate_routes_recon():
     with tempfile.TemporaryDirectory() as d:
         root = Path(d)
         _w(root / "notes/solution-recon.md", "# Recon (loose)\n")                   # loose -> specs/<feature>
-        _w(root / "docs/specs/orion/recon.md", "# Recon (already in a feature)\n")  # already home -> leave
+        _w(root / "docs/specs/checkout/recon.md", "# Recon (already in a feature)\n")  # already home -> leave
         plan = scaffold.migrate(root)
         m = {e["from"]: e["to"] for e in plan["moves"]}
         check(m.get("notes/solution-recon.md") == "docs/specs/feature-1/solution-recon.md",
               "recon: a loose solution-recon is routed into specs/<feature>/")
         leaves = {lv["path"]: lv["kind"] for lv in plan["leave_in_place"]}
-        check(leaves.get("docs/specs/orion/recon.md") == "recon",
+        check(leaves.get("docs/specs/checkout/recon.md") == "recon",
               "recon: a recon already under specs/ is classified and left in place")
 
 

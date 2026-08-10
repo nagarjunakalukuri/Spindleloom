@@ -95,11 +95,11 @@ def test_advance_refuses_at_unaccepted_phase_boundary():
         # the accountable role accepts -> the same advance now succeeds
         a = subprocess.run([sys.executable, str(HERE / "sloom.py"), "approve", "requirements",
                             "--feature", "user-auth", "--role", "product-owner",
-                            "--by", "N. Kalukuri", str(tmp)],
+                            "--by", "A. Reviewer", str(tmp)],
                            capture_output=True, text=True, encoding="utf-8", errors="replace")
         assert a.returncode == 0 and "ACCEPTED recorded" in a.stdout, a.stdout
         tok = tmp / ".spindleloom/approvals/user-auth/requirements.md"
-        assert tok.is_file() and "By: N. Kalukuri" in tok.read_text(encoding="utf-8")
+        assert tok.is_file() and "By: A. Reviewer" in tok.read_text(encoding="utf-8")
         r2 = _run("advance", "run-20260709-auth", "--agent", "frd-writer",
                   "--status", "done", str(tmp))
         assert r2.returncode == 0, r2.stdout

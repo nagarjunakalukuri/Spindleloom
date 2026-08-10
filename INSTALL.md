@@ -47,7 +47,7 @@ For teams rolling out Spindleloom across multiple repos or to 10+ developers.
 ### Phase 1 — Validate and package (owner/champion, 1 day)
 
 - [ ] Clone source, run `validate_graph.py` — confirm OK
-- [ ] Run `build_harness_artifacts.py` — confirm ~615 artifacts across 6 harnesses (count grows across releases)
+- [ ] Run `build_harness_artifacts.py` — confirm ~670 artifacts across 6 harnesses (count grows across releases)
 - [ ] Run all hook tests: `py -3 -m pytest hooks/ -q` — all pass (needs pytest; `unittest discover` silently collects only ~13 of ~90)
 - [ ] Decide install method: **plugin** (recommended for Claude Code teams) or **manual copy**
 - [ ] Decide tracker: Azure Boards (set `AZURE_DEVOPS_*` vars) or Jira (set `JIRA_*` vars)
@@ -80,7 +80,7 @@ For teams rolling out Spindleloom across multiple repos or to 10+ developers.
 - [ ] Wire `build_harness_artifacts.py --check` as a CI drift gate so stale bundles can't merge
 - [ ] After any Spindleloom source update: re-run `build_harness_artifacts.py` and re-distribute
 - [ ] Use `run-orchestrator` + `.spindleloom/run-state.json` for any autonomous fleet runs
-- [ ] Review `knowledge_hub/archive/PILOT-READOUT.md` for known adjustment areas before wider rollout
+- [ ] Review `knowledge_hub/FIELD-PILOT.md` for known adjustment areas before wider rollout
 
 ### Size your adoption
 
