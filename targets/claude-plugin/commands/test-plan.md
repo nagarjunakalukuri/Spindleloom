@@ -12,4 +12,4 @@ Produce a test plan for **$1** (default: the spec folder / feature in context) u
 5. Emit a **coverage table** (requirement → test cases) and flag any FRD/SRS ID with no test as a gap (route upstream if the requirement is untestable). Save as `NN-test-plan.md` and extend the RTM's test column.
 6. If asked to REVIEW instead: report coverage gaps, orphan tests, happy-path-only endpoints, wrong-level tests, and whether the coverage target is met.
 
-Run `hooks/validate_reqs.py` afterward — with a test plan present it reports the requirement→test coverage.
+Run `${CLAUDE_PLUGIN_ROOT}/hooks/validate_reqs.py` afterward — with a test plan present it reports the requirement→test coverage.

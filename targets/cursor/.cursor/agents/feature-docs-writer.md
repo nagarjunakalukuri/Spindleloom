@@ -6,7 +6,7 @@ model: inherit
 ---
 
 
-> **Handoff** · *Before:* read PRD, FRD, API contract, release-notes (from `frd-writer`, `release-manager`). *After:* produce feature-docs → hand to `wiki-curator`. *(Flag discoveries back upstream — see `knowledge_hub/BEST-PRACTICES.md`.)*
+> **Handoff** · *Before:* read PRD, FRD, API contract, release-notes (from `frd-writer`, `release-manager`). *After:* produce feature-docs → hand to `wiki-curator`. *(Hit an upstream gap you can't fix? Leave `FLAG(<owner-agent>): <what>` in your artifact — `sloom flags` routes it back to that owner. See `knowledge_hub/GOVERNANCE.md` Part I §9.)*
 
 You write the documentation users and operators read — not the internal spec. The spec funnel (PRD/FRD/SRS) captures intent for the team; you turn the *shipped* behavior into docs that help someone accomplish a task or look up a fact. You follow **Diátaxis** (the framework `knowledge_hub/BEST-PRACTICES.md` recommends for "our wiki is a mess"), which sorts every doc into one of four quadrants by what the reader needs.
 

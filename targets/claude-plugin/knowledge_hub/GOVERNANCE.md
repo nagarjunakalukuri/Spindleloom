@@ -253,12 +253,12 @@ Four complementary paths — you should never have to *know where a doc lives*:
 
 | Tool | Role |
 |---|---|
-| `hooks/scaffold.py` | lay down the `docs/` + `.spindleloom/` layout (tier-aware, idempotent) |
-| `hooks/validate_reqs.py` | RTM coverage / Req-ID / ADR-ref gate (CI + hook) |
-| `hooks/build_artifact_registry.py` | generate the catalog; `--baseline <tag>` freezes a snapshot |
-| `hooks/emit_backlog.py` | backlog.md → work-tracker work items (the sync contract of §12, automated): parse · field-map (AC → its own field) · dry-run plan · ID write-back; pluggable tracker adapter |
+| `${CLAUDE_PLUGIN_ROOT}/hooks/scaffold.py` | lay down the `docs/` + `.spindleloom/` layout (tier-aware, idempotent) |
+| `${CLAUDE_PLUGIN_ROOT}/hooks/validate_reqs.py` | RTM coverage / Req-ID / ADR-ref gate (CI + hook) |
+| `${CLAUDE_PLUGIN_ROOT}/hooks/build_artifact_registry.py` | generate the catalog; `--baseline <tag>` freezes a snapshot |
+| `${CLAUDE_PLUGIN_ROOT}/hooks/emit_backlog.py` | backlog.md → work-tracker work items (the sync contract of §12, automated): parse · field-map (AC → its own field) · dry-run plan · ID write-back; pluggable tracker adapter |
 | `hooks/mcp_server.py` | live traceability + artifact queries over MCP (launched via `uv run`) |
-| `hooks/rtm_core.py` | the shared stdlib parser behind all of the above |
+| `${CLAUDE_PLUGIN_ROOT}/hooks/rtm_core.py` | the shared stdlib parser behind all of the above |
 
 See `BEST-PRACTICES.md` for the requirement-quality standard and feedback loops, and `hooks/HOOKS.md` for wiring these into CI.
 
@@ -455,7 +455,7 @@ Layout is owned by **Part I** above -- this section only adds the Azure angle:
 
 ### Recommended flow on Azure
 1. Generate docs with the agents → store in Repos (+ Wiki links).
-2. `backlog-manager` output → push to Boards with **`sloom backlog`** (`hooks/emit_backlog.py` → `hooks/azure_boards_adapter.py`): creates Epics/Stories/Tasks/Bugs via JSON-Patch, puts acceptance criteria in the native **Acceptance Criteria** field, sets Priority/StoryPoints/Tags, links Epic parents (`--link-epics`), and writes the created IDs back into the RTM. (`hooks/jira_adapter.py` is the same flow for Jira; CSV import is the fallback when you have no PAT.)
+2. `backlog-manager` output → push to Boards with **`sloom backlog`** (`${CLAUDE_PLUGIN_ROOT}/hooks/emit_backlog.py` → `${CLAUDE_PLUGIN_ROOT}/hooks/azure_boards_adapter.py`): creates Epics/Stories/Tasks/Bugs via JSON-Patch, puts acceptance criteria in the native **Acceptance Criteria** field, sets Priority/StoryPoints/Tags, links Epic parents (`--link-epics`), and writes the created IDs back into the RTM. (`${CLAUDE_PLUGIN_ROOT}/hooks/jira_adapter.py` is the same flow for Jira; CSV import is the fallback when you have no PAT.)
 3. `estimation-facilitator` → fill Story Points; `sprint-planner` → assign to an Iteration with capacity (iteration/capacity assignment is manual -- the adapter deliberately doesn't own it).
 4. Devs work the board; link commits/PRs to stories; Test Plans hold test cases (`test-plan-writer` feeds these).
 5. Analytics dashboards give velocity/burndown/CFD/DORA — covering most of the metrics/reporting need natively.

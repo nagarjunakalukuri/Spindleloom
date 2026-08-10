@@ -20,14 +20,14 @@ The bundled `sloom` MCP server (short for Spindleloom) exposes **19 tools** in t
 
 ## Command line (`sloom`)
 
-`hooks/` ships the toolkit CLI that the agent definitions call -- stdlib-only Python 3.10+, no install:
+`${CLAUDE_PLUGIN_ROOT}/hooks/` ships the toolkit CLI that the agent definitions call -- stdlib-only Python 3.10+, no install:
 
 ```
-python hooks/sloom.py check <repo>        # spec battery (reqs, RTM, registry, drift)
-python hooks/sloom.py run status <run-id> # the distributed run ledger
-python hooks/sloom.py approve <phase> ... # phase-boundary acceptance token
-python hooks/sloom.py signoff <gate> ...  # evidence-required release sign-off
-python hooks/sloom.py flags <repo>        # open FLAG(owner) re-work
+python ${CLAUDE_PLUGIN_ROOT}/hooks/sloom.py check <repo>        # spec battery (reqs, RTM, registry, drift)
+python ${CLAUDE_PLUGIN_ROOT}/hooks/sloom.py run status <run-id> # the distributed run ledger
+python ${CLAUDE_PLUGIN_ROOT}/hooks/sloom.py approve <phase> ... # phase-boundary acceptance token
+python ${CLAUDE_PLUGIN_ROOT}/hooks/sloom.py signoff <gate> ...  # evidence-required release sign-off
+python ${CLAUDE_PLUGIN_ROOT}/hooks/sloom.py flags <repo>        # open FLAG(owner) re-work
 ```
 
-`sloom scaffold <repo>` lays down the governed docs tree. Run `python hooks/sloom.py` with no arguments for the full command list.
+`sloom scaffold <repo>` lays down the governed docs tree. Run `python ${CLAUDE_PLUGIN_ROOT}/hooks/sloom.py` with no arguments for the full command list.

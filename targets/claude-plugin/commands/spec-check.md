@@ -11,5 +11,5 @@ Run a traceability audit on the spec set at **$1** (default: spec folder in cont
    - **Uncovered** — FRD/SRS IDs with no downstream PBI/test (unbuilt scope).
    - **Orphans** — PBIs/design with no upstream requirement (scope creep, or a missing requirement to add upstream).
    - **Broken refs** — IDs referenced that don't exist, or duplicate IDs.
-4. If a `hooks/validate_reqs.py` validator exists, run it and fold in its findings.
+4. If a `${CLAUDE_PLUGIN_ROOT}/hooks/validate_reqs.py` validator exists, run it and fold in its findings.
 5. Output a coverage summary (e.g. "FRD: 8/8 covered, SRS: 11/12 — SR-PERF-002 has no PBI") and the exact fixes. Read-only.
