@@ -149,6 +149,65 @@ def test_fleet_edge_counts_match_contracts():
     assert data.count("t:'i'}") == len(set(fp.INDEX_SOURCES))
 
 
+# ---- bundled CLI (field-pilot gap 16 / IMP-160) ----
+
+def _ast_local_imports(path, local):
+    """Independent oracle: real imports via the AST, not the generator's own regex.
+    Covers `import a, b`, `from x import y`, and indented/function-level imports."""
+    import ast
+    mods = set()
+    for node in ast.walk(ast.parse(path.read_text(encoding="utf-8", errors="ignore"))):
+        if isinstance(node, ast.Import):
+            mods.update(a.name.split(".")[0] for a in node.names)
+        elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
+            mods.add(node.module.split(".")[0])
+    return {m for m in mods if m in local}
+
+
+def test_cli_closure_is_complete_and_carries_the_front_door():
+    import build_harness_artifacts as bha
+    closure = bha.hook_closure(ROOT)
+    for must in ("sloom.py", "validate_gates.py", "build_context_pack.py", "rtm_core.py"):
+        assert must in closure, must + " missing from the shipped CLI closure"
+    # The oracle is the AST, NOT bha.LOCAL_IMPORT -- so loosening/breaking the
+    # generator's regex makes this test fail instead of agreeing with the bug.
+    local = {p.stem for p in (ROOT / "hooks").glob("*.py")}
+    for n in closure:
+        for mod in _ast_local_imports(ROOT / "hooks" / n, local):
+            assert mod + ".py" in closure, "%s imports %s, which is not bundled" % (n, mod)
+    # the adapters are reachable only through function-level imports in sloom.py
+    assert {"jira_adapter.py", "azure_boards_adapter.py"} <= set(closure)
+
+
+def test_bundles_ship_what_the_cli_reads():
+    # shipping scaffold.py without templates/ makes `sloom scaffold` write _TODO_ stubs
+    for rel in ("claude-plugin", "claude-code", "cursor", "copilot", "windsurf"):
+        t = ROOT / "targets" / rel / "templates"
+        assert (t / "backlog-template.md").is_file(), rel + " ships no templates/"
+        assert (t / "ci" / "sloom-gate.yml").is_file(), rel + " ships no CI gate template"
+
+
+def test_non_claude_bundles_repoint_tool_paths():
+    # an agent telling a Cursor user to run hooks/validate_reqs.py points at nothing
+    for rel, glob in (("cursor", ".cursor/agents/*.md"),
+                      ("windsurf", ".windsurf/rules/*.md")):
+        hits = []
+        for p in (ROOT / "targets" / rel).glob(glob):
+            body = p.read_text(encoding="utf-8", errors="ignore")
+            if "hooks/validate_reqs.py" in body or "hooks/sloom.py" in body:
+                hits.append(p.name)
+        assert not hits, "%s: stale hooks/ paths in %s" % (rel, hits[:5])
+
+
+def test_every_bundle_ships_the_cli_the_agents_reference():
+    # the pilot's most expensive gap: 8 agent definitions called a CLI no bundle shipped
+    for rel in ("claude-plugin/hooks", "claude-code/hooks",
+                "cursor/tools", "copilot/tools", "windsurf/tools"):
+        d = ROOT / "targets" / rel
+        assert (d / "sloom.py").is_file(), rel + " ships no sloom.py"
+        assert (d / "validate_gates.py").is_file(), rel + " ships no validate_gates.py"
+
+
 def test_fleet_stale_override_fails():
     fp.EDGE_TYPE_OVERRIDES[("ghost-agent", "nobody")] = "s"
     try:

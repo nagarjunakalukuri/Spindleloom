@@ -324,10 +324,8 @@ def emit_claude_plugin(agents, src):
     # build_rtm --check, and surfaces failures on stderr (exit 2 -> fed to the model).
     # Ships every module the gate imports; the pre-0.3 wiring silently swallowed a
     # missing-rtm_core crash behind `2>/dev/null || true` -- never again. ---
-    hook_files = ("on_md_edit.py", "validate_reqs.py", "build_rtm.py", "rtm_core.py")
-    if all((src / "hooks" / n).is_file() for n in hook_files):
-        for n in hook_files:
-            files[f"hooks/{n}"] = (src / "hooks" / n).read_text(encoding="utf-8", errors="ignore")
+    files.update(cli_files(src, "hooks"))
+    if (src / "hooks" / "on_md_edit.py").is_file():
         files["hooks/hooks.json"] = json.dumps({
             "hooks": {
                 "PostToolUse": [{
@@ -389,8 +387,99 @@ def emit_claude_plugin(agents, src):
         "on first run, no manual `pip install`.\n\n"
         "`.mcp.json` is auto-discovered; it points the server at your project root. `scaffold_project` "
         "writes and is disabled unless you add `\"SPINDLELOOM_WRITABLE\": \"1\"` to the server's `env`.\n"
+        + cli_readme("hooks")
     )
     return files
+
+
+# --- The adopter CLI: `sloom` plus every tool it forwards to, plus every local module
+# those import. This list is COMPUTED, not hardcoded: a hardcoded four-file tuple is
+# exactly how the CLI silently stopped shipping while 8 agent definitions kept calling
+# it (field-pilot gap 16 / IMP-160). Add an entry point, its dependencies follow. ---
+CLI_ENTRY_POINTS = (
+    "sloom.py",                     # front door: check / run / approve / signoff / flags
+    "on_md_edit.py",                # the PostToolUse spec gate
+    "validate_reqs.py", "build_rtm.py", "validate_gates.py", "build_context_pack.py",
+    "build_artifact_registry.py", "scaffold.py", "emit_backlog.py", "sync_context_log.py",
+)
+# Deliberately matches INDENTED imports too -- sloom.py imports its tracker adapters
+# inside functions, which an anchored `^import` scan misses.
+LOCAL_IMPORT = re.compile(r"(?m)^\s*(?:import|from)\s+(\w+)")
+
+
+def hook_closure(src):
+    """Entry points + every local hook module they import, transitively (sorted)."""
+    hooks = src / "hooks"
+    local = {p.stem for p in hooks.glob("*.py")}
+    seen, stack = set(), [n for n in CLI_ENTRY_POINTS if (hooks / n).is_file()]
+    while stack:
+        name = stack.pop()
+        if name in seen:
+            continue
+        seen.add(name)
+        body = (hooks / name).read_text(encoding="utf-8", errors="ignore")
+        for m in LOCAL_IMPORT.finditer(body):
+            dep = m.group(1) + ".py"
+            if m.group(1) in local and dep not in seen and (hooks / dep).is_file():
+                stack.append(dep)
+    return sorted(seen)
+
+
+def cli_files(src, prefix):
+    """The CLI closure under `prefix/` (`hooks/` where the harness runs hooks, `tools/`
+    where it does not), PLUS `templates/` at bundle root.
+
+    scaffold.py resolves templates as `<its dir>/../templates`, so a bundle that ships
+    the CLI without the templates tree makes `sloom scaffold` write `_TODO_` placeholder
+    docs and silently skip the CI gate, exit 0. Shipping the CLI means shipping what the
+    CLI reads.
+    """
+    out = {f"{prefix}/{n}": (src / "hooks" / n).read_text(encoding="utf-8", errors="ignore")
+           for n in hook_closure(src)}
+    out.update(read_tree(src / "templates", "templates"))   # incl. templates/ci/*.yml
+    return out
+
+
+def repoint_tool_paths(text, src, prefix):
+    """Shipped prose writes tool paths repo-relative (`hooks/x.py`). Where a bundle puts
+    the CLI elsewhere, rewrite them so the instruction an agent reads actually resolves."""
+    if prefix == "hooks":
+        return text
+    for n in hook_closure(src):
+        text = text.replace("hooks/" + n, f"{prefix}/{n}")
+    return text
+
+
+def repoint_bundle(files, src, prefix):
+    """Apply the path rewrite across a bundle's prose (agents, commands, rules, skills,
+    templates, CI). Leaves the shipped .py bytes byte-identical to source."""
+    for k in list(files):
+        if k.startswith(prefix + "/") or k.startswith("mcp/"):
+            continue
+        if k.endswith((".md", ".mdc", ".yml", ".yaml")):
+            files[k] = repoint_tool_paths(files[k], src, prefix)
+    return files
+
+
+_CLI_README_TMPL = (
+    "\n## Command line (`sloom`)\n\n"
+    "`__DIR__/` ships the toolkit CLI that the agent definitions call -- stdlib-only "
+    "Python 3.10+, no install:\n\n"
+    "```\n"
+    "python __DIR__/sloom.py check <repo>        # spec battery (reqs, RTM, registry, drift)\n"
+    "python __DIR__/sloom.py run status <run-id> # the distributed run ledger\n"
+    "python __DIR__/sloom.py approve <phase> ... # phase-boundary acceptance token\n"
+    "python __DIR__/sloom.py signoff <gate> ...  # evidence-required release sign-off\n"
+    "python __DIR__/sloom.py flags <repo>        # open FLAG(owner) re-work\n"
+    "```\n\n"
+    "`sloom scaffold <repo>` lays down the governed docs tree. Run `python "
+    "__DIR__/sloom.py` with no arguments for the full command list.\n"
+)
+
+
+def cli_readme(prefix):
+    """The CLI section of a bundle README, pointed at that bundle's tool dir."""
+    return _CLI_README_TMPL.replace("__DIR__", prefix)
 
 
 def emit_claude_code(agents, src):
@@ -399,10 +488,7 @@ def emit_claude_code(agents, src):
     for name, content in load_commands(src):
         files[f"commands/{name}.md"] = content
     files.update(read_tree(src / "skills", "skills"))
-    for n in ("on_md_edit.py", "validate_reqs.py", "build_rtm.py", "rtm_core.py"):
-        p = src / "hooks" / n
-        if p.is_file():
-            files[f"hooks/{n}"] = p.read_text(encoding="utf-8", errors="ignore")
+    files.update(cli_files(src, "hooks"))
     files["CLAUDE.md"] = instructions_md(agents, src)
     files.update(mcp_server_files(src))
     files[".mcp.json"] = mcp_config("claude", "${CLAUDE_PROJECT_DIR}/mcp/mcp_server.py", "${CLAUDE_PROJECT_DIR}")
@@ -411,9 +497,11 @@ def emit_claude_code(agents, src):
         "Generated by `build_harness_artifacts.py` from the single source. Prefer the `claude-plugin` target "
         "(one `/plugin install`); use this only to hand-wire `.claude/`.\n\n"
         "Copy `agents/` → `.claude/agents/`, `commands/` → `.claude/commands/`, `skills/` → `.claude/skills/`, "
-        "`CLAUDE.md` → repo root, and `mcp/` + `.mcp.json` → repo root (MCP launches via `uv run` — install "
+        "`CLAUDE.md` → repo root, and `hooks/` + `templates/` + `mcp/` + `.mcp.json` → repo root "
+        "(`hooks/` is the CLI, `templates/` is what it writes from; MCP launches via `uv run` — install "
         "[uv](https://docs.astral.sh/uv/)). Wire `hooks/on_md_edit.py` as a PostToolUse Write|Edit hook in "
         "`.claude/settings.json` for the live spec gate.\n"
+        + cli_readme("hooks")
     )
     return files
 
@@ -434,16 +522,20 @@ def emit_cursor(agents, src):
             "globs:", "alwaysApply: true", "---", ""]
     files[".cursor/rules/000-spindleloom-conventions.mdc"] = "\n".join(conv) + instructions_md(agents, src)
     files.update(mcp_server_files(src))
+    files.update(cli_files(src, "tools"))
     # Cursor resolves ${workspaceFolder} (the dir containing .cursor/mcp.json) — portable, no abs path.
     files[".cursor/mcp.json"] = mcp_config("cursor", "${workspaceFolder}/mcp/mcp_server.py", "${workspaceFolder}")
+    repoint_bundle(files, src, "tools")
     files["README.md"] = (
         "# Cursor bundle\n\n"
-        "Generated by `build_harness_artifacts.py`. Copy `.cursor/`, `.claude/`, and `mcp/` into your repo root. "
+        "Generated by `build_harness_artifacts.py`. Copy `.cursor/`, `.claude/`, `mcp/`, `tools/` and "
+        "`templates/` into your repo root (`tools/` + `templates/` are the CLI and what it writes from). "
         "Each role is a native Cursor agent (`.cursor/agents/`); slash commands live in `.cursor/commands/`; "
         "skills in `.claude/skills/` (Cursor auto-reads them); `000-spindleloom-conventions.mdc` is the always-on rule. "
         "`.cursor/mcp.json` registers the live traceability server, launched via `uv run` "
         "(install [uv](https://docs.astral.sh/uv/); it provisions the MCP SDK on first run); "
         "it uses `${workspaceFolder}`, so it's portable across machines.\n"
+        + cli_readme("tools")
     )
     return files
 
@@ -463,14 +555,18 @@ def emit_copilot(agents, src):
         lines.append(f"- **{a['name']}** — {first_sentence(a['description'])}")
     files[".github/copilot-instructions.md"] = "\n".join(lines) + "\n"
     files.update(mcp_server_files(src))
+    files.update(cli_files(src, "tools"))
     files[".vscode/mcp.json"] = mcp_config("vscode", "${workspaceFolder}/mcp/mcp_server.py", "${workspaceFolder}")
+    repoint_bundle(files, src, "tools")
     files["README.md"] = (
         "# GitHub Copilot bundle\n\n"
-        "Generated by `build_harness_artifacts.py`. Copy `.github/`, `.vscode/`, and `mcp/` into your repo root. "
+        "Generated by `build_harness_artifacts.py`. Copy `.github/`, `.vscode/`, `.claude/`, `mcp/`, `tools/` "
+        "and `templates/` into your repo root (`tools/` + `templates/` are the CLI and what it writes from). "
         "Chat modes + `copilot-instructions.md` carry the fleet; `.github/prompts/` carries the slash "
         "commands; `.claude/skills/` is auto-read by Copilot; `.vscode/mcp.json` registers the "
         "live traceability server, launched via `uv run` (install "
         "[uv](https://docs.astral.sh/uv/); it provisions the MCP SDK on first run).\n"
+        + cli_readme("tools")
     )
     return files
 
@@ -521,10 +617,13 @@ def emit_windsurf(agents, src):
             "description: Spindleloom project conventions (SDLC funnel, Req-ID, RTM).", "---", ""]
     files[".windsurf/rules/000-spindleloom-conventions.md"] = "\n".join(conv) + instructions_md(agents, src)
     files.update(mcp_server_files(src))
+    files.update(cli_files(src, "tools"))
     snippet = mcp_config("claude", "/abs/path/to/your/repo/mcp/mcp_server.py", "/abs/path/to/your/repo")
+    repoint_bundle(files, src, "tools")
     files["README.md"] = (
         "# Windsurf bundle\n\n"
-        "Generated by `build_harness_artifacts.py`. Copy `.windsurf/` and `mcp/` into your repo root. Windsurf has no "
+        "Generated by `build_harness_artifacts.py`. Copy `.windsurf/`, `.claude/`, `mcp/`, `tools/` and "
+        "`templates/` into your repo root (`tools/` + `templates/` are the CLI and what it writes from). Windsurf has no "
         "subagents, so each role is a `model_decision` rule (activates when relevant); "
         "`000-spindleloom-conventions.md` is always-on. Oversize roles are auto-condensed to Windsurf's ~12k rule cap "
         "(full text stays in the source/plugin). `.windsurf/workflows/` carries the slash commands; "
@@ -534,6 +633,7 @@ def emit_windsurf(agents, src):
         "(install [uv](https://docs.astral.sh/uv/) — it provisions the MCP SDK on first run), with "
         "absolute paths to where you copied `mcp/`:\n\n"
         "```json\n" + snippet + "```\n"
+        + cli_readme("tools")
     )
     return files
 

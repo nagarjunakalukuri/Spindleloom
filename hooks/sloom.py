@@ -70,8 +70,24 @@ TOOLS = {
 }
 
 
+# Toolkit-only commands: they operate on the fleet source, not an adopter repo, so the
+# harness bundles deliberately do not ship them. Say that plainly instead of letting
+# python emit a raw "can't open file" (field-pilot gap 16 follow-up).
+TOOLKIT_ONLY = {"graph": "validates the agent fleet's contract graph",
+                "targets": "regenerates the harness bundles",
+                "index": "regenerates the agent index / help / handoffs"}
+
+
 def run(script, args):
-    return subprocess.call([sys.executable, str(HERE / script), *args])
+    p = HERE / script
+    if not p.is_file():
+        why = "toolkit-only — not shipped in harness bundles" if script in (
+            "validate_graph.py", "build_harness_artifacts.py", "build_agent_index.py",
+            "build_help.py", "build_handoffs.py") else "not bundled"
+        print(f"sloom: `{script}` is unavailable here ({why}). "
+              f"Run it from a clone of the Spindleloom toolkit repo.")
+        return 2
+    return subprocess.call([sys.executable, str(p), *args])
 
 
 def check(root):

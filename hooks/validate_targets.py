@@ -113,15 +113,28 @@ def main(argv):
         n = len(list((pl / sub).glob(pat))) if (pl / sub).is_dir() else 0
         if n < floor:
             errors.append(f"claude-plugin: only {n} in {sub}/ (expected ≥{floor})")
-    hooks_dir = pl / "hooks"
-    bundled = {p.stem for p in hooks_dir.glob("*.py")} if hooks_dir.is_dir() else set()
-    for p in sorted(hooks_dir.glob("*.py")) if hooks_dir.is_dir() else []:
-        for m in re.finditer(r"(?m)^(?:import|from)\s+(\w+)", p.read_text(encoding="utf-8", errors="ignore")):
-            mod = m.group(1)
-            # a local module = one that exists in the SOURCE hooks dir; it must ship too
-            if (Path(__file__).resolve().parent / f"{mod}.py").is_file() and mod not in bundled:
-                errors.append(f"claude-plugin: hooks/{p.name} imports local module '{mod}' "
-                              f"which is NOT bundled — the hook will crash at runtime")
+    # ---- bundled python tools: the CLI must ship, and its local imports with it ----
+    # Applies to EVERY bundle that carries python, not just the plugin: the agent
+    # definitions reference `sloom …` from all of them (field-pilot gap 16 / IMP-160).
+    # The scan matches INDENTED imports too — sloom.py imports its tracker adapters
+    # inside functions, which the old `^import` anchor silently skipped.
+    for tgt, sub in (("claude-plugin", "hooks"), ("claude-code", "hooks"),
+                     ("cursor", "tools"), ("copilot", "tools"), ("windsurf", "tools")):
+        d = root / tgt / sub
+        if not d.is_dir():
+            errors.append(f"{tgt}: no {sub}/ — the CLI the agent definitions call is not shipped")
+            continue
+        bundled = {p.stem for p in d.glob("*.py")}
+        if "sloom" not in bundled:
+            errors.append(f"{tgt}: {sub}/ ships no sloom.py — the agent definitions reference "
+                          f"`sloom run|approve|signoff|flags`, which would not exist on install")
+        for p in sorted(d.glob("*.py")):
+            for m in re.finditer(r"(?m)^\s*(?:import|from)\s+(\w+)", p.read_text(encoding="utf-8", errors="ignore")):
+                mod = m.group(1)
+                # a local module = one that exists in the SOURCE hooks dir; it must ship too
+                if (Path(__file__).resolve().parent / f"{mod}.py").is_file() and mod not in bundled:
+                    errors.append(f"{tgt}: {sub}/{p.name} imports local module '{mod}' "
+                                  f"which is NOT bundled — it will crash at runtime")
 
     # ---- claude-code loose target ----
     cc = root / "claude-code"
