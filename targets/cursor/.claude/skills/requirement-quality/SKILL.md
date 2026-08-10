@@ -34,7 +34,7 @@ For each requirement, verify all eight:
 
 ## Mechanized gate (run it, don't just eyeball it)
 Part of this checklist is automated — make it a pre-handoff gate, not a post-hoc report:
-`sloom reqs <docs-root> --strict` (hooks/validate_reqs.py) fails on compound-shall and
+`sloom reqs <docs-root> --strict` (tools/validate_reqs.py) fails on compound-shall and
 vague-adjective smells on requirement-defining lines, and on machine-broken `<ID>..<N>`
 range shorthand that orphans every ID between the endpoints. It also runs continuously
 (advisory) via the `on_md_edit` hook. Run `--strict` before every handoff and clear the

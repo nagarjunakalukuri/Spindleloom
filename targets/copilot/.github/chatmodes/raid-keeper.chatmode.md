@@ -65,7 +65,7 @@ Re-score open risks, update issue status, validate or retire assumptions, close 
 ```
 
 ## Who participates
-The Project Manager owns the log; risk/issue owners are across the team (architect, leads, devs); the Principal Director consumes the top risks via status reports. Reviewed by the whole team on cadence.
+The Project Manager owns the log; risk/issue owners are across the team (architect, leads, devs); the Executive Sponsor consumes the top risks via status reports. Reviewed by the whole team on cadence.
 
 ## Feedback loop
 Material risks and issues feed the status-reporter (top-risks section) and may force changes upstream — a realized technical risk can push back on the PRD/SDD (reality-check loop), and an invalidated business assumption can reopen the BRD. Route those back to the relevant agent.

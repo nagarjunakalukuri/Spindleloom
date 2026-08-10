@@ -1,0 +1,69 @@
+# sloom-gate.yml — the PR gate that makes "merged to main" mean the gates actually ran.
+#
+# Written into adopter repos by `scaffold.py` (as .github/workflows/sloom-gate.yml).
+# The branch/PR promotion model: a role's artifact is "local" on their branch until this
+# gate passes and the PR merges — the merge is where ID collisions (DUP-REQID), broken
+# traceability, RTM gaps, and unevidenced gates are caught BEFORE they land in shared state.
+#
+# Requires the Spindleloom hooks to be reachable — either the toolkit vendored at
+# spindleloom/ (default below), the sloom plugin's hooks dir, or a pip/uv install.
+# Adjust SLOOM_HOOKS to where hooks/ lives in YOUR repo. GitHub Actions syntax; the
+# steps are three plain python invocations — trivially portable to GitLab CI / Azure
+# Pipelines (see templates/ci-cd-pipeline-template.md for the full pipeline this
+# gate slots into).
+
+name: sloom gate
+
+on:
+  pull_request:
+    paths:
+      - "docs/**"
+      - ".spindleloom/**"
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - ".spindleloom/**"
+
+env:
+  # where the Spindleloom hooks/ directory lives in this repo
+  SLOOM_HOOKS: spindleloom/hooks
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # The adopter battery: traceability + quality lint (incl. DUP-REQID),
+      # RTM coverage, registry drift (when a catalog exists), execution gates,
+      # and md<->tracker drift (when a backlog + mapped RTM exist). Stdlib-only.
+      - name: sloom check
+        run: python "$SLOOM_HOOKS/sloom.py" check .
+
+      # PBI-scoped verification gate: when the branch names a PBI
+      # (e.g. feature/PBI-CHECKOUT-007-saved-cards), require its change-verifier
+      # PASS artifact to exist — the maker/checker loop, enforced at merge.
+      - name: require PBI verification (when branch names one)
+        if: github.event_name == 'pull_request'
+        run: |
+          PBI=$(echo "${{ github.head_ref }}" | grep -oE 'PBI-[A-Z0-9]+-[0-9]+' | head -1 || true)
+          if [ -n "$PBI" ]; then
+            echo "branch names $PBI — requiring its verification artifact"
+            python "$SLOOM_HOOKS/validate_gates.py" . --require "$PBI"
+          else
+            echo "no PBI in branch name — skipping the per-PBI verification gate"
+          fi
+
+      # OPTIONAL — enforce PHASE ACCEPTANCE at merge too. By default acceptance is a
+      # RUN-TIME gate (sloom run advance / the orchestrator / a local
+      # `validate_gates.py --accepted`); `sloom check` above does NOT check it, so a green
+      # PR does not by itself mean the phase was accepted. Uncomment and map <phase>/<slug>
+      # from your branch or a PR label to require an ACCEPTED token at merge:
+      # - name: require phase acceptance (optional)
+      #   if: github.event_name == 'pull_request'
+      #   run: python "$SLOOM_HOOKS/validate_gates.py" . --accepted <phase> --feature <slug>

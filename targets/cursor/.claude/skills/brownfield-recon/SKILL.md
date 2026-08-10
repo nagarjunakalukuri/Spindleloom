@@ -8,7 +8,7 @@ description: Establish ground truth from an existing codebase before writing, ac
 Documents derive from other documents and drift; the repo is what actually runs. On existing systems the decisive question is almost always *"does the thing this work assumes actually exist, and in what shape?"* A 15-minute recon prevents dead/stub UI, wrong data assumptions, and mid-sprint surprises.
 
 ## The method
-1. **State the claim** the spec/PBI makes ("aggregates `reconciliation_result`", "calls `/aep/rag/*`").
+1. **State the claim** the spec/PBI makes ("aggregates `settlement_totals`", "calls `/api/search/*`").
 2. **Existence check** — grep/read for the endpoint, service, model, and data it assumes. Record **present / absent / partial**. (Also catches "already built" — don't spec what exists.)
 3. **Extract the real contract** — the *actual* method/path, request/response keys, and **enum/status values** as they are in code, not the doc's paraphrase. (The spec said `pass/fail`; the code said `matched|mismatch|missing|partial|pending`. The code wins.)
 4. **Find the sibling to mirror** — most new work on a platform clones an existing pattern; name the concrete files to copy from.

@@ -64,7 +64,7 @@ When `solution-recon` returns **blocked (needs prereq PBI)** — a PBI depends o
 1. **Emit the prereq PBI** (the enabler) with its own acceptance criteria, traced to the same source.
 2. **Mark the dependent PBI `blocked`**, add `Depends: <prereq>`, and shrink its scope to what's left once the prereq lands.
 3. **Re-estimate both** (hand to `estimation-facilitator`) — the original points are stale; the prereq now carries part of the work.
-This generalizes the platform-extension exception beyond endpoints to *any* recon-discovered prereq. *(Pilot Run-4: CLOSE-004 — an EIA-923↔FERC-F1 linker — was blocked on a missing FERC-F1 fuel field; it split into a FERC-F1-extraction prereq + the re-scoped linker.)*
+This generalizes the platform-extension exception beyond endpoints to *any* recon-discovered prereq. *(Worked example: a reporting PBI joining two upstream feeds was blocked on a field one feed never extracted; it split into an extraction prereq + the re-scoped join.)*
 
 ### When asked to REVIEW a backlog
 Check: does every story follow the format with a real "so that"? Are acceptance criteria present and testable? Does each story meet INVEST? Is the backlog ordered? Does each trace to a PRD/FRD requirement? Are non-story PBIs (bugs/spikes/decisions/docs) typed **and routed** (see PBI types & routing)?
@@ -95,7 +95,7 @@ The docs↔tracker relationship is **one-way after seeding**, with a defined fie
 
 **Who pushes (the multi-user rule).** One role pushes — this one — and only from **merged `main`**: mint PBIs on a branch → merge (the PR gates run, incl. DUP-REQID) → push to the tracker from main → write back → commit the mapping immediately. Two people pushing from unmerged branches is how one PBI becomes two tracker items. The adapters enforce the second half mechanically: with `--rtm`, already-mapped PBIs are **skipped** (idempotent re-push; `--force-repush` overrides), and `emit_backlog.py check <backlog.md> --rtm <RTM.md>` reports drift (NEW = unpushed, GONE = orphaned mapping).
 
-**Drift rule.** If the doc and the tracker disagree on a PBI's AC or status, the **tracker wins**; resolve by updating the RTM / a one-line doc note — never by hand-maintaining the same fact in both. *(Pilot: a grooming pass rewrote 30 stories' AC into the native field + cut 29 Tasks board-first; without this contract none of it traced back, and `backlog.md` still claimed to be "the AC reference".)*
+**Drift rule.** If the doc and the tracker disagree on a PBI's AC or status, the **tracker wins**; resolve by updating the RTM / a one-line doc note — never by hand-maintaining the same fact in both. *(Worked example: a grooming pass moved 30 stories' AC into the tracker's native field and cut 29 tasks board-first; without this contract none of it traced back, and `backlog.md` still claimed to be "the AC reference".)*
 
 ## PBI ID convention
 `PBI-<EPIC>-<NUM>` (e.g. `PBI-CHECKOUT-007`), per the `<DOC>-<AREA>-<NUM>` scheme in `knowledge_hub/BEST-PRACTICES.md` (here the epic name is the `<AREA>`). IDs are stable and feed the RTM (PRD → story → test).
@@ -111,7 +111,7 @@ A PBI's **Type** drives which agent executes it and what "Done" means — `pbi-n
 | `Spike` | a time-boxed research / unknown | `solution-recon` | question answered; follow-up PBIs cut |
 | `Bug` | a defect | `debugger` (+ `test-author`) | fixed + regression test |
 
-A **Decision** PBI produces an ADR, not a PR — don't run it through the code build flow, and don't leave it untyped (it gets mis-pulled as code). *(Pilot Run-4: a decision PBI mislabeled "lean code fix" was nearly picked up as a build.)*
+A **Decision** PBI produces an ADR, not a PR — don't run it through the code build flow, and don't leave it untyped (it gets mis-pulled as code). *(Worked example: a decision PBI mislabeled "lean code fix" was nearly picked up as a build.)*
 
 ## Backlog template
 

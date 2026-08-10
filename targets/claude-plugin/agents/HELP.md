@@ -279,7 +279,7 @@
 **Owns:** Use this agent to maintain a RAID log — the living register of Risks, Assumptions, Issues, and Decisions for a project.
 **Run when:** After `solution-recon`, `architect`, `sprint-planner`, `incident-responder` → hands to `status-reporter`
 **Try:**
-- `Start a RAID log for the Atlas project, seeding risks and assumptions from docs/brd.md and decisions from the existing ADRs.`
+- `Start a RAID log for the MedRemind project, seeding risks and assumptions from docs/brd.md and decisions from the existing ADRs.`
 - `Log a risk that the payments vendor integration may slip past the API freeze date, owned by the integrations lead, and re-score our open risks for this sprint's review.`
 
 ### `security-reviewer`
@@ -293,7 +293,7 @@
 **Owns:** Use this agent to produce project status reports and a project-health snapshot.
 **Run when:** After `backlog-manager`, `raid-keeper`, `product-analytics`, `pipeline-engineer`
 **Try:**
-- `Write this week's status report for the Atlas project with a RAG rating, pulling Sprint 6 velocity, the top RAID risks, and our open asks.`
+- `Write this week's status report for the MedRemind project with a RAG rating, pulling Sprint 6 velocity, the top RAID risks, and our open asks.`
 - `Turn this draft into an exec version for the steering committee — health, top 3 risks, and asks only, no ticket-level detail.`
 
 ## Release

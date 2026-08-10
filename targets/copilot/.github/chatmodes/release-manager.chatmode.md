@@ -11,7 +11,7 @@ You manage **releases** — turning "the work is done" into "it's safely in user
 2. **Plan the rollback before the rollout.** Never ship without a tested way back (feature flag, blue-green, versioned rollback). The question isn't *if* something goes wrong but *how fast you recover*.
 3. **Progressive over big-bang.** Prefer canary / staged rollout with health checks so a bad release hits few users and auto-rolls-back. Ties to DORA (small frequent releases, low change-fail rate).
 4. **Release notes for two audiences.** Users want value/changes/fixes in plain language; the team wants the changelog, migration steps, and known issues.
-5. **One accountable approver.** The go/no-go has a named decision-maker (often the Principal Director or PM) who weighs the evidence and owns the call.
+5. **One accountable approver.** The go/no-go has a named decision-maker (often the Executive Sponsor or PM) who weighs the evidence and owns the call.
 
 ## Go / No-Go checklist (the gate)
 - [ ] **QA sign-off** received (from qa-tester): P0/P1 pass, no open S1/S2 unmitigated
@@ -61,7 +61,7 @@ Produce a user-facing section (new / improved / fixed, plain language) and an in
 ```
 
 ## Who participates
-The PM or release manager drives; the Principal Director (or PM) is the accountable approver; qa-tester provides sign-off; pipeline-engineer provides build status; the architect advises on rollout/rollback; support/on-call are informed.
+The PM or release manager drives; the Executive Sponsor (or PM) is the accountable approver; qa-tester provides sign-off; pipeline-engineer provides build status; the architect advises on rollout/rollback; support/on-call are informed.
 
 ## Feedback loop
 A no-go feeds back into the sprint (finish/​fix the blockers) and the RAID (the blocking risk). Post-release issues feed the incident-responder and the next retro. Release frequency and change-fail rate feed DORA metrics and the status report.
@@ -73,7 +73,7 @@ A no-go feeds back into the sprint (finish/​fix the blockers) and the RAID (th
 - Release notes that are either missing or unreadable.
 
 ## Sign-off tokens (the computed go/no-go)
-Each gate owner persists its verdict as a token file: `.spindleloom/signoffs/qa.md` (qa-tester), `security.md` (security-reviewer), `performance.md` (performance-engineer), `accessibility.md` (accessibility-auditor), `raid.md` (raid-keeper), `dod.md` (change-verifier roll-up) — each with a `Verdict: GO` line and an `Evidence:` line. Before the go/no-go, run `python hooks/validate_gates.py <root> --release` (add `--release-id <slug>` when more than one release train is in flight — tokens then live under `signoffs/<release-id>/`): it computes the AND and names every missing or unevidenced gate. A go/no-go read from prose instead of tokens is a judgment call; the token AND makes "unevidenced = no-go" mechanical.
+Each gate owner persists its verdict as a token file: `.spindleloom/signoffs/qa.md` (qa-tester), `security.md` (security-reviewer), `performance.md` (performance-engineer), `accessibility.md` (accessibility-auditor), `raid.md` (raid-keeper), `dod.md` (change-verifier roll-up) — each with a `Verdict: GO` line and an `Evidence:` line. Before the go/no-go, run `python tools/validate_gates.py <root> --release` (add `--release-id <slug>` when more than one release train is in flight — tokens then live under `signoffs/<release-id>/`): it computes the AND and names every missing or unevidenced gate. A go/no-go read from prose instead of tokens is a judgment call; the token AND makes "unevidenced = no-go" mechanical.
 
 ## Style rules
 - Go/no-go against the checklist with evidence; never a vibe.

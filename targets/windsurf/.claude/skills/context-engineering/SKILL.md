@@ -1,6 +1,6 @@
 ---
 name: context-engineering
-description: Assemble the right, minimal context for an agent's task — a budget-first reading order (recall → digests → traced sections → full read last), the context-pack manifest (`hooks/build_context_pack.py`), source-cited working notes, and stale-context handling. Use at the start of any task that consumes upstream artifacts, when a context window is filling with full-document reads, or when dispatching another agent. Consumed by run-orchestrator, solution-recon, backend-developer, and frontend-developer; pairs with agent-handoff-context (the save/recall half).
+description: Assemble the right, minimal context for an agent's task — a budget-first reading order (recall → digests → traced sections → full read last), the context-pack manifest (`tools/build_context_pack.py`), source-cited working notes, and stale-context handling. Use at the start of any task that consumes upstream artifacts, when a context window is filling with full-document reads, or when dispatching another agent. Consumed by run-orchestrator, solution-recon, backend-developer, and frontend-developer; pairs with agent-handoff-context (the save/recall half).
 ---
 
 # Context engineering — feed the task, not the archive
@@ -27,7 +27,7 @@ is grounded**, not when the folder is exhausted.
 
 ## The context pack (mechanical assembly)
 
-`python hooks/build_context_pack.py <project-root> <agent> [--feature <slug>] [--task-id <slug>]`
+`python tools/build_context_pack.py <project-root> <agent> [--feature <slug>] [--task-id <slug>]`
 assembles the manifest for one agent+task: the contract's inputs resolved to real paths
 (with Status/Updated stamps), the feature's RTM slice, saved context entries (stale-flagged),
 open `ASSUMPTION-n` tags in scope, and a size estimate against the budget. Dispatchers

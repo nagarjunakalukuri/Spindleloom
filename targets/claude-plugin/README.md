@@ -17,3 +17,17 @@ Then the agents trigger by description (or `/agents`), the slash commands (`/spe
 The bundled `sloom` MCP server (short for Spindleloom) exposes **19 tools** in two groups. **RTM / catalog / conformance (12):** trace/coverage (`trace_requirement`, `rtm_coverage`, `funnel_status`), catalog (`list_requirements`, `list_artifacts`, `find_artifact`, `find_decision`, `search_specs`), conformance (`check_conformance`), and authoring (`next_req_id`, `stale_artifacts`, `scaffold_project`). **Agent context memory (6):** `save_context` / `recall_context` / `list_contexts` / `get_context` / `delete_context` / `sync_contexts` — token-efficient handoff layer so agents retrieve prior decisions in one call instead of re-reading upstream docs. Enable semantic search with `"SPINDLELOOM_SEMANTIC":"1"` (local ONNX embeddings, no API calls). `.mcp.json` launches it via `uv run --with "mcp[cli]"`, so the only prerequisite is [uv](https://docs.astral.sh/uv/) — uv provisions the MCP SDK (and a Python interpreter) on first run, no manual `pip install`.
 
 `.mcp.json` is auto-discovered; it points the server at your project root. `scaffold_project` writes and is disabled unless you add `"SPINDLELOOM_WRITABLE": "1"` to the server's `env`.
+
+## Command line (`sloom`)
+
+`hooks/` ships the toolkit CLI that the agent definitions call -- stdlib-only Python 3.10+, no install:
+
+```
+python hooks/sloom.py check <repo>        # spec battery (reqs, RTM, registry, drift)
+python hooks/sloom.py run status <run-id> # the distributed run ledger
+python hooks/sloom.py approve <phase> ... # phase-boundary acceptance token
+python hooks/sloom.py signoff <gate> ...  # evidence-required release sign-off
+python hooks/sloom.py flags <repo>        # open FLAG(owner) re-work
+```
+
+`sloom scaffold <repo>` lays down the governed docs tree. Run `python hooks/sloom.py` with no arguments for the full command list.

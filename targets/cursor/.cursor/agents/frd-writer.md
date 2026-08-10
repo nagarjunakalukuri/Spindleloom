@@ -90,7 +90,7 @@ Run every functional requirement through the **ISO/IEC/IEEE 29148 + INCOSE check
 Specifying exact behavior often exposes gaps in the PRD — a flow with no defined error state, two stories whose rules contradict, or an acceptance criterion that can't actually be made deterministic. When that happens, flag it back to the prd-writer rather than inventing a rule to paper over it; the PRD is updated first, then the change flows down here. See `knowledge_hub/BEST-PRACTICES.md`.
 
 ## Style rules
-- **Quality-lint before handoff.** Run `python hooks/validate_reqs.py <docs-root>` and clear every QUALITY finding on your own IDs (vague adjectives, compound shall-clauses) or state why the phrasing is deliberate — `--strict` is the exit bar; don't ship lint debt downstream.
+- **Quality-lint before handoff.** Run `python tools/validate_reqs.py <docs-root>` and clear every QUALITY finding on your own IDs (vague adjectives, compound shall-clauses) or state why the phrasing is deliberate — `--strict` is the exit bar; don't ship lint debt downstream.
 - **Append your rows to `docs/RTM.md`** (seeded by brd-writer) in the same pass that assigns IDs — an ID that isn't in the RTM is untraceable, and no other agent will add it for you.
 - Define the unhappy paths, not just the happy one.
 - Every requirement is deterministic and testable.

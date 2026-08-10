@@ -4,7 +4,7 @@
 
 | Field | → Work item |
 |---|---|
-| Title | `<PBI-ID> T<n> — <verb> <object>` (e.g. `PBI-AEP-208 T2 — Parser gia_parser.py`) |
+| Title | `<PBI-ID> T<n> — <verb> <object>` (e.g. `PBI-ORD-208 T2 — Parser invoice_parser.py`) |
 | Parent | the PBI (hierarchy link) |
 | Description | one line — what changes + the seam/file it touches |
 | Estimate | remaining hours (optional) |
