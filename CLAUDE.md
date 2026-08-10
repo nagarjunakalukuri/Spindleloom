@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-Spindleloom is **not an application** — it's a fleet of **52 role-specialist AI agents** (plus 52 templates, 28 skills, 23 slash commands, self-validating Python hooks, and a traceability MCP server) that carry a product across the full SDLC (market → spec → design → build → test → ship → operate) as one traceable chain. The "code" here is mostly **Markdown-as-contract** (`agents/*.md`, `templates/*.md`, `skills/*/SKILL.md`, `commands/*.md`) plus **stdlib-only Python** in `hooks/` that validates and generates from it.
+Spindleloom is **not an application** — it's a fleet of **52 role-specialist AI agents** (plus 53 templates, 28 skills, 23 slash commands, self-validating Python hooks, and a traceability MCP server) that carry a product across the full SDLC (market → spec → design → build → test → ship → operate) as one traceable chain. The "code" here is mostly **Markdown-as-contract** (`agents/*.md`, `templates/*.md`, `skills/*/SKILL.md`, `commands/*.md`) plus **stdlib-only Python** in `hooks/` that validates and generates from it.
 
 The product ships to end users as **harness-native bundles** under `targets/` — the same source is generated into Claude Code / Cursor / Copilot / Windsurf / AGENTS.md formats by `hooks/build_harness_artifacts.py`. `targets/` is **generated — never edit it by hand.**
 

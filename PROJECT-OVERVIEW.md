@@ -6,7 +6,7 @@
 
 ## 1. What this is (in one paragraph)
 
-Spindleloom is **not an application** — it's a **tool-agnostic fleet of 52 role-specialist AI agents** (plus **28 skills**, **52 document templates**, **23 slash commands**, stdlib-Python **hooks**, and a **traceability MCP server**) that carry a product across the entire software development lifecycle — market → spec → design → build → test → ship → operate — as *one traceable chain*. Each agent owns one role, reads the artifact above it, hands off to the next, and pushes discoveries back upstream. Teams run only the subset they need. The whole fleet is authored once as Markdown-with-contracts and **generated into harness-native bundles** (Claude Code, Cursor, Copilot, Windsurf, AGENTS.md) under `targets/`.
+Spindleloom is **not an application** — it's a **tool-agnostic fleet of 52 role-specialist AI agents** (plus **28 skills**, **53 document templates**, **23 slash commands**, stdlib-Python **hooks**, and a **traceability MCP server**) that carry a product across the entire software development lifecycle — market → spec → design → build → test → ship → operate — as *one traceable chain*. Each agent owns one role, reads the artifact above it, hands off to the next, and pushes discoveries back upstream. Teams run only the subset they need. The whole fleet is authored once as Markdown-with-contracts and **generated into harness-native bundles** (Claude Code, Cursor, Copilot, Windsurf, AGENTS.md) under `targets/`.
 
 **Three layers to keep straight:**
 - **Spindleloom** — the agent fleet that builds the SDLC wheel (this repo's source).

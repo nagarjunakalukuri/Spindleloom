@@ -32,7 +32,7 @@ pip install "mcp[cli]"
 |---|---|
 | `agents/` | 52 agent definitions (one `.md` per agent; frontmatter is the contract) |
 | `skills/` | 28 reusable methodology skills (one `<name>/SKILL.md` each) |
-| `templates/` | 52 document templates (filled by agents, checked into project repos) |
+| `templates/` | 53 document templates (filled by agents, checked into project repos) |
 | `commands/` | 23 slash commands wired into Claude Code |
 | `hooks/` | Python automation (validators, generators, MCP server, Azure adapter) |
 | `hooks/*.sh` | Shell hooks (SSRF-safe URL caching for remote spec fetches) |
