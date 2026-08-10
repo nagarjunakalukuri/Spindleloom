@@ -114,6 +114,7 @@ def main():
         cc[p.stem] = claude_code_map(b)
 
     errors = []
+    advisories = []          # surfaced, never fatal (check 14's naming half)
 
     # 1 + 2: symmetry and dangling agent references
     for a in sorted(names):
@@ -258,14 +259,18 @@ def main():
             return True
         return any(o in fam and i in fam for fam in FAMILIES)
 
-    inputs_map, outputs_map, roles = {}, {}, {}
+    inputs_map, outputs_map, roles, tools_map, bodies = {}, {}, {}, {}, {}
     for p in files:
-        b = frontmatter(p.read_text(encoding="utf-8", errors="ignore"))
+        raw = p.read_text(encoding="utf-8", errors="ignore")
+        b = frontmatter(raw)
+        bodies[p.stem] = raw[len(b) + 3:] if b else raw
         inputs_map[p.stem] = inline_list(b, "inputs")
         om = re.search(r"(?m)^outputs:\s*(.+)$", b)
         outputs_map[p.stem] = [x.strip() for x in om.group(1).split(",") if x.strip()] if om else []
         rm2 = re.search(r"(?m)^agentic_role:\s*(\S+)", b)
         roles[p.stem] = rm2.group(1) if rm2 else ""
+        tm = re.search(r"(?m)^tools:\s*(.+)$", b)
+        tools_map[p.stem] = tm.group(1).strip() if tm else ""
     for a in sorted(names):
         if roles.get(a) in ("advisor", "orchestrator"):
             continue  # routing edges per AGENT-AUTHORING "Edge semantics"
@@ -278,6 +283,31 @@ def main():
                     f"({a}.outputs [{', '.join(outputs_map[a])}] matches none of "
                     f"{b}.inputs [{', '.join(inputs_map.get(b, []))}]) — declare the input, "
                     f"or sanction the edge if it is deliberate context provision")
+
+    # 14: an artifact someone else consumes must be writable by its producer.
+    # `solution-recon` declared an output ten agents read and shipped with no Write tool
+    # for the fleet's whole life -- it could only ever answer in chat, so the file every
+    # downstream agent was told to cite never existed. Physical capability first; whether
+    # the agent also names a canonical path is the advisory below.
+    consumed_tokens = {i.lower() for lst in inputs_map.values() for i in lst}
+    for a in sorted(names):
+        outs = [o for o in outputs_map.get(a, []) if o and o.strip() not in ("-", "—")]
+        if not outs:
+            continue
+        if not any(any(_match(o, c) for c in consumed_tokens) for o in outs):
+            continue                                   # nobody reads it; chat is fine
+        tools = (tools_map.get(a) or "").lower()
+        if "write" not in tools and "edit" not in tools:
+            errors.append(
+                f"persistence: {a} declares output(s) [{', '.join(outs)}] that other agents "
+                f"consume, but its tools are '{tools_map.get(a) or '(none)'}' — it cannot "
+                f"write the artifact it is supposed to hand off. Add Write/Edit, or drop "
+                f"the output from the contract if it is genuinely response-only")
+        elif not re.search(r"templates/[\w-]+\.md|docs/[\w<>/-]+\.md|\.spindleloom/[\w<>/-]+",
+                           bodies.get(a, "")):
+            advisories.append(
+                f"persistence: {a} can write but names no canonical path for "
+                f"[{', '.join(outs)}] — downstream agents cannot predict where to read it")
 
     # 12b: fleet-page AGENT_SKILLS map + node phases match the contracts (the two
     # hand-authored data blocks check 12 didn't cover -- desc drift stays human).
@@ -315,8 +345,14 @@ def main():
         print(f"\nFAIL — {len(errors)} integrity issue(s):")
         for e in sorted(set(errors)):
             print("  -", e)
+        for a in sorted(set(advisories)):
+            print("  ·", a)
         return 1
     print("OK — graph symmetric, no dangling refs, declared skills present, INDEX current, claude_code mappings resolve.")
+    if advisories:
+        print(f"   {len(set(advisories))} advisory(ies) — not fatal:")
+        for a in sorted(set(advisories)):
+            print("  ·", a)
     return 0
 
 
