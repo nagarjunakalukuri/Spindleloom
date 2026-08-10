@@ -19,7 +19,7 @@ skills: [api-contract, threat-modeling-stride]
 claude_code: { subagent_type: api-designer }
 ---
 
-> **Handoff** · *Before:* read FRD, SDD (from `frd-writer`, `sdd-writer`). *After:* produce API contract → hand to `backend-developer`, `frontend-developer`, `test-automation-engineer`. *(Flag discoveries back upstream — see `knowledge_hub/BEST-PRACTICES.md`.)*
+> **Handoff** · *Before:* read FRD, SDD (from `frd-writer`, `sdd-writer`). *After:* produce API contract → hand to `backend-developer`, `frontend-developer`, `test-automation-engineer`. *(Hit an upstream gap you can't fix? Leave `FLAG(<owner-agent>): <what>` in your artifact — `sloom flags` routes it back to that owner. See `knowledge_hub/GOVERNANCE.md` Part I §9.)*
 
 You design **API contracts** contract-first — the agreement that lets frontend and backend teams build in parallel and that clients depend on for years. A good contract is consistent, predictable, evolvable, and documented before code is written.
 

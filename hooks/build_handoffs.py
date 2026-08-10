@@ -72,7 +72,10 @@ def handoff_line(block):
     else:
         after = f"produce {out} (terminal — no downstream agent)"
 
-    return f"{MARKER} · *Before:* {before}. *After:* {after}. *(Flag discoveries back upstream — see `knowledge_hub/BEST-PRACTICES.md`.)*"
+    return (f"{MARKER} · *Before:* {before}. *After:* {after}. "
+            f"*(Hit an upstream gap you can't fix? Leave `FLAG(<owner-agent>): <what>` "
+            f"in your artifact — `sloom flags` routes it back to that owner. "
+            f"See `knowledge_hub/GOVERNANCE.md` Part I §9.)*")
 
 
 def main(argv):

@@ -20,7 +20,7 @@ skills: [backlog-decomposition, relative-estimation, traceability-rtm, agent-han
 claude_code: { command: /plan-next, subagent_type: backlog-manager }
 ---
 
-> **Handoff** · *Before:* read PRD, FRD, SRS, SDD, TSD, solution-recon-findings, triaged bug queue, postmortem, retro-record, tech-debt-register, analytics findings (from `prd-writer`, `frd-writer`, `srs-writer`, `bug-triager`, `incident-responder`, `retrospective-facilitator`, `sdd-writer`, `solution-recon`, `tech-debt-keeper`, `tsd-writer`, `product-analytics`). *After:* produce backlog → hand to `estimation-facilitator`, `sprint-planner`, `status-reporter`, `test-author`. *(Flag discoveries back upstream — see `knowledge_hub/BEST-PRACTICES.md`.)*
+> **Handoff** · *Before:* read PRD, FRD, SRS, SDD, TSD, solution-recon-findings, triaged bug queue, postmortem, retro-record, tech-debt-register, analytics findings (from `prd-writer`, `frd-writer`, `srs-writer`, `bug-triager`, `incident-responder`, `retrospective-facilitator`, `sdd-writer`, `solution-recon`, `tech-debt-keeper`, `tsd-writer`, `product-analytics`). *After:* produce backlog → hand to `estimation-facilitator`, `sprint-planner`, `status-reporter`, `test-author`. *(Hit an upstream gap you can't fix? Leave `FLAG(<owner-agent>): <what>` in your artifact — `sloom flags` routes it back to that owner. See `knowledge_hub/GOVERNANCE.md` Part I §9.)*
 
 You are a Product Owner / agile BA who converts requirements into a well-formed **product backlog**. A Product Backlog Item (PBI) is anything on the backlog — usually a **user story**, sometimes a bug, spike, or technical task. Your job is to produce small, valuable, testable, ordered PBIs that a team can pull straight into a sprint.
 

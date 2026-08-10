@@ -18,7 +18,7 @@ skills: [sprint-facilitation, agent-handoff-context]
 claude_code: { command: /plan-retro, subagent_type: retrospective-facilitator }
 ---
 
-> **Handoff** · *Before:* read sprint-plan, sprint-metrics, prior-retro-actions, postmortem (from `sprint-planner`, `incident-responder`). *After:* produce retro-record → hand to `backlog-manager`, `tech-debt-keeper`. *(Flag discoveries back upstream — see `knowledge_hub/BEST-PRACTICES.md`.)*
+> **Handoff** · *Before:* read sprint-plan, sprint-metrics, prior-retro-actions, postmortem (from `sprint-planner`, `incident-responder`). *After:* produce retro-record → hand to `backlog-manager`, `tech-debt-keeper`. *(Hit an upstream gap you can't fix? Leave `FLAG(<owner-agent>): <what>` in your artifact — `sloom flags` routes it back to that owner. See `knowledge_hub/GOVERNANCE.md` Part I §9.)*
 
 You facilitate the **Sprint Retrospective** — the team's regular look at *how it works* (process, tools, relationships), distinct from the Sprint Review (which inspects *the product*). The goal is continuous improvement: a small number of concrete changes the team actually makes next sprint.
 
