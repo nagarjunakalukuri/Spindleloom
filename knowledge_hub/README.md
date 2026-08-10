@@ -31,11 +31,12 @@ One owner per fact. Every topic below has exactly **one** home; every other file
 | [`LOOPWRIGHT.md`](LOOPWRIGHT.md) | The delivery-loop layer: inner/outer loops, DevEx, measuring & tightening, agents-to-loops map. |
 | [`HARNESS-MATRIX.md`](HARNESS-MATRIX.md) | The 7-surface × 4-tool matrix the harness generator targets. |
 | [`FLEET-EVAL.md`](FLEET-EVAL.md) | The behavioral E2E regression protocol (golden brief + judge rubric). |
+| [`FIELD-PILOT.md`](FIELD-PILOT.md) | The de-identified field record: eight runs inside a live enterprise codebase, the 21-gap catalog, and each gap's status against the current release. |
 | [`IMPROVEMENTS.md`](IMPROVEMENTS.md) | The living improvement register (audit-driven backlog for the toolkit itself). |
 
 ## `archive/`
 
-Spent or superseded documents, kept for the record: the 2026 positioning piece (`AI-2026-TRENDS-AND-COVERAGE.md` -- its gaps were all built, so it read as marketing, not a to-do list), the pilot plan + both readouts, and the pre-personas `how-to-use.html` (its worked example was folded into `project-overview.html` §12, its invoke primer into the personas hub). `role-playbooks.html` was removed outright after its artifact chain, prompt-ingredients model and MCP scenarios were folded in. Nothing in `archive/` is load-bearing; don't link to it from new work except as history.
+Spent or superseded documents, kept for the record: the 2026 positioning piece (`AI-2026-TRENDS-AND-COVERAGE.md` -- its gaps were all built, so it read as marketing, not a to-do list), the pilot plan (its client-specific readouts were retired — their generalized evidence is [`FIELD-PILOT.md`](FIELD-PILOT.md)), and the pre-personas `how-to-use.html` (its worked example was folded into `project-overview.html` §12, its invoke primer into the personas hub). `role-playbooks.html` was removed outright after its artifact chain, prompt-ingredients model and MCP scenarios were folded in. Nothing in `archive/` is load-bearing; don't link to it from new work except as history.
 
 ## Related, outside this folder
 

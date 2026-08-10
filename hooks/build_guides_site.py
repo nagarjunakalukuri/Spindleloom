@@ -50,6 +50,7 @@ SOURCES = [
     "LOOPWRIGHT.md",
     "HARNESS-MATRIX.md",
     "FLEET-EVAL.md",
+    "FIELD-PILOT.md",
     "IMPROVEMENTS.md",
     "claude-prompt-library.md",
 ]
@@ -219,6 +220,7 @@ PAGES = [
         ("loopwright.html", "Loopwright", "generated", "The delivery-loop discipline and the loop taxonomy on every agent."),
         ("harness-matrix.html", "Harness matrix", "generated", "The 7-surface x 4-tool distribution spec -- four tools, six bundles."),
         ("fleet-eval.html", "Fleet eval", "generated", "The behavioral E2E regression protocol: golden brief + judge rubric."),
+        ("field-pilot.html", "Field pilot", "generated", "Eight runs inside a live enterprise codebase, de-identified: what held, the 21-gap catalog, where each gap stands now."),
         ("improvements.html", "Improvement register", "generated", "The toolkit's own deferred backlog, tiered and cut-ready."),
         ("claude-prompt-library.html", "Claude prompt library", "generated", "Generic power-prompts, each mapped to the fleet specialist that does it better."),
         ("readme.html", "The guide map", "generated", "What lives where across the knowledge hub and this site."),
