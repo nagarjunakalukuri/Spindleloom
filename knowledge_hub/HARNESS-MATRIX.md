@@ -24,6 +24,7 @@ Where each AI-coding harness exposes each customization surface, and which Spind
 | `skills/` | bundled in plugin | reuse `.claude/skills/` | reuse `.claude/skills/` | reuse `.claude/skills/` |
 | convention docs | `CLAUDE.md` / conventions skill | always-on `.mdc` rule | `copilot-instructions.md` | always-on `.windsurf` rule |
 | `hooks/` | plugin `hooks/hooks.json` | `.cursor/hooks.json` (documented; **not yet emitted** — IMP-131) | (Preview) | (Preview) |
+| the `sloom` CLI | `hooks/` (13 modules, closure-computed) | `tools/` | `tools/` | `tools/` | 
 | MCP server | `.mcp.json` (plugin root) | `.cursor/mcp.json` | `.vscode/mcp.json` | user-global `mcp_config.json` (snippet in bundle README) |
 | `commands/*.md` | plugin `commands/` (+ loose `.claude/commands/`) | `.cursor/commands/*.md` | `.github/prompts/*.prompt.md` | `.windsurf/workflows/*.md` |
 | — | `AGENTS.md` is the lowest-common-denominator instruction target that **all four read** |

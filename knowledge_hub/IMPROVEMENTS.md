@@ -10,7 +10,8 @@
 > 0.3.0: `validate_gates.py`, requirement-quality lint, altitude coverage, bypass-edge
 > prune, escaped-defect register, `/ops-metrics` maker, analytics→backlog edge). This
 > register holds what was deliberately **deferred** — each item is cut-ready. Successor to
-> the archived pilot-era register (`archive/IMPROVEMENTS.md`).
+> the retired pilot-era register; the field evidence behind it is generalized in
+> [`FIELD-PILOT.md`](FIELD-PILOT.md).
 
 ## Tier 2 — self-measurement (remaining)
 
@@ -67,7 +68,7 @@
 
 ## Standing items carried from earlier sessions
 
-- Real human-team pilot per `archive/PILOT-PLAN.md` (verdict ADJUST — still the biggest validation gap).
+- Real human-team pilot per [`archive/PILOT-PLAN.md`](archive/PILOT-PLAN.md) (verdict ADJUST — still the biggest validation gap); the eight AI-driven field runs are recorded in [`FIELD-PILOT.md`](FIELD-PILOT.md).
 - Drift gates or generation for the remaining hand-authored HTML guides — only the fleet page is gated; `for-everyone.html` is hand-authored and ungated, and `governance-handbook.html` is generated from `GOVERNANCE.md` but its generator is not yet a hook with a `--check` gate.
 
 ## Six-perspective gap audit (2026-07-10)
@@ -96,3 +97,40 @@ Six parallel subagents traced one stakeholder journey each (reader · installer 
 - **IMP-151** | Local==CI — `validate_targets.py` (+ MCP smoke) run only in CI though CLAUDE.md claims parity; add `validate_targets` to pre-commit. | Contributor | S | **fixed this session**
 
 Superseded/absorbed: IMP-113 (command holes) is broadened by the operator audit — Review phase + `sre` + API/data/UX design have no slash command at all; keep tracking under IMP-113.
+
+## Tier 5 — from the field pilot
+
+Nine prescriptions carried out of [`FIELD-PILOT.md`](FIELD-PILOT.md) — eight runs inside a live
+enterprise codebase. Each cites the pilot's own gap number; the field record holds the evidence
+and the current status of all 21 gaps. **IMP-160 is the one an adopter feels first.**
+
+| ID | Item | Gap | Effort | Notes |
+|---|---|---|---|---|
+| **IMP-160** | **Ship the tooling the agent definitions assume.** | 16 | S/M | **fixed** — `build_harness_artifacts.py` now *computes* the CLI closure (`hook_closure()` over `CLI_ENTRY_POINTS`, matching indented imports) instead of hardcoding four files: 13 modules ship as `hooks/` (claude-plugin, claude-code) and `tools/` (cursor, copilot, windsurf), 673 artifacts total. `validate_targets` enforces presence + import resolution on **every** bundle (it previously checked one, with a regex blind to function-level imports); `test_new_gates` guards the closure; a bundle smoke test scaffolds a repo and runs `check`/`run status`/`flags`/`signoff` from a clean copy of each |
+| **IMP-161** | Derive the run ledger's readable `.md` from its `.json` (or add a `save_run_state` tool mirroring `save_context`) — today the orchestrator hand-syncs both at every step transition with nothing checking they agree | 17 | S | 11 hand-syncs in one run, 16 in another |
+| **IMP-162** | Dispatch/spend introspection — the run ledger has no dispatch counter and `sloom run status` never computes spend, so "enforce the budget" is unaided arithmetic | 18 | S | One run had to recount mid-flight |
+| **IMP-163** | `reserve-next-id` — `next_req_id` is read-only computation, so two parallel writers get the same answer and nothing records a claim; collisions surface only afterwards | 19 | S | Two concurrent sessions minted the same work-item ID |
+| **IMP-164** | Context tools for specialists — no agent's `tools:` manifest includes an MCP tool (verified across all 52), so only the orchestrator can save/recall, while `agent-handoff-context` reads as if any agent could. Expose the tools, or state the constraint in the skill | 20 | S | |
+| **IMP-165** | Doc-ownership lease or queryable run registry — a starting run cannot discover an active one; the branch-and-merge concurrency model does not cover two sessions writing the same *uncommitted* file | 21 | M | A real write race killed an agent mid-edit |
+| **IMP-166** | Intake stub for externally-authored artifacts — require source/date/author/premise as the *first* write, before recon spend, so an untracked stimulus can't be ground-truthed twice | 13 | S | |
+| **IMP-167** | Prior-art position on new abstractions — when a proposal introduces a config-object/manifest/profile, force a stated reuse / extend / justify-new before the ADR | 14 | S | Two competing manifest patterns nearly shipped |
+| **IMP-168** | `scope:` field on the backlog row (net-new-vertical / extend-vertical / cross-cutting) so estimation and the ready gate can scrutinize a greenfield vertical differently from a thin extension | 15 | S | |
+
+Also open from the pilot and not yet cut as items: multi-initiative audit scope (gap 1), doc-vs-code
+reconciliation (gap 7, the tracker half is IMP-107), evidence-typed verification cells (gap 8),
+cross-agent finding dedup (gap 9), a "gated/conditional" work-item state, and a shared
+"gates landed so far" view for parallel reviewers.
+
+## Tier 6 — from the IMP-160 review and the artifact/readiness audit
+
+Found by adversarially reviewing the IMP-160 fix and by auditing artifact production and
+start-readiness across all 52 contracts. **IMP-169 is a correctness bug in shipped behavior.**
+
+| ID | Item | Effort | Notes |
+|---|---|---|---|
+| **IMP-169** | **`solution-recon` has never persisted a file — it cannot.** `agents/solution-recon.md:4` declares `tools: Read, Glob, Grep, Bash` (no Write/Edit) and its 95 lines never name a path or say save/write/persist; its `## Output` block is a *response format*. Meanwhile `commands/build-recon.md:12` tells a human to save it, `GOVERNANCE.md` gives it a home at `docs/specs/<feature>/recon.md`, and **7 agents declare it as an input** while `backend-developer`/`frontend-developer` are told to re-verify its `file:line` citations. Proof: `find . -iname 'recon*.md'` returns nothing repo-wide, including both worked examples. Fix: add Write/Edit; add a "Persist the findings" section naming the path (mirror `change-verifier.md:109`); add `templates/recon-template.md`; add a scaffold slot + registry kind; settle `recon.md` vs `solution-recon.md` against `hooks/test_standard.py`. Note `hooks/test_build_context_pack.py:38` currently asserts recon's *absence* | S/M | The same latent defect exists in `change-verifier` (told to write a report, no Write tool) |
+| **IMP-170** | Generalize the fix: a `validate_graph` check that any agent with a non-empty `outputs:` either declares a persistence path/template or is explicitly response-only. Would have caught IMP-169 and the change-verifier case at authoring time | S | |
+| **IMP-171** | Run check 13 **in reverse**: every declared `inputs:` token needs a supplier in that agent's upstream, or an explicit `external:` marker. 23 of 52 agents currently declare an input no upstream produces; a genuinely severed input is indistinguishable from a sanctioned one. Also: `brief`/objective — the artifact every eval run actually starts from — is declared by no agent | M | |
+| **IMP-172** | Derive the run ledger's `upstream` from the contracts instead of trusting the orchestrator's transcription. `sloom.py` reads `row.get("upstream", [])` from LLM-authored JSON, so an omitted key silently disables the "graph is the gate" refusal; `--artifact` is optional, so a step can go `done` with `produced: null` | S/M | |
+| **IMP-173** | The `FLAG(<owner>)` convention has a consumer and no producer: `sloom flags` is built and tested, but **zero of 52 agents** contain `FLAG(`, and every agent's generated handoff line points at `BEST-PRACTICES.md`, which never defines it (it lives in `GOVERNANCE.md` Part I). Put it in the generated handoff blockquote so all 52 carry it | S | |
+| **IMP-174** | Remaining CLI-packaging holes after IMP-160: plugin prose uses repo-relative `hooks/x.py` but a plugin installs under `${CLAUDE_PLUGIN_ROOT}`; bare `sloom <cmd>` (29 references in the plugin bundle) resolves nowhere with no shim shipped; `build_context_pack.py` searches only `agents/`|`.claude/agents/`, so `sloom pack` cannot find agents in the cursor/copilot/windsurf layouts; `agents-md` ships pointers to `agents/` and `knowledge_hub/` it does not carry | M | |
