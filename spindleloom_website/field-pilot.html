@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Field Pilot - eight runs of the fleet inside a live enterprise codebase -- Spindleloom Guides</title>
+<style>
+:root{
+  --ground:#0E1524; --panel:#141E2E; --panel-2:#18263A;
+  --ink:#DBE5F1; --ink-mid:#93A6BC; --ink-dim:#8497AE; --hair:#1E2E45; --hair-2:#2A3E5C;
+  --gold:#CFA23A; --gold-hi:#E7BE58; --weft:#5C90BE;
+  --shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34);
+  --serif:"Hoefler Text","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:light){:root{
+  --ground:#E9EAE5; --panel:#FFFFFF; --panel-2:#F3F3EF;
+  --ink:#16202E; --ink-mid:#47586B; --ink-dim:#556575; --hair:#DEDFD8; --hair-2:#C9CBC1;
+  --gold:#8A6816; --gold-hi:#7C5D12; --weft:#3C6C93;
+  --shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07);
+}}
+:root[data-theme="light"]{--ground:#E9EAE5;--panel:#FFFFFF;--panel-2:#F3F3EF;--ink:#16202E;--ink-mid:#47586B;--ink-dim:#556575;--hair:#DEDFD8;--hair-2:#C9CBC1;--gold:#8A6816;--gold-hi:#7C5D12;--weft:#3C6C93;--shadow:0 1px 2px rgba(20,27,38,.05),0 12px 30px rgba(20,27,38,.07)}
+:root[data-theme="dark"]{--ground:#0E1524;--panel:#141E2E;--panel-2:#18263A;--ink:#DBE5F1;--ink-mid:#93A6BC;--ink-dim:#8497AE;--hair:#1E2E45;--hair-2:#2A3E5C;--gold:#CFA23A;--gold-hi:#E7BE58;--weft:#5C90BE;--shadow:0 1px 0 rgba(255,255,255,.03),0 14px 34px rgba(0,0,0,.34)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.66;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+b,strong{color:var(--ink)}
+::selection{background:color-mix(in srgb,var(--gold) 30%,transparent)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:2px}
+.bar{position:sticky;top:0;z-index:80;display:flex;align-items:center;gap:14px;padding:11px 26px;
+  background:color-mix(in srgb,var(--ground) 88%,transparent);backdrop-filter:blur(9px);border-bottom:1px solid var(--hair)}
+.bar .brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--ink-mid);white-space:nowrap}
+.bar .brand b{color:var(--gold)}
+.bar nav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.bar nav a{font-family:var(--mono);font-size:11px;color:var(--ink-mid);padding:6px 10px;border-radius:8px}
+.bar nav a:hover{color:var(--gold);text-decoration:none}
+.toggle{font-family:var(--mono);font-size:11px;color:var(--ink-mid);background:transparent;border:1px solid var(--hair-2);
+  border-radius:20px;padding:6px 13px;cursor:pointer;white-space:nowrap}
+.toggle:hover{border-color:var(--gold);color:var(--gold)}
+.hero{border-bottom:1px solid var(--hair)}
+.hero .in{max-width:1120px;margin:0 auto;padding:44px 30px 34px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-mid)}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,46px);line-height:1.05;letter-spacing:-.02em;margin:12px 0 0;text-wrap:balance}
+.hero .note{font-family:var(--mono);font-size:11.5px;color:var(--ink-mid);margin-top:14px}
+.layout{max-width:1120px;margin:0 auto;padding:34px 30px 80px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:44px}
+@media(max-width:960px){.layout{grid-template-columns:1fr}.spine{display:none}}
+.spine{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 90px);overflow:auto;font-size:12.5px}
+.spine .sp-part{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;margin:18px 0 6px;color:var(--gold)}
+.spine ol{list-style:none}
+.spine li a{display:block;color:var(--ink-mid);padding:3px 0 3px 12px;border-left:2px solid var(--hair)}
+.spine li a:hover{color:var(--ink);text-decoration:none}
+.spine li.on a{color:var(--gold);border-left-color:var(--gold)}
+article h3{font-family:var(--serif);font-weight:600;font-size:23px;letter-spacing:-.01em;margin:40px 0 12px;scroll-margin-top:72px}
+article h4{font-size:15.5px;margin:26px 0 8px;scroll-margin-top:72px}
+article p{margin:0 0 13px;max-width:76ch;color:var(--ink-mid)}
+article li{margin:0 0 7px;color:var(--ink-mid)}
+article ul,article ol{margin:0 0 14px;padding-left:22px}
+article blockquote{border-left:3px solid var(--gold);background:var(--panel);border-radius:0 10px 10px 0;
+  padding:12px 18px;margin:0 0 16px}
+article blockquote p{margin:0}
+article hr{border:0;height:1px;background:var(--hair);margin:34px 0}
+article code{font-family:var(--mono);font-size:.86em;background:var(--panel-2);border:1px solid var(--hair);border-radius:5px;padding:1px 6px;color:var(--gold-hi)}
+article pre{font-family:var(--mono);font-size:12.5px;line-height:1.55;background:var(--panel);border:1px solid var(--hair);
+  border-radius:12px;padding:16px 18px;overflow-x:auto;margin:0 0 16px;color:var(--ink-mid)}
+.tw{overflow-x:auto;margin:0 0 18px;border:1px solid var(--hair);border-radius:12px;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel)}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mid);
+  text-align:left;padding:10px 14px;border-bottom:1px solid var(--hair-2);background:var(--panel-2)}
+td{padding:10px 14px;border-bottom:1px solid var(--hair);vertical-align:top;color:var(--ink-mid)}
+tr:last-child td{border-bottom:0}
+footer{border-top:1px solid var(--hair)}
+footer .in{max-width:1120px;margin:0 auto;padding:22px 30px;font-size:12.5px;color:var(--ink-mid)}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="brand"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style="flex-shrink:0;vertical-align:-4px"><path d="M10 10 C7.6 6.9 3.1 6.6 3.1 10 C3.1 13.4 7.6 13.1 10 10" fill="none" stroke="var(--weft)" stroke-width="1.7" stroke-linecap="round"/><path d="M10 10 C12.4 6.9 16.9 6.6 16.9 10 C16.9 13.4 12.4 13.1 10 10" fill="none" stroke="var(--gold)" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="10" r="2.9" fill="var(--ground)"/><circle cx="10" cy="10" r="1.7" fill="var(--gold)"/><circle cx="10" cy="10" r="0.7" fill="var(--ground)"/></svg> Spindleloom &middot; <b>Guides</b></span>
+  <nav aria-label="Site">
+    <a href="index.html">Home</a>
+    <a href="personas/index.html">Hub</a>
+    <a href="project-overview.html">Overview</a>
+    <a href="governance-handbook.html">Governance</a>
+    <a href="readme.html">All guides</a>
+  </nav>
+  <button class="toggle" id="themeToggle" aria-label="Toggle light or dark theme">&#9681; theme</button>
+</div>
+<header class="hero"><div class="in">
+  <div class="kicker">Spindleloom &middot; knowledge hub</div>
+  <h1>Field Pilot - eight runs of the fleet inside a live enterprise codebase</h1>
+  <p class="note">Generated reading view. Source of truth: <a href="../knowledge_hub/FIELD-PILOT.md"><code>knowledge_hub/FIELD-PILOT.md</code></a> --
+  edit the MD, then run <code>python hooks/build_guides_site.py</code>.</p>
+</div></header>
+<div class="layout">
+  <nav class="spine" aria-label="Contents"><div class="sp-part">On this page</div><ol><li><a href="#g-the-host-application">The host application</a></li>
+<li><a href="#g-method">Method</a></li>
+<li><a href="#g-run-log">Run log</a></li>
+<li><a href="#g-what-held-up">What held up</a></li>
+<li><a href="#g-the-gap-catalog">The gap catalog</a></li>
+<li><a href="#g-what-to-build-next">What to build next</a></li>
+<li><a href="#g-what-an-adopter-should-take-from-this">What an adopter should take from this</a></li>
+<li><a href="#g-limitations">Limitations</a></li></ol></nav>
+  <main><article><div class="tw"><table>
+<tr><th>Field</th><th>Value</th></tr>
+<tr><td>Owner</td><td>Toolkit maintainer</td></tr>
+<tr><td>Status</td><td>Closed record (eight runs, 2026-07-03 -&gt; 2026-07-24); the human-team pilot in <a href="archive/PILOT-PLAN.md"><code>archive/PILOT-PLAN.md</code></a> is still unrun</td></tr>
+<tr><td>Complements</td><td><a href="fleet-eval.html"><code>FLEET-EVAL.md</code></a> - synthetic, isolated, judge-graded. This is the opposite: real code, real stakes, no control group.</td></tr>
+<tr><td>Subject</td><td>A regulated-industry enterprise platform, de-identified (see <i>The host application</i>)</td></tr>
+<tr><td>Judge</td><td>None. Findings are self-reported by the operating session and evidenced by file, command, or artifact.</td></tr>
+<tr><td>Feeds</td><td><a href="improvements.html"><code>IMPROVEMENTS.md</code></a> - the open gaps below are the toolkit's own backlog</td></tr>
+</table></div>
+<p><code>FLEET-EVAL.md</code> proves the fleet <i>coordinates</i> on a fixed brief in a scratch directory. It cannot show what happens when the same fleet meets a codebase with history: stale documents, a work-item tracker that disagrees with the code, two initiatives sharing one repository, and a team that will not stop shipping while you audit them. This record is that second question, answered over eight runs. It is written for two readers: an adopter deciding whether the discipline survives contact with a real repo, and a maintainer deciding what to build next.</p>
+<p><b>Read the honesty note first.</b> There is no baseline, no control team, and no independent judge. Every run was driven by an AI session operating the fleet, and that same session wrote the findings. What this record can honestly show is <i>what broke, what caught it, and what was still missing</i> - not a productivity number. Where a claim rests only on the operator's own say-so, it says so.</p>
+<h3 id="g-the-host-application">The host application</h3>
+<p>De-identified. Structure preserved, identity removed - no client, product, module, ticket, branch, or person name appears anywhere in this record, and quantities are given as bands rather than exact counts.</p>
+<div class="tw"><table>
+<tr><th>Dimension</th><th>What it was</th></tr>
+<tr><td>Domain</td><td>Regulated-industry operations: high-volume document ingestion, rule-based evaluation against a regulatory ruleset, human-in-the-loop review of machine judgments, and an immutable audit trail over every decision</td></tr>
+<tr><td>Stack</td><td>Python service backend, React/TypeScript frontend, managed container hosting (replicated in production), a managed NoSQL store, an enterprise work-item tracker as the delivery system of record</td></tr>
+<tr><td>Team</td><td>A mid-size pod - sponsor, PM (wearing the PO hat), architect, leads, developers, QA. Team composition is context from the engagement, not something these runs measured.</td></tr>
+<tr><td>Repository</td><td>One repo, <b>two parallel initiatives</b>, a governed docs tree in the low hundreds of files carrying a comparable number of requirement IDs across ADRs, backlogs, RTMs, sprint plans and threat models</td></tr>
+<tr><td>Verticals touched</td><td>A compliance module (the primary subject), a public-filings module, a legal module, a net-new life-sciences vertical, and a cross-cutting knowledge layer spanning all four</td></tr>
+</table></div>
+<p>Why it was a fair test: the repo was <b>not</b> scaffolded by this toolkit. It arrived with its own ADR numbering, its own document tree, its own conventions, and a second initiative the Standard has no vocabulary for. Every conformance finding below is a real adoption cost, not a self-inflicted one.</p>
+<h3 id="g-method">Method</h3>
+<p>Two distinct modes ran, and the difference matters when reading the findings:</p>
+<ol>
+<li><b>Runs 1-4 - the toolkit reasons, the host's own agents execute.</b> The fleet's discipline</li>
+<p>(gates, traceability, contract-shaped handoffs) was applied by an operator using the host repo's own agent definitions. These runs test the <i>method</i>.</p>
+<li><b>Runs 5-8 - the installed plugin drives and executes.</b> The distributed fleet</li>
+<p>(<code>sloom:*</code> subagents plus its MCP tools) ran recon -&gt; design -&gt; ADR -&gt; backlog -&gt; estimation -&gt; build -&gt; three review gates -&gt; fix -&gt; re-verify, producing <b>merge-ready</b> code on a local branch. No pull request was opened during the pilot; "shipped" below means reviewed and landed locally, never deployed.</p>
+</ol>
+<p><b>Fidelity caveats, stated because the runs were not uniform.</b> Runs 5, 6 and 8 declared a 16-dispatch budget up front and recorded every step in a run ledger; runs 5 and 6 landed exactly on budget, and run 8 went two over, both spent closing execution-confirmed defects and recorded before the overrun rather than after. <b>Run 7 did neither</b>: it kept no run ledger (dispatches were tracked in the operating session's own task list), declared no budget, and ran its three review gates with the <i>host repo's</i> reviewer agents rather than the fleet's - so it is a weaker data point for the product than runs 5, 6 and 8, and is reported that way below.</p>
+<h3 id="g-run-log">Run log</h3>
+<div class="tw"><table>
+<tr><th>Run</th><th>Mode</th><th>What it did</th><th>The findings that mattered</th></tr>
+<tr><td><b>1</b></td><td>method</td><td>Conformance pass on a non-conformant repo: restored the pinned config, renumbered a duplicated ADR, de-duplicated filenames, expanded shorthand ID ranges in the RTM, traced six new requirement IDs, pushed six stories to the tracker with dependency links</td><td>Conformance was reachable <b>without relocating the tree</b> - the declared-deviation path let a repo with two initiatives become conformant honestly instead of hiding the second one. Five toolkit gaps surfaced.</td></tr>
+<tr><td><b>2</b></td><td>method</td><td>A security gate on a compliance-critical write path; a build plan; then a <b>parallel four-lens gap sweep</b> (recon, test-plan, tech-debt, backlog) synthesized into one register</td><td>Planning-time recon <b>caught two fatal defects in a linker before it was built</b>. Every lens then found something the others structurally could not: a <b>ghost work item</b> (a blocker two stories referenced that was never cut), a dead coverage-threshold config, an auth-bypass flag hardcoded in a production image, and a disputed UI toggle settled as a test bug. And <b>cross-agent disagreement was signal</b>: a config-inferred "CI is green" claim contradicted an empirical "the suite dies at import" finding; surfacing the conflict exposed a compound risk that averaging would have hidden.</td></tr>
+<tr><td><b>3</b></td><td>method</td><td>Fixed the three act-today findings from run 2 (a deploy-on-red CI condition, the hardcoded auth-bypass, an expired-credential bug), unblocked an integration suite that had never once run, and re-closed a story marked done at 31 of 108 passing tests</td><td>Re-verification with a pasted full-suite run took that story from <b>31/108 to 108/108</b>; the root cause across nine pages was <b>test fixtures modeling contracts that predated the real service types</b>, plus tests mocking import paths that do not exist in the source. Separately, the only other logging-capture usage in the entire suite also never asserted against what it captured - <b>a codebase-wide class of tests that structurally could not fail</b>. The same "recorded state disagrees with reality" pattern then turned up in narrative docs, independent of the tracker.</td></tr>
+<tr><td><b>4</b></td><td>method</td><td>Planned a cross-cutting capability from an <b>externally-authored storyboard</b> a stakeholder shared - two parallel recon passes, a compliance-tension pass, a design pass, a self-referential gap audit, and a synthesis</td><td>Recon found the proposed core abstraction existed nowhere in the codebase and <b>structurally duplicated a prior ADR's manifest pattern</b> neither author knew about. The design resolved it the load-bearing way: nest the new concept as a sub-object <i>inside</i> the existing manifest rather than ship a third competing config-object pattern. The compliance pass returned <b>six concrete tensions</b> against the platform's own audit and security standards (single-actor audit schema vs dual e-signature, append-only vs two-signature approval, signer sourcing, signature integrity, redaction-as-mutation, visual-only access control).</td></tr>
+<tr><td><b>5</b></td><td>product</td><td>First end-to-end build by the installed fleet: 16 dispatches, recon -&gt; architect -&gt; ADR + RAID -&gt; backlog -&gt; estimation -&gt; backend build -&gt; 3 gates -&gt; frontend build -&gt; 3 gates, every review finding fixed and re-verified in-session</td><td>A checker <b>temporarily broke a guard clause to prove its covering test was not tautological</b>, watched it fail, and restored it - unprompted. Reviewers also <i>discovered</i> rather than merely verified: one found a real accessibility defect (focus never restored after an approve/reject) <b>by reading past green tests</b>, and grepped the whole backend to check a workaround's justification, finding the underlying problem worse than believed (three inconsistent error-envelope shapes, not one).</td></tr>
+<tr><td><b>6</b></td><td>product</td><td>A second slice, same loop shape, 16 dispatches, exactly on budget</td><td>Recon <b>corrected the plan document's own architecture claim</b> before design began. The architect made a call under a real tension (storing raw text the feature needs vs a never-log-content rule), <b>named the objection to its own decision</b> rather than hiding the tradeoff, and designed a reversible mitigation. A gap documented in run 5 (parallel writers needing each other's unminted IDs) was consciously <i>designed around</i> by sequencing the two writers - the first time a catalogued gap was avoided rather than re-hit.</td></tr>
+<tr><td><b>7</b></td><td>product (reduced fidelity)</td><td>A third slice, run <b>concurrently with run 6 in a separate session</b>, against the same uncommitted planning documents. No run ledger, no declared budget, host-repo reviewers on the gates.</td><td>A real write race: a cleanup agent was killed mid-edit. Nothing was lost only because the other session had left a hand-written courtesy note this session happened to read. Both sessions also independently reached the same "next free ID" and <b>minted the same work-item ID twice</b>; recovery was to renumber <i>and</i> record the collision in the document so the numbering gap stays explained. Two independently orchestrated runs <b>cannot currently detect each other</b>.</td></tr>
+<tr><td><b>8</b></td><td>product</td><td>The deferred slice from run 6, 18 dispatches (2 over cap, both for execution-confirmed defects)</td><td>Checkers stopped trusting the maker's <i>own</i> mutation-proof: one independently reverted the fix itself, confirmed the exact original crash reproduced, restored it byte-identically, and re-confirmed green. Architect grounding reached into <b>infrastructure-as-code</b> (replica count) to settle a design decision application code could not answer. Verifying one view surfaced <b>the same latent crash pattern in two already-shipped views</b> - a defect class, not a defect.</td></tr>
+</table></div>
+<h3 id="g-what-held-up">What held up</h3>
+<p>Recorded deliberately, because a gap catalog alone reads as a failure log:</p>
+<ul>
+<li><b>Adversarial verification is real.</b> Across four build runs, checkers rebuilt acceptance</li>
+<p>matrices from source rather than trusting summaries, re-diffed a deliberately duplicated code path line-by-line for security divergence, and twice proved a test's discriminating power by breaking the code under it. In run 8 they went further and treated the maker's own mutation-proof as a claim requiring independent re-verification.</p>
+<li><b>Checkers found new defects, not just confirmation.</b> The highest-value review findings</li>
+<p>were things nobody had asked about: an accessibility defect behind green tests, an error-envelope inconsistency three times worse than believed, and a latent crash class present in two already-shipped components.</p>
+<li><b>Agents audited the operator.</b> A backlog agent overturned the operating session's own</li>
+<p>prior status claims - twice, with evidence. Independent verification worked <i>on the person running the pilot</i>, which is the sharpest available test of the builder-is-not-verifier rule.</p>
+<li><b>Recon before design paid for itself repeatedly.</b> Four runs had their own plan corrected</li>
+<p>before code: two fatal linker defects caught at planning time, a wrong extension point, a wrong service to mirror, and a proposed abstraction that duplicated an existing one.</p>
+<li><b>Refusal was used correctly.</b> Agents declined to force a story to Ready over a real unowned</li>
+<p>dependency, declined to invent a filename that did not exist yet, declined a false-precision estimate, and declined to force-reuse a component that did not fit - each time stating why.</p>
+<li><b>Registers were extended, not duplicated.</b> Both keeper agents checked for a pre-existing</li>
+<p>register before creating one, and verified the claims they were handed with fresh searches rather than transcribing them.</p>
+<li><b>The loop shape survived losing its tooling.</b> With the CLI absent (gap 16), a hand-rolled</li>
+<p>propose -&gt; confirm -&gt; dispatch loop still kept the human at the right altitude: architecture calls and scope changes got an explicit decision, routine dispatches did not.</p>
+<li><b>Context handoff worked when it was used.</b> Run 2 persisted a synthesized finding register</li>
+<p>for downstream agents - the one positive data point for the mechanism gap 20 criticizes.</p>
+</ul>
+<h3 id="g-the-gap-catalog">The gap catalog</h3>
+<p>Twenty-one numbered gaps, generalized. Gap 10 was retracted by its own author. Gaps 11 and 12 were catalogued in the host repo's evolution log rather than here, to avoid the exact "same claim in two places" drift the pilot kept finding; they are summarized but not re-derived.</p>
+<p><b>Status</b> is against the current release of this toolkit, verified by reading the code - not by assuming the name of a feature implies its behavior. <b>One gap is closed</b> (16, fixed in response to this record); ten are partially addressed, seven remain open, and two were never re-assessed.</p>
+<h4 id="g-group-a-intake-and-discovery-upstream-of-recon">Group A - intake and discovery (upstream of recon)</h4>
+<div class="tw"><table>
+<tr><th>#</th><th>Gap</th><th>Status</th><th>Where it stands</th></tr>
+<tr><td>1</td><td>The audit sees only one initiative; a second one sharing the repo is silently unaudited</td><td><b>OPEN</b></td><td><code>rtm_core.resolve_docs_root()</code> still resolves exactly one root, and <code>markdown_files()</code> now <i>excludes</i> any subtree owning its own RTM - which stops false orphans but means the second initiative is not audited at all. A fixture with a second scope containing an uncovered requirement and a broken citation still exits 0.</td></tr>
+<tr><td>13</td><td>No intake gate for externally-authored artifacts entering the decision pipeline</td><td><b>OPEN</b></td><td>A stakeholder's link plus an HTML file got a full multi-agent recon and design pass before it had any repo-tracked identity. Nothing requires a minimal source/date/author/premise record before recon spend, and nothing lets a later run detect "we already ground-truthed this."</td></tr>
+<tr><td>14</td><td>No cross-initiative collision check for <i>proposals</i></td><td><b>OPEN</b></td><td>Every existing collision check matches identical IDs of already-minted artifacts. Nothing compares two not-yet-built proposals for a duplicated abstraction - the run-4 case, where two config-object patterns designed months apart by different authors would have shipped as competitors.</td></tr>
+<tr><td>15</td><td>Backlog and estimation cannot distinguish a greenfield vertical from a thin extension</td><td><b>OPEN</b></td><td>The backlog row schema has no scope dimension; its Type column carries routing categories, not effort class. A net-new vertical and a small extension land on the board looking identically sized.</td></tr>
+<tr><td>11</td><td>Verification stamps carry no time-to-live</td><td><i>not re-assessed</i></td><td>A green conformance stamp stays quotable indefinitely, however much code has landed since.</td></tr>
+<tr><td>12</td><td>Context handoffs compress away the scope of what was scanned</td><td><i>not re-assessed</i></td><td>A handoff records the findings but not the sweep's boundaries, so a downstream agent cannot tell what was <i>not</i> looked at.</td></tr>
+<tr><td>10</td><td><i>(retracted by its author)</i></td><td>-</td><td>An absence-claim that turned out to be wrong; kept in the numbering for honesty.</td></tr>
+</table></div>
+<h4 id="g-group-b-reconciliation-recorded-state-vs-reality">Group B - reconciliation (recorded state vs reality)</h4>
+<div class="tw"><table>
+<tr><th>#</th><th>Gap</th><th>Status</th><th>Where it stands</th></tr>
+<tr><td>7</td><td>Nothing reconciles recorded state against reality - the pilot's dominant failure mode, hit in both directions, on the tracker <b>and</b> in narrative docs</td><td><b>PARTIAL</b></td><td>A drift check now diffs backlog items against the RTM's own tracker-mapping column and reports unpushed/orphaned - entirely offline. Neither adapter can read work-item state back (one can read the instance's field <i>schema</i>, never an item's status), the reverse sync is still an open register item, and no mechanism at all covers the doc-vs-code variant.</td></tr>
+<tr><td>8</td><td>A "done" claim need not be evidence-typed</td><td><b>PARTIAL</b></td><td>A structured verification artifact is now mandatory and a gate fails a PASS with no coverage matrix or a non-green row. But the cells are unvalidated text - a matrix row containing the bare word "pass" satisfies it; no executed-run record, command string, or output is required. Only <i>release sign-offs</i> mechanically demand evidence.</td></tr>
+<tr><td>6</td><td>Renaming an artifact silently breaks downstream lookups</td><td><b>PARTIAL</b></td><td>Dangling citations are now flagged for two ID classes (a cited ADR with no defining file; an RTM-cited requirement that does not exist) - exactly the run-1 scenario. There is still no rename or alias ledger, and an ordinary hand-rename leaves stale file-path links unchecked.</td></tr>
+<tr><td>2</td><td>Human shorthand defeats requirement-ID validation</td><td><b>PARTIAL</b></td><td>A range-shorthand lint now catches the dotted and ellipsis forms, and <code>--strict</code> promotes it to a hard failure - which the spec-writer agents name as their exit bar. But no shipped mechanical gate passes <code>--strict</code> (not CI, not pre-commit, not the adopter battery), so by default it prints and passes; and it still misses the bare continuation form (<code>-002, -004</code>), hyphen and en-dash ranges, and "001 to 004".</td></tr>
+<tr><td>4</td><td>The artifact-kind detector over-claims, collapsing distinct files to one ID</td><td><b>PARTIAL</b></td><td>The over-claim itself is unchanged, but duplicate artifact IDs are now a hard failure rather than silence: two backlogs in different feature folders fail the check by name.</td></tr>
+<tr><td>3</td><td>The pinned config is project knowledge but silently deletable</td><td><b>PARTIAL</b></td><td>Deleting it now raises an advisory - which never affects the exit code. Worse, a missing config silently re-points the entire audit at a different tree with no message, so a deviation that was declared can be un-declared by deletion.</td></tr>
+<tr><td>5</td><td>The converter refuses two initiatives without offering a path</td><td><b>PARTIAL</b></td><td>The refusal is now diagnosed per file (ADR-number collisions, many-to-one destination collisions, byte-compared "differs / identical" verdicts) instead of one flat rejection. There is still no reconcile or merge mode, and no RTM-merge tool exists.</td></tr>
+</table></div>
+<h4 id="g-group-c-orchestration-and-plumbing-the-weakest-layer">Group C - orchestration and plumbing (the weakest layer)</h4>
+<div class="tw"><table>
+<tr><th>#</th><th>Gap</th><th>Status</th><th>Where it stands</th></tr>
+<tr><td>16</td><td><b>The agent definitions reference a CLI and hooks that no install path ships</b></td><td><b>MOSTLY CLOSED</b></td><td><i>What the pilot found:</i> the tooling existed in source, but the bundle generator hardcoded a four-file hook tuple, so <code>sloom.py</code>, <code>validate_gates.py</code> and <code>build_context_pack.py</code> shipped in <b>zero</b> of the six bundles while eight agent definitions called them - costing hand-rolled workarounds in three of four product runs. <i>Fixed:</i> the generator now <b>computes</b> the closure from the import graph (<code>hook_closure()</code> over <code>CLI_ENTRY_POINTS</code>, matching indented imports); all 13 CLI modules ship plus <code>templates/</code> (without it <code>sloom scaffold</code> silently wrote <code>_TODO_</code> stubs); tool paths in shipped prose are repointed per bundle; toolkit-only subcommands now explain themselves instead of emitting a file-not-found; <code>validate_targets</code> enforces presence + import resolution on every bundle; a smoke test scaffolds and runs the CLI from a clean copy of each. <i>Still open (IMP-174):</i> plugin prose uses repo-relative paths where a plugin installs under a plugin root, bare <code>sloom</code> has no shipped shim, and <code>sloom pack</code> can't locate agents in three harness layouts.</td></tr>
+<tr><td>17</td><td>No run-state persistence primitive; the ledger is hand-maintained in two files</td><td><b>PARTIAL</b></td><td>The machine-readable half is now real: a locked read-modify-write with atomic replace, upstream-completion enforcement, phase-acceptance checks, and an appended decision log. The human-readable mirror is still hand-synced - the template and the orchestrator both still call for the pair, nothing derives one from the other, and nothing checks they agree. Run 5 hand-synced them at 11 step transitions, run 6 at 16.</td></tr>
+<tr><td>21</td><td>Two concurrent sessions sharing uncommitted documents cannot detect each other</td><td><b>PARTIAL</b></td><td>Per-run mutual exclusion now exists (an exclusive lock around one run's ledger). Neither of the pilot's two asks is built: no lease naming the documents a run currently owns, and no registry a starting run can query. The governing model resolves concurrency by branch-and-merge, which is precisely what does not cover two sessions writing the same uncommitted file in one working tree.</td></tr>
+<tr><td>19</td><td>Parallel writers cannot see each other's not-yet-minted IDs</td><td><b>PARTIAL</b></td><td>A next-free-ID helper exists and is exposed as a tool, but it is pure read-only computation - two parallel callers get the same answer and nothing records a claim, which is exactly how run 7's two sessions minted the same ID. Collisions are caught only afterwards, as a duplicate-ID failure. Run 6 showed the gap can be <i>designed around</i> by sequencing the writers.</td></tr>
+<tr><td>18</td><td>Budget enforcement is arithmetic the enforcer does by hand</td><td><b>OPEN</b></td><td>The orchestrator's stated job includes enforcing a dispatch cap, but nothing computes spend. The run ledger has no dispatch counter and the status command prints step states only. Every run self-reported its count from memory; one had to recount mid-run.</td></tr>
+<tr><td>20</td><td>Specialist agents cannot persist their own handoff context</td><td><b>OPEN</b></td><td>Verified across all 52 contracts: no agent's tool manifest includes an MCP tool, so only the orchestrating session can call save/recall - while the handoff skill still reads as if any agent could. Every handoff fact in the product runs was extracted from returned text and saved on the specialists' behalf.</td></tr>
+<tr><td>9</td><td>Cross-agent finding dedup after a fan-out is manual</td><td><b>OPEN</b></td><td>The run-2 sweep produced 39 raw findings that the operator merged by hand to roughly 32. There is still no shared finding-ID convention (the fan-out lens agent mints no IDs at all) and no merge helper.</td></tr>
+</table></div>
+<h4 id="g-two-frictions-that-never-got-a-number">Two frictions that never got a number</h4>
+<p>Recorded because both had real consequences and neither fits the numbered catalog:</p>
+<ul>
+<li><b>No "gated / conditional" state on a planned work item.</b> A story whose own recon had</li>
+<p>declared it blocked was still committed into a sprint at 8 points, because "don't commit until cleared" existed only as prose with nothing enforcing it.</p>
+<li><b>Parallel review gates can finalize on stale peer state.</b> With three reviewers dispatched</li>
+<p>at once, one filed "no evidence of a security sign-off" as a blocking finding while that sign-off was landing in the same batch. It self-corrected within the turn, and parallelizing the gates is still right, but a shared "gates landed so far" view would remove the friction.</p>
+</ul>
+<h4 id="g-what-the-shape-of-this-catalog-says">What the shape of this catalog says</h4>
+<p>The pilot's own conclusion, and an independent code review agrees: <b>the agents are the strongest part of the system and the scaffolding around them is the weakest.</b> Not one gap in Group C is about an agent's judgment. They are all about the plumbing an orchestrator needs and does not have - a shipped CLI, a run registry, a dispatch counter, a way for a specialist to persist what it learned. Group A says the same thing at the other end of the pipeline: the blind spots cluster <i>before</i> recon and <i>after</i> review, not in the middle where the reasoning happens.</p>
+<h3 id="g-what-to-build-next">What to build next</h3>
+<p>The pilot's own prescriptions, carried forward verbatim in intent. These are registered in <a href="improvements.html"><code>IMPROVEMENTS.md</code></a>:</p>
+<ol>
+<li>~~<b>Ship the referenced tooling, or branch the docs.</b>~~ <b>Done</b> - the generator computes</li>
+<p>the CLI's import closure and every bundle ships it; <code>validate_targets</code> and a standalone smoke test hold it there (gap 16, IMP-160).</p>
+<li><b>Derive the run ledger's readable half from its machine half</b>, or add a save-run-state</li>
+<p>tool mirroring the context-save shape (gap 17).</p>
+<li><b>Add a dispatch/spend read</b> so budget enforcement stops being unaided arithmetic (gap 18).</li>
+<li><b>Add a reserve-next-id call</b> so parallel writers can cross-reference correctly on first</li>
+<p>write (gap 19).</p>
+<li>**Expose the context tools to specialists, or state plainly that persistence is the</li>
+<p>orchestrator's job** - the skill currently implies the opposite (gap 20).</p>
+<li><b>Add a doc-ownership lease or a queryable run registry</b> so a starting run can discover an</li>
+<p>active one before writing shared state (gap 21).</p>
+<li><b>Require an intake stub</b> (source, date, author, one-line premise) as the <i>first</i> write for</li>
+<p>any externally-authored artifact, before recon spend (gap 13).</p>
+<li><b>Force a prior-art position</b> (reuse / extend / justify-new) whenever a proposal introduces</li>
+<p>a config-object, manifest, or profile abstraction (gap 14).</p>
+<li><b>Add a scope field</b> to the backlog row - net-new-vertical / extend-vertical / cross-cutting</li>
+</ol>
+<ul>
+<li>so estimation can apply different scrutiny to each (gap 15).</li>
+</ul>
+<h3 id="g-what-an-adopter-should-take-from-this">What an adopter should take from this</h3>
+<p>Seven practices earned their place under real pressure. None of them require a toolkit change:</p>
+<ol>
+<li><b>Verify by execution, never by reading.</b> A test that exists is not a criterion that is</li>
+<p>met. Where it matters, break the code deliberately and watch the test fail before you trust it.</p>
+<li><b>Treat the maker's own proof as a claim.</b> The strongest runs had the checker independently</li>
+<p>reproduce the mutation, not read about it.</p>
+<li><b>Read past the green tests.</b> Two of the pilot's best findings were defects that every test</li>
+<p>passed over: a test suite that captured logs and asserted nothing, and a component whose own accessibility claim its tests never checked.</p>
+<li><b>Recon before design, always - including recon of your own plan.</b> Four runs had a written</li>
+<p>plan corrected before code, each time by reading the actual source rather than the document.</p>
+<li><b>Fan out with genuinely different lenses, then keep the disagreements.</b> Where two lenses</li>
+<p>contradicted each other, the contradiction was the finding.</p>
+<li><b>Re-read a shared document immediately before editing it.</b> With no locking, this was the</li>
+<p>only defense that worked - and it is not sufficient: two sessions still minted the same ID independently, because re-reading protects text, not identifiers.</p>
+<li><b>Record a budget overrun before you spend it, and only for an execution-confirmed defect.</b></li>
+<p>Transparent overrun beat both rigid enforcement and silent drift.</p>
+</ol>
+<p>And one for maintainers of any agent fleet: <b>ship the tooling your agent definitions assume, or make the definitions branch.</b> Gap 16 forced hand-rolled workarounds in three of the four product runs.</p>
+<h3 id="g-limitations">Limitations</h3>
+<ul>
+<li><b>No baseline, no control, no independent judge.</b> Nothing here supports a claim about speed,</li>
+<p>cost, or defect rate. The productivity question needs the human-team pilot in <a href="archive/PILOT-PLAN.md"><code>archive/PILOT-PLAN.md</code></a>, which remains unrun.</p>
+<li><b>The operator wrote the findings.</b> Mitigated in places (agents overturned the operator's own</li>
+<p>claims twice) but not eliminated.</p>
+<li><b>One codebase, one domain, one team.</b> Regulated-industry document processing is a favorable</li>
+<p>case for a traceability-heavy toolkit; a fast-moving consumer product might report differently.</p>
+<li><b>Runs 1-4 tested the method, not the product.</b> Only runs 5-8 exercised the distributed fleet</li>
+<p>as an adopter would receive it - and run 7 did so at reduced fidelity (see <i>Method</i>).</p>
+<li><b>Nothing was released.</b> The runs produced merge-ready code on a local branch; no pull</li>
+<p>request, no deployment, no production observation.</p>
+<li><b>The statuses above are a code read, not a re-run.</b> They say what the current release</li>
+<p>implements, not that a ninth run would find the gap gone.</p>
+</ul></article></main>
+</div>
+<footer><div class="in">
+  Part of the <a href="readme.html">Spindleloom website</a> &middot; front door: the
+  <a href="personas/index.html">Persona Field Handbook</a>.
+</div></footer>
+<script>
+const root=document.documentElement;
+try{const _st=localStorage.getItem("sl-theme");if(_st)root.setAttribute("data-theme",_st);}catch(e){}
+document.getElementById("themeToggle").addEventListener("click",()=>{
+  const dark=matchMedia("(prefers-color-scheme:dark)").matches;
+  const cur=root.getAttribute("data-theme")||(dark?"dark":"light");
+  const next=cur==="dark"?"light":"dark";
+  root.setAttribute("data-theme",next);
+  try{localStorage.setItem("sl-theme",next);}catch(e){}
+});
+const items=[...document.querySelectorAll(".spine li")];
+const map={};items.forEach(li=>{const a=li.querySelector("a");if(a)map[a.getAttribute("href").slice(1)]=li;});
+const spy=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){
+  items.forEach(l=>l.classList.remove("on"));const li=map[e.target.id];if(li)li.classList.add("on");}}),
+  {rootMargin:"-20% 0px -70% 0px"});
+document.querySelectorAll("article h3[id]").forEach(h=>spy.observe(h));
+</script>
+</body>
+</html>

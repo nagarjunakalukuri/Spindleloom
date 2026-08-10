@@ -260,10 +260,10 @@ footer .in{max-width:1120px;margin:0 auto;padding:22px 30px;font-size:12.5px;col
 <li>Right-size the funnel to the blast radius; don't right-size the quality gates.</li>
 </ul>
 <h4 id="g-project-operating-manual-avoid-re-discovery-per-agent">Project operating manual (avoid re-discovery per agent)</h4>
-<p>Key project-specific facts — Python interpreter path, test run incantation, repo root layout, per-package test commands — are re-derived by each new agent in a session if they're not persisted. This wastes tokens and causes friction (G8):</p>
+<p>Key project-specific facts — Python interpreter path, test run incantation, repo root layout, per-package test commands — are re-derived by each new agent in a session if they're not persisted. This wastes tokens and causes friction:</p>
 <ul>
 <li><b>Use <code>save_context</code> (MCP tool):</b> at session start, one agent resolves and saves the incantation under <code>task_id=&quot;project-ops&quot;</code>; every subsequent agent calls <code>recall_context(task_id=&quot;project-ops&quot;)</code> first before running commands (dev-onboarding seeds this at its readiness gate).</li>
-<li><b>Use a project <code>CLAUDE.md</code> addendum:</b> add a <code>## Running tests</code> section with the literal, resolved commands for this repo (e.g., <code>uv run pytest oi_atlas_cache/tests/ -x</code>). Every agent reads CLAUDE.md at start.</li>
+<li><b>Use a project <code>CLAUDE.md</code> addendum:</b> add a <code>## Running tests</code> section with the literal, resolved commands for this repo (e.g., <code>uv run pytest src/tests/ -x</code>). Every agent reads CLAUDE.md at start.</li>
 <li><b>On Windows with <code>uv</code>:</b> the interpreter is typically <code>.venv/Scripts/python.exe</code> and the test runner is <code>uv run pytest</code>. Write the resolved form once and reference it everywhere rather than re-probing per agent.</li>
 </ul>
 <h4 id="g-increment-by-blast-radius">Increment by blast radius</h4>
@@ -272,23 +272,23 @@ footer .in{max-width:1120px;margin:0 auto;padding:22px 30px;font-size:12.5px;col
 <li>Build and verify the net-new isolated replacement independently.</li>
 <li>Cut over the hot path in its own gated step with its own recon → build → test-author → change-verifier → code-reviewer cycle.</li>
 </ol>
-<p>The cutover increment is the one that can break callers — it deserves its own blast-radius assessment, its own symbol-removal grep (see <code>backend-developer</code>), and its own <code>change-verifier</code> run. "Agent enthusiasm vs blast radius" is the failure mode: don't let the readiness of the isolated piece tempt a combined hot-path cutover in one pass (G11).</p>
+<p>The cutover increment is the one that can break callers — it deserves its own blast-radius assessment, its own symbol-removal grep (see <code>backend-developer</code>), and its own <code>change-verifier</code> run. "Agent enthusiasm vs blast radius" is the failure mode: don't let the readiness of the isolated piece tempt a combined hot-path cutover in one pass.</p>
 <h4 id="g-maker-checker-split-mandatory-not-optional">Maker/checker split — mandatory, not optional</h4>
-<p>The maker/checker pattern is the pilot's <b>highest-ROI control</b> (G3/G13/G16):</p>
+<p>The maker/checker pattern is the fleet's <b>highest-ROI control</b>:</p>
 <ul>
 <li><code>code-reviewer</code> must be a <b>different agent from both the maker and the test-author</b>. The agent that wrote the bug is the worst one to spot it; the agent that wrote the tests can agree with the maker's wrong contract.</li>
 <li>For every cutover (hot-path migration, symbol removal, store replacement), run <code>code-reviewer</code> on the diff it did not write. This is not optional and not a ceremony — it is the control that catches Critical/Major bugs that tests and the verifier both miss.</li>
 <li>The maker builds → <code>change-verifier</code> executes the change → <code>code-reviewer</code> reads the diff statically. All three are distinct agents; collapsing any two collapses the separation that makes the loop work.</li>
 </ul>
 <h4 id="g-recon-before-implement-mandatory-for-brownfield">Recon-before-implement — mandatory for brownfield</h4>
-<p><code>solution-recon</code> must run before any brownfield implementation (G4/G10):</p>
+<p><code>solution-recon</code> must run before any brownfield implementation:</p>
 <ul>
-<li>Recon establishes ground truth: what the code actually does, not what the spec describes. In brownfield codebases, the spec routinely understates the work (broken import placeholders, "5 caches" that are really 3, shells that don't function).</li>
-<li><b>Feed recon drift back into the ADR.</b> When recon finds a mismatch between the spec/ADR and the actual code (e.g., the ADR describes a 5-cache architecture but the code has 3), amend the ADR or write a superseding one — don't silently diverge (G10).</li>
+<li>Recon establishes ground truth: what the code actually does, not what the spec describes. In brownfield codebases, the spec routinely understates the work (broken import placeholders, "five adapters" that are really three, shells that don't function).</li>
+<li><b>Feed recon drift back into the ADR.</b> When recon finds a mismatch between the spec/ADR and the actual code (e.g., the ADR describes five adapters but the code has three), amend the ADR or write a superseding one — don't silently diverge.</li>
 <li>Recon is per-family / per-epic, not per-task: one recon covers the whole feature; per-story builds cite it as warm context; per-task is a pointer, not a re-run.</li>
 </ul>
 <h4 id="g-brownfield-cache-symbol-cutover-playbook">Brownfield cache / symbol-cutover playbook</h4>
-<p>The canonical template for migrating an existing brownfield store, cache, or shared symbol — proven repeatable across multiple caches in the pilot (G14/G16):</p>
+<p>The canonical template for migrating an existing brownfield store, cache, or shared symbol — proven repeatable across several cutovers in field use:</p>
 <pre>1. solution-recon   — establish ground truth; find broken shells, real contracts,
                       non-functional placeholders; amend the ADR if scope changed.
 
@@ -310,7 +310,7 @@ footer .in{max-width:1120px;margin:0 auto;padding:22px 30px;font-size:12.5px;col
                       that import the changed package.
 
 6. Repeat for each cutover unit (one increment per hot path, by blast radius).</pre>
-<p>Test-author discoveries (latent bugs surfaced while writing tests) route to <code>tech-debt-keeper</code>, not back to the maker — they are real bugs found during writing, not test failures. Apply cheap hardening (e.g., <code>isinstance</code> guards) in-loop rather than always deferring to a follow-up (G6/G9).</p></article></main>
+<p>Test-author discoveries (latent bugs surfaced while writing tests) route to <code>tech-debt-keeper</code>, not back to the maker — they are real bugs found during writing, not test failures. Apply cheap hardening (e.g., <code>isinstance</code> guards) in-loop rather than always deferring to a follow-up.</p></article></main>
 </div>
 <footer><div class="in">
   Part of the <a href="readme.html">Spindleloom website</a> &middot; front door: the

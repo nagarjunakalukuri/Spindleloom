@@ -144,7 +144,7 @@ cp spindleloom/commands/*     .claude/commands/
 <h4 id="g-phase-1-validate-and-package-owner-champion-1-day">Phase 1 — Validate and package (owner/champion, 1 day)</h4>
 <ul>
 <li>[ ] Clone source, run <code>validate_graph.py</code> — confirm OK</li>
-<li>[ ] Run <code>build_harness_artifacts.py</code> — confirm ~615 artifacts across 6 harnesses (count grows across releases)</li>
+<li>[ ] Run <code>build_harness_artifacts.py</code> — confirm ~670 artifacts across 6 harnesses (count grows across releases)</li>
 <li>[ ] Run all hook tests: <code>py -3 -m pytest hooks/ -q</code> — all pass (needs pytest; <code>unittest discover</code> silently collects only ~13 of ~90)</li>
 <li>[ ] Decide install method: <b>plugin</b> (recommended for Claude Code teams) or <b>manual copy</b></li>
 <li>[ ] Decide tracker: Azure Boards (set <code>AZURE_DEVOPS_*</code> vars) or Jira (set <code>JIRA_*</code> vars)</li>
@@ -177,7 +177,7 @@ cp spindleloom/commands/*     .claude/commands/
 <li>[ ] Wire <code>build_harness_artifacts.py --check</code> as a CI drift gate so stale bundles can't merge</li>
 <li>[ ] After any Spindleloom source update: re-run <code>build_harness_artifacts.py</code> and re-distribute</li>
 <li>[ ] Use <code>run-orchestrator</code> + <code>.spindleloom/run-state.json</code> for any autonomous fleet runs</li>
-<li>[ ] Review <code>knowledge_hub/archive/PILOT-READOUT.md</code> for known adjustment areas before wider rollout</li>
+<li>[ ] Review <code>knowledge_hub/FIELD-PILOT.md</code> for known adjustment areas before wider rollout</li>
 </ul>
 <h4 id="g-size-your-adoption">Size your adoption</h4>
 <div class="tw"><table>

@@ -101,6 +101,18 @@ footer .in{max-width:1120px;margin:0 auto;padding:22px 30px;font-size:12.5px;col
 <li><a href="#g-0-2-0-2026-07-07">[0.2.0] — 2026-07-07</a></li></ol></nav>
   <main><article><p>All notable changes to Spindleloom. Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>; versions follow SemVer (pre-1.0: minor bumps may break).</p>
 <h3 id="g-unreleased">[Unreleased]</h3>
+<h4 id="g-fixed">Fixed</h4>
+<ul>
+<li><b>The <code>sloom</code> CLI now ships with every bundle</b> (field-pilot gap 16 / IMP-160). <code>sloom.py</code>, <code>validate_gates.py</code> and <code>build_context_pack.py</code> existed in source but shipped in <b>zero</b> of the six harness bundles, while eight agent definitions referenced <code>sloom run|approve|signoff|flags</code> unconditionally — so a fresh install hit a missing command at its first phase boundary. <code>build_harness_artifacts.py</code> now <b>computes</b> the CLI's import closure from declared entry points (13 modules) instead of hardcoding a four-file tuple, emitting it as <code>hooks/</code> for the Claude targets and <code>tools/</code> for Cursor/Copilot/Windsurf (673 artifacts, up from 616). <code>validate_targets.py</code> now enforces CLI presence and local-import resolution on <b>every</b> bundle — previously it checked one bundle with a regex that could not see function-level imports, which is why the drift went unnoticed.</li>
+</ul>
+<h4 id="g-added">Added</h4>
+<ul>
+<li><b><code>knowledge_hub/FIELD-PILOT.md</code></b> — the de-identified record of eight fleet runs inside a live enterprise codebase: what held up, a 21-gap catalog grouped by pipeline stage, each gap's verified status against the current release, and nine carried-forward prescriptions (registered as IMP-160..168). Generated reading twin at <code>spindleloom_website/field-pilot.html</code>.</li>
+</ul>
+<h4 id="g-changed">Changed</h4>
+<ul>
+<li>Client-identifying references from a prior engagement removed from shipped agent contracts, a skill, a template, entry docs and the published site (they had propagated into all six <code>targets/</code> bundles); replaced with generic examples. The client-specific pilot readouts were retired in favor of the generalized field record.</li>
+</ul>
 <h3 id="g-0-5-0-2026-07-11">[0.5.0] - 2026-07-11</h3>
 <p>Documentation consolidation, a role-based field handbook, the Woven Loop brand, a browsable website, and five new anti-drift gates - layered on 0.4.0's platform. The fleet's contract graph is unchanged; the platform grows <code>sloom signoff</code> and a 9-gate <code>sloom check</code> battery.</p>
 <h4 id="g-added">Added</h4>
@@ -222,7 +234,7 @@ footer .in{max-width:1120px;margin:0 auto;padding:22px 30px;font-size:12.5px;col
 <li>SEC/UX/A11Y IDs now have RTM columns; <code>qa-tester</code>/<code>accessibility-auditor</code> declare their <code>gate:</code>; role labels corrected (<code>performance-engineer</code>, <code>dev-onboarding</code> → maker).</li>
 <li>Four broken skill↔agent pairings re-armed; two orphan templates re-linked from their producing agents.</li>
 <li>Docs drift: <code>HOOKS.md</code> now documents the real 18-tool/4-resource MCP surface and all validator checks; ONBOARDING agent count; README guide paths; dangling SPEC-KIT-CROSSWALK references removed; ~70 legacy <code>project_managment_agents</code> paths corrected; orphaned <code>.wheelwright/</code> removed.</li>
-<li>Agent-definition hardening from the AEP gap register (evidence-standard, gate-integrity, ghost-blocker, autospec, executed-vs-inferred rules across 8 agents + the DoR/DoD template), generalized to be project-agnostic.</li>
+<li>Agent-definition hardening from a field-pilot gap register (evidence-standard, gate-integrity, ghost-blocker, autospec, executed-vs-inferred rules across 8 agents + the DoR/DoD template), generalized to be project-agnostic.</li>
 </ul>
 <h4 id="g-removed">Removed</h4>
 <ul>
