@@ -4,6 +4,18 @@ All notable changes to Spindleloom. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+### Fixed
+
+- **The `sloom` CLI now ships with every bundle** (field-pilot gap 16 / IMP-160). `sloom.py`, `validate_gates.py` and `build_context_pack.py` existed in source but shipped in **zero** of the six harness bundles, while eight agent definitions referenced `sloom run|approve|signoff|flags` unconditionally — so a fresh install hit a missing command at its first phase boundary. `build_harness_artifacts.py` now **computes** the CLI's import closure from declared entry points (13 modules) instead of hardcoding a four-file tuple, emitting it as `hooks/` for the Claude targets and `tools/` for Cursor/Copilot/Windsurf (673 artifacts, up from 616). `validate_targets.py` now enforces CLI presence and local-import resolution on **every** bundle — previously it checked one bundle with a regex that could not see function-level imports, which is why the drift went unnoticed.
+
+### Added
+
+- **`knowledge_hub/FIELD-PILOT.md`** — the de-identified record of eight fleet runs inside a live enterprise codebase: what held up, a 21-gap catalog grouped by pipeline stage, each gap's verified status against the current release, and nine carried-forward prescriptions (registered as IMP-160..168). Generated reading twin at `spindleloom_website/field-pilot.html`.
+
+### Changed
+
+- Client-identifying references from a prior engagement removed from shipped agent contracts, a skill, a template, entry docs and the published site (they had propagated into all six `targets/` bundles); replaced with generic examples. The client-specific pilot readouts were retired in favor of the generalized field record.
+
 ## [0.5.0] - 2026-07-11
 
 Documentation consolidation, a role-based field handbook, the Woven Loop brand, a browsable website, and five new anti-drift gates - layered on 0.4.0's platform. The fleet's contract graph is unchanged; the platform grows `sloom signoff` and a 9-gate `sloom check` battery.
@@ -140,7 +152,7 @@ Platform hardening and context-engineering fidelity on top of the multi-user con
 - SEC/UX/A11Y IDs now have RTM columns; `qa-tester`/`accessibility-auditor` declare their `gate:`; role labels corrected (`performance-engineer`, `dev-onboarding` → maker).
 - Four broken skill↔agent pairings re-armed; two orphan templates re-linked from their producing agents.
 - Docs drift: `HOOKS.md` now documents the real 18-tool/4-resource MCP surface and all validator checks; ONBOARDING agent count; README guide paths; dangling SPEC-KIT-CROSSWALK references removed; ~70 legacy `project_managment_agents` paths corrected; orphaned `.wheelwright/` removed.
-- Agent-definition hardening from the AEP gap register (evidence-standard, gate-integrity, ghost-blocker, autospec, executed-vs-inferred rules across 8 agents + the DoR/DoD template), generalized to be project-agnostic.
+- Agent-definition hardening from a field-pilot gap register (evidence-standard, gate-integrity, ghost-blocker, autospec, executed-vs-inferred rules across 8 agents + the DoR/DoD template), generalized to be project-agnostic.
 
 ### Removed
 
